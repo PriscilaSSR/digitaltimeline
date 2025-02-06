@@ -7,5 +7,6 @@
     "deploy": "gh-pages -d build"
   }
 }
-npm install gh-pages --save-dev
-npm run deploy
+"publishConfig": {
+  "registry": "https://npm.pkg.github.com"
+},
