@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aviation History Timeline</title>
+  <style>
+    /* CSS styles */
+    .timeline {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .timeline-item {
+      width: 200px;
+      margin: 10px;
+      padding: 10px;
+      background-color: #f4f4f4;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .timeline-item:hover {
+      background-color: #e0e0e0;
+    }
+    .timeline-item.active {
+      background-color: #c0c0c0;
+    }
+    .details {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .details img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aviation History Timeline</h1>
+  <div class="timeline">
+    <!-- Timeline items will be dynamically added here -->
+  </div>
+  <div class="details">
+    <h2>Details</h2>
+    <div id="details-content">
+      <!-- Details content will be dynamically updated here -->
+    </div>
+  </div>
+
+  <script>
+    // JavaScript code
+    const timelineItems = [
+      {
+        date: '5th century BC',
+        location: 'China',
+        title: 'Early Kites',
+        description: 'Kites are invented in China, an early form of human flight.',
+        img: 'kite.jpg',
+        people: ['Mozi', 'Lu Ban']
+      },
+      {
+        date: '1485',
+        location: 'Italy',
+        title: "Leonardo's Ornithopter",
+        description: "Leonardo da Vinci designs a human-powered ornithopter.",
+        img: 'ornithopter.jpg',
+        people: ['Leonardo da Vinci']
+      },
+      // Add more timeline items here
+    ];
+
+    const timelineContainer = document.querySelector('.timeline');
+    const detailsContent = document.getElementById('details-content');
+
+    // Render timeline items
+    timelineItems.forEach(item => {
+      const timelineItem = document.createElement('div');
+      timelineItem.classList.add('timeline-item');
+      timelineItem.innerHTML = `
+        <h3>${item.date}</h3>
+        <p>${item.title}</p>
+      `;
+      timelineItem.addEventListener('click', () => {
+        showDetails(item);
+        highlightActiveItem(timelineItem);
+      });
+      timelineContainer.appendChild(timelineItem);
+    });
+
+    // Show details when a timeline item is clicked
+    function showDetails(item) {
+      detailsContent.innerHTML = `
+        <h3>${item.title}</h3>
+        <p>${item.description}</p>
+        <img src="${item.img}" alt="${item.title}">
+        <p>Location: ${item.location}</p>
+        <p>Key people involved:</p>
+        <ul>
+          ${item.people.map(person => `<li>${person}</li>`).join('')}
+        </ul>
+      `;
+    }
+
+    // Highlight active timeline item
+    function highlightActiveItem(item) {
+      const activeItem = document.querySelector('.timeline-item.active');
+      if (activeItem) {
+        activeItem.classList.remove('active');
+      }
+      item.classList.add('active');
+    }
+  </script>
+</body>
+</html>
