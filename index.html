@@ -92,6 +92,17 @@
       right: 10px;
       cursor: pointer;
     }
+    .timeline-column[data-category="Early Theoretical Concepts"] {
+  background-color: #f9f9f9;
+}
+
+.timeline-column[data-category="Early Experimentations"] {
+  background-color: #e9e9e9;
+}
+
+.timeline-column[data-category="Early Cultural Artifacts"] {
+  background-color: #f0f0f0;
+}
   </style>
 </head>
 <body>
@@ -116,13 +127,9 @@ const timelineItems = [
     description: 'Kites are invented in China, an early form of human flight.',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
+    category: 'Early Cultural Artifacts',
     row: 1,
-    connections: [
-      {
-        text: "About the Moon Film",
-        target: "Archytas\' Flying Pigeon"  // This references another timeline item.
-      }
-      ]
+    connections: []
   },
   {
         date: '400s BCE',
@@ -131,8 +138,9 @@ const timelineItems = [
         description: 'Archytas of Tarentum creates a wooden pigeon that could "fly" using a jet of air.',
         img: "/api/placeholder/100/100",
         people: ['Archytas of Tarentum'],
+        category: 'Early Experimentations',
         row: 1,
-    connections: [] // No connections here.
+        connections: [] // No connections here.
       },
       {
         date: '200s BCE',
@@ -141,6 +149,7 @@ const timelineItems = [
         description: 'Archimedes discovers the principles of buoyancy, which later influence theories of flight.',
         img: "/api/placeholder/100/100",
         people: ['Archimedes'],
+        category: 'Early Theoretical Concepts',
         row: 1,
         connections: [] // No connections here.
       },
@@ -151,6 +160,7 @@ const timelineItems = [
         description: 'Kongming invents the sky lantern, the first hot air balloon. From its military use it became known as the Kongming lantern.',
         img: "/api/placeholder/100/100",
         people: ['Kongming'],
+        category: 'Early Theoretical Concepts',
         row: 1,
      connections: [] // No connections here.
       },
@@ -161,6 +171,7 @@ const timelineItems = [
     description: 'Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.',
     img: "/api/placeholder/100/100",
     people: ['Hero of Alexandria'],
+    category: 'Early Theoretical Concepts',
     row: 1,
       connections: [] // No connections here.
   },
@@ -171,6 +182,7 @@ const timelineItems = [
         description: 'Roger Bacon theorizes that air can support objects like water supports boats.',
         img: "/api/placeholder/100/100",
         people: ['Roger Bacon'],
+        category: 'Early Theoretical Concepts',
         row: 2,
         connections: [] // No connections here.
       },
@@ -181,6 +193,7 @@ const timelineItems = [
         description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
         img: "/api/placeholder/100/100",
         people: ['Leonardo da Vinci'],
+        category: 'Early Cultural Artifacts',
         row: 2,
         connections: [] // No connections here.
       },
@@ -191,6 +204,7 @@ const timelineItems = [
         description: 'João Torto, a Portuguese barber, attempts human flight with fabric wings but falls to his death.',
         img: "/api/placeholder/100/100",
         people: ['João Torto'],
+        category: 'Early Experimentations',
         row: 2,
         connections: [] // No connections here.
       },
@@ -546,11 +560,22 @@ const timelineItems = [
   }
     ];
 
-  const timelineContainer = document.querySelector('.timeline');
+    const timelineContainer = document.querySelector('.timeline');
     const popupContent = document.getElementById('popup-content');
     const popup = document.querySelector('.popup');
     const popupClose = document.querySelector('.popup-close');
+    const categories = ['Early Theories', 'Early Experimentations', 'Early Cultural Artifacts'];
+  
+    const timelineContainer = document.querySelector('.timeline');
 
+      // Create timeline columns using your defined categories
+      categories.forEach(category => {
+        const timelineColumn = document.createElement('div');
+        timelineColumn.classList.add('timeline-column');
+        // Use a data attribute to store the category name
+        timelineColumn.setAttribute('data-category', category);
+        timelineContainer.appendChild(timelineColumn);
+      });
     // Create timeline columns
     const columns = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
     columns.forEach(column => {
@@ -600,7 +625,31 @@ const timelineItems = [
         });
       }
     });
+timelineItems.sort((a, b) => a.row - b.row);
 
+timelineItems.forEach(item => {
+  const timelineItem = document.createElement('div');
+  timelineItem.classList.add('timeline-item');
+  timelineItem.innerHTML = `
+    <h3>${item.date}</h3>
+    <p>${item.title}</p>
+  `;
+
+  // Add event listener to show popup (or any other interaction you need)
+  timelineItem.addEventListener('click', () => {
+    showPopup(item);
+    highlightActiveItem(timelineItem);
+  });
+
+  // Determine which column to use based on the item's category.
+  // You can provide a default category if none is set.
+  const category = item.category || 'Early Theories';
+  const timelineColumn = document.querySelector(`.timeline-column[data-category="${category}"]`);
+
+  if (timelineColumn) {
+    timelineColumn.appendChild(timelineItem);
+  }
+});
     // Function to show the main popup with a timeline event's details.
     function showPopup(item) {
       popupContent.innerHTML = `
