@@ -77,7 +77,7 @@ const timelineItems = [
     row: 1
   },
   {
-    date: '5th century BC',
+    date: '500 BCE',
     location: 'China',
     title: 'Early Kites',
     description: 'Kites are invented in China, an early form of human flight.',
@@ -86,132 +86,321 @@ const timelineItems = [
     row: 1
   },
   {
-    date: '1485',
-    location: 'Italy',
-    title: "Leonardo's Ornithopter",
-    description: "Leonardo da Vinci designs a human-powered ornithopter.",
-    img: "/api/placeholder/100/100",
-    people: ['Leonardo da Vinci'],
-    row: 2
-  },
-  {
-    date: '1709',
-    location: 'Portugal',
-    title: 'Bartolomeu de Gusmão\'s Glider',
-    description: 'Bartolomeu Lourenço de Gusmão demonstrates a small model glider to King John V of Portugal, reported to have flown a considerable distance.',
-    img: "/api/placeholder/100/100",
-    people: ['Bartolomeu Lourenço de Gusmão'],
-    row: 3
-  },
-  {
-        date: '1716',
-        location: 'Sweden',
-        title: 'Swedenborg\'s Flying Machine',
-        description: 'Emanuel Swedenborg sketches a design for a flying machine in his work "Sketch of a Machine for Flying in the Air".',
+        date: '400 BCE',
+        location: 'Tarentum, Italy',
+        title: 'Archytas\' Flying Pigeon',
+        description: 'Archytas of Tarentum creates a wooden pigeon that could "fly" using a jet of air.',
         img: "/api/placeholder/100/100",
-        people: ['Emanuel Swedenborg'],
+        people: ['Archytas of Tarentum'],
+        row: 1
+      },
+      {
+        date: '200 BCE',
+        location: 'Syracuse, Sicily',
+        title: 'Archimedes\' Buoyancy Principle',
+        description: 'Archimedes discovers the principles of buoyancy, which later influence theories of flight.',
+        img: "/api/placeholder/100/100",
+        people: ['Archimedes'],
+        row: 1
+      },
+      {
+        date: '1290',
+        location: 'England',
+        title: 'Roger Bacon\'s Air Support Theory',
+        description: 'Roger Bacon theorizes that air can support objects like water supports boats.',
+        img: "/api/placeholder/100/100",
+        people: ['Roger Bacon'],
+        row: 2
+      },
+      {
+        date: '1480s',
+        location: 'Italy',
+        title: "Leonardo da Vinci's Flying Machines",
+        description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
+        img: "/api/placeholder/100/100",
+        people: ['Leonardo da Vinci'],
+        row: 2
+      },
+      {
+        date: '1540',
+        location: 'Portugal',
+        title: 'João Torto\'s Failed Flight Attempt',
+        description: 'João Torto, a Portuguese barber, attempts human flight with fabric wings but falls to his death.',
+        img: "/api/placeholder/100/100",
+        people: ['João Torto'],
+        row: 2
+      },
+      {
+        date: '1709',
+        location: 'Portugal',
+        title: 'Bartolomeu de Gusmão\'s Passarola',
+        description: 'Bartolomeu de Gusmão, a Brazilian-Portuguese priest, demonstrates a hot air balloon prototype called the "Passarola."',
+        img: "/api/placeholder/100/100",
+        people: ['Bartolomeu de Gusmão'],
         row: 3
-  },
-  {
-    date: '1783',
-    location: 'France',
-    title: 'Montgolfier Brothers\' Hot Air Balloon',
-    description: 'The Montgolfier brothers launch the first manned hot air balloon flight.',
-    img: "/api/placeholder/100/100",
-    people: ['Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
-    row: 4
-  },
-  {
-    date: '1799',
-    location: 'England',
-    title: 'Cayley\'s Glider',
-    description: 'Sir George Cayley builds the first successful glider.',
-    img: "/api/placeholder/100/100",
-    people: ['Sir George Cayley'],
-    row: 4
-  },
-  {
-    date: '1890s',
-    location: 'Germany',
-    title: 'Lilienthal\'s Gliders',
-    description: 'Otto Lilienthal makes successful flights with gliders.',
-    img: "/api/placeholder/100/100",
-    people: ['Otto Lilienthal'],
-    row: 5
-  },
-  {
-    date: '1890s',
-    location: 'France',
-    title: 'Ader\'s Steam-Powered Aircraft',
-    description: 'Clément Ader builds steam-powered aircraft, including the Avion III.',
-    img: "/api/placeholder/100/100",
-    people: ['Clément Ader'],
-    row: 5
-  },
-  {
-    date: '1903',
-    location: 'New Zealand',
-    title: 'Pearse\'s Monoplane',
-    description: 'Richard Pearse flies a monoplane, but the claim is disputed by Americans obvs.',
-    img: "/api/placeholder/100/100", 
-    people: ['Richard Pearse'],
-    row: 6
-  },
-  {
-    date: '1906',  
-    location: 'Brazil',
-    title: '14-bis Flight',
-    description: 'Alberto Santos-Dumont makes the first officially witnessed self-powered flight in Europe in his 14-bis aircraft. This was the first flight certified by the Aero-Club de France.',
-    img: "/api/placeholder/100/100",
-    people: ['Alberto Santos-Dumont'], 
-    row: 6
-  },
-  {
-    date: '1908',
-    location: 'United States', 
-    title: 'Wright Flyer',
-    description: 'The Wright brothers make public flights, demonstrating their glider, that could not get up by itself. Their 1903 flights were not officially witnessed.',
-    img: "/api/placeholder/100/100",
-    people: ['Orville Wright', 'Wilbur Wright'],
-    row: 6
-  },
-  {
-    date: '1914', 
-    location: 'United States',
-    title: 'First Commercial Airline',
-    description: 'The St. Petersburg-Tampa Airboat Line starts commercial flights.',
-    img: "/api/placeholder/100/100",
-    people: ['Thomas Benoist', 'Percival Fansler'],
-    row: 7
-  },
-  {
-    date: '1928',
-    location: 'Germany',
-    title: 'Graf Zeppelin', 
-    description: 'The LZ 127 Graf Zeppelin, a large passenger-carrying rigid airship, enters commercial service. It demonstrated the potential of airships for long-distance travel.',
-    img: "/api/placeholder/100/100",
-    people: ['Ferdinand von Zeppelin'],
-    row: 8
-  },
-  {
-    date: '1947',
-    location: 'United States',
-    title: 'Breaking the Sound Barrier',
-    description: 'Chuck Yeager pilots the Bell X-1 to break the sound barrier.',
-    img: "/api/placeholder/100/100",  
-    people: ['Chuck Yeager'],
-    row: 8
-  },
-  {
-    date: '1969',
-    location: 'United States',
-    title: 'First Moon Landing',
-    description: 'Neil Armstrong and Buzz Aldrin land on the moon in Apollo 11.',
-    img: "/api/placeholder/100/100",
-    people: ['Neil Armstrong', 'Buzz Aldrin'], 
-    row: 9
-  }
-];
+      },
+      {
+        date: '1783',
+        location: 'France',
+        title: 'Montgolfier Brothers\' Hot Air Balloon',
+        description: 'Jean-François Pilâtre de Rozier and François Laurent d\'Arlandes make the first manned flight in a hot air balloon built by the Montgolfier brothers.',
+        img: "/api/placeholder/100/100",
+        people: ['Jean-François Pilâtre de Rozier', 'François Laurent d\'Arlandes', 'Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
+        row: 4
+      },
+      {
+        date: '1799',
+        location: 'England',
+        title: 'George Cayley\'s Glider Design',
+        description: 'George Cayley designs the first modern glider with distinct lift, thrust, and control components.',
+        img: "/api/placeholder/100/100",
+        people: ['George Cayley'],
+        row: 4
+      },
+      {
+        date: '1852',
+        location: 'France',
+        title: 'Henri Giffard\'s Dirigible',
+        description: 'Henri Giffard invents the first controllable dirigible, powered by a steam engine.',
+        img: "/api/placeholder/100/100",
+        people: ['Henri Giffard'],
+        row: 5
+      },
+      {
+        date: 'Late 19th Century',
+        location: 'Germany',
+        title: 'Ferdinand von Zeppelin\'s Rigid Airships',
+        description: 'Ferdinand von Zeppelin develops rigid airships, leading to their widespread use.',
+        img: "/api/placeholder/100/100",
+        people: ['Ferdinand von Zeppelin'],
+        row: 5
+      },
+      {
+        date: '1843',
+        location: 'England',
+        title: 'William Henson\'s Aircraft Design',
+        description: 'William Henson patents an early aircraft design with fixed wings and a steam-powered engine.',
+        img: "/api/placeholder/100/100",
+        people: ['William Henson'],
+        row: 6
+      },
+      {
+        date: '1853',
+        location: 'England',
+        title: 'George Cayley\'s Manned Glider Flight',
+        description: 'George Cayley successfully flies the first manned glider.',
+        img: "/api/placeholder/100/100",
+        people: ['George Cayley'],
+        row: 6
+      },
+      {
+        date: '1871',
+        location: 'England',
+        title: 'Francis Wenham\'s Wind Tunnel',
+        description: 'Francis Wenham builds the first wind tunnel to study aerodynamics.',
+        img: "/api/placeholder/100/100",
+        people: ['Francis Wenham'],
+        row: 7
+      },
+      {
+        date: '1891',
+        location: 'Germany',
+        title: 'Otto Lilienthal\'s Glider Flights',
+        description: 'Otto Lilienthal achieves controlled glider flights and documents his aerodynamic research.',
+        img: "/api/placeholder/100/100",
+        people: ['Otto Lilienthal'],
+        row: 7
+      },
+      {
+        date: '1896',
+        location: 'United States',
+        title: 'Octave Chanute\'s Biplane Glider',
+        description: 'Octave Chanute advances glider designs and builds a successful biplane glider.',
+        img: "/api/placeholder/100/100",
+        people: ['Octave Chanute'],
+        row: 8
+      },
+      {
+        date: '1890',
+        location: 'France',
+        title: 'Clément Ader\'s Éole',
+        description: 'Clément Ader builds the Éole, a bat-like steam-powered aircraft, which briefly lifts off but lacks control.',
+        img: "/api/placeholder/100/100",
+        people: ['Clément Ader'],
+        row: 8
+      },
+      {
+        date: '1894',
+        location: 'United States/United Kingdom',
+        title: 'Hiram Maxim\'s Steam-Powered Biplane',
+        description: 'Hiram Maxim builds and tests a massive steam-powered biplane but fails to achieve sustained flight.',
+        img: "/api/placeholder/100/100",
+        people: ['Hiram Maxim'],
+        row: 9
+      },
+      {
+        date: '1896',
+        location: 'United States',
+        title: 'Samuel Pierpont Langley\'s Aerodrome',
+        description: 'Samuel Pierpont Langley flies small, unmanned models successfully and begins work on a full-sized aircraft.',
+        img: "/api/placeholder/100/100",
+        people: ['Samuel Pierpont Langley'],
+        row: 9
+      },
+      {
+        date: '1899',
+        location: 'United Kingdom',
+        title: 'Percy Pilcher\'s Powered Aircraft Design',
+        description: 'Percy Pilcher designs a powered aircraft but dies in a glider accident before testing it.',
+        img: "/api/placeholder/100/100",
+        people: ['Percy Pilcher'],
+        row: 10
+      },
+      {
+        date: '1901',
+        location: 'United States',
+        title: 'Gustave Whitehead\'s Reported Flight',
+        description: 'Gustave Whitehead reportedly flies in Connecticut, though documentation is debated.',
+        img: "/api/placeholder/100/100",
+        people: ['Gustave Whitehead'],
+        row: 10
+      },
+      {
+        date: '1902',
+        location: 'New Zealand',
+        title: 'Richard Pearse\'s Monoplane',
+        description: 'Richard Pearse builds a monoplane and makes brief, uncontrolled flights.',
+        img: "/api/placeholder/100/100",
+        people: ['Richard Pearse'],
+        row: 11
+      },
+      {
+        date: '1903',
+        location: 'Germany',
+        title: 'Karl Jatho\'s Powered Aircraft',
+        description: 'Karl Jatho reportedly flies a powered aircraft before others, but it is unstable.',
+        img: "/api/placeholder/100/100",
+        people: ['Karl Jatho'],
+        row: 11
+      },
+      {
+        date: '1906',
+        location: 'France',
+        title: 'Alberto Santos-Dumont\'s 14-bis Flight',
+        description: 'Alberto Santos-Dumont flies the 14-bis in Paris, the first powered airplane flight officially recognized by the Aéro-Club de France. Unlike others, it takes off unaided, earning public recognition.',
+        img: "/api/placeholder/100/100",
+        people: ['Alberto Santos-Dumont'],
+        row: 12
+      },
+      {
+        date: '1907',
+        location: 'Romania',
+        title: 'Traian Vuia\'s Monoplane',
+        description: 'Traian Vuia builds a monoplane that flies short distances without external help.',
+        img: "/api/placeholder/100/100",
+        people: ['Traian Vuia'],
+        row: 12
+      },
+      {
+        date: '1908',
+        location: 'France',
+        title: 'Aída de Acosta Pilots Santos-Dumont\'s Dirigible',
+        description: 'Aída de Acosta becomes the first woman to pilot an aircraft (Santos-Dumont\'s dirigible No. 9).',
+        img: "/api/placeholder/100/100",
+        people: ['Aída de Acosta', 'Alberto Santos-Dumont'],
+        row: 13
+      },
+      {
+        date: '1908',
+        location: 'France',
+        title: 'Louis Blériot\'s Blériot XI',
+        description: 'Louis Blériot builds the Blériot XI, a monoplane with significant improvements in control.',
+        img: "/api/placeholder/100/100",
+        people: ['Louis Blériot'],
+        row: 13
+      },
+      {
+        date: '1909',
+        location: 'France/England',
+        title: 'Louis Blériot Crosses the English Channel',
+        description: 'Louis Blériot crosses the English Channel, proving the airplane\'s viability for transportation.',
+        img: "/api/placeholder/100/100", 
+        people: ['Louis Blériot'],
+        row: 14
+      },
+      {
+        date: '1910',
+        location: 'Brazil',
+        title: 'Dimitri Sensaud de Lavaud\'s Flight in Latin America',
+        description: 'Dimitri Sensaud de Lavaud completes the first powered flight in Latin America.',
+        img: "/api/placeholder/100/100",
+        people: ['Dimitri Sensaud de Lavaud'],
+        row: 14  
+      },
+      {
+        date: '1910',
+        location: 'France',
+        title: 'Henri Fabre\'s Seaplane Flight',
+        description: 'Henri Fabre achieves the first successful seaplane flight.',
+        img: "/api/placeholder/100/100",
+        people: ['Henri Fabre'],
+        row: 15
+      }, 
+      {
+        date: '1911',
+        location: 'United States',
+        title: 'Calbraith Perry Rodgers\' Transcontinental Flight',
+        description: 'Calbraith Perry Rodgers completes the first transcontinental flight.',
+        img: "/api/placeholder/100/100",
+        people: ['Calbraith Perry Rodgers'],
+        row: 15
+      },
+      {
+        date: '1918',  
+        location: 'France',
+        title: 'Henry Farman\'s Aircraft in World War I',
+        description: 'Henry Farman develops aircraft used in World War I, leading to military aviation.',
+        img: "/api/placeholder/100/100",
+        people: ['Henry Farman'],
+        row: 16
+      },
+      {
+        date: '1901–1903',
+        location: 'United States',
+        title: 'Samuel Langley\'s Aerodrome A Failure', 
+        description: 'Samuel Pierpont Langley builds and crashes the Aerodrome A, a failed attempt at powered flight.',
+        img: "/api/placeholder/100/100",
+        people: ['Samuel Pierpont Langley'],
+        row: 16
+      },
+      {
+        date: '1903',
+        location: 'Scotland',
+        title: 'Preston Watson\'s Alleged Flight',
+        description: 'Preston Watson allegedly flies, though no strong evidence exists.',
+        img: "/api/placeholder/100/100",
+        people: ['Preston Watson'],
+        row: 17 
+      },
+      {
+        date: '1904',
+        location: 'United Kingdom',
+        title: 'John William Dunne\'s Tailless Aircraft',
+        description: 'John William Dunne develops early tailless aircraft with military backing.',
+        img: "/api/placeholder/100/100",
+        people: ['John William Dunne'],
+        row: 17
+      },
+      {
+        date: '1910',
+        location: 'Romania',
+        title: 'Henri Coandă\'s Coandă-1910',
+        description: 'Henri Coandă builds the Coandă-1910, possibly the first jet-propelled aircraft.',
+        img: "/api/placeholder/100/100", 
+        people: ['Henri Coandă'],
+        row: 18
+      }
+    ];
 
     const timelineContainer = document.querySelector('.timeline');
     const popupContent = document.getElementById('popup-content');
