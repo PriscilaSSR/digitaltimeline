@@ -3,20 +3,20 @@
 <head>
   <title>Aviation History Timeline</title>
   <style>
-    .timeline {
+.timeline {
       display: flex;
       justify-content: space-between;
       position: relative;
       margin: 50px 0;
     }
 
-    .timeline-line {
+    .timeline-column {
       position: relative;
       width: 25%;
       padding: 20px;
     }
 
-    .timeline-line::before {
+    .timeline-column::before {
       content: '';
       position: absolute;
       top: 0;
@@ -55,11 +55,22 @@
       background-color: #c0c0c0;
     }
 
-    .connection {
+    .vertical-connection {
+      position: absolute;
+      top: 50%;
+      bottom: -30px;
+      left: -20px;
+      width: 40px;
+      border-left: 2px solid #999;
+      transform: translateY(-50%);
+      z-index: -1;
+    }
+
+    .horizontal-connection {
       position: absolute;
       top: 50%;
       left: -20px;
-      width: 40px;
+      right: -20px;
       height: 2px;
       background-color: #999;
       transform: translateY(-50%);
@@ -495,18 +506,18 @@ const timelineItems = [
   }
     ];
 
-     const timelineContainer = document.querySelector('.timeline');
+    const timelineContainer = document.querySelector('.timeline');
     const popupContent = document.getElementById('popup-content');
     const popup = document.querySelector('.popup');
     const popupClose = document.querySelector('.popup-close');
 
-    // Create timeline lines
-    const lines = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
-    lines.forEach(line => {
-      const timelineLine = document.createElement('div');
-      timelineLine.classList.add('timeline-line');
-      timelineLine.setAttribute('data-line', line);
-      timelineContainer.appendChild(timelineLine);
+    // Create timeline columns
+    const columns = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
+    columns.forEach(column => {
+      const timelineColumn = document.createElement('div');
+      timelineColumn.classList.add('timeline-column');
+      timelineColumn.setAttribute('data-column', column);
+      timelineContainer.appendChild(timelineColumn);
     });
 
     // Render timeline items
@@ -522,18 +533,27 @@ const timelineItems = [
         highlightActiveItem(timelineItem);
       });
 
-      const line = item.line || 'Early Theories';
-      const timelineLine = document.querySelector(`.timeline-line[data-line="${line}"]`);
-      timelineLine.appendChild(timelineItem);
+      const column = item.column || 'Early Theories';
+      const timelineColumn = document.querySelector(`.timeline-column[data-column="${column}"]`);
+      timelineColumn.appendChild(timelineItem);
 
+      // Create vertical connections
+      const prevItem = timelineColumn.lastElementChild.previousElementSibling;
+      if (prevItem) {
+        const verticalConnection = document.createElement('div');
+        verticalConnection.classList.add('vertical-connection');
+        timelineItem.appendChild(verticalConnection);
+      }
+
+      // Create horizontal connections
       item.connections.forEach(connection => {
         const connectedItem = timelineItems.find(i => i.people.some(p => p.name === connection.name));
         if (connectedItem) {
-          const connectionLine = document.createElement('div');
-          connectionLine.classList.add('connection');
-          connectionLine.style.left = `${(lines.indexOf(line) + 1) * 25}%`;
-          connectionLine.style.width = `${Math.abs(lines.indexOf(line) - lines.indexOf(connectedItem.line || 'Early Theories')) * 25}%`;
-          timelineItem.appendChild(connectionLine);
+          const horizontalConnection = document.createElement('div');
+          horizontalConnection.classList.add('horizontal-connection');
+          horizontalConnection.style.left = `${(columns.indexOf(column) + 1) * 25}%`;
+          horizontalConnection.style.width = `${Math.abs(columns.indexOf(column) - columns.indexOf(connectedItem.column || 'Early Theories')) * 25}%`;
+          timelineItem.appendChild(horizontalConnection);
         }
       });
     });
