@@ -26,14 +26,29 @@
     .timeline-item.active {
       background-color: #c0c0c0;
     }
-    .details {
-      margin-top: 20px;
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
       text-align: center;
     }
-    .details img {
+    .popup img {
       max-width: 100%;
       height: auto;
       margin-bottom: 10px;
+    }
+    .popup-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -42,10 +57,11 @@
   <div class="timeline">
     <!-- Timeline items will be dynamically added here -->
   </div>
-  <div class="details">
-    <h2>Details</h2>
-    <div id="details-content">
-      <!-- Details content will be dynamically updated here -->
+
+  <div class="popup">
+    <span class="popup-close">&times;</span>
+    <div id="popup-content">
+      <!-- Popup content will be dynamically updated here -->
     </div>
   </div>
 
@@ -86,6 +102,15 @@ const timelineItems = [
     img: "/api/placeholder/100/100",
     people: ['Bartolomeu Lourenço de Gusmão'],
     row: 3
+  },
+  {
+        date: '1716',
+        location: 'Sweden',
+        title: 'Swedenborg\'s Flying Machine',
+        description: 'Emanuel Swedenborg sketches a design for a flying machine in his work "Sketch of a Machine for Flying in the Air".',
+        img: "/api/placeholder/100/100",
+        people: ['Emanuel Swedenborg'],
+        row: 3
   },
   {
     date: '1783',
@@ -189,7 +214,9 @@ const timelineItems = [
 ];
 
     const timelineContainer = document.querySelector('.timeline');
-    const detailsContent = document.getElementById('details-content');
+    const popupContent = document.getElementById('popup-content');
+    const popup = document.querySelector('.popup');
+    const popupClose = document.querySelector('.popup-close');
 
     // Create timeline rows
     const rows = Math.max(...timelineItems.map(item => item.row));
@@ -215,9 +242,9 @@ const timelineItems = [
       timelineRow.appendChild(timelineItem);
     });
 
-    // Show details when a timeline item is clicked
-    function showDetails(item) {
-      detailsContent.innerHTML = `
+    // Show popup when a timeline item is clicked
+    function showPopup(item) {
+      popupContent.innerHTML = `
         <h3>${item.title}</h3>
         <p>${item.description}</p>
         <img src="${item.img}" alt="${item.title}">
@@ -227,8 +254,13 @@ const timelineItems = [
           ${item.people.map(person => `<li>${person}</li>`).join('')}
         </ul>
       `;
+      popup.style.display = 'block';
     }
 
+    // Hide popup when close button is clicked
+    popupClose.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
     // Highlight active timeline item 
     function highlightActiveItem(item) {
       const activeItem = document.querySelector('.timeline-item.active');
