@@ -456,18 +456,19 @@ const timelineItems = [
   }
     ];
 
-    const timelineContainer = document.querySelector('.timeline');
+     const timelineContainer = document.querySelector('.timeline');
     const popupContent = document.getElementById('popup-content');
     const popup = document.querySelector('.popup');
     const popupClose = document.querySelector('.popup-close');
 
-    // Create timeline rows
-    const rows = Math.max(...timelineItems.map(item => item.row));
-    for (let i = 1; i <= rows; i++) {
-      const timelineRow = document.createElement('div');
-      timelineRow.classList.add('timeline-row');
-      timelineContainer.appendChild(timelineRow);
-    }
+    // Create timeline lines
+    const lines = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
+    lines.forEach(line => {
+      const timelineLine = document.createElement('div');
+      timelineLine.classList.add('timeline-line');
+      timelineLine.setAttribute('data-line', line);
+      timelineContainer.appendChild(timelineLine);
+    });
 
     // Render timeline items
     timelineItems.forEach(item => {
@@ -478,11 +479,24 @@ const timelineItems = [
         <p>${item.title}</p>
       `;
       timelineItem.addEventListener('click', () => {
-        showPopup(item); // Changed from showDetails to showPopup
+        showPopup(item);
         highlightActiveItem(timelineItem);
       });
-      const timelineRow = document.querySelector(`.timeline-row:nth-child(${item.row})`);
-      timelineRow.appendChild(timelineItem);
+
+      const line = item.line || 'Early Theories';
+      const timelineLine = document.querySelector(`.timeline-line[data-line="${line}"]`);
+      timelineLine.appendChild(timelineItem);
+
+      item.connections.forEach(connection => {
+        const connectedItem = timelineItems.find(i => i.people.some(p => p.name === connection.name));
+        if (connectedItem) {
+          const connectionLine = document.createElement('div');
+          connectionLine.classList.add('connection');
+          connectionLine.style.left = `${(lines.indexOf(line) + 1) * 25}%`;
+          connectionLine.style.width = `${Math.abs(lines.indexOf(line) - lines.indexOf(connectedItem.line || 'Early Theories')) * 25}%`;
+          timelineItem.appendChild(connectionLine);
+        }
+      });
     });
 
     // Show popup when a timeline item is clicked
