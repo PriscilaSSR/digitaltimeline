@@ -3,19 +3,22 @@
 <head>
   <title>Aviation History Timeline</title>
   <style>
-    /* CSS styles */
     .timeline {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
+    }
+    .timeline-row {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
     }
     .timeline-item {
       width: 200px;
-      margin: 10px;
       padding: 10px;
       background-color: #f4f4f4;
       border-radius: 5px;
       cursor: pointer;
+      text-align: center;
     }
     .timeline-item:hover {
       background-color: #e0e0e0;
@@ -47,7 +50,6 @@
   </div>
 
   <script>
-    // JavaScript code
     const timelineItems = [
       {
         date: '5th century BC',
@@ -55,7 +57,8 @@
         title: 'Early Kites',
         description: 'Kites are invented in China, an early form of human flight.',
         img: 'kite.jpg',
-        people: ['Mozi', 'Lu Ban']
+        people: ['Mozi', 'Lu Ban'],
+        row: 1
       },
       {
         date: '1485',
@@ -63,13 +66,111 @@
         title: "Leonardo's Ornithopter",
         description: "Leonardo da Vinci designs a human-powered ornithopter.",
         img: 'ornithopter.jpg',
-        people: ['Leonardo da Vinci']
+        people: ['Leonardo da Vinci'],
+        row: 2
       },
-      // Add more timeline items here
+      {
+        date: '1783',
+        location: 'France', 
+        title: 'Montgolfier Brothers\' Hot Air Balloon',
+        description: 'The Montgolfier brothers launch the first manned hot air balloon flight.',
+        img: 'montgolfier.jpg',
+        people: ['Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
+        row: 3
+      },
+      {
+        date: '1799',
+        location: 'England',
+        title: 'Cayley\'s Glider',
+        description: 'Sir George Cayley builds the first successful glider.',
+        img: 'cayley.jpg',
+        people: ['Sir George Cayley'],
+        row: 4
+      },
+      {
+        date: '1890s',
+        location: 'Germany',
+        title: 'Lilienthal\'s Gliders',
+        description: 'Otto Lilienthal makes successful flights with gliders.',
+        img: 'lilienthal.jpg',
+        people: ['Otto Lilienthal'],
+        row: 5 
+      },
+      {
+        date: '1890s',
+        location: 'France',
+        title: 'Ader\'s Steam-Powered Aircraft',
+        description: 'Clément Ader builds steam-powered aircraft, including the Avion III.',
+        img: 'avion3.jpg',
+        people: ['Clément Ader'],
+        row: 5
+      },
+      {
+        date: '1903 (disputed)',
+        location: 'New Zealand',
+        title: 'Pearse\'s Monoplane',  
+        description: 'Richard Pearse allegedly flies a monoplane, but the claim is disputed.',
+        img: 'pearse.jpg',
+        people: ['Richard Pearse'],
+        row: 6
+      },
+      {
+        date: '1906',
+        location: 'France',
+        title: '14-bis Flight',
+        description: 'Santos-Dumont makes the first witnessed powered flights in Europe.',
+        img: 'santosdumont.jpg',
+        people: ['Alberto Santos-Dumont'],
+        row: 6
+      },
+      {
+        date: '1903',
+        location: 'United States',
+        title: 'Wright Flyer',
+        description: 'The Wright brothers make the first powered, controlled flights.',
+        img: 'wrightflyer.jpg',
+        people: ['Orville Wright', 'Wilbur Wright'],
+        row: 6  
+      },
+      {
+        date: '1914',
+        location: 'United States',
+        title: 'First Commercial Airline',
+        description: 'The St. Petersburg-Tampa Airboat Line starts commercial flights.',
+        img: 'airboatline.jpg',  
+        people: ['Thomas Benoist', 'Percival Fansler'],
+        row: 7
+      },
+      {
+        date: '1947',
+        location: 'United States',  
+        title: 'Breaking the Sound Barrier',
+        description: 'Chuck Yeager pilots the Bell X-1 to break the sound barrier.',
+        img: 'bellx1.jpg',
+        people: ['Chuck Yeager'],
+        row: 8
+      },
+      {  
+        date: '1969',
+        location: 'United States',
+        title: 'First Moon Landing',
+        description: 'Neil Armstrong and Buzz Aldrin land on the moon in Apollo 11.',  
+        img: 'apollo11.jpg',
+        people: ['Neil Armstrong', 'Buzz Aldrin'],
+        row: 9
+      }
     ];
 
     const timelineContainer = document.querySelector('.timeline');
     const detailsContent = document.getElementById('details-content');
+
+    // Create timeline rows
+    const rows = Math.max(...timelineItems.map(item => item.row));
+    for (let i = 1; i <= rows; i++) {
+      const timelineRow = document.createElement('div');
+      timelineRow.classList.add('timeline-row');
+      timelineContainer.appendChild(timelineRow);
+    }
 
     // Render timeline items
     timelineItems.forEach(item => {
@@ -83,7 +184,8 @@
         showDetails(item);
         highlightActiveItem(timelineItem);
       });
-      timelineContainer.appendChild(timelineItem);
+      const timelineRow = document.querySelector(`.timeline-row:nth-child(${item.row})`);
+      timelineRow.appendChild(timelineItem);
     });
 
     // Show details when a timeline item is clicked
@@ -100,7 +202,7 @@
       `;
     }
 
-    // Highlight active timeline item
+    // Highlight active timeline item 
     function highlightActiveItem(item) {
       const activeItem = document.querySelector('.timeline-item.active');
       if (activeItem) {
