@@ -235,7 +235,7 @@ const timelineItems = [
         <p>${item.title}</p>
       `;
       timelineItem.addEventListener('click', () => {
-        showDetails(item);
+        showPopup(item); // Changed from showDetails to showPopup
         highlightActiveItem(timelineItem);
       });
       const timelineRow = document.querySelector(`.timeline-row:nth-child(${item.row})`);
@@ -261,7 +261,8 @@ const timelineItems = [
     popupClose.addEventListener('click', () => {
       popup.style.display = 'none';
     });
-    // Highlight active timeline item 
+
+    // Highlight active timeline item
     function highlightActiveItem(item) {
       const activeItem = document.querySelector('.timeline-item.active');
       if (activeItem) {
@@ -269,6 +270,7 @@ const timelineItems = [
       }
       item.classList.add('active');
     }
+  </script>
   </script>
 </body>
 </html>
