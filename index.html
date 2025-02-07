@@ -5,26 +5,65 @@
   <style>
     .timeline {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      margin: 50px 0;
     }
-    .timeline-row {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
+
+    .timeline-line {
+      position: relative;
+      width: 25%;
+      padding: 20px;
     }
+
+    .timeline-line::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      border-left: 2px solid #ccc;
+      transform: translateX(-50%);
+    }
+
     .timeline-item {
-      width: 200px;
-      padding: 10px;
+      position: relative;
+      margin-bottom: 30px;
+      padding: 20px;
       background-color: #f4f4f4;
       border-radius: 5px;
       cursor: pointer;
       text-align: center;
     }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -15px;
+      width: 30px;
+      height: 2px;
+      background-color: #ccc;
+      transform: translateY(-50%);
+    }
+
     .timeline-item:hover {
       background-color: #e0e0e0;
     }
+
     .timeline-item.active {
       background-color: #c0c0c0;
+    }
+
+    .connection {
+      position: absolute;
+      top: 50%;
+      left: -20px;
+      width: 40px;
+      height: 2px;
+      background-color: #999;
+      transform: translateY(-50%);
+      z-index: -1;
     }
     .popup {
       display: none;
