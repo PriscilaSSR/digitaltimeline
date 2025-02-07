@@ -50,142 +50,143 @@
   </div>
 
   <script>
-    const timelineItems = [
-      {
-      date: '1st century AD',
-      location: 'Alexandria, Egypt',
-      title: 'Hero\'s Aeolipile',
-      description: 'Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.',
-      img: "/api/placeholder/100/100",
-      people: ['Hero of Alexandria'],
-      row: 1
-    },
-      {
-        date: '5th century BC',
-        location: 'China',
-        title: 'Early Kites',
-        description: 'Kites are invented in China, an early form of human flight.',
-        img: 'kite.jpg',
-        people: ['Mozi', 'Lu Ban'],
-        row: 1
-      },
-      {
-        date: '1485',
-        location: 'Italy',
-        title: "Leonardo's Ornithopter",
-        description: "Leonardo da Vinci designs a human-powered ornithopter.",
-        img: 'ornithopter.jpg',
-        people: ['Leonardo da Vinci'],
-        row: 2
-      },
-      date: '1709',
-      location: 'Portugal',
-      title: 'Bartolomeu de Gusmão\'s Glider',
-      description: 'Bartolomeu Lourenço de Gusmão demonstrates a small model glider to King John V of Portugal, reported to have flown a considerable distance.',  
-      img: "/api/placeholder/100/100",
-      people: ['Bartolomeu Lourenço de Gusmão'],
-      row: 3  
-    },
-      {
-        date: '1783',
-        location: 'France', 
-        title: 'Montgolfier Brothers\' Hot Air Balloon',
-        description: 'The Montgolfier brothers launch the first manned hot air balloon flight.',
-        img: 'montgolfier.jpg',
-        people: ['Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
-        row: 4
-      },
-      {
-        date: '1799',
-        location: 'England',
-        title: 'Cayley\'s Glider',
-        description: 'Sir George Cayley builds the first successful glider.',
-        img: 'cayley.jpg',
-        people: ['Sir George Cayley'],
-        row: 4
-      },
-      {
-        date: '1890s',
-        location: 'Germany',
-        title: 'Lilienthal\'s Gliders',
-        description: 'Otto Lilienthal makes successful flights with gliders.',
-        img: 'lilienthal.jpg',
-        people: ['Otto Lilienthal'],
-        row: 5 
-      },
-      {
-        date: '1890s',
-        location: 'France',
-        title: 'Ader\'s Steam-Powered Aircraft',
-        description: 'Clément Ader builds steam-powered aircraft, including the Avion III.',
-        img: 'avion3.jpg',
-        people: ['Clément Ader'],
-        row: 5
-      },
-      {
-        date: '1903',
-        location: 'New Zealand',
-        title: 'Pearse\'s Monoplane',  
-        description: 'Richard Pearse allegedly flies a monoplane, but the claim is disputed.',
-        img: 'pearse.jpg',
-        people: ['Richard Pearse'],
-        row: 6
-      },
-      {
-        date: '1906',
-        location: 'Brazil',
-        title: '14-bis Flight',
-        description: 'Santos-Dumont makes the first witnessed powered flight.',
-        img: 'santosdumont.jpg',
-        people: ['Alberto Santos-Dumont'],
-        row: 6
-      },
-      {
-        date: '190',
-        location: 'United States',
-        title: 'Wright Flyer',
-        description: 'The Wright brothers push their little glider down a hill.',
-        img: 'wrightflyer.jpg',
-        people: ['Orville Wright', 'Wilbur Wright'],
-        row: 6  
-      },
-      {
-        date: '1914',
-        location: 'United States',
-        title: 'First Commercial Airline',
-        description: 'The St. Petersburg-Tampa Airboat Line starts commercial flights.',
-        img: 'airboatline.jpg,'  
-        people: ['Thomas Benoist', 'Percival Fansler'],
-        row: 7
-      },
-    {
-      date: '1928',
-      location: 'Germany',  
-      title: 'Graf Zeppelin',
-      description: 'The LZ 127 Graf Zeppelin, a large passenger-carrying rigid airship, enters commercial service. It demonstrated the potential of airships for long-distance travel.',
-      img: "/api/placeholder/100/100",
-      people: ['Ferdinand von Zeppelin'],  
-      row: 8
-    },
-      {
-        date: '1947',
-        location: 'United States',  
-        title: 'Breaking the Sound Barrier',
-        description: 'Chuck Yeager pilots the Bell X-1 to break the sound barrier.',
-        img: 'bellx1.jpg',
-        people: ['Chuck Yeager'],
-        row: 8
-      },
-      {  
-        date: '1969',
-        location: 'United States',
-        title: 'First Moon Landing',
-        description: 'Neil Armstrong and Buzz Aldrin land on the moon in Apollo 11.',  
-        img: 'apollo11.jpg',
-        people: ['Neil Armstrong', 'Buzz Aldrin'],
-        row: 9
-      }
-    ];
+const timelineItems = [
+  {
+    date: '1st century AD',
+    location: 'Alexandria, Egypt',
+    title: 'Hero\'s Aeolipile',
+    description: 'Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.',
+    img: "/api/placeholder/100/100",
+    people: ['Hero of Alexandria'],
+    row: 1
+  },
+  {
+    date: '5th century BC',
+    location: 'China',
+    title: 'Early Kites',
+    description: 'Kites are invented in China, an early form of human flight.',
+    img: "/api/placeholder/100/100",
+    people: ['Mozi', 'Lu Ban'],
+    row: 1
+  },
+  {
+    date: '1485',
+    location: 'Italy',
+    title: "Leonardo's Ornithopter",
+    description: "Leonardo da Vinci designs a human-powered ornithopter.",
+    img: "/api/placeholder/100/100",
+    people: ['Leonardo da Vinci'],
+    row: 2
+  },
+  {
+    date: '1709',
+    location: 'Portugal',
+    title: 'Bartolomeu de Gusmão\'s Glider',
+    description: 'Bartolomeu Lourenço de Gusmão demonstrates a small model glider to King John V of Portugal, reported to have flown a considerable distance.',
+    img: "/api/placeholder/100/100",
+    people: ['Bartolomeu Lourenço de Gusmão'],
+    row: 3
+  },
+  {
+    date: '1783',
+    location: 'France',
+    title: 'Montgolfier Brothers\' Hot Air Balloon',
+    description: 'The Montgolfier brothers launch the first manned hot air balloon flight.',
+    img: "/api/placeholder/100/100",
+    people: ['Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
+    row: 4
+  },
+  {
+    date: '1799',
+    location: 'England',
+    title: 'Cayley\'s Glider',
+    description: 'Sir George Cayley builds the first successful glider.',
+    img: "/api/placeholder/100/100",
+    people: ['Sir George Cayley'],
+    row: 4
+  },
+  {
+    date: '1890s',
+    location: 'Germany',
+    title: 'Lilienthal\'s Gliders',
+    description: 'Otto Lilienthal makes successful flights with gliders.',
+    img: "/api/placeholder/100/100",
+    people: ['Otto Lilienthal'],
+    row: 5
+  },
+  {
+    date: '1890s',
+    location: 'France',
+    title: 'Ader\'s Steam-Powered Aircraft',
+    description: 'Clément Ader builds steam-powered aircraft, including the Avion III.',
+    img: "/api/placeholder/100/100",
+    people: ['Clément Ader'],
+    row: 5
+  },
+  {
+    date: '1903',
+    location: 'New Zealand',
+    title: 'Pearse\'s Monoplane',
+    description: 'Richard Pearse flies a monoplane, but the claim is disputed by Americans obvs.',
+    img: "/api/placeholder/100/100", 
+    people: ['Richard Pearse'],
+    row: 6
+  },
+  {
+    date: '1906',  
+    location: 'Brazil',
+    title: '14-bis Flight',
+    description: 'Alberto Santos-Dumont makes the first officially witnessed self-powered flight in Europe in his 14-bis aircraft. This was the first flight certified by the Aero-Club de France.',
+    img: "/api/placeholder/100/100",
+    people: ['Alberto Santos-Dumont'], 
+    row: 6
+  },
+  {
+    date: '1908',
+    location: 'United States', 
+    title: 'Wright Flyer',
+    description: 'The Wright brothers make public flights, demonstrating their glider, that could not get up by itself. Their 1903 flights were not officially witnessed.',
+    img: "/api/placeholder/100/100",
+    people: ['Orville Wright', 'Wilbur Wright'],
+    row: 6
+  },
+  {
+    date: '1914', 
+    location: 'United States',
+    title: 'First Commercial Airline',
+    description: 'The St. Petersburg-Tampa Airboat Line starts commercial flights.',
+    img: "/api/placeholder/100/100",
+    people: ['Thomas Benoist', 'Percival Fansler'],
+    row: 7
+  },
+  {
+    date: '1928',
+    location: 'Germany',
+    title: 'Graf Zeppelin', 
+    description: 'The LZ 127 Graf Zeppelin, a large passenger-carrying rigid airship, enters commercial service. It demonstrated the potential of airships for long-distance travel.',
+    img: "/api/placeholder/100/100",
+    people: ['Ferdinand von Zeppelin'],
+    row: 8
+  },
+  {
+    date: '1947',
+    location: 'United States',
+    title: 'Breaking the Sound Barrier',
+    description: 'Chuck Yeager pilots the Bell X-1 to break the sound barrier.',
+    img: "/api/placeholder/100/100",  
+    people: ['Chuck Yeager'],
+    row: 8
+  },
+  {
+    date: '1969',
+    location: 'United States',
+    title: 'First Moon Landing',
+    description: 'Neil Armstrong and Buzz Aldrin land on the moon in Apollo 11.',
+    img: "/api/placeholder/100/100",
+    people: ['Neil Armstrong', 'Buzz Aldrin'], 
+    row: 9
+  }
+];
 
     const timelineContainer = document.querySelector('.timeline');
     const detailsContent = document.getElementById('details-content');
