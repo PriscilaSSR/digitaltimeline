@@ -108,12 +108,12 @@
     <!-- Timeline items will be dynamically added here -->
   </div>
 
-  <div class="popup">
-    <span class="popup-close">&times;</span>
-    <div id="popup-content">
-      <!-- Popup content will be dynamically updated here -->
-    </div>
+<div class="popup">
+  <span class="popup-close">&times;</span>
+  <div id="popup-content">
+    <!-- Timeline event details will be loaded here -->
   </div>
+</div>
 
   <script>
 const timelineItems = [
@@ -124,7 +124,12 @@ const timelineItems = [
     description: 'Kites are invented in China, an early form of human flight.',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
-    row: 1
+    row: 1,
+    connections: [
+      {
+        text: "About the Moon Film",
+        target: "Archytas\' Flying Pigeon"  // This references another timeline item.
+      }
   },
   {
         date: '400s BCE',
@@ -133,7 +138,8 @@ const timelineItems = [
         description: 'Archytas of Tarentum creates a wooden pigeon that could "fly" using a jet of air.',
         img: "/api/placeholder/100/100",
         people: ['Archytas of Tarentum'],
-        row: 1
+        row: 1,
+    connections: [] // No connections here.
       },
       {
         date: '200s BCE',
@@ -142,7 +148,8 @@ const timelineItems = [
         description: 'Archimedes discovers the principles of buoyancy, which later influence theories of flight.',
         img: "/api/placeholder/100/100",
         people: ['Archimedes'],
-        row: 1
+        row: 1,
+        connections: [] // No connections here.
       },
    {
         date: '200s BCE',
@@ -151,7 +158,8 @@ const timelineItems = [
         description: 'Kongming invents the sky lantern, the first hot air balloon. From its military use it became known as the Kongming lantern.',
         img: "/api/placeholder/100/100",
         people: ['Kongming'],
-        row: 1
+        row: 1,
+     connections: [] // No connections here.
       },
     {
     date: '100s CE',
@@ -160,7 +168,8 @@ const timelineItems = [
     description: 'Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.',
     img: "/api/placeholder/100/100",
     people: ['Hero of Alexandria'],
-    row: 1
+    row: 1,
+      connections: [] // No connections here.
   },
       {
         date: '1290s',
@@ -169,7 +178,8 @@ const timelineItems = [
         description: 'Roger Bacon theorizes that air can support objects like water supports boats.',
         img: "/api/placeholder/100/100",
         people: ['Roger Bacon'],
-        row: 2
+        row: 2,
+        connections: [] // No connections here.
       },
       {
         date: '1480s',
@@ -178,7 +188,8 @@ const timelineItems = [
         description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
         img: "/api/placeholder/100/100",
         people: ['Leonardo da Vinci'],
-        row: 2
+        row: 2,
+        connections: [] // No connections here.
       },
       {
         date: '1540s',
@@ -187,7 +198,8 @@ const timelineItems = [
         description: 'João Torto, a Portuguese barber, attempts human flight with fabric wings but falls to his death.',
         img: "/api/placeholder/100/100",
         people: ['João Torto'],
-        row: 2
+        row: 2,
+        connections: [] // No connections here.
       },
       {
         date: '1709',
@@ -196,7 +208,8 @@ const timelineItems = [
         description: 'Bartolomeu de Gusmão, a Brazilian-Portuguese priest, demonstrates a hot air balloon prototype called the "Passarola."',
         img: "/api/placeholder/100/100",
         people: ['Bartolomeu de Gusmão'],
-        row: 3
+        row: 3,
+        connections: [] // No connections here.
       },
       {
         date: '1783',
@@ -205,7 +218,8 @@ const timelineItems = [
         description: 'Jean-François Pilâtre de Rozier and François Laurent d\'Arlandes make the first manned flight in a hot air balloon built by the Montgolfier brothers.',
         img: "/api/placeholder/100/100",
         people: ['Jean-François Pilâtre de Rozier', 'François Laurent d\'Arlandes', 'Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
-        row: 4
+        row: 4,
+        connections: [] // No connections here.
       },
       {
         date: '1799',
@@ -214,7 +228,8 @@ const timelineItems = [
         description: 'George Cayley designs the first modern glider with distinct lift, thrust, and control components.',
         img: "/api/placeholder/100/100",
         people: ['George Cayley'],
-        row: 4
+        row: 4,
+        connections: [] // No connections here.
       },
       {
         date: '1852',
@@ -223,7 +238,8 @@ const timelineItems = [
         description: 'Henri Giffard invents the first controllable dirigible, powered by a steam engine.',
         img: "/api/placeholder/100/100",
         people: ['Henri Giffard'],
-        row: 5
+        row: 5,
+        connections: [] // No connections here.
       },
       {
         date: '1843',
@@ -232,7 +248,8 @@ const timelineItems = [
         description: 'William Henson patents an early aircraft design with fixed wings and a steam-powered engine.',
         img: "/api/placeholder/100/100",
         people: ['William Henson'],
-        row: 6
+        row: 6,
+        connections: [] // No connections here.
       },
       {
         date: '1853',
@@ -241,7 +258,8 @@ const timelineItems = [
         description: 'George Cayley successfully flies the first manned glider. Developed principles of lift, drag, and fixed-wing aircraft.',
         img: "/api/placeholder/100/100",
         people: ['George Cayley'],
-        row: 7
+        row: 7,
+        connections: [] // No connections here.
       },
       {
         date: '1871',
@@ -250,7 +268,8 @@ const timelineItems = [
         description: 'Francis Wenham builds the first wind tunnel to study aerodynamics. Proved long wings generate more lift.',
         img: "/api/placeholder/100/100",
         people: ['Francis Wenham'],
-        row: 7
+        row: 7,
+        connections: [] // No connections here.
       },
     {
         date: '1884',
@@ -259,7 +278,8 @@ const timelineItems = [
         description: 'Charles Renard and Arthur Constantin Krebs launch a non-rigid airship.',
         img: "/api/placeholder/100/100",
         people: ['Charles Renard and Arthur Constantin Krebs'],
-        row: 7
+        row: 7,
+        connections: [] // No connections here.
       },
       {
         date: '1891',
@@ -268,7 +288,8 @@ const timelineItems = [
         description: 'Otto Lilienthal achieves controlled glider flights and documents his aerodynamic research. First controlled glider flights, proved human flight was possible.',
         img: "/api/placeholder/100/100",
         people: ['Otto Lilienthal'],
-        row: 7
+        row: 7,
+        connections: [] // No connections here.
       },
       {
         date: '1896',
@@ -277,7 +298,8 @@ const timelineItems = [
         description: 'Octave Chanute advances glider designs and builds a successful biplane glider. Improved glider designs, documented aviation theories.',
         img: "/api/placeholder/100/100",
         people: ['Octave Chanute'],
-        row: 7
+        row: 7,
+        connections: [] // No connections here.
       },
       {
         date: '1890',
@@ -286,7 +308,8 @@ const timelineItems = [
         description: 'Clément Ader builds the Éole, a bat-like steam-powered aircraft, which briefly lifts off but lacks control.',
         img: "/api/placeholder/100/100",
         people: ['Clément Ader'],
-        row: 8
+        row: 8,
+        connections: [] // No connections here.
       },
       {
         date: '1894',
@@ -295,7 +318,8 @@ const timelineItems = [
         description: 'Hiram Maxim builds and tests a massive steam-powered biplane but fails to achieve sustained flight.',
         img: "/api/placeholder/100/100",
         people: ['Hiram Maxim'],
-        row: 8
+        row: 8,
+        connections: [] // No connections here.
       },
       {
         date: '1896',
@@ -304,7 +328,8 @@ const timelineItems = [
         description: 'Samuel Pierpont Langley flies small, unmanned models successfully. Built the Aerodrome A, but failed with full-scale aircraft.',
         img: "/api/placeholder/100/100",
         people: ['Samuel Pierpont Langley'],
-        row: 8
+        row: 8,
+        connections: [] // No connections here.
       },
       {
         date: '1899',
@@ -313,7 +338,8 @@ const timelineItems = [
         description: 'Percy Pilcher designs a powered aircraft but dies in a glider accident before testing it.',
         img: "/api/placeholder/100/100",
         people: ['Percy Pilcher'],
-        row: 9
+        row: 9,
+        connections: [] // No connections here.
       },
       {
         date: '1900',
@@ -322,7 +348,8 @@ const timelineItems = [
         description: 'Ferdinand von Zeppelin develops rigid airships, leading to their widespread use.',
         img: "/api/placeholder/100/100",
         people: ['Ferdinand von Zeppelin'],
-        row: 9
+        row: 9,
+        connections: [] // No connections here.
       },
       {
         date: '1901',
@@ -331,7 +358,8 @@ const timelineItems = [
         description: 'Gustave Whitehead reportedly flies in Connecticut, though documentation is debated.',
         img: "/api/placeholder/100/100",
         people: ['Gustave Whitehead'],
-        row: 9
+        row: 9,
+        connections: [] // No connections here.
       },
       {
         date: '1902',
@@ -340,7 +368,8 @@ const timelineItems = [
         description: 'Richard Pearse builds a monoplane and makes brief, uncontrolled flights.',
         img: "/api/placeholder/100/100",
         people: ['Richard Pearse'],
-        row: 9
+        row: 9,
+        connections: [] // No connections here.
       },
       {
         date: '1903',
@@ -349,7 +378,8 @@ const timelineItems = [
         description: 'Karl Jatho built an unstable monoplane that flew briefly but lacked documentation.',
         img: "/api/placeholder/100/100",
         people: ['Karl Jatho'],
-        row: 9
+        row: 9,
+        connections: [] // No connections here.
       },
       {
         date: '1906',
@@ -358,7 +388,8 @@ const timelineItems = [
         description: 'Alberto Santos-Dumont flies the 14-bis in Paris, the first powered airplane flight officially recognized by the Aéro-Club de France. Unlike others, it takes off unaided and uses wheels, earning public recognition.',
         img: "/api/placeholder/100/100",
         people: ['Alberto Santos-Dumont'],
-        row: 10
+        row: 10,
+        connections: [] // No connections here.
       },
       {
         date: '1907',
@@ -367,7 +398,8 @@ const timelineItems = [
         description: 'Traian Vuia designed a monoplane with wheels that took off independently but flew short distances.',
         img: "/api/placeholder/100/100",
         people: ['Traian Vuia'],
-        row: 10
+        row: 10,
+        connections: [] // No connections here.
       },
       {
         date: '1908',
@@ -376,7 +408,8 @@ const timelineItems = [
         description: 'Aída de Acosta becomes the first woman to pilot an aircraft (Santos-Dumont\'s dirigible No. 9).',
         img: "/api/placeholder/100/100",
         people: ['Aída de Acosta', 'Alberto Santos-Dumont'],
-        row: 10
+        row: 10,
+        connections: [] // No connections here.
       },
       {
         date: '1908',
@@ -385,7 +418,8 @@ const timelineItems = [
         description: 'Developed tailless aircraft designs with military applications.',
         img: "/api/placeholder/100/100",
         people: ['John William Dunne'],
-        row: 11
+        row: 11,
+        connections: [] // No connections here.
       },
       {
         date: '1909',
@@ -394,7 +428,8 @@ const timelineItems = [
         description: 'Louis Blériot crosses the English Channel, proving the airplane\'s viability for transportation.',
         img: "/api/placeholder/100/100", 
         people: ['Louis Blériot'],
-        row: 11
+        row: 11,
+        connections: [] // No connections here.
       },
       {
         date: '1910',
@@ -403,7 +438,8 @@ const timelineItems = [
         description: 'Dimitri Sensaud de Lavaud completes the first powered flight in Latin America.',
         img: "/api/placeholder/100/100",
         people: ['Dimitri Sensaud de Lavaud'],
-        row: 11  
+        row: 11,
+        connections: [] // No connections here.  
       },
       {
         date: '1910',
@@ -412,7 +448,8 @@ const timelineItems = [
         description: 'Henri Fabre achieves the first successful seaplane flight.',
         img: "/api/placeholder/100/100",
         people: ['Henri Fabre'],
-        row: 12
+        row: 12,
+        connections: [] // No connections here.
       }, 
       {
         date: '1911',
@@ -421,7 +458,8 @@ const timelineItems = [
         description: 'Calbraith Perry Rodgers completes the first transcontinental flight.',
         img: "/api/placeholder/100/100",
         people: ['Calbraith Perry Rodgers'],
-        row: 12
+        row: 12,
+        connections: [] // No connections here.
       },
       {
         date: '1918',  
@@ -430,7 +468,8 @@ const timelineItems = [
         description: 'Henry Farman develops aircraft used in World War I, leading to military aviation.',
         img: "/api/placeholder/100/100",
         people: ['Henry Farman'],
-        row: 12
+        row: 12,
+        connections: [] // No connections here.
       },
       {
         date: '1901–1903',
@@ -439,7 +478,8 @@ const timelineItems = [
         description: 'Samuel Pierpont Langley builds and crashes the Aerodrome A, a failed attempt at powered flight.',
         img: "/api/placeholder/100/100",
         people: ['Samuel Pierpont Langley'],
-        row: 13
+        row: 13,
+        connections: [] // No connections here.
       },
       {
         date: '1903',
@@ -448,7 +488,8 @@ const timelineItems = [
         description: 'Preston Watson allegedly flies, though no strong evidence exists.',
         img: "/api/placeholder/100/100",
         people: ['Preston Watson'],
-        row: 13 
+        row: 13,
+        connections: [] // No connections here. 
       },
       {
         date: '1904',
@@ -457,7 +498,8 @@ const timelineItems = [
         description: 'John William Dunne develops early tailless aircraft with military backing.',
         img: "/api/placeholder/100/100",
         people: ['John William Dunne'],
-        row: 13
+        row: 13,
+        connections: [] // No connections here.
       },
       {
         date: '1910',
@@ -466,7 +508,8 @@ const timelineItems = [
         description: 'Henri Coandă builds the Coandă-1910, possibly the first jet-propelled aircraft.',
         img: "/api/placeholder/100/100", 
         people: ['Henri Coandă'],
-        row: 14
+        row: 14,
+        connections: [] // No connections here.
       },
     {
     date: '1914', 
@@ -475,7 +518,8 @@ const timelineItems = [
     description: 'The St. Petersburg-Tampa Airboat Line starts commercial flights.',
     img: "/api/placeholder/100/100",
     people: ['Thomas Benoist', 'Percival Fansler'],
-    row: 14
+    row: 14,
+        connections: [] // No connections here.
   },
   {
     date: '1928',
@@ -484,7 +528,8 @@ const timelineItems = [
     description: 'The LZ 127 Graf Zeppelin, a large passenger-carrying rigid airship, enters commercial service. It demonstrated the potential of airships for long-distance travel.',
     img: "/api/placeholder/100/100",
     people: ['Ferdinand von Zeppelin'],
-    row: 15
+    row: 15,
+        connections: [] // No connections here.
   },
   {
     date: '1947',
@@ -493,7 +538,8 @@ const timelineItems = [
     description: 'Chuck Yeager pilots the Bell X-1 to break the sound barrier.',
     img: "/api/placeholder/100/100",  
     people: ['Chuck Yeager'],
-    row: 15
+    row: 15,
+        connections: [] // No connections here.
   },
   {
     date: '1969',
@@ -502,91 +548,100 @@ const timelineItems = [
     description: 'Neil Armstrong and Buzz Aldrin land on the moon in Apollo 11.',
     img: "/api/placeholder/100/100",
     people: ['Neil Armstrong', 'Buzz Aldrin'], 
-    row: 15
+    row: 15,
+        connections: [] // No connections here.
   }
     ];
 
-    const timelineContainer = document.querySelector('.timeline');
-    const popupContent = document.getElementById('popup-content');
-    const popup = document.querySelector('.popup');
-    const popupClose = document.querySelector('.popup-close');
+    <script>
+  const timelineContainer = document.querySelector('.timeline');
+  const popupContent = document.getElementById('popup-content');
+  const popup = document.querySelector('.popup');
+  const popupClose = document.querySelector('.popup-close');
 
-    // Create timeline columns
-    const columns = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
-    columns.forEach(column => {
-      const timelineColumn = document.createElement('div');
-      timelineColumn.classList.add('timeline-column');
-      timelineColumn.setAttribute('data-column', column);
-      timelineContainer.appendChild(timelineColumn);
+  // Create timeline columns
+  const columns = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
+  columns.forEach(column => {
+    const timelineColumn = document.createElement('div');
+    timelineColumn.classList.add('timeline-column');
+    timelineColumn.setAttribute('data-column', column);
+    timelineContainer.appendChild(timelineColumn);
+  });
+
+  // Render timeline items
+  timelineItems.forEach(item => {
+    const timelineItem = document.createElement('div');
+    timelineItem.classList.add('timeline-item');
+    timelineItem.innerHTML = `
+      <h3>${item.date}</h3>
+      <p>${item.title}</p>
+    `;
+
+    // When a timeline item is clicked, show its details in the popup.
+    timelineItem.addEventListener('click', () => {
+      showPopup(item);
+      highlightActiveItem(timelineItem);
     });
 
-    // Render timeline items
-    timelineItems.forEach(item => {
-      const timelineItem = document.createElement('div');
-      timelineItem.classList.add('timeline-item');
-      timelineItem.innerHTML = `
-        <h3>${item.date}</h3>
-        <p>${item.title}</p>
-      `;
-      timelineItem.addEventListener('click', () => {
-        showPopup(item);
-        highlightActiveItem(timelineItem);
-      });
+    // Determine which column to use (using a default for simplicity).
+    const column = item.column || 'Early Theories';
+    const timelineColumn = document.querySelector(`.timeline-column[data-column="${column}"]`);
+    timelineColumn.appendChild(timelineItem);
 
-      const column = item.column || 'Early Theories';
-      const timelineColumn = document.querySelector(`.timeline-column[data-column="${column}"]`);
-      timelineColumn.appendChild(timelineItem);
-
-      // Create vertical connections
-      const prevItem = timelineColumn.lastElementChild.previousElementSibling;
-      if (prevItem) {
-        const verticalConnection = document.createElement('div');
-        verticalConnection.classList.add('vertical-connection');
-        timelineItem.appendChild(verticalConnection);
-      }
-
-      // Create horizontal connections
+    // Create connection hyperlinks if they exist.
+    if (item.connections && Array.isArray(item.connections)) {
       item.connections.forEach(connection => {
-        const connectedItem = timelineItems.find(i => i.people.some(p => p.name === connection.name));
-        if (connectedItem) {
-          const horizontalConnection = document.createElement('div');
-          horizontalConnection.classList.add('horizontal-connection');
-          horizontalConnection.style.left = `${(columns.indexOf(column) + 1) * 25}%`;
-          horizontalConnection.style.width = `${Math.abs(columns.indexOf(column) - columns.indexOf(connectedItem.column || 'Early Theories')) * 25}%`;
-          timelineItem.appendChild(horizontalConnection);
-        }
+        const connectionLink = document.createElement('a');
+        connectionLink.href = "#";
+        connectionLink.textContent = connection.text;
+        connectionLink.classList.add('connection-link');
+        // When a connection link is clicked:
+        connectionLink.addEventListener('click', (event) => {
+          event.stopPropagation();
+          event.preventDefault();
+          // Close the current popup.
+          popup.style.display = 'none';
+          // Find the referenced timeline event using its title.
+          const targetItem = timelineItems.find(i => i.title === connection.target);
+          if (targetItem) {
+            // Open the referenced timeline event's popup.
+            showPopup(targetItem);
+          }
+        });
+        // Append the connection link inside the timeline item.
+        timelineItem.appendChild(connectionLink);
       });
-    });
-
-    // Show popup when a timeline item is clicked
-    function showPopup(item) {
-      popupContent.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${item.description}</p>
-        <img src="${item.img}" alt="${item.title}">
-        <p>Location: ${item.location}</p>
-        <p>Key people involved:</p>
-        <ul>
-          ${item.people.map(person => `<li>${person}</li>`).join('')}
-        </ul>
-      `;
-      popup.style.display = 'block';
     }
+  });
 
-    // Hide popup when close button is clicked
-    popupClose.addEventListener('click', () => {
-      popup.style.display = 'none';
-    });
+  // Function to show the main popup with a timeline event's details.
+  function showPopup(item) {
+    popupContent.innerHTML = `
+      <h3>${item.title}</h3>
+      <p>${item.description}</p>
+      <img src="${item.img}" alt="${item.title}">
+      <p>Location: ${item.location}</p>
+      <p>Key people involved:</p>
+      <ul>
+        ${item.people.map(person => `<li>${person}</li>`).join('')}
+      </ul>
+    `;
+    popup.style.display = 'block';
+  }
 
-    // Highlight active timeline item
-    function highlightActiveItem(item) {
-      const activeItem = document.querySelector('.timeline-item.active');
-      if (activeItem) {
-        activeItem.classList.remove('active');
-      }
-      item.classList.add('active');
+  // Close the popup when the close button is clicked.
+  popupClose.addEventListener('click', () => {
+    popup.style.display = 'none';
+  });
+
+  // Function to highlight the active timeline item.
+  function highlightActiveItem(item) {
+    const activeItem = document.querySelector('.timeline-item.active');
+    if (activeItem) {
+      activeItem.classList.remove('active');
     }
-  </script>
-  </script>
+    item.classList.add('active');
+  }
+</script>
 </body>
 </html>
