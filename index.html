@@ -3,19 +3,17 @@
 <head>
   <title>Aviation History Timeline</title>
   <style>
-.timeline {
+    .timeline {
       display: flex;
       justify-content: space-between;
       position: relative;
       margin: 50px 0;
     }
-
     .timeline-column {
       position: relative;
       width: 25%;
       padding: 20px;
     }
-
     .timeline-column::before {
       content: '';
       position: absolute;
@@ -25,7 +23,6 @@
       border-left: 2px solid #ccc;
       transform: translateX(-50%);
     }
-
     .timeline-item {
       position: relative;
       margin-bottom: 30px;
@@ -35,7 +32,6 @@
       cursor: pointer;
       text-align: center;
     }
-
     .timeline-item::before {
       content: '';
       position: absolute;
@@ -46,15 +42,12 @@
       background-color: #ccc;
       transform: translateY(-50%);
     }
-
     .timeline-item:hover {
       background-color: #e0e0e0;
     }
-
     .timeline-item.active {
       background-color: #c0c0c0;
     }
-
     .vertical-connection {
       position: absolute;
       top: 50%;
@@ -65,7 +58,6 @@
       transform: translateY(-50%);
       z-index: -1;
     }
-
     .horizontal-connection {
       position: absolute;
       top: 50%;
@@ -108,12 +100,12 @@
     <!-- Timeline items will be dynamically added here -->
   </div>
 
-<div class="popup">
-  <span class="popup-close">&times;</span>
-  <div id="popup-content">
-    <!-- Timeline event details will be loaded here -->
+  <div class="popup">
+    <span class="popup-close">&times;</span>
+    <div id="popup-content">
+      <!-- Timeline event details will be loaded here -->
+    </div>
   </div>
-</div>
 
   <script>
 const timelineItems = [
@@ -130,6 +122,7 @@ const timelineItems = [
         text: "About the Moon Film",
         target: "Archytas\' Flying Pigeon"  // This references another timeline item.
       }
+      ]
   },
   {
         date: '400s BCE',
@@ -555,93 +548,88 @@ const timelineItems = [
 
     <script>
   const timelineContainer = document.querySelector('.timeline');
-  const popupContent = document.getElementById('popup-content');
-  const popup = document.querySelector('.popup');
-  const popupClose = document.querySelector('.popup-close');
+    const popupContent = document.getElementById('popup-content');
+    const popup = document.querySelector('.popup');
+    const popupClose = document.querySelector('.popup-close');
 
-  // Create timeline columns
-  const columns = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
-  columns.forEach(column => {
-    const timelineColumn = document.createElement('div');
-    timelineColumn.classList.add('timeline-column');
-    timelineColumn.setAttribute('data-column', column);
-    timelineContainer.appendChild(timelineColumn);
-  });
-
-  // Render timeline items
-  timelineItems.forEach(item => {
-    const timelineItem = document.createElement('div');
-    timelineItem.classList.add('timeline-item');
-    timelineItem.innerHTML = `
-      <h3>${item.date}</h3>
-      <p>${item.title}</p>
-    `;
-
-    // When a timeline item is clicked, show its details in the popup.
-    timelineItem.addEventListener('click', () => {
-      showPopup(item);
-      highlightActiveItem(timelineItem);
+    // Create timeline columns
+    const columns = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
+    columns.forEach(column => {
+      const timelineColumn = document.createElement('div');
+      timelineColumn.classList.add('timeline-column');
+      timelineColumn.setAttribute('data-column', column);
+      timelineContainer.appendChild(timelineColumn);
     });
 
-    // Determine which column to use (using a default for simplicity).
-    const column = item.column || 'Early Theories';
-    const timelineColumn = document.querySelector(`.timeline-column[data-column="${column}"]`);
-    timelineColumn.appendChild(timelineItem);
+    // Render timeline items
+    timelineItems.forEach(item => {
+      const timelineItem = document.createElement('div');
+      timelineItem.classList.add('timeline-item');
+      timelineItem.innerHTML = `
+        <h3>${item.date}</h3>
+        <p>${item.title}</p>
+      `;
 
-    // Create connection hyperlinks if they exist.
-    if (item.connections && Array.isArray(item.connections)) {
-      item.connections.forEach(connection => {
-        const connectionLink = document.createElement('a');
-        connectionLink.href = "#";
-        connectionLink.textContent = connection.text;
-        connectionLink.classList.add('connection-link');
-        // When a connection link is clicked:
-        connectionLink.addEventListener('click', (event) => {
-          event.stopPropagation();
-          event.preventDefault();
-          // Close the current popup.
-          popup.style.display = 'none';
-          // Find the referenced timeline event using its title.
-          const targetItem = timelineItems.find(i => i.title === connection.target);
-          if (targetItem) {
-            // Open the referenced timeline event's popup.
-            showPopup(targetItem);
-          }
-        });
-        // Append the connection link inside the timeline item.
-        timelineItem.appendChild(connectionLink);
+      // When a timeline item is clicked, show its details in the popup.
+      timelineItem.addEventListener('click', () => {
+        showPopup(item);
+        highlightActiveItem(timelineItem);
       });
+
+      // Determine which column to use (using a default for simplicity).
+      const column = item.column || 'Early Theories';
+      const timelineColumn = document.querySelector(`.timeline-column[data-column="${column}"]`);
+      timelineColumn.appendChild(timelineItem);
+
+      // Create connection hyperlinks if they exist.
+      if (item.connections && Array.isArray(item.connections)) {
+        item.connections.forEach(connection => {
+          const connectionLink = document.createElement('a');
+          connectionLink.href = "#";
+          connectionLink.textContent = connection.text;
+          connectionLink.classList.add('connection-link');
+          connectionLink.addEventListener('click', (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            popup.style.display = 'none';
+            const targetItem = timelineItems.find(i => i.title === connection.target);
+            if (targetItem) {
+              showPopup(targetItem);
+            }
+          });
+          timelineItem.appendChild(connectionLink);
+        });
+      }
+    });
+
+    // Function to show the main popup with a timeline event's details.
+    function showPopup(item) {
+      popupContent.innerHTML = `
+        <h3>${item.title}</h3>
+        <p>${item.description}</p>
+        <img src="${item.img}" alt="${item.title}">
+        <p>Location: ${item.location}</p>
+        <p>Key people involved:</p>
+        <ul>
+          ${item.people.map(person => `<li>${person}</li>`).join('')}
+        </ul>
+      `;
+      popup.style.display = 'block';
     }
-  });
 
-  // Function to show the main popup with a timeline event's details.
-  function showPopup(item) {
-    popupContent.innerHTML = `
-      <h3>${item.title}</h3>
-      <p>${item.description}</p>
-      <img src="${item.img}" alt="${item.title}">
-      <p>Location: ${item.location}</p>
-      <p>Key people involved:</p>
-      <ul>
-        ${item.people.map(person => `<li>${person}</li>`).join('')}
-      </ul>
-    `;
-    popup.style.display = 'block';
-  }
+    // Close the popup when the close button is clicked.
+    popupClose.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
 
-  // Close the popup when the close button is clicked.
-  popupClose.addEventListener('click', () => {
-    popup.style.display = 'none';
-  });
-
-  // Function to highlight the active timeline item.
-  function highlightActiveItem(item) {
-    const activeItem = document.querySelector('.timeline-item.active');
-    if (activeItem) {
-      activeItem.classList.remove('active');
+    // Function to highlight the active timeline item.
+    function highlightActiveItem(item) {
+      const activeItem = document.querySelector('.timeline-item.active');
+      if (activeItem) {
+        activeItem.classList.remove('active');
+      }
+      item.classList.add('active');
     }
-    item.classList.add('active');
-  }
-</script>
+  </script>
 </body>
 </html>
