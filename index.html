@@ -738,7 +738,7 @@ timelineItems.forEach(item => {
   const timelineItem = document.createElement('div');
   timelineItem.classList.add('timeline-item');
   timelineItem.id = itemId;
-  timelineItem.setAttribute('data-category', item.category); // 🔹 Add category as an attribute
+  timelineItem.setAttribute('data-category', item.category); 
 
   timelineItem.innerHTML = `
     <h3>${item.date}</h3>
@@ -751,64 +751,50 @@ timelineItems.forEach(item => {
     highlightActiveItem(timelineItem);
   });
 
-  // Append to correct column
+  // If this item has connections, build them
+  if (item.connections && item.connections.length > 0) {
+    const refsDiv = document.createElement('div');
+    refsDiv.classList.add('connections');
+    refsDiv.innerHTML = `<span>Connections:</span> `;
+
+    item.connections.forEach(ref => {
+      const refLink = document.createElement('a');
+      refLink.textContent = `#${ref}`;
+      refLink.dataset.targetTitle = ref;
+
+      // Find the connected item in the array
+      const targetItem = timelineItems.find(i => i.title === ref);
+      if (targetItem) {
+        // Apply color based on the connected item’s category
+        refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
+        refLink.style.color = 'white';
+
+        // On click, show the connected item’s popup
+        refLink.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          showPopup(targetItem);
+
+          const targetElem = document.getElementById(targetItem._domId);
+          if (targetElem) {
+            highlightActiveItem(targetElem);
+            targetElem.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+      refsDiv.appendChild(refLink);
+    });
+
+    timelineItem.appendChild(refsDiv);
+  }
+
+  // Finally, place in correct column
   const colSelector = `.timeline-column[data-category="${item.category}"]`;
   const colDiv = document.querySelector(colSelector);
   if (colDiv) {
     colDiv.appendChild(timelineItem);
   }
 
-  item._domElement = timelineItem;
-});
-
- // If connections exist, build them
-if (item.connections && item.connections.length > 0) {
-  const refsDiv = document.createElement('div');
-  refsDiv.classList.add('connections');
-  refsDiv.innerHTML = `<span>Connections:</span> `;
-
-  item.connections.forEach(ref => {
-    const refLink = document.createElement('a');
-    refLink.textContent = `#${ref}`; // Add hashtag style
-    refLink.dataset.targetTitle = ref;
-
-    // Find the connected item
-    const targetItem = timelineItems.find(i => i.title === ref);
-
-    if (targetItem) {
-      // Apply color based on category
-      refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
-      refLink.style.color = 'white'; // Make text white for contrast
-
-      // Attach click event
-      refLink.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        e.preventDefault();
-
-        showPopup(targetItem);
-
-        // Scroll to connected item and highlight it
-        const targetElem = document.getElementById(targetItem._domId);
-        if (targetElem) {
-          highlightActiveItem(targetElem);
-          targetElem.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    }
-
-    refsDiv.appendChild(refLink);
-  });
-
-  timelineItem.appendChild(refsDiv);
-}
-  // place in correct column
-  const colSelector = `.timeline-column[data-category="${item.category}"]`;
-  const colDiv = document.querySelector(colSelector);
-  if (colDiv) {
-    colDiv.appendChild(timelineItem);
-  }
-
-  // store reference to DOM
   item._domElement = timelineItem;
 });
 
