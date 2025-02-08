@@ -11,17 +11,18 @@
     }
     .timeline-column {
       position: relative;
-      width: 25%;
+      width: 32%; /* 3 columns total */
       padding: 20px;
+      box-sizing: border-box;
     }
+    /* Vertical line in each column (optional decorative effect) */
     .timeline-column::before {
       content: '';
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 50%;
+      left: 10px;
       border-left: 2px solid #ccc;
-      transform: translateX(-50%);
     }
     .timeline-item {
       position: relative;
@@ -32,15 +33,12 @@
       cursor: pointer;
       text-align: center;
     }
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: -15px;
-      width: 30px;
-      height: 2px;
-      background-color: #ccc;
-      transform: translateY(-50%);
+    .timeline-item h3 {
+      margin: 0;
+      font-size: 1.1em;
+    }
+    .timeline-item p {
+      margin: 5px 0 0;
     }
     .timeline-item:hover {
       background-color: #e0e0e0;
@@ -48,43 +46,24 @@
     .timeline-item.active {
       background-color: #c0c0c0;
     }
-    .vertical-connection {
-      position: absolute;
-      top: 50%;
-      bottom: -30px;
-      left: -20px;
-      width: 40px;
-      border-left: 2px solid #999;
-      transform: translateY(-50%);
-      z-index: -1;
-    }
-    .horizontal-connection {
-      position: absolute;
-      top: 50%;
-      left: -20px;
-      right: -20px;
-      height: 2px;
-      background-color: #999;
-      transform: translateY(-50%);
-      z-index: -1;
-    }
     .popup {
       display: none;
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background-color: white;
+      background-color: #fff;
       padding: 20px;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
       max-width: 400px;
-      text-align: center;
+      text-align: left;
+      z-index: 999;
     }
     .popup img {
       max-width: 100%;
       height: auto;
-      margin-bottom: 10px;
+      margin: 10px 0;
     }
     .popup-close {
       position: absolute;
@@ -92,30 +71,29 @@
       right: 10px;
       cursor: pointer;
     }
-    .timeline-column[data-category="Early Theoretical Concepts"] {
-  background-color: #f9f9f9;
-}
-
-.timeline-column[data-category="Early Experimentations"] {
-  background-color: #e9e9e9;
-}
-
-.timeline-column[data-category="Early Cultural Artifacts"] {
-  background-color: #f0f0f0;
-}
+    /* Optional background color differences per category column */
+    .timeline-column[data-category="Cultural Artifacts"] {
+      background-color: #f9f9f9;
+    }
+    .timeline-column[data-category="Conceptual & Scientific Breakthroughs"] {
+      background-color: #e9e9e9;
+    }
+    .timeline-column[data-category="Engineering Experiments & Demonstrations"] {
+      background-color: #f0f0f0;
+    }
   </style>
 </head>
 <body>
   <h1>Aviation History Timeline</h1>
+  
   <div class="timeline">
-    <!-- Timeline items will be dynamically added here -->
+    <!-- Timeline columns will be created by JS based on categories -->
   </div>
 
+  <!-- Popup for showing details of timeline items -->
   <div class="popup">
     <span class="popup-close">&times;</span>
-    <div id="popup-content">
-      <!-- Timeline event details will be loaded here -->
-    </div>
+    <div id="popup-content"></div>
   </div>
 
 <script>
@@ -127,10 +105,21 @@ const timelineItems = [
     description: 'Kites are invented in China, an early form of human flight.',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
-    category: 'Early Cultural Artifacts',
+    category: 'Cultural Artifacts',
     row: 1,
     connections: []
   },
+    {
+        date: '500s BCE',
+        location: 'Greece',
+        title: 'The Myth of Icarus and Daedalus',
+        description: 'This myth, often depicted in classical art and referenced by poets and playwrights, is one of the earliest and most enduring symbols of humanity’s flight aspirations—and of hubris. It reminds us that the dream of flying dates back to antiquity and has long carried both awe and cautionary overtones.',
+        img: "/api/placeholder/100/100",
+        people: ['The Myth of Icarus and Daedalus'],
+        category: 'Cultural Artifacts',
+        row: 1,
+        connections: [] // No connections here.
+      },
   {
         date: '400s BCE',
         location: 'Tarentum, Italy',
@@ -138,7 +127,7 @@ const timelineItems = [
         description: 'Archytas of Tarentum creates a wooden pigeon that could "fly" using a jet of air.',
         img: "/api/placeholder/100/100",
         people: ['Archytas of Tarentum'],
-        category: 'Early Experimentations',
+        category: 'Engineering Experiments & Demonstrations',
         row: 1,
         connections: [] // No connections here.
       },
@@ -149,7 +138,7 @@ const timelineItems = [
         description: 'Archimedes discovers the principles of buoyancy, which later influence theories of flight.',
         img: "/api/placeholder/100/100",
         people: ['Archimedes'],
-        category: 'Early Theoretical Concepts',
+        category: 'Conceptual & Scientific Breakthroughs',
         row: 1,
         connections: [] // No connections here.
       },
@@ -160,7 +149,7 @@ const timelineItems = [
         description: 'Kongming invents the sky lantern, the first hot air balloon. From its military use it became known as the Kongming lantern.',
         img: "/api/placeholder/100/100",
         people: ['Kongming'],
-        category: 'Early Theoretical Concepts',
+        category: 'Conceptual & Scientific Breakthroughs',
         row: 1,
      connections: [] // No connections here.
       },
@@ -171,10 +160,43 @@ const timelineItems = [
     description: 'Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.',
     img: "/api/placeholder/100/100",
     people: ['Hero of Alexandria'],
-    category: 'Early Theoretical Concepts',
+    category: 'Conceptual & Scientific Breakthroughs',
     row: 1,
       connections: [] // No connections here.
   },
+      {
+        date: '800s',
+        location: 'Spain',
+        title: 'Abbas Ibn Firnas\'s jump',
+        description: 'Abbas Ibn Firnas jumps from a tower wearing a cloak stiffened with wooden struts. He survives but is injured—an early documented instance of someone attempting to break their fall using (crude) aerodynamic principles.',
+        img: "/api/placeholder/100/100",
+        people: ['Abbas Ibn Firnas'],
+        category: 'Engineering Experiments & Demonstrations',
+        row: 2,
+        connections: [] // No connections here.
+      },
+        {
+        date: '800s',
+        location: 'Middle East and India',
+        title: 'The Ebony Horse Tale',
+        description: 'One of the tales from One Thousand and One Night. An inventor presents a magical mechanical horse to a Persian king; the horse can fly its rider into the sky.',
+        img: "/api/placeholder/100/100",
+        people: ['The Ebony Horse'],
+        category: 'Cultural Artifacts',
+        row: 2,
+        connections: [] // No connections here.
+      },
+  {
+        date: '1000s',
+        location: 'England',
+        title: 'Eilmer of Malmesbury\'s jump',
+        description: 'A Benedictine monk who tries to fly with a glider-like apparatus. He may have glided a short distance from a tower before crashing. Despite the failure, he allegedly recognized that a tail or tailplane might have provided stability.',
+        img: "/api/placeholder/100/100",
+        people: ['Eilmer of Malmesbury'],
+        category: 'Engineering Experiments & Demonstrations',
+        row: 2,
+        connections: [] // No connections here.
+      },
       {
         date: '1290s',
         location: 'England',
@@ -182,7 +204,7 @@ const timelineItems = [
         description: 'Roger Bacon theorizes that air can support objects like water supports boats.',
         img: "/api/placeholder/100/100",
         people: ['Roger Bacon'],
-        category: 'Early Theoretical Concepts',
+        category: 'Conceptual & Scientific Breakthroughs',
         row: 2,
         connections: [] // No connections here.
       },
@@ -193,7 +215,7 @@ const timelineItems = [
         description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
         img: "/api/placeholder/100/100",
         people: ['Leonardo da Vinci'],
-        category: 'Early Cultural Artifacts',
+        category: 'Cultural Artifacts',
         row: 2,
         connections: [] // No connections here.
       },
@@ -204,7 +226,29 @@ const timelineItems = [
         description: 'João Torto, a Portuguese barber, attempts human flight with fabric wings but falls to his death.',
         img: "/api/placeholder/100/100",
         people: ['João Torto'],
-        category: 'Early Experimentations',
+        category: 'Engineering Experiments & Demonstrations',
+        row: 2,
+        connections: [] // No connections here.
+      },
+  {
+        date: '1657',
+        location: 'France',
+        title: 'Cyrano de Bergerac\'s Comical History of the States and Empires of the Moon',
+        description: 'One of the first “proto–science fiction” works. Although comedic, it proposed mechanical means of leaving Earth, bridging mythic flight and more scientifically grounded speculation.',
+        img: "/api/placeholder/100/100",
+        people: ['Cyrano de Bergerac'],
+        category: 'Cultural Artifacts',
+        row: 2,
+        connections: [] // No connections here.
+      },
+        {
+        date: '1659',
+        location: 'England',
+        title: 'Robert Hooke\'s Airflow',
+        description: 'Robert Hooke investigates concepts of drag and airflow, contributing to the body of knowledge that would eventually be applied to flight.',
+        img: "/api/placeholder/100/100",
+        people: ['Robert Hooke'],
+        category: 'Conceptual & Scientific Breakthroughs',
         row: 2,
         connections: [] // No connections here.
       },
@@ -215,6 +259,18 @@ const timelineItems = [
         description: 'Bartolomeu de Gusmão, a Brazilian-Portuguese priest, demonstrates a hot air balloon prototype called the "Passarola."',
         img: "/api/placeholder/100/100",
         people: ['Bartolomeu de Gusmão'],
+        category: 'Engineering Experiments & Demonstrations',
+        row: 3,
+        connections: [] // No connections here.
+      },
+        {
+        date: '1726',
+        location: 'England',
+        title: 'Jonathan Swift\'s Flying Island of Laputa',
+        description: 'Though satire, Laputa symbolizes the human longing to master flight and the sky—exaggerated to the point of political power (the island hovers over other lands). It predates real scientific progress but demonstrates how flight was becoming embedded in broader cultural and sociopolitical thought.',
+        img: "/api/placeholder/100/100",
+        people: ['Jonathan Swift'],
+        category: 'Cultural Artifacts',
         row: 3,
         connections: [] // No connections here.
       },
@@ -226,366 +282,437 @@ const timelineItems = [
         img: "/api/placeholder/100/100",
         people: ['Jean-François Pilâtre de Rozier', 'François Laurent d\'Arlandes', 'Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
         row: 4,
+        category: 'Engineering Experiments & Demonstrations',
         connections: [] // No connections here.
       },
       {
-        date: '1799',
-        location: 'England',
-        title: 'George Cayley\'s Glider Design',
-        description: 'George Cayley designs the first modern glider with distinct lift, thrust, and control components.',
-        img: "/api/placeholder/100/100",
-        people: ['George Cayley'],
-        row: 4,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1852',
-        location: 'France',
-        title: 'Henri Giffard\'s Dirigible',
-        description: 'Henri Giffard invents the first controllable dirigible, powered by a steam engine.',
-        img: "/api/placeholder/100/100",
-        people: ['Henri Giffard'],
-        row: 5,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1843',
-        location: 'England',
-        title: 'William Henson\'s Aircraft Design',
-        description: 'William Henson patents an early aircraft design with fixed wings and a steam-powered engine.',
-        img: "/api/placeholder/100/100",
-        people: ['William Henson'],
-        row: 6,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1853',
-        location: 'England',
-        title: 'George Cayley\'s Manned Glider Flight',
-        description: 'George Cayley successfully flies the first manned glider. Developed principles of lift, drag, and fixed-wing aircraft.',
-        img: "/api/placeholder/100/100",
-        people: ['George Cayley'],
-        row: 7,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1871',
-        location: 'England',
-        title: 'Francis Wenham\'s Wind Tunnel',
-        description: 'Francis Wenham builds the first wind tunnel to study aerodynamics. Proved long wings generate more lift.',
-        img: "/api/placeholder/100/100",
-        people: ['Francis Wenham'],
-        row: 7,
-        connections: [] // No connections here.
-      },
-    {
-        date: '1884',
-        location: 'France',
-        title: 'Francis Wenham\'s Wind Tunnel',
-        description: 'Charles Renard and Arthur Constantin Krebs launch a non-rigid airship.',
-        img: "/api/placeholder/100/100",
-        people: ['Charles Renard and Arthur Constantin Krebs'],
-        row: 7,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1891',
-        location: 'Germany',
-        title: 'Otto Lilienthal\'s Glider Flights',
-        description: 'Otto Lilienthal achieves controlled glider flights and documents his aerodynamic research. First controlled glider flights, proved human flight was possible.',
-        img: "/api/placeholder/100/100",
-        people: ['Otto Lilienthal'],
-        row: 7,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1896',
-        location: 'United States',
-        title: 'Octave Chanute\'s Biplane Glider',
-        description: 'Octave Chanute advances glider designs and builds a successful biplane glider. Improved glider designs, documented aviation theories.',
-        img: "/api/placeholder/100/100",
-        people: ['Octave Chanute'],
-        row: 7,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1890',
-        location: 'France',
-        title: 'Clément Ader\'s Éole',
-        description: 'Clément Ader builds the Éole, a bat-like steam-powered aircraft, which briefly lifts off but lacks control.',
-        img: "/api/placeholder/100/100",
-        people: ['Clément Ader'],
-        row: 8,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1894',
-        location: 'United States/United Kingdom',
-        title: 'Hiram Maxim\'s Steam-Powered Biplane',
-        description: 'Hiram Maxim builds and tests a massive steam-powered biplane but fails to achieve sustained flight.',
-        img: "/api/placeholder/100/100",
-        people: ['Hiram Maxim'],
-        row: 8,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1896',
-        location: 'United States',
-        title: 'Samuel Pierpont Langley\'s Aerodrome',
-        description: 'Samuel Pierpont Langley flies small, unmanned models successfully. Built the Aerodrome A, but failed with full-scale aircraft.',
-        img: "/api/placeholder/100/100",
-        people: ['Samuel Pierpont Langley'],
-        row: 8,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1899',
-        location: 'United Kingdom',
-        title: 'Percy Pilcher\'s Powered Aircraft Design',
-        description: 'Percy Pilcher designs a powered aircraft but dies in a glider accident before testing it.',
-        img: "/api/placeholder/100/100",
-        people: ['Percy Pilcher'],
-        row: 9,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1900',
-        location: 'Germany',
-        title: 'Ferdinand von Zeppelin\'s Rigid Airships',
-        description: 'Ferdinand von Zeppelin develops rigid airships, leading to their widespread use.',
-        img: "/api/placeholder/100/100",
-        people: ['Ferdinand von Zeppelin'],
-        row: 9,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1901',
-        location: 'United States',
-        title: 'Gustave Whitehead\'s Reported Flight',
-        description: 'Gustave Whitehead reportedly flies in Connecticut, though documentation is debated.',
-        img: "/api/placeholder/100/100",
-        people: ['Gustave Whitehead'],
-        row: 9,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1902',
-        location: 'New Zealand',
-        title: 'Richard Pearse\'s Monoplane',
-        description: 'Richard Pearse builds a monoplane and makes brief, uncontrolled flights.',
-        img: "/api/placeholder/100/100",
-        people: ['Richard Pearse'],
-        row: 9,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1903',
-        location: 'Germany',
-        title: 'Karl Jatho\'s Powered Aircraft',
-        description: 'Karl Jatho built an unstable monoplane that flew briefly but lacked documentation.',
-        img: "/api/placeholder/100/100",
-        people: ['Karl Jatho'],
-        row: 9,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1906',
-        location: 'Brazil/France',
-        title: 'Alberto Santos-Dumont\'s 14-bis Flight',
-        description: 'Alberto Santos-Dumont flies the 14-bis in Paris, the first powered airplane flight officially recognized by the Aéro-Club de France. Unlike others, it takes off unaided and uses wheels, earning public recognition.',
-        img: "/api/placeholder/100/100",
-        people: ['Alberto Santos-Dumont'],
-        row: 10,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1907',
-        location: 'Romania',
-        title: 'Traian Vuia\'s Monoplane',
-        description: 'Traian Vuia designed a monoplane with wheels that took off independently but flew short distances.',
-        img: "/api/placeholder/100/100",
-        people: ['Traian Vuia'],
-        row: 10,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1908',
-        location: 'France',
-        title: 'Aída de Acosta Pilots Santos-Dumont\'s Dirigible',
-        description: 'Aída de Acosta becomes the first woman to pilot an aircraft (Santos-Dumont\'s dirigible No. 9).',
-        img: "/api/placeholder/100/100",
-        people: ['Aída de Acosta', 'Alberto Santos-Dumont'],
-        row: 10,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1908',
-        location: 'United Kingdom',
-        title: 'John William Dunne',
-        description: 'Developed tailless aircraft designs with military applications.',
-        img: "/api/placeholder/100/100",
-        people: ['John William Dunne'],
-        row: 11,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1909',
-        location: 'France/England',
-        title: 'Louis Blériot Crosses the English Channel',
-        description: 'Louis Blériot crosses the English Channel, proving the airplane\'s viability for transportation.',
-        img: "/api/placeholder/100/100", 
-        people: ['Louis Blériot'],
-        row: 11,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1910',
-        location: 'Brazil',
-        title: 'Dimitri Sensaud de Lavaud\'s Flight in Latin America',
-        description: 'Dimitri Sensaud de Lavaud completes the first powered flight in Latin America.',
-        img: "/api/placeholder/100/100",
-        people: ['Dimitri Sensaud de Lavaud'],
-        row: 11,
-        connections: [] // No connections here.  
-      },
-      {
-        date: '1910',
-        location: 'France',
-        title: 'Henri Fabre\'s Seaplane Flight',
-        description: 'Henri Fabre achieves the first successful seaplane flight.',
-        img: "/api/placeholder/100/100",
-        people: ['Henri Fabre'],
-        row: 12,
-        connections: [] // No connections here.
-      }, 
-      {
-        date: '1911',
-        location: 'United States',
-        title: 'Calbraith Perry Rodgers\' Transcontinental Flight',
-        description: 'Calbraith Perry Rodgers completes the first transcontinental flight.',
-        img: "/api/placeholder/100/100",
-        people: ['Calbraith Perry Rodgers'],
-        row: 12,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1918',  
-        location: 'France',
-        title: 'Henry Farman\'s Aircraft in World War I',
-        description: 'Henry Farman develops aircraft used in World War I, leading to military aviation.',
-        img: "/api/placeholder/100/100",
-        people: ['Henry Farman'],
-        row: 12,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1901–1903',
-        location: 'United States',
-        title: 'Samuel Langley\'s Aerodrome A Failure', 
-        description: 'Samuel Pierpont Langley builds and crashes the Aerodrome A, a failed attempt at powered flight.',
-        img: "/api/placeholder/100/100",
-        people: ['Samuel Pierpont Langley'],
-        row: 13,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1903',
-        location: 'Scotland',
-        title: 'Preston Watson\'s Alleged Flight',
-        description: 'Preston Watson allegedly flies, though no strong evidence exists.',
-        img: "/api/placeholder/100/100",
-        people: ['Preston Watson'],
-        row: 13,
-        connections: [] // No connections here. 
-      },
-      {
-        date: '1904',
-        location: 'United Kingdom',
-        title: 'John William Dunne\'s Tailless Aircraft',
-        description: 'John William Dunne develops early tailless aircraft with military backing.',
-        img: "/api/placeholder/100/100",
-        people: ['John William Dunne'],
-        row: 13,
-        connections: [] // No connections here.
-      },
-      {
-        date: '1910',
-        location: 'Romania',
-        title: 'Henri Coandă\'s Coandă-1910',
-        description: 'Henri Coandă builds the Coandă-1910, possibly the first jet-propelled aircraft.',
-        img: "/api/placeholder/100/100", 
-        people: ['Henri Coandă'],
-        row: 14,
-        connections: [] // No connections here.
-      },
-    {
-    date: '1914', 
-    location: 'United States',
-    title: 'First Commercial Airline',
-    description: 'The St. Petersburg-Tampa Airboat Line starts commercial flights.',
-    img: "/api/placeholder/100/100",
-    people: ['Thomas Benoist', 'Percival Fansler'],
-    row: 14,
-        connections: [] // No connections here.
-  },
-  {
-    date: '1928',
-    location: 'Germany',
-    title: 'Graf Zeppelin', 
-    description: 'The LZ 127 Graf Zeppelin, a large passenger-carrying rigid airship, enters commercial service. It demonstrated the potential of airships for long-distance travel.',
-    img: "/api/placeholder/100/100",
-    people: ['Ferdinand von Zeppelin'],
-    row: 15,
-        connections: [] // No connections here.
-  },
-  {
-    date: '1947',
-    location: 'United States',
-    title: 'Breaking the Sound Barrier',
-    description: 'Chuck Yeager pilots the Bell X-1 to break the sound barrier.',
-    img: "/api/placeholder/100/100",  
-    people: ['Chuck Yeager'],
-    row: 15,
-        connections: [] // No connections here.
-  },
-  {
-    date: '1969',
-    location: 'United States',
-    title: 'First Moon Landing',
-    description: 'Neil Armstrong and Buzz Aldrin land on the moon in Apollo 11.',
-    img: "/api/placeholder/100/100",
-    people: ['Neil Armstrong', 'Buzz Aldrin'], 
-    row: 15,
-        connections: [] // No connections here.
-  }
+  date: '1799',
+  location: 'England',
+  title: "George Cayley's Glider Design",
+  description: "George Cayley designs the first modern glider with distinct lift, thrust, and control components.",
+  img: "/api/placeholder/100/100",
+  people: ['George Cayley'],
+  row: 4,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1852',
+  location: 'France',
+  title: "Henri Giffard's Dirigible",
+  description: "Henri Giffard invents the first controllable dirigible, powered by a steam engine.",
+  img: "/api/placeholder/100/100",
+  people: ['Henri Giffard'],
+  row: 5,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1843',
+  location: 'England',
+  title: "William Henson's Aircraft Design",
+  description: "William Henson patents an early aircraft design with fixed wings and a steam-powered engine.",
+  img: "/api/placeholder/100/100",
+  people: ['William Henson'],
+  row: 6,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1853',
+  location: 'England',
+  title: "George Cayley's Manned Glider Flight",
+  description: "George Cayley successfully flies the first manned glider. Developed principles of lift, drag, and fixed-wing aircraft.",
+  img: "/api/placeholder/100/100",
+  people: ['George Cayley'],
+  row: 7,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1865-1904',
+  location: 'England',
+  title: "Jules Verne's Novels",
+  description: "Verne’s meticulous detail and semi-scientific style enthralled readers. He envisioned airships and cannon-propelled moonshots, inspiring generations of inventors to consider powered flight and eventual space travel.",
+  img: "/api/placeholder/100/100",
+  people: ['Jules Verne'],
+  row: 7,
+  connections: [],
+  category: "Cultural Artifacts"
+},
+{
+  date: '1871',
+  location: 'England',
+  title: "Francis Wenham's Wind Tunnel",
+  description: "Francis Wenham builds the first wind tunnel to study aerodynamics. Proved that long, narrow wings generate more lift.",
+  img: "/api/placeholder/100/100",
+  people: ['Francis Wenham'],
+  row: 7,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1884',
+  location: 'France',
+  title: "Charles Renard and Arthur Constantin's Le France",
+  description: "Charles Renard and Arthur Constantin Krebs launch a non-rigid airship that inspires Zeppelin.",
+  img: "/api/placeholder/100/100",
+  people: ['Charles Renard', 'Arthur Constantin Krebs'],
+  row: 7,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1891',
+  location: 'Germany',
+  title: "Otto Lilienthal's Glider Flights",
+  description: "Otto Lilienthal achieves controlled glider flights and documents aerodynamic research, proving human flight was possible.",
+  img: "/api/placeholder/100/100",
+  people: ['Otto Lilienthal'],
+  row: 7,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1896',
+  location: 'United States',
+  title: "Octave Chanute's Biplane Glider",
+  description: "Octave Chanute advances glider designs and builds a successful biplane glider, improving aviation theories.",
+  img: "/api/placeholder/100/100",
+  people: ['Octave Chanute'],
+  row: 7,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1890',
+  location: 'France',
+  title: "Clément Ader's Éole",
+  description: "Clément Ader builds the Éole, a bat-like steam-powered aircraft, which briefly lifts off but lacks control.",
+  img: "/api/placeholder/100/100",
+  people: ['Clément Ader'],
+  row: 8,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1894',
+  location: 'United States/United Kingdom',
+  title: "Hiram Maxim's Steam-Powered Biplane",
+  description: "Hiram Maxim builds and tests a massive steam-powered biplane but fails to achieve sustained flight.",
+  img: "/api/placeholder/100/100",
+  people: ['Hiram Maxim'],
+  row: 8,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1896',
+  location: 'United States',
+  title: "Samuel Pierpont Langley's Aerodrome",
+  description: "Samuel Pierpont Langley flies small, unmanned models successfully. Built the Aerodrome A, which failed at full scale.",
+  img: "/api/placeholder/100/100",
+  people: ['Samuel Pierpont Langley'],
+  row: 8,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1899',
+  location: 'United Kingdom',
+  title: "Percy Pilcher's Powered Aircraft Design",
+  description: "Percy Pilcher designs a powered aircraft but dies in a glider accident before testing it.",
+  img: "/api/placeholder/100/100",
+  people: ['Percy Pilcher'],
+  row: 9,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1900',
+  location: 'Germany',
+  title: "Ferdinand von Zeppelin's Rigid Airships",
+  description: "Ferdinand von Zeppelin develops rigid airships, leading to widespread use of zeppelins.",
+  img: "/api/placeholder/100/100",
+  people: ['Ferdinand von Zeppelin'],
+  row: 9,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1901',
+  location: 'United States',
+  title: "Gustave Whitehead's Reported Flight",
+  description: "Gustave Whitehead reportedly flies in Connecticut, though documentation remains debated.",
+  img: "/api/placeholder/100/100",
+  people: ['Gustave Whitehead'],
+  row: 9,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1902',
+  location: 'France',
+  title: "Georges Méliès's A Trip to the Moon",
+  description: "Georges Méliès creates the iconic silent film, launching a bullet-shaped rocket to the Moon in a whimsical scenario.",
+  img: "/api/placeholder/100/100",
+  people: ['Georges Méliès'],
+  row: 9,
+  connections: [],
+  category: "Cultural Artifacts"
+},
+{
+  date: '1902',
+  location: 'New Zealand',
+  title: "Richard Pearse's Monoplane",
+  description: "Richard Pearse builds a monoplane and makes brief, uncontrolled flights.",
+  img: "/api/placeholder/100/100",
+  people: ['Richard Pearse'],
+  row: 9,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1903',
+  location: 'Germany',
+  title: "Karl Jatho's Powered Aircraft",
+  description: "Karl Jatho builds an unstable monoplane that flies briefly but lacks thorough documentation.",
+  img: "/api/placeholder/100/100",
+  people: ['Karl Jatho'],
+  row: 9,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1906',
+  location: 'Brazil/France',
+  title: "Alberto Santos-Dumont's 14-bis Flight",
+  description: "Alberto Santos-Dumont flies the 14-bis in Paris—the first powered airplane flight recognized by the Aéro-Club de France.",
+  img: "/api/placeholder/100/100",
+  people: ['Alberto Santos-Dumont'],
+  row: 10,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1907',
+  location: 'Romania',
+  title: "Traian Vuia's Monoplane",
+  description: "Traian Vuia designs a monoplane with wheels that takes off unaided but flies only short distances.",
+  img: "/api/placeholder/100/100",
+  people: ['Traian Vuia'],
+  row: 10,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1908',
+  location: 'France',
+  title: "Aída de Acosta Pilots Santos-Dumont's Dirigible",
+  description: "Aída de Acosta becomes the first woman to pilot an aircraft: Santos-Dumont's dirigible No. 9.",
+  img: "/api/placeholder/100/100",
+  people: ['Aída de Acosta', 'Alberto Santos-Dumont'],
+  row: 10,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1908',
+  location: 'England',
+  title: "H.G. Wells's The War in the Air",
+  description: "H.G. Wells's novel envisions how airplanes could revolutionize warfare, foreshadowing aerial battles of WWI.",
+  img: "/api/placeholder/100/100",
+  people: ['H.G. Wells', 'Alberto Santos-Dumont'],
+  row: 10,
+  connections: [],
+  category: "Cultural Artifacts"
+},
+{
+  date: '1908',
+  location: 'United Kingdom',
+  title: 'John William Dunne',
+  description: "Develops tailless aircraft designs with military applications.",
+  img: "/api/placeholder/100/100",
+  people: ['John William Dunne'],
+  row: 11,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1909',
+  location: 'France/England',
+  title: 'Louis Blériot Crosses the English Channel',
+  description: "Louis Blériot's successful Channel crossing proves the airplane's viability for transportation.",
+  img: "/api/placeholder/100/100",
+  people: ['Louis Blériot'],
+  row: 11,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1910',
+  location: 'Brazil',
+  title: "Dimitri Sensaud de Lavaud's Flight in Latin America",
+  description: "Dimitri Sensaud de Lavaud completes the first powered flight in Latin America.",
+  img: "/api/placeholder/100/100",
+  people: ['Dimitri Sensaud de Lavaud'],
+  row: 11,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1910',
+  location: 'France',
+  title: "Henri Fabre's Seaplane Flight",
+  description: "Henri Fabre achieves the first successful seaplane flight.",
+  img: "/api/placeholder/100/100",
+  people: ['Henri Fabre'],
+  row: 12,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1911',
+  location: 'United States',
+  title: "Calbraith Perry Rodgers' Transcontinental Flight",
+  description: "Calbraith Perry Rodgers completes the first transcontinental flight across the United States.",
+  img: "/api/placeholder/100/100",
+  people: ['Calbraith Perry Rodgers'],
+  row: 12,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1918',
+  location: 'France',
+  title: "Henry Farman's Aircraft in World War I",
+  description: "Henry Farman develops aircraft used in World War I, advancing military aviation.",
+  img: "/api/placeholder/100/100",
+  people: ['Henry Farman'],
+  row: 12,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1901–1903',
+  location: 'United States',
+  title: "Samuel Langley's Aerodrome A Failure",
+  description: "Samuel Pierpont Langley builds and crashes the Aerodrome A, a failed attempt at powered flight.",
+  img: "/api/placeholder/100/100",
+  people: ['Samuel Pierpont Langley'],
+  row: 13,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1903',
+  location: 'Scotland',
+  title: "Preston Watson's Alleged Flight",
+  description: "Preston Watson allegedly flies, though no strong evidence exists.",
+  img: "/api/placeholder/100/100",
+  people: ['Preston Watson'],
+  row: 13,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1904',
+  location: 'United Kingdom',
+  title: "John William Dunne's Tailless Aircraft",
+  description: "John William Dunne develops early tailless aircraft designs with military backing.",
+  img: "/api/placeholder/100/100",
+  people: ['John William Dunne'],
+  row: 13,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1910',
+  location: 'Romania',
+  title: "Henri Coandă's Coandă-1910",
+  description: "Henri Coandă builds the Coandă-1910, possibly the first jet-propelled aircraft.",
+  img: "/api/placeholder/100/100",
+  people: ['Henri Coandă'],
+  row: 14,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1914',
+  location: 'United States',
+  title: 'First Commercial Airline',
+  description: "The St. Petersburg-Tampa Airboat Line starts commercial flights, pioneering airline service.",
+  img: "/api/placeholder/100/100",
+  people: ['Thomas Benoist', 'Percival Fansler'],
+  row: 14,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1928',
+  location: 'Germany',
+  title: 'Graf Zeppelin',
+  description: "The LZ 127 Graf Zeppelin, a large passenger-carrying rigid airship, enters commercial service and demonstrates long-distance travel potential.",
+  img: "/api/placeholder/100/100",
+  people: ['Ferdinand von Zeppelin'],
+  row: 15,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1947',
+  location: 'United States',
+  title: 'Breaking the Sound Barrier',
+  description: "Chuck Yeager pilots the Bell X-1 to become the first to break the sound barrier in level flight.",
+  img: "/api/placeholder/100/100",
+  people: ['Chuck Yeager'],
+  row: 15,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1969',
+  location: 'United States',
+  title: 'First Moon Landing',
+  description: "Neil Armstrong and Buzz Aldrin land on the Moon in Apollo 11, achieving a milestone in human space exploration.",
+  img: "/api/placeholder/100/100",
+  people: ['Neil Armstrong', 'Buzz Aldrin'],
+  row: 15,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+}
+
+    ];
+    // ============ MAIN SCRIPT LOGIC ===================
+
+    // 1) Define the categories you want as columns.
+    const categories = [
+      'Cultural Artifacts',
+      'Conceptual & Scientific Breakthroughs',
+      'Engineering Experiments & Demonstrations'
     ];
 
-    const timelineContainer = document.querySelector('.timeline');
-    const popupContent = document.getElementById('popup-content');
-    const popup = document.querySelector('.popup');
-    const popupClose = document.querySelector('.popup-close');
-    const categories = ['Early Theories', 'Early Experimentations', 'Early Cultural Artifacts'];
-  
+    // 2) Grab the main timeline container.
     const timelineContainer = document.querySelector('.timeline');
 
-      // Create timeline columns using your defined categories
-      categories.forEach(category => {
-        const timelineColumn = document.createElement('div');
-        timelineColumn.classList.add('timeline-column');
-        // Use a data attribute to store the category name
-        timelineColumn.setAttribute('data-category', category);
-        timelineContainer.appendChild(timelineColumn);
-      });
-    // Create timeline columns
-    const columns = ['Early Theories', 'Lighter-than-Air Flight', 'Gliders', 'Powered Flight'];
-    columns.forEach(column => {
+    // 3) Create a column <div> for each category, label it with data-category
+    categories.forEach(category => {
       const timelineColumn = document.createElement('div');
       timelineColumn.classList.add('timeline-column');
-      timelineColumn.setAttribute('data-column', column);
+      timelineColumn.setAttribute('data-category', category);
+
+      // Optional: add a heading within the column to label it
+      const heading = document.createElement('h2');
+      heading.textContent = category;
+      timelineColumn.appendChild(heading);
+
       timelineContainer.appendChild(timelineColumn);
     });
 
-    // Render timeline items
+    // 4) Sort items by row for vertical ordering within each column
+    timelineItems.sort((a, b) => a.row - b.row);
+
+    // 5) Create DOM elements for each timeline item and append to the correct column
     timelineItems.forEach(item => {
       const timelineItem = document.createElement('div');
       timelineItem.classList.add('timeline-item');
@@ -594,70 +721,35 @@ const timelineItems = [
         <p>${item.title}</p>
       `;
 
-      // When a timeline item is clicked, show its details in the popup.
+      // On click, show details in popup
       timelineItem.addEventListener('click', () => {
         showPopup(item);
         highlightActiveItem(timelineItem);
       });
 
-      // Determine which column to use (using a default for simplicity).
-      const column = item.column || 'Early Theories';
-      const timelineColumn = document.querySelector(`.timeline-column[data-column="${column}"]`);
-      timelineColumn.appendChild(timelineItem);
+      // Find the appropriate column by category
+      const categorySelector = `.timeline-column[data-category="${item.category}"]`;
+      const timelineColumn = document.querySelector(categorySelector);
 
-      // Create connection hyperlinks if they exist.
-      if (item.connections && Array.isArray(item.connections)) {
-        item.connections.forEach(connection => {
-          const connectionLink = document.createElement('a');
-          connectionLink.href = "#";
-          connectionLink.textContent = connection.text;
-          connectionLink.classList.add('connection-link');
-          connectionLink.addEventListener('click', (event) => {
-            event.stopPropagation();
-            event.preventDefault();
-            popup.style.display = 'none';
-            const targetItem = timelineItems.find(i => i.title === connection.target);
-            if (targetItem) {
-              showPopup(targetItem);
-            }
-          });
-          timelineItem.appendChild(connectionLink);
-        });
+      // If a matching column is found, append this item
+      if (timelineColumn) {
+        timelineColumn.appendChild(timelineItem);
       }
     });
-timelineItems.sort((a, b) => a.row - b.row);
 
-timelineItems.forEach(item => {
-  const timelineItem = document.createElement('div');
-  timelineItem.classList.add('timeline-item');
-  timelineItem.innerHTML = `
-    <h3>${item.date}</h3>
-    <p>${item.title}</p>
-  `;
+    // 6) Popup handling
+    const popup = document.querySelector('.popup');
+    const popupContent = document.getElementById('popup-content');
+    const popupClose = document.querySelector('.popup-close');
 
-  // Add event listener to show popup (or any other interaction you need)
-  timelineItem.addEventListener('click', () => {
-    showPopup(item);
-    highlightActiveItem(timelineItem);
-  });
-
-  // Determine which column to use based on the item's category.
-  // You can provide a default category if none is set.
-  const category = item.category || 'Early Theories';
-  const timelineColumn = document.querySelector(`.timeline-column[data-category="${category}"]`);
-
-  if (timelineColumn) {
-    timelineColumn.appendChild(timelineItem);
-  }
-});
-    // Function to show the main popup with a timeline event's details.
     function showPopup(item) {
       popupContent.innerHTML = `
         <h3>${item.title}</h3>
-        <p>${item.description}</p>
+        <p><strong>Date:</strong> ${item.date}</p>
+        <p><strong>Description:</strong> ${item.description}</p>
         <img src="${item.img}" alt="${item.title}">
-        <p>Location: ${item.location}</p>
-        <p>Key people involved:</p>
+        <p><strong>Location:</strong> ${item.location}</p>
+        <p><strong>Key people involved:</strong></p>
         <ul>
           ${item.people.map(person => `<li>${person}</li>`).join('')}
         </ul>
@@ -665,19 +757,20 @@ timelineItems.forEach(item => {
       popup.style.display = 'block';
     }
 
-    // Close the popup when the close button is clicked.
-    popupClose.addEventListener('click', () => {
-      popup.style.display = 'none';
-    });
-
-    // Function to highlight the active timeline item.
+    // Highlight the active timeline item
     function highlightActiveItem(item) {
+      // Remove .active from any previously active item
       const activeItem = document.querySelector('.timeline-item.active');
       if (activeItem) {
         activeItem.classList.remove('active');
       }
       item.classList.add('active');
     }
+
+    // Close the popup
+    popupClose.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
   </script>
 </body>
 </html>
