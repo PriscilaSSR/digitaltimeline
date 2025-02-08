@@ -76,13 +76,24 @@
 <script>
 const timelineItems = [
   {
+    date: '100s BCE',
+    location: 'China',
+    title: 'Paper',
+    description: 'Paper is invented in China and then spreads to the Arabic world in the 700s BC, then to Medieval Europe. The lightweight material was later used in hot air lanterns in China. Even later, Leonardo da Vinci and George Cayley used paper and other lightweight materials to create models and test their theories of flight ',
+    img: "/api/placeholder/100/100",
+    people: ['Mozi', 'Lu Ban'],
+    category: 'Conceptual & Scientific Breakthroughs',
+    row: 1,
+    connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci's Flying Machines']
+  },
+  {
     date: '500s BCE',
     location: 'China',
     title: 'Early Kites',
     description: 'Kites are invented in China, an early form of human flight.',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
-    category: 'Cultural Artifacts',
+    category: 'Conceptual & Scientific Breakthroughs',
     row: 1,
     connections: []
   },
@@ -122,8 +133,8 @@ const timelineItems = [
    {
         date: '200s BCE',
         location: 'China',
-        title: 'Kongming\'s Sky Latern',
-        description: 'Kongming invents the sky lantern, the first hot air balloon. From its military use it became known as the Kongming lantern.',
+        title: 'Kongming\'s Sky Lantern',
+        description: 'Kongming invents the sky lantern, the first hot air balloon. From its military use, it became known as the Kongming lantern.',
         img: "/api/placeholder/100/100",
         people: ['Kongming'],
         category: 'Conceptual & Scientific Breakthroughs',
@@ -188,7 +199,7 @@ const timelineItems = [
       {
         date: '1480s',
         location: 'Italy',
-        title: "Leonardo da Vinci's Flying Machines",
+        title: 'Leonardo da Vinci's Flying Machines',
         description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
         img: "/api/placeholder/100/100",
         people: ['Leonardo da Vinci'],
