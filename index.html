@@ -105,7 +105,7 @@ const timelineItems = [
     date: '100s BCE',
     location: 'China',
     title: 'Paper',
-    description: 'Paper is invented in China and then spreads to the Arabic world in the 700s BC, then to Medieval Europe. The lightweight material was later used in hot air lanterns in China. Even later, Leonardo da Vinci and George Cayley used paper and other lightweight materials to create models and test their theories of flight ',
+    description: 'Paper is invented in China and then spreads to the Arabic world in the 700s BC, then to Medieval Europe. A key material innovation that aided future flight experiments. The lightweight material was later used in hot air lanterns in China. Even later, Leonardo da Vinci and George Cayley used paper and other lightweight materials to create models and test their theories of flight ',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
     category: 'Conceptual & Scientific Breakthroughs',
@@ -119,10 +119,21 @@ const timelineItems = [
     description: 'Kites are invented in China, an early form of human flight.',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Engineering Experiments & Demonstrations',
     row: 1,
-    connections: []
+    connections: ['Paper']
   },
+      {
+        date: '500s BCE',
+        location: 'India',
+        title: 'The Pushpaka Vimana',
+        description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a ‘flying machine.’',
+        img: "/api/placeholder/100/100",
+        people: ['The Pushpaka Vimana'],
+        category: 'Cultural Artifacts',
+        row: 1,
+        connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt' ]
+      },
     {
         date: '500s BCE',
         location: 'Greece',
@@ -163,7 +174,7 @@ const timelineItems = [
         description: 'Kongming invents the sky lantern, the first hot air balloon. From its military use, it became known as the Kongming lantern.',
         img: "/api/placeholder/100/100",
         people: ['Kongming'],
-        category: 'Conceptual & Scientific Breakthroughs',
+        category: 'Engineering Experiments & Demonstrations',
         row: 1,
      connections: ['Early Kites', 'Paper']
       },
@@ -174,7 +185,7 @@ const timelineItems = [
     description: 'Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.',
     img: "/api/placeholder/100/100",
     people: ['Hero of Alexandria'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Engineering Experiments & Demonstrations',
     row: 1,
       connections: ['Archytas\' Flying Pigeon']
   },
@@ -244,6 +255,28 @@ const timelineItems = [
         row: 2,
         connections: ['The Myth of Icarus and Daedalus', 'Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt']
       },
+    {
+        date: '1634',
+        location: 'Holy Roman Empire',
+        title: 'Kepler\'s Somnium',
+        description: 'One of the first “proto–science fiction” works. A fictional narrative describing a journey to the Moon, introducing early ideas on celestial mechanics. A text showing flight/space travel in a quasi-scientific way.',
+        img: "/api/placeholder/100/100",
+        people: ['Johannes Kepler'],
+        category: 'Cultural Artifacts',
+        row: 2,
+        connections: [] // No connections here.
+      },
+      {
+        date: '1638',
+        location: 'England',
+        title: 'Francis Godwin\'s The Man in the Moone',
+        description: 'One of the first “proto–science fiction” works. A utopian story describing lunar travel using large, trained birds; an early example of flight-themed fiction and speculation.',
+        img: "/api/placeholder/100/100",
+        people: ['Francis Godwin'],
+        category: 'Cultural Artifacts',
+        row: 2,
+        connections: [] // No connections here.
+      },
   {
         date: '1657',
         location: 'France',
@@ -267,6 +300,17 @@ const timelineItems = [
         connections: ['Archimedes\' Buoyancy Principle', 'Roger Bacon\'s Air Support Theory'] // No connections here.
       },
       {
+        date: '1687',
+        location: 'England',
+        title: 'Newton\'s Laws of Motion',
+        description: 'Lays out the three laws of motion and universal gravitation, essential to understanding how and why aircraft can generate lift and react to forces in flight.',
+        img: "/api/placeholder/100/100",
+        people: ['Isaac Newton'],
+        category: 'Conceptual & Scientific Breakthroughs',
+        row: 2,
+        connections: [] // No connections here.
+      },
+      {
         date: '1709',
         location: 'Portugal',
         title: 'Bartolomeu de Gusmão\'s Passarola',
@@ -285,6 +329,17 @@ const timelineItems = [
         img: "/api/placeholder/100/100",
         people: ['Jonathan Swift'],
         category: 'Cultural Artifacts',
+        row: 3,
+        connections: [] // No connections here.
+      },
+      {
+        date: '1738',
+        location: 'Switzerland/Netherlands',
+        title: 'Daniel Bernoulli\'s Hydrodynamica',
+        description: 'Describes how pressure in a moving fluid decreases as velocity increases; foundational for many aerodynamic analyses of wing lift.',
+        img: "/api/placeholder/100/100",
+        people: ['Daniel Bernoulli'],
+        category: 'Conceptual & Scientific Breakthroughs',
         row: 3,
         connections: [] // No connections here.
       },
@@ -509,6 +564,17 @@ const timelineItems = [
   category: "Engineering Experiments & Demonstrations"
 },
 {
+  date: '1904',
+  location: 'Germany',
+  title: "Ludwig Prandtl’s Boundary-Layer Theory",
+  description: "Prandtl’s insight that a thin layer of fluid near a surface governs most aerodynamic drag/energy loss was a milestone in modern fluid mechanics and airplane design.",
+  img: "/api/placeholder/100/100",
+  people: ['Ludwig Prandtl'],
+  row: 9,
+  connections: [],
+  category: "Conceptual & Scientific Breakthroughs"
+},
+{
   date: '1906',
   location: 'Brazil/France',
   title: "Alberto Santos-Dumont's 14-bis Flight",
@@ -518,6 +584,17 @@ const timelineItems = [
   row: 10,
   connections: [],
   category: "Engineering Experiments & Demonstrations"
+},
+{
+  date: '1906',
+  location: 'Germany/Russia',
+  title: "Martin Wilhelm Kutta & Nikolai Zhukovsky’s Lift Theorem",
+  description: "Established the relationship between circulation around an airfoil and the lift force—crucial for calculating wing performance in aircraft.",
+  img: "/api/placeholder/100/100",
+  people: ['Martin Wilhelm Kutta', 'Nikolai Zhukovsky'],
+  row: 9,
+  connections: [],
+  category: "Conceptual & Scientific Breakthroughs"
 },
 {
   date: '1907',
