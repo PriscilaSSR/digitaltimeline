@@ -24,19 +24,22 @@
     .timeline-item.active {
       background-color: #cfcfcf;
     }
-    .connections {
-      margin-top: 10px;
-      font-size: 0.9em;
-      text-align: left;
-    }
-    .connections span {
-      font-weight: bold;
-    }
-    .connections a {
-      text-decoration: underline;
-      cursor: pointer;
-      margin-right: 8px;
-    }
+.connections a {
+  display: inline-block;
+  background-color: #ddd; /* Light gray background */
+  color: black; /* Default text color */
+  padding: 5px 10px;
+  margin: 4px 3px;
+  border-radius: 12px; /* Rounded corners for hashtag look */
+  font-size: 0.85em;
+  cursor: pointer;
+  text-decoration: none; /* No underline */
+  transition: all 0.3s ease;
+}
+
+.connections a:hover {
+  background-color: #bbb; /* Darker gray on hover */
+}
     .popup {
       display: none; /* hidden by default */
       position: fixed;
@@ -726,39 +729,38 @@ timelineItems.forEach(item => {
   });
 
   // If connections exist, build them
-  if (item.connections && item.connections.length > 0) {
+ if (item.connections && item.connections.length > 0) {
   const refsDiv = document.createElement('div');
   refsDiv.classList.add('connections');
   refsDiv.innerHTML = `<span>Connections:</span> `;
 
   item.connections.forEach(ref => {
     const refLink = document.createElement('a');
-    refLink.textContent = ref;
+    refLink.textContent = `#${ref}`; // Add hashtag style
     refLink.dataset.targetTitle = ref;
 
-    // Handle click to navigate to connected item
-    refLink.addEventListener('click', (e) => {
-      e.stopPropagation(); 
-      e.preventDefault();
+    // Find the connected item
+    const targetItem = timelineItems.find(i => i.title === ref);
 
-      // Find the connected timeline item
-      const targetItem = timelineItems.find(i => i.title === ref);
-      if (targetItem) {
+    if (targetItem) {
+      // Apply color based on category
+      refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
+      refLink.style.color = 'white'; // Make text white for better contrast
+
+      // Attach click event
+      refLink.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        e.preventDefault();
+
         showPopup(targetItem);
 
-        // Scroll and highlight
+        // Scroll to connected item and highlight it
         const targetElem = document.getElementById(targetItem._domId);
         if (targetElem) {
           highlightActiveItem(targetElem);
           targetElem.scrollIntoView({ behavior: 'smooth' });
         }
-      }
-    });
-
-    // Assign color based on category
-    const targetItem = timelineItems.find(i => i.title === ref);
-    if (targetItem) {
-      refLink.style.color = categoryColors[targetItem.category] || 'black';
+      });
     }
 
     refsDiv.appendChild(refLink);
@@ -780,10 +782,12 @@ timelineItems.forEach(item => {
 });
 
 // 7) Popup logic
+// Select popup elements
 const popup = document.querySelector('.popup');
 const popupContent = document.getElementById('popup-content');
 const popupClose = document.querySelector('.popup-close');
 
+// Function to show popup
 function showPopup(item) {
   popupContent.innerHTML = `
     <h3>${item.title}</h3>
@@ -799,12 +803,25 @@ function showPopup(item) {
   popup.style.display = 'block';
 }
 
+// ✅ Fix: Properly close popup when clicking the close button
+popupClose.addEventListener('click', (e) => {
+  e.stopPropagation(); // Prevent click from bubbling up
+  popup.style.display = 'none';
+});
+
+// ✅ Fix: Close when clicking outside the popup, but not inside it
 document.addEventListener('click', (e) => {
   if (!popup.contains(e.target) && !e.target.classList.contains('timeline-item')) {
     popup.style.display = 'none';
   }
 });
 
+// ✅ Fix: Prevent clicks inside the popup from closing it
+popup.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+
+// Highlight the active timeline item
 function highlightActiveItem(elem) {
   const prevActive = document.querySelector('.timeline-item.active');
   if (prevActive) {
