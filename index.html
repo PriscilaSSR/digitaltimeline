@@ -84,7 +84,7 @@ const timelineItems = [
     people: ['Mozi', 'Lu Ban'],
     category: 'Conceptual & Scientific Breakthroughs',
     row: 1,
-    connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci's Flying Machines']
+    connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci\'s Flying Machines']
   },
   {
     date: '500s BCE',
@@ -725,13 +725,13 @@ timelineItems.forEach(item => {
     highlightActiveItem(timelineItem);
   });
 
-  // If references exist, build them
-  if (item.references && item.references.length > 0) {
+  // If connections exist, build them
+  if (item.connections && item.connections.length > 0) {
     const refsDiv = document.createElement('div');
-    refsDiv.classList.add('references');
-    refsDiv.innerHTML = `<span>References:</span> `;
+    refsDiv.classList.add('connections');
+    refsDiv.innerHTML = `<span>Connections:</span> `;
 
-    item.references.forEach(ref => {
+    item.connections.forEach(ref => {
       const refLink = document.createElement('a');
       refLink.textContent = ref.text;
       refLink.dataset.targetTitle = ref.targetTitle;
@@ -803,8 +803,10 @@ function showPopup(item) {
   popup.style.display = 'block';
 }
 
-popupClose.addEventListener('click', () => {
-  popup.style.display = 'none';
+document.addEventListener('click', (e) => {
+  if (!popup.contains(e.target) && !e.target.classList.contains('timeline-item')) {
+    popup.style.display = 'none';
+  }
 });
 
 function highlightActiveItem(elem) {
