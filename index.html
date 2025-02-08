@@ -132,7 +132,7 @@ const timelineItems = [
         people: ['The Myth of Icarus and Daedalus'],
         category: 'Cultural Artifacts',
         row: 1,
-        connections: [] // No connections here.
+        connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt' ]
       },
   {
         date: '400s BCE',
@@ -154,7 +154,7 @@ const timelineItems = [
         people: ['Archimedes'],
         category: 'Conceptual & Scientific Breakthroughs',
         row: 1,
-        connections: [] // No connections here.
+        connections: ['Roger Bacon\'s Air Support Theory', 'Robert Hooke\'s Airflow']
       },
    {
         date: '200s BCE',
@@ -165,7 +165,7 @@ const timelineItems = [
         people: ['Kongming'],
         category: 'Conceptual & Scientific Breakthroughs',
         row: 1,
-     connections: [] // No connections here.
+     connections: ['Early Kites', 'Paper']
       },
     {
     date: '100s CE',
@@ -176,7 +176,7 @@ const timelineItems = [
     people: ['Hero of Alexandria'],
     category: 'Conceptual & Scientific Breakthroughs',
     row: 1,
-      connections: [] // No connections here.
+      connections: ['Archytas\' Flying Pigeon']
   },
       {
         date: '800s',
@@ -187,7 +187,7 @@ const timelineItems = [
         people: ['Abbas Ibn Firnas'],
         category: 'Engineering Experiments & Demonstrations',
         row: 2,
-        connections: [] // No connections here.
+        connections: ['The Myth of Icarus and Daedalus', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt']
       },
         {
         date: '800s',
@@ -209,7 +209,7 @@ const timelineItems = [
         people: ['Eilmer of Malmesbury'],
         category: 'Engineering Experiments & Demonstrations',
         row: 2,
-        connections: [] // No connections here.
+        connections: ['The Myth of Icarus and Daedalus', 'Abbas Ibn Firnas\'s jump', 'João Torto\'s Failed Flight Attempt']
       },
       {
         date: '1290s',
@@ -220,7 +220,7 @@ const timelineItems = [
         people: ['Roger Bacon'],
         category: 'Conceptual & Scientific Breakthroughs',
         row: 2,
-        connections: [] // No connections here.
+        connections: ['Archimedes\' Buoyancy Principle', 'Robert Hooke\'s Airflow']
       },
       {
         date: '1480s',
@@ -231,7 +231,7 @@ const timelineItems = [
         people: ['Leonardo da Vinci'],
         category: 'Cultural Artifacts',
         row: 2,
-        connections: [] // No connections here.
+        connections: ['Paper'] // No connections here.
       },
       {
         date: '1540s',
@@ -242,7 +242,7 @@ const timelineItems = [
         people: ['João Torto'],
         category: 'Engineering Experiments & Demonstrations',
         row: 2,
-        connections: [] // No connections here.
+        connections: ['The Myth of Icarus and Daedalus', 'Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt']
       },
   {
         date: '1657',
@@ -264,7 +264,7 @@ const timelineItems = [
         people: ['Robert Hooke'],
         category: 'Conceptual & Scientific Breakthroughs',
         row: 2,
-        connections: [] // No connections here.
+        connections: ['Archimedes\' Buoyancy Principle', 'Roger Bacon\'s Air Support Theory'] // No connections here.
       },
       {
         date: '1709',
@@ -275,7 +275,7 @@ const timelineItems = [
         people: ['Bartolomeu de Gusmão'],
         category: 'Engineering Experiments & Demonstrations',
         row: 3,
-        connections: [] // No connections here.
+        connections: ['Kongming\'s Sky Lantern','Archimedes\' Buoyancy Principle']
       },
         {
         date: '1726',
@@ -308,7 +308,7 @@ const timelineItems = [
   people: ['George Cayley'],
   row: 4,
   connections: [],
-  category: "Engineering Experiments & Demonstrations"
+  category: "Conceptual & Scientific Breakthroughs"
 },
 {
   date: '1852',
@@ -363,7 +363,7 @@ const timelineItems = [
   people: ['Francis Wenham'],
   row: 7,
   connections: [],
-  category: "Engineering Experiments & Demonstrations"
+  category: "Conceptual & Scientific Breakthroughs"
 },
 {
   date: '1884',
@@ -440,7 +440,7 @@ const timelineItems = [
   people: ['Percy Pilcher'],
   row: 9,
   connections: [],
-  category: "Engineering Experiments & Demonstrations"
+  category: "Conceptual & Scientific Breakthroughs"
 },
 {
   date: '1900',
@@ -497,6 +497,17 @@ const timelineItems = [
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
+  {
+  date: '1903',
+  location: 'Scotland',
+  title: "Preston Watson's Alleged Flight",
+  description: "Preston Watson allegedly flies, though no strong evidence exists.",
+  img: "/api/placeholder/100/100",
+  people: ['Preston Watson'],
+  row: 9,
+  connections: [],
+  category: "Engineering Experiments & Demonstrations"
+},
 {
   date: '1906',
   location: 'Brazil/France',
@@ -544,13 +555,13 @@ const timelineItems = [
 {
   date: '1908',
   location: 'United Kingdom',
-  title: 'John William Dunne',
+  title: "John William Dunne's warplanes",
   description: "Develops tailless aircraft designs with military applications.",
   img: "/api/placeholder/100/100",
   people: ['John William Dunne'],
   row: 11,
   connections: [],
-  category: "Engineering Experiments & Demonstrations"
+  category: "Conceptual & Scientific Breakthroughs"
 },
 {
   date: '1909',
@@ -605,40 +616,7 @@ const timelineItems = [
   people: ['Henry Farman'],
   row: 12,
   connections: [],
-  category: "Engineering Experiments & Demonstrations"
-},
-{
-  date: '1901–1903',
-  location: 'United States',
-  title: "Samuel Langley's Aerodrome A Failure",
-  description: "Samuel Pierpont Langley builds and crashes the Aerodrome A, a failed attempt at powered flight.",
-  img: "/api/placeholder/100/100",
-  people: ['Samuel Pierpont Langley'],
-  row: 13,
-  connections: [],
-  category: "Engineering Experiments & Demonstrations"
-},
-{
-  date: '1903',
-  location: 'Scotland',
-  title: "Preston Watson's Alleged Flight",
-  description: "Preston Watson allegedly flies, though no strong evidence exists.",
-  img: "/api/placeholder/100/100",
-  people: ['Preston Watson'],
-  row: 13,
-  connections: [],
-  category: "Engineering Experiments & Demonstrations"
-},
-{
-  date: '1904',
-  location: 'United Kingdom',
-  title: "John William Dunne's Tailless Aircraft",
-  description: "John William Dunne develops early tailless aircraft designs with military backing.",
-  img: "/api/placeholder/100/100",
-  people: ['John William Dunne'],
-  row: 13,
-  connections: [],
-  category: "Engineering Experiments & Demonstrations"
+  category: "Conceptual & Scientific Breakthroughs"
 },
 {
   date: '1910',
@@ -647,7 +625,7 @@ const timelineItems = [
   description: "Henri Coandă builds the Coandă-1910, possibly the first jet-propelled aircraft.",
   img: "/api/placeholder/100/100",
   people: ['Henri Coandă'],
-  row: 14,
+  row: 13,
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
@@ -658,18 +636,18 @@ const timelineItems = [
   description: "The St. Petersburg-Tampa Airboat Line starts commercial flights, pioneering airline service.",
   img: "/api/placeholder/100/100",
   people: ['Thomas Benoist', 'Percival Fansler'],
-  row: 14,
+  row: 13,
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
 {
   date: '1928',
   location: 'Germany',
-  title: 'Graf Zeppelin',
+  title: 'The Graf Zeppelin',
   description: "The LZ 127 Graf Zeppelin, a large passenger-carrying rigid airship, enters commercial service and demonstrates long-distance travel potential.",
   img: "/api/placeholder/100/100",
   people: ['Ferdinand von Zeppelin'],
-  row: 15,
+  row: 14,
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
@@ -680,7 +658,7 @@ const timelineItems = [
   description: "Chuck Yeager pilots the Bell X-1 to become the first to break the sound barrier in level flight.",
   img: "/api/placeholder/100/100",
   people: ['Chuck Yeager'],
-  row: 15,
+  row: 14,
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
