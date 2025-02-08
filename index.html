@@ -1,100 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Aviation History Timeline</title>
+  <title>Color-Coded Connections by Category</title>
   <style>
     .timeline {
       display: flex;
       justify-content: space-between;
-      position: relative;
       margin: 50px 0;
     }
     .timeline-column {
-      position: relative;
-      width: 32%; /* 3 columns total */
+      width: 32%;
       padding: 20px;
       box-sizing: border-box;
     }
-    /* Vertical line in each column (optional decorative effect) */
-    .timeline-column::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 10px;
-      border-left: 2px solid #ccc;
-    }
     .timeline-item {
-      position: relative;
-      margin-bottom: 30px;
-      padding: 20px;
+      margin-bottom: 20px;
       background-color: #f4f4f4;
       border-radius: 5px;
       cursor: pointer;
       text-align: center;
-    }
-    .timeline-item h3 {
-      margin: 0;
-      font-size: 1.1em;
-    }
-    .timeline-item p {
-      margin: 5px 0 0;
-    }
-    .timeline-item:hover {
-      background-color: #e0e0e0;
+      padding: 10px;
     }
     .timeline-item.active {
-      background-color: #c0c0c0;
+      background-color: #cfcfcf;
+    }
+    .connections {
+      margin-top: 10px;
+      font-size: 0.9em;
+      text-align: left;
+    }
+    .connections span {
+      font-weight: bold;
+    }
+    .connections a {
+      text-decoration: underline;
+      cursor: pointer;
+      margin-right: 8px;
     }
     .popup {
-      display: none;
+      display: none; /* hidden by default */
       position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #fff;
+      transform: translate(-50%,-50%);
+      background: #fff;
       padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
       max-width: 400px;
-      text-align: left;
+      width: 90%;
       z-index: 999;
-    }
-    .popup img {
-      max-width: 100%;
-      height: auto;
-      margin: 10px 0;
     }
     .popup-close {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 5px;
+      right: 5px;
       cursor: pointer;
-    }
-    /* Optional background color differences per category column */
-    .timeline-column[data-category="Cultural Artifacts"] {
-      background-color: #f9f9f9;
-    }
-    .timeline-column[data-category="Conceptual & Scientific Breakthroughs"] {
-      background-color: #e9e9e9;
-    }
-    .timeline-column[data-category="Engineering Experiments & Demonstrations"] {
-      background-color: #f0f0f0;
     }
   </style>
 </head>
 <body>
-  <h1>Aviation History Timeline</h1>
-  
-  <div class="timeline">
-    <!-- Timeline columns will be created by JS based on categories -->
-  </div>
 
-  <!-- Popup for showing details of timeline items -->
-  <div class="popup">
-    <span class="popup-close">&times;</span>
-    <div id="popup-content"></div>
-  </div>
+<h1>Aviation Timeline with Color-Coded Connections</h1>
+
+<div class="timeline">
+  <!-- JS will create columns here -->
+</div>
+
+<!-- Popup for showing details -->
+<div class="popup">
+  <span class="popup-close">&times;</span>
+  <div id="popup-content"></div>
+</div>
 
 <script>
 const timelineItems = [
@@ -691,86 +668,141 @@ const timelineItems = [
       'Conceptual & Scientific Breakthroughs',
       'Engineering Experiments & Demonstrations'
     ];
+  const categoryColors = {
+  "Cultural Artifacts": "purple",
+  "Conceptual & Scientific Breakthroughs": "red",
+  "Engineering Experiments & Demonstrations": "blue"
+};
 
-    // 2) Grab the main timeline container.
-    const timelineContainer = document.querySelector('.timeline');
+// 4) Setup the timeline columns
+const timelineContainer = document.querySelector('.timeline');
 
-    // 3) Create a column <div> for each category, label it with data-category
-    categories.forEach(category => {
-      const timelineColumn = document.createElement('div');
-      timelineColumn.classList.add('timeline-column');
-      timelineColumn.setAttribute('data-category', category);
+categories.forEach(cat => {
+  const colDiv = document.createElement('div');
+  colDiv.classList.add('timeline-column');
+  colDiv.setAttribute('data-category', cat);
 
-      // Optional: add a heading within the column to label it
-      const heading = document.createElement('h2');
-      heading.textContent = category;
-      timelineColumn.appendChild(heading);
+  // optional heading
+  const heading = document.createElement('h2');
+  heading.textContent = cat;
+  colDiv.appendChild(heading);
 
-      timelineContainer.appendChild(timelineColumn);
-    });
+  timelineContainer.appendChild(colDiv);
+});
 
-    // 4) Sort items by row for vertical ordering within each column
-    timelineItems.sort((a, b) => a.row - b.row);
+// 5) Sort items by row
+timelineItems.sort((a, b) => a.row - b.row);
 
-    // 5) Create DOM elements for each timeline item and append to the correct column
-    timelineItems.forEach(item => {
-      const timelineItem = document.createElement('div');
-      timelineItem.classList.add('timeline-item');
-      timelineItem.innerHTML = `
-        <h3>${item.date}</h3>
-        <p>${item.title}</p>
-      `;
+// 6) Render each item
+timelineItems.forEach(item => {
+  // create an ID from title (for optional scrolling)
+  const itemId = item.title.replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+  item._domId = itemId;
 
-      // On click, show details in popup
-      timelineItem.addEventListener('click', () => {
-        showPopup(item);
-        highlightActiveItem(timelineItem);
+  const timelineItem = document.createElement('div');
+  timelineItem.classList.add('timeline-item');
+  timelineItem.id = itemId;
+
+  timelineItem.innerHTML = `
+    <h3>${item.date}</h3>
+    <p>${item.title}</p>
+  `;
+
+  // On click, show popup
+  timelineItem.addEventListener('click', () => {
+    showPopup(item);
+    highlightActiveItem(timelineItem);
+  });
+
+  // If references exist, build them
+  if (item.references && item.references.length > 0) {
+    const refsDiv = document.createElement('div');
+    refsDiv.classList.add('references');
+    refsDiv.innerHTML = `<span>References:</span> `;
+
+    item.references.forEach(ref => {
+      const refLink = document.createElement('a');
+      refLink.textContent = ref.text;
+      refLink.dataset.targetTitle = ref.targetTitle;
+
+      // When user clicks a reference link
+      refLink.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        e.preventDefault();
+
+        // find the target item
+        const targetItem = timelineItems.find(i => i.title === refLink.dataset.targetTitle);
+        if (targetItem) {
+          // show popup for that item
+          showPopup(targetItem);
+
+          // highlight and optionally scroll
+          const targetElem = document.getElementById(targetItem._domId);
+          if (targetElem) {
+            highlightActiveItem(targetElem);
+            targetElem.scrollIntoView({behavior: 'smooth'});
+          }
+        }
       });
 
-      // Find the appropriate column by category
-      const categorySelector = `.timeline-column[data-category="${item.category}"]`;
-      const timelineColumn = document.querySelector(categorySelector);
-
-      // If a matching column is found, append this item
-      if (timelineColumn) {
-        timelineColumn.appendChild(timelineItem);
+      // *******************
+      // COLOR-CODING LINKS
+      // *******************
+      // We'll find the targetItem first, then color it based on targetItem.category:
+      const targetItem = timelineItems.find(i => i.title === ref.targetTitle);
+      if (targetItem) {
+        const color = categoryColors[targetItem.category] || 'black';
+        refLink.style.color = color;
       }
+
+      refsDiv.appendChild(refLink);
     });
 
-    // 6) Popup handling
-    const popup = document.querySelector('.popup');
-    const popupContent = document.getElementById('popup-content');
-    const popupClose = document.querySelector('.popup-close');
+    timelineItem.appendChild(refsDiv);
+  }
 
-    function showPopup(item) {
-      popupContent.innerHTML = `
-        <h3>${item.title}</h3>
-        <p><strong>Date:</strong> ${item.date}</p>
-        <p><strong>Description:</strong> ${item.description}</p>
-        <img src="${item.img}" alt="${item.title}">
-        <p><strong>Location:</strong> ${item.location}</p>
-        <p><strong>Key people involved:</strong></p>
-        <ul>
-          ${item.people.map(person => `<li>${person}</li>`).join('')}
-        </ul>
-      `;
-      popup.style.display = 'block';
-    }
+  // place in correct column
+  const colSelector = `.timeline-column[data-category="${item.category}"]`;
+  const colDiv = document.querySelector(colSelector);
+  if (colDiv) {
+    colDiv.appendChild(timelineItem);
+  }
 
-    // Highlight the active timeline item
-    function highlightActiveItem(item) {
-      // Remove .active from any previously active item
-      const activeItem = document.querySelector('.timeline-item.active');
-      if (activeItem) {
-        activeItem.classList.remove('active');
-      }
-      item.classList.add('active');
-    }
+  // store reference to DOM
+  item._domElement = timelineItem;
+});
 
-    // Close the popup
-    popupClose.addEventListener('click', () => {
-      popup.style.display = 'none';
-    });
-  </script>
+// 7) Popup logic
+const popup = document.querySelector('.popup');
+const popupContent = document.getElementById('popup-content');
+const popupClose = document.querySelector('.popup-close');
+
+function showPopup(item) {
+  popupContent.innerHTML = `
+    <h3>${item.title}</h3>
+    <p><strong>Date:</strong> ${item.date}</p>
+    <p><strong>Description:</strong> ${item.description}</p>
+    <img src="${item.img}" alt="${item.title}" style="max-width:100%; margin: 10px 0;">
+    <p><strong>Location:</strong> ${item.location}</p>
+    <p><strong>Key people:</strong></p>
+    <ul>
+      ${item.people.map(p => `<li>${p}</li>`).join('')}
+    </ul>
+  `;
+  popup.style.display = 'block';
+}
+
+popupClose.addEventListener('click', () => {
+  popup.style.display = 'none';
+});
+
+function highlightActiveItem(elem) {
+  const prevActive = document.querySelector('.timeline-item.active');
+  if (prevActive) {
+    prevActive.classList.remove('active');
+  }
+  elem.classList.add('active');
+}
+</script>
 </body>
 </html>
