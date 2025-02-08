@@ -33,7 +33,7 @@
 }
 
 /* Category-based color styling */
-.timeline-item[data-category="Cultural Artifacts"] {
+.timeline-item[data-category="Sociocultural Factors"] {
   border-left-color: purple;
   background: linear-gradient(to right, rgba(128, 0, 128, 0.15), white);
 }
@@ -102,9 +102,20 @@
 <script>
 const timelineItems = [
   {
+    date: 'c. 2700 BCE',
+    location: 'China',
+    title: 'Silk Production and Trade',
+    description: 'Chinese silk becomes a prized lightweight and strong textile. This material would eventually be used for early kites, balloon envelopes, and parachutes.',
+    img: '/api/placeholder/100/100',
+    people: ['Legendary Empress Leizu (mythical)'],
+    category: 'Indirect Innovations & Conditions',
+    connections: [],
+    row: 1
+  },
+  {
     date: '100s BCE',
     location: 'China',
-    title: 'Paper',
+    title: 'Paper Production and Trade',
     description: 'Paper is invented in China and then spreads to the Arabic world in the 700s BC, then to Medieval Europe. A key material innovation that aided future flight experiments. The lightweight material was later used in hot air lanterns in China. Even later, Leonardo da Vinci and George Cayley used paper and other lightweight materials to create models and test their theories of flight ',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
@@ -130,7 +141,7 @@ const timelineItems = [
         description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a ‘flying machine.’',
         img: "/api/placeholder/100/100",
         people: ['The Pushpaka Vimana'],
-        category: 'Cultural Artifacts',
+        category: 'Sociocultural Factors',
         row: 1,
         connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt' ]
       },
@@ -141,7 +152,7 @@ const timelineItems = [
         description: 'This myth, often depicted in classical art and referenced by poets and playwrights, is one of the earliest and most enduring symbols of humanity’s flight aspirations—and of hubris. It reminds us that the dream of flying dates back to antiquity and has long carried both awe and cautionary overtones.',
         img: "/api/placeholder/100/100",
         people: ['The Myth of Icarus and Daedalus'],
-        category: 'Cultural Artifacts',
+        category: 'Sociocultural Factors',
         row: 1,
         connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt' ]
       },
@@ -179,7 +190,7 @@ const timelineItems = [
      connections: ['Early Kites', 'Paper']
       },
     {
-    date: '100s CE',
+    date: '100s',
     location: 'Alexandria, Egypt',
     title: 'Hero\'s Aeolipile',
     description: 'Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.',
@@ -207,10 +218,21 @@ const timelineItems = [
         description: 'One of the tales from One Thousand and One Night. An inventor presents a magical mechanical horse to a Persian king; the horse can fly its rider into the sky.',
         img: "/api/placeholder/100/100",
         people: ['The Ebony Horse'],
-        category: 'Cultural Artifacts',
+        category: 'Sociocultural Factors',
         row: 2,
         connections: [] // No connections here.
       },
+    {
+    date: '900s',
+    location: 'China',
+    title: 'Gunpowder Invention',
+    description: 'Invented in China for fireworks and warfare, gunpowder also sowed the seed for rocketry, influencing the concept of thrust and controlled explosions for propulsion.',
+    img: '/api/placeholder/100/100',
+    people: ['Chinese Alchemists'],
+    category: 'Conceptual & Scientific Breakthroughs',
+    connections: [],
+    row: 2
+  },
   {
         date: '1000s',
         location: 'England',
@@ -233,6 +255,17 @@ const timelineItems = [
         row: 2,
         connections: ['Archimedes\' Buoyancy Principle', 'Robert Hooke\'s Airflow']
       },
+    {
+    date: '1440s',
+    location: 'Mainz, Germany',
+    title: 'Gutenberg\'s Printing Press',
+    description: 'Johannes Gutenberg develops the movable-type printing press, drastically speeding the circulation of new ideas and scientific works, including theories of flight.',
+    img: '/api/placeholder/100/100',
+    people: ['Johannes Gutenberg'],
+    category: 'Conceptual & Scientific Breakthroughs',
+    connections: [],
+    row: 2
+  },
       {
         date: '1480s',
         location: 'Italy',
@@ -240,7 +273,7 @@ const timelineItems = [
         description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
         img: "/api/placeholder/100/100",
         people: ['Leonardo da Vinci'],
-        category: 'Cultural Artifacts',
+        category: 'Sociocultural Factors',
         row: 2,
         connections: ['Paper'] // No connections here.
       },
@@ -255,6 +288,17 @@ const timelineItems = [
         row: 2,
         connections: ['The Myth of Icarus and Daedalus', 'Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt']
       },
+  {
+  date: '17th–19th Centuries',
+  location: 'Europe',
+  title: 'The Gentleman Scientist Tradition',
+  description: 'Wealthy or well-connected amateurs (often aristocrats) pursued scientific research as a leisure activity, self-funding experiments without needing immediate commercial return. Figures like Sir George Cayley (an English baronet) exemplify this ethos; their private means allowed them to freely investigate aerodynamics, laying crucial groundwork for later practical aviation breakthroughs.',
+  img: '/api/placeholder/100/100',
+  people: ['Sir George Cayley', 'Other Aristocratic Natural Philosophers'],
+  category: 'Sociocultural Factors',
+  connections: [],
+  row: 2
+},
     {
         date: '1634',
         location: 'Holy Roman Empire',
@@ -262,7 +306,7 @@ const timelineItems = [
         description: 'One of the first “proto–science fiction” works. A fictional narrative describing a journey to the Moon, introducing early ideas on celestial mechanics. A text showing flight/space travel in a quasi-scientific way.',
         img: "/api/placeholder/100/100",
         people: ['Johannes Kepler'],
-        category: 'Cultural Artifacts',
+        category: 'Sociocultural Factors',
         row: 2,
         connections: [] // No connections here.
       },
@@ -273,7 +317,7 @@ const timelineItems = [
         description: 'One of the first “proto–science fiction” works. A utopian story describing lunar travel using large, trained birds; an early example of flight-themed fiction and speculation.',
         img: "/api/placeholder/100/100",
         people: ['Francis Godwin'],
-        category: 'Cultural Artifacts',
+        category: 'Sociocultural Factors',
         row: 2,
         connections: [] // No connections here.
       },
@@ -284,7 +328,7 @@ const timelineItems = [
         description: 'One of the first “proto–science fiction” works. Although comedic, it proposed mechanical means of leaving Earth, bridging mythic flight and more scientifically grounded speculation.',
         img: "/api/placeholder/100/100",
         people: ['Cyrano de Bergerac'],
-        category: 'Cultural Artifacts',
+        category: 'Sociocultural Factors',
         row: 2,
         connections: [] // No connections here.
       },
@@ -328,7 +372,7 @@ const timelineItems = [
         description: 'Though satire, Laputa symbolizes the human longing to master flight and the sky—exaggerated to the point of political power (the island hovers over other lands). It predates real scientific progress but demonstrates how flight was becoming embedded in broader cultural and sociopolitical thought.',
         img: "/api/placeholder/100/100",
         people: ['Jonathan Swift'],
-        category: 'Cultural Artifacts',
+        category: 'Sociocultural Factors',
         row: 3,
         connections: [] // No connections here.
       },
@@ -343,6 +387,17 @@ const timelineItems = [
         row: 3,
         connections: [] // No connections here.
       },
+    {
+    date: '1760–1840',
+    location: 'Great Britain',
+    title: 'Industrial Revolution',
+    description: 'Steam power revolutionizes manufacturing and metallurgy, providing mass production methods and mechanical expertise that future aircraft builders would rely on.',
+    img: '/api/placeholder/100/100',
+    people: ['James Watt', 'Matthew Boulton'],
+    category: 'Conceptual & Scientific Breakthroughs',
+    connections: [],
+    row: 3
+  },
       {
         date: '1783',
         location: 'France',
@@ -365,6 +420,28 @@ const timelineItems = [
   connections: [],
   category: "Conceptual & Scientific Breakthroughs"
 },
+    {
+    date: '1839',
+    location: 'United States',
+    title: 'Goodyear\'s Vulcanization of Rubber',
+    description: 'Charles Goodyear discovers how to vulcanize rubber, producing stronger, more elastic material. Critical for balloon seals, early tires, and vibration-damping in aircraft.',
+    img: '/api/placeholder/100/100',
+    people: ['Charles Goodyear'],
+    category: 'Conceptual & Scientific Breakthroughs',
+    connections: [],
+    row: 4
+  },
+  {
+    date: '1851',
+    location: 'London, England',
+    title: 'The Great Exhibition',
+    description: 'An international fair showcasing industrial inventions. Events like this spurred global interest in new machines, including early flying contraptions, by awarding prizes and attracting wealthy backers.',
+    img: '/api/placeholder/100/100',
+    people: ['Prince Albert', 'Henry Cole'],
+    category: 'Sociocultural Factors',
+    connections: [],
+    row: 4
+  },
 {
   date: '1852',
   location: 'France',
@@ -407,7 +484,7 @@ const timelineItems = [
   people: ['Jules Verne'],
   row: 7,
   connections: [],
-  category: "Cultural Artifacts"
+  category: "Sociocultural Factors"
 },
 {
   date: '1871',
@@ -431,6 +508,28 @@ const timelineItems = [
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
+  {
+    date: '1885',
+    location: 'Coventry, England',
+    title: 'Safety Bicycle Revolution',
+    description: 'John Kemp Starley produces the “safety bicycle.” This sparks a bicycle boom, driving advances in lightweight metal frames, gears, and precision machining—skills crucial for early airplane builders.',
+    img: '/api/placeholder/100/100',
+    people: ['John Kemp Starley'],
+    category: 'Engineering Experiments & Demonstrations',
+    connections: [],
+    row: 7
+  },
+  {
+    date: '1886',
+    location: 'United States/France',
+    title: 'Hall–Héroult Process for Aluminum',
+    description: 'Charles Martin Hall and Paul Héroult separately discover a cost-effective method to produce aluminum, introducing a strong, lightweight metal for aircraft structures.',
+    img: '/api/placeholder/100/100',
+    people: ['Charles Martin Hall', 'Paul Héroult'],
+    category: 'Conceptual & Scientific Breakthroughs',
+    connections: [],
+    row: 7
+  },
 {
   date: '1891',
   location: 'Germany',
@@ -508,6 +607,17 @@ const timelineItems = [
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
+    {
+    date: '1901',
+    location: 'France',
+    title: 'Deutsch de la Meurthe Prize',
+    description: 'Industrialist Henri Deutsch de la Meurthe offers prizes for airship and airplane feats, sparking fierce competition. These contests push development of powered flight in Europe.',
+    img: '/api/placeholder/100/100',
+    people: ['Henri Deutsch de la Meurthe'],
+    category: 'Sociocultural Factors',
+    connections: [],
+    row: 9
+  },
 {
   date: '1901',
   location: 'United States',
@@ -528,7 +638,7 @@ const timelineItems = [
   people: ['Georges Méliès'],
   row: 9,
   connections: [],
-  category: "Cultural Artifacts"
+  category: "Sociocultural Factors"
 },
 {
   date: '1902',
@@ -627,7 +737,7 @@ const timelineItems = [
   people: ['H.G. Wells', 'Alberto Santos-Dumont'],
   row: 10,
   connections: [],
-  category: "Cultural Artifacts"
+  category: "Sociocultural Factors"
 },
 {
   date: '1908',
@@ -684,6 +794,17 @@ const timelineItems = [
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
+    {
+    date: '1914–1918',
+    location: 'Europe/Worldwide',
+    title: 'Military Demand in World War I',
+    description: 'World War I massively accelerates aircraft innovation, with governments funding engine, aerodynamics, and materials research—much of which transfers to civilian aviation post-war.',
+    img: '/api/placeholder/100/100',
+    people: ['Various WWI Aircraft Pioneers'],
+    category: 'Sociocultural Factors',
+    connections: [],
+    row: 12
+  }
 {
   date: '1918',
   location: 'France',
@@ -756,12 +877,12 @@ const timelineItems = [
 
     // 1) Define the categories you want as columns.
     const categories = [
-      'Cultural Artifacts',
+      'Sociocultural Factors',
       'Conceptual & Scientific Breakthroughs',
       'Engineering Experiments & Demonstrations'
     ];
   const categoryColors = {
-  "Cultural Artifacts": "purple",
+  "Sociocultural Factors": "purple",
   "Conceptual & Scientific Breakthroughs": "red",
   "Engineering Experiments & Demonstrations": "blue"
 };
