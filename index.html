@@ -761,8 +761,8 @@ timelineItems.forEach(item => {
   item._domElement = timelineItem;
 });
 
-  // If connections exist, build them
- if (item.connections && item.connections.length > 0) {
+ // If connections exist, build them
+if (item.connections && item.connections.length > 0) {
   const refsDiv = document.createElement('div');
   refsDiv.classList.add('connections');
   refsDiv.innerHTML = `<span>Connections:</span> `;
@@ -778,7 +778,7 @@ timelineItems.forEach(item => {
     if (targetItem) {
       // Apply color based on category
       refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
-      refLink.style.color = 'white'; // Make text white for better contrast
+      refLink.style.color = 'white'; // Make text white for contrast
 
       // Attach click event
       refLink.addEventListener('click', (e) => {
@@ -801,8 +801,6 @@ timelineItems.forEach(item => {
 
   timelineItem.appendChild(refsDiv);
 }
-
-
   // place in correct column
   const colSelector = `.timeline-column[data-category="${item.category}"]`;
   const colDiv = document.querySelector(colSelector);
@@ -842,7 +840,7 @@ popupClose.addEventListener('click', (e) => {
 });
 
 document.addEventListener('click', (e) => {
-  if (!popup.contains(e.target) && !e.target.classList.contains('timeline-item')) {
+  if (!popup.contains(e.target) && !e.target.closest('.timeline-item')) {
     popup.style.display = 'none';
   }
 });
