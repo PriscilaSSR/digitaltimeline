@@ -727,50 +727,46 @@ timelineItems.forEach(item => {
 
   // If connections exist, build them
   if (item.connections && item.connections.length > 0) {
-    const refsDiv = document.createElement('div');
-    refsDiv.classList.add('connections');
-    refsDiv.innerHTML = `<span>Connections:</span> `;
+  const refsDiv = document.createElement('div');
+  refsDiv.classList.add('connections');
+  refsDiv.innerHTML = `<span>Connections:</span> `;
 
-    item.connections.forEach(ref => {
-      const refLink = document.createElement('a');
-      refLink.textContent = ref.text;
-      refLink.dataset.targetTitle = ref.targetTitle;
+  item.connections.forEach(ref => {
+    const refLink = document.createElement('a');
+    refLink.textContent = ref;
+    refLink.dataset.targetTitle = ref;
 
-      // When user clicks a reference link
-      refLink.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        e.preventDefault();
+    // Handle click to navigate to connected item
+    refLink.addEventListener('click', (e) => {
+      e.stopPropagation(); 
+      e.preventDefault();
 
-        // find the target item
-        const targetItem = timelineItems.find(i => i.title === refLink.dataset.targetTitle);
-        if (targetItem) {
-          // show popup for that item
-          showPopup(targetItem);
-
-          // highlight and optionally scroll
-          const targetElem = document.getElementById(targetItem._domId);
-          if (targetElem) {
-            highlightActiveItem(targetElem);
-            targetElem.scrollIntoView({behavior: 'smooth'});
-          }
-        }
-      });
-
-      // *******************
-      // COLOR-CODING LINKS
-      // *******************
-      // We'll find the targetItem first, then color it based on targetItem.category:
-      const targetItem = timelineItems.find(i => i.title === ref.targetTitle);
+      // Find the connected timeline item
+      const targetItem = timelineItems.find(i => i.title === ref);
       if (targetItem) {
-        const color = categoryColors[targetItem.category] || 'black';
-        refLink.style.color = color;
-      }
+        showPopup(targetItem);
 
-      refsDiv.appendChild(refLink);
+        // Scroll and highlight
+        const targetElem = document.getElementById(targetItem._domId);
+        if (targetElem) {
+          highlightActiveItem(targetElem);
+          targetElem.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
     });
 
-    timelineItem.appendChild(refsDiv);
-  }
+    // Assign color based on category
+    const targetItem = timelineItems.find(i => i.title === ref);
+    if (targetItem) {
+      refLink.style.color = categoryColors[targetItem.category] || 'black';
+    }
+
+    refsDiv.appendChild(refLink);
+  });
+
+  timelineItem.appendChild(refsDiv);
+}
+
 
   // place in correct column
   const colSelector = `.timeline-column[data-category="${item.category}"]`;
