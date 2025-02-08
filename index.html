@@ -13,17 +13,40 @@
       padding: 20px;
       box-sizing: border-box;
     }
-    .timeline-item {
-      margin-bottom: 20px;
-      background-color: #f4f4f4;
-      border-radius: 5px;
-      cursor: pointer;
-      text-align: center;
-      padding: 10px;
-    }
-    .timeline-item.active {
-      background-color: #cfcfcf;
-    }
+/* General timeline item styling */
+.timeline-item {
+  margin-bottom: 20px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.05), white); /* Subtle gradient */
+  border-left: 6px solid transparent; /* Placeholder border for color */
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  padding: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+
+/* Hover effect */
+.timeline-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Category-based color styling */
+.timeline-item[data-category="Cultural Artifacts"] {
+  border-left-color: purple;
+  background: linear-gradient(to right, rgba(128, 0, 128, 0.15), white);
+}
+
+.timeline-item[data-category="Conceptual & Scientific Breakthroughs"] {
+  border-left-color: red;
+  background: linear-gradient(to right, rgba(255, 0, 0, 0.15), white);
+}
+
+.timeline-item[data-category="Engineering Experiments & Demonstrations"] {
+  border-left-color: blue;
+  background: linear-gradient(to right, rgba(0, 0, 255, 0.15), white);
+}
 .connections a {
   display: inline-block;
   background-color: #ddd; /* Light gray background */
@@ -709,24 +732,34 @@ timelineItems.sort((a, b) => a.row - b.row);
 
 // 6) Render each item
 timelineItems.forEach(item => {
-  // create an ID from title (for optional scrolling)
   const itemId = item.title.replace(/\s+/g, '-').replace(/[^\w-]/g, '');
   item._domId = itemId;
 
   const timelineItem = document.createElement('div');
   timelineItem.classList.add('timeline-item');
   timelineItem.id = itemId;
+  timelineItem.setAttribute('data-category', item.category); // 🔹 Add category as an attribute
 
   timelineItem.innerHTML = `
     <h3>${item.date}</h3>
     <p>${item.title}</p>
   `;
 
-  // On click, show popup
+  // Show popup on click
   timelineItem.addEventListener('click', () => {
     showPopup(item);
     highlightActiveItem(timelineItem);
   });
+
+  // Append to correct column
+  const colSelector = `.timeline-column[data-category="${item.category}"]`;
+  const colDiv = document.querySelector(colSelector);
+  if (colDiv) {
+    colDiv.appendChild(timelineItem);
+  }
+
+  item._domElement = timelineItem;
+});
 
   // If connections exist, build them
  if (item.connections && item.connections.length > 0) {
@@ -803,20 +836,17 @@ function showPopup(item) {
   popup.style.display = 'block';
 }
 
-// ✅ Fix: Properly close popup when clicking the close button
 popupClose.addEventListener('click', (e) => {
   e.stopPropagation(); // Prevent click from bubbling up
   popup.style.display = 'none';
 });
 
-// ✅ Fix: Close when clicking outside the popup, but not inside it
 document.addEventListener('click', (e) => {
   if (!popup.contains(e.target) && !e.target.classList.contains('timeline-item')) {
     popup.style.display = 'none';
   }
 });
 
-// ✅ Fix: Prevent clicks inside the popup from closing it
 popup.addEventListener('click', (e) => {
   e.stopPropagation();
 });
