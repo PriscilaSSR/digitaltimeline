@@ -891,7 +891,7 @@ const timelineItems = [
 
 document.addEventListener('DOMContentLoaded', function() {
     const categoryColors = {
-      "Sociocultural Factors": "purple",
+      "Sociocultural Factors": "purple", 
       "Conceptual & Scientific Breakthroughs": "red",
       "Engineering Experiments & Demonstrations": "blue"
     };
@@ -900,7 +900,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const categories = [
       'Sociocultural Factors',
-      'Conceptual & Scientific Breakthroughs',
+      'Conceptual & Scientific Breakthroughs', 
       'Engineering Experiments & Demonstrations'
     ];
 
@@ -948,8 +948,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
 
                     refLink.addEventListener('click', (e) => {
-                        e.stopPropagation(); // PREVENT PARENT CLICK EVENT
-                        e.preventDefault();
+                        e.stopPropagation(); // PREVENT PARENT CLICK EVENT 
+                        e.preventDefault(); 
                         showPopup(targetItem);
 
                         const targetElem = document.getElementById(targetItem._domId);
@@ -977,7 +977,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showPopup(item) {
         popupContent.innerHTML = `
             <h3>${item.title}</h3>
-            <p><strong>Date:</strong> ${item.date}</p>
+            <p><strong>Date:</strong> ${item.date}</p>  
             <p><strong>Description:</strong> ${item.description}</p>
             <p><strong>Location:</strong> ${item.location}</p>
             <p><strong>Key people:</strong> ${item.people.join(', ')}</p>
