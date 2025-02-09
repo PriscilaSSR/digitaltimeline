@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Color-Coded Connections by Category</title>
-  <style>
+   <style>
     .timeline {
       display: flex;
       justify-content: space-between;
@@ -13,58 +13,58 @@
       padding: 20px;
       box-sizing: border-box;
     }
-/* General timeline item styling */
-.timeline-item {
-  margin-bottom: 20px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.05), white); /* Subtle gradient */
-  border-left: 6px solid transparent; /* Placeholder border for color */
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  padding: 12px;
-  transition: all 0.3s ease;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
-}
 
-/* Hover effect */
-.timeline-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.15);
-}
+    /* General timeline item styling */
+    .timeline-item {
+      margin-bottom: 20px;
+      background-size: cover; /* Ensures background expands dynamically */
+      background-position: center;
+      border-left: 6px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      padding: 12px;
+      transition: all 0.3s ease;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      min-height: 120px; /* Ensures background is visible */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
 
-/* Category-based color styling */
-.timeline-item[data-category="Sociocultural Factors"] {
-  border-left-color: purple;
-  background: linear-gradient(to right, rgba(128, 0, 128, 0.15), white);
-}
+    /* Overlay for readability */
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.7); /* Light overlay for readability */
+      border-radius: 8px;
+    }
 
-.timeline-item[data-category="Conceptual & Scientific Breakthroughs"] {
-  border-left-color: red;
-  background: linear-gradient(to right, rgba(255, 0, 0, 0.15), white);
-}
+    .timeline-item h3, .timeline-item p {
+      position: relative;
+      z-index: 2;
+    }
 
-.timeline-item[data-category="Engineering Experiments & Demonstrations"] {
-  border-left-color: blue;
-  background: linear-gradient(to right, rgba(0, 0, 255, 0.15), white);
-}
-.connections a {
-  display: inline-block;
-  background-color: #ddd; /* Light gray background */
-  color: black; /* Default text color */
-  padding: 5px 10px;
-  margin: 4px 3px;
-  border-radius: 12px; /* Rounded corners for hashtag look */
-  font-size: 0.85em;
-  cursor: pointer;
-  text-decoration: none; /* No underline */
-  transition: all 0.3s ease;
-}
+    /* Category-based border colors */
+    .timeline-item[data-category="Sociocultural Factors"] {
+      border-left-color: purple;
+    }
 
-.connections a:hover {
-  background-color: #bbb; /* Darker gray on hover */
-}
+    .timeline-item[data-category="Conceptual & Scientific Breakthroughs"] {
+      border-left-color: red;
+    }
+
+    .timeline-item[data-category="Engineering Experiments & Demonstrations"] {
+      border-left-color: blue;
+    }
+
     .popup {
-      display: none; /* hidden by default */
+      display: none;
       position: fixed;
       top: 50%;
       left: 50%;
@@ -894,12 +894,9 @@ categories.forEach(cat => {
   const colDiv = document.createElement('div');
   colDiv.classList.add('timeline-column');
   colDiv.setAttribute('data-category', cat);
-
-  // optional heading
   const heading = document.createElement('h2');
   heading.textContent = cat;
   colDiv.appendChild(heading);
-
   timelineContainer.appendChild(colDiv);
 });
 
@@ -908,18 +905,13 @@ timelineItems.sort((a, b) => a.row - b.row);
 
 // 6) Render each item
 timelineItems.forEach(item => {
-  const itemId = item.title.replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-  item._domId = itemId;
-
   const timelineItem = document.createElement('div');
   timelineItem.classList.add('timeline-item');
-  timelineItem.id = itemId;
-  timelineItem.setAttribute('data-category', item.category); 
-
-  timelineItem.innerHTML = `
-    <h3>${item.date}</h3>
-    <p>${item.title}</p>
-  `;
+  timelineItem.setAttribute('data-category', item.category);
+  timelineItem.style.backgroundImage = `url(${item.img})`;
+  timelineItem.innerHTML = `<h3>${item.date}</h3><p>${item.title}</p>`;
+  document.querySelector(`.timeline-column[data-category="${item.category}"]`).appendChild(timelineItem);
+});
 
   // Show popup on click
   timelineItem.addEventListener('click', () => {
