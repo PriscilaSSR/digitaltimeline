@@ -993,7 +993,40 @@ const timelineItems = [
         document.querySelectorAll('.timeline-item.active').forEach(el => el.classList.remove('active'));
         elem.classList.add('active');
     }
-});
+    function setupConnectionLinks() {
+        timelineItems.forEach(item => {
+          if (item.connections && item.connections.length > 0) {
+            item.connections.forEach(ref => {
+              const refLink = document.querySelector(`[data-target-title="${ref}"]`);
+              if (refLink) {
+                refLink.addEventListener('click', (e) => {
+                  console.log('Connection link clicked:', ref);
+                  e.stopPropagation();
+                  e.preventDefault();
+
+                  const targetItem = timelineItems.find(i => i.title === ref);
+                  console.log('Target item:', targetItem);
+
+                  if (targetItem) {
+                    showPopup(targetItem);
+
+                    const targetElem = document.getElementById(targetItem._domId);
+                    console.log('Target element:', targetElem);
+                    if (targetElem) {
+                      highlightActiveItem(targetElem);
+                      targetElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  } else {
+                    console.log('Target item not found');
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+ setupConnectionLinks();
+    });
 </script>
 </body>
 </html>
