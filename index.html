@@ -873,55 +873,55 @@ const timelineItems = [
 }
 
     ];
-    // ============ MAIN SCRIPT LOGIC ===================
+    
+// ============ MAIN SCRIPT LOGIC ===================
 
-    // 1) Define the categories you want as columns.
+document.addEventListener('DOMContentLoaded', function() {
     const categories = [
       'Sociocultural Factors',
       'Conceptual & Scientific Breakthroughs',
       'Engineering Experiments & Demonstrations'
     ];
-  const categoryColors = {
-  "Sociocultural Factors": "purple",
-  "Conceptual & Scientific Breakthroughs": "red",
-  "Engineering Experiments & Demonstrations": "blue"
-};
 
-document.addEventListener('DOMContentLoaded', function() {
+    const categoryColors = {
+      "Sociocultural Factors": "purple",
+      "Conceptual & Scientific Breakthroughs": "red",
+      "Engineering Experiments & Demonstrations": "blue"
+    };
+
     const timelineContainer = document.querySelector('.timeline');
 
     // Create columns dynamically
     categories.forEach(cat => {
-      const colDiv = document.createElement('div');
-      colDiv.classList.add('timeline-column');
-      colDiv.setAttribute('data-category', cat.replace(/\s+/g, '-')); // Normalize category names
-      const heading = document.createElement('h2');
-      heading.textContent = cat;
-      colDiv.appendChild(heading);
-      timelineContainer.appendChild(colDiv);
+        const colDiv = document.createElement('div');
+        colDiv.classList.add('timeline-column');
+        colDiv.setAttribute('data-category', cat.replace(/\s+/g, '-'));
+        const heading = document.createElement('h2');
+        heading.textContent = cat;
+        colDiv.appendChild(heading);
+        timelineContainer.appendChild(colDiv);
     });
 
+    // STEP 1: Assign `_domId` to all items FIRST
+    timelineItems.forEach((item, index) => {
+        item._domId = `item-${index}`;
+    });
+
+    // STEP 2: Render timeline items
     timelineItems.forEach(item => {
         const timelineItem = document.createElement('div');
         timelineItem.classList.add('timeline-item');
-
-        // Normalize category name for consistency
-        const safeCategory = item.category.replace(/\s+/g, '-');
-        timelineItem.setAttribute('data-category', safeCategory);
+        timelineItem.setAttribute('data-category', item.category.replace(/\s+/g, '-'));
         timelineItem.style.backgroundImage = `url(${item.img})`;
         timelineItem.innerHTML = `<h3>${item.date}</h3><p>${item.title}</p>`;
-
-        // Assign ID for linking
-        item._domId = `item-${timelineItems.indexOf(item)}`;
         timelineItem.id = item._domId;
 
-        // Add event listener for popup
         timelineItem.addEventListener('click', () => {
             showPopup(item);
             highlightActiveItem(timelineItem);
         });
 
-        // Handle connections if present
+        // Handle connections
         if (item.connections && item.connections.length > 0) {
             const refsDiv = document.createElement('div');
             refsDiv.classList.add('connections');
@@ -929,13 +929,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
             item.connections.forEach(ref => {
                 const refLink = document.createElement('a');
-                refLink.textContent = `${ref}`;
+                refLink.textContent = ref;
+                refLink.style.margin = "5px";
                 refLink.dataset.targetTitle = ref;
 
                 const targetItem = timelineItems.find(i => i.title === ref);
                 if (targetItem) {
                     refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
                     refLink.style.color = 'white';
+                    refLink.style.padding = "3px 5px";
+                    refLink.style.borderRadius = "5px";
+                    refLink.style.cursor = "pointer";
 
                     refLink.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -945,7 +949,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const targetElem = document.getElementById(targetItem._domId);
                         if (targetElem) {
                             highlightActiveItem(targetElem);
-                            targetElem.scrollIntoView({ behavior: 'smooth' });
+                            targetElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
                     });
                 }
@@ -956,14 +960,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Append to correct column
-        const colDiv = document.querySelector(`.timeline-column[data-category="${safeCategory}"]`);
+        const colDiv = document.querySelector(`.timeline-column[data-category="${item.category.replace(/\s+/g, '-')}"]`);
         if (colDiv) {
             colDiv.appendChild(timelineItem);
         } else {
             console.warn(`Category column not found for ${item.category}`);
         }
-
-        item._domElement = timelineItem;
     });
 
     // Popup logic
@@ -972,24 +974,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const popupClose = document.querySelector('.popup-close');
 
     function showPopup(item) {
-  popupContent.innerHTML = `
-    <h3>${item.title}</h3>
-    <p><strong>Date:</strong> ${item.date}</p>
-    <p><strong>Description:</strong> ${item.description}</p>
-    <img src="${item.img}" alt="${item.title}" style="max-width:100%; margin: 10px 0;">
-    <p><strong>Location:</strong> ${item.location}</p>
-    <p><strong>Key people:</strong></p>
-    <ul>
-      ${item.people.map(p => `<li>${p}</li>`).join('')}
-    </ul>
-  `;
-  popup.style.display = 'block';
-}
+        popupContent.innerHTML = `
+            <h3>${item.title}</h3>
+            <p><strong>Date:</strong> ${item.date}</p>
+            <p><strong>Description:</strong> ${item.description}</p>
+            <p><strong>Location:</strong> ${item.location}</p>
+            <p><strong>Key people:</strong> ${item.people.join(', ')}</p>
+        `;
+        popup.style.display = 'block';
+    }
 
-    popupClose.addEventListener('click', (e) => {
-        e.stopPropagation();
-        popup.style.display = 'none';
-    });
+    popupClose.addEventListener('click', () => popup.style.display = 'none');
 
     document.addEventListener('click', (e) => {
         if (!popup.contains(e.target) && !e.target.closest('.timeline-item')) {
@@ -997,15 +992,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    popup.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-
     function highlightActiveItem(elem) {
-        const prevActive = document.querySelector('.timeline-item.active');
-        if (prevActive) {
-            prevActive.classList.remove('active');
-        }
+        document.querySelectorAll('.timeline-item.active').forEach(el => el.classList.remove('active'));
         elem.classList.add('active');
     }
 });
