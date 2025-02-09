@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aviation Timeline with Connections</title>
+  <style>
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+    }
+    .timeline-column {
+      flex: 1;
+      padding: 10px;
+    }
+    .timeline-item {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .connection-link {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aviation Timeline</h1>
+  <div class="timeline">
+    <div class="timeline-column" id="sociocultural"></div>
+    <div class="timeline-column" id="conceptual"></div>
+    <div class="timeline-column" id="engineering"></div>
+  </div>
+
+  <div class="popup" id="popup">
+    <h2 id="popup-title"></h2>
+    <p id="popup-description"></p>
+    <p><strong>Date:</strong> <span id="popup-date"></span></p>
+    <p><strong>Location:</strong> <span id="popup-location"></span></p>
+    <p><strong>People:</strong> <span id="popup-people"></span></p>
+    <p><strong>Connections:</strong> <span id="popup-connections"></span></p>
+  </div>
+
+  <script>
+    const timelineData = [
+      // ... your timeline data here ...
+    ];
+
+    const categories = {
+      'Sociocultural Factors': 'sociocultural',
+      'Conceptual & Scientific Breakthroughs': 'conceptual',
+      'Engineering Experiments & Demonstrations': 'engineering'
+    };
+
+    const categoryColors = {
+      'Sociocultural Factors': 'lightblue',
+      'Conceptual & Scientific Breakthroughs': 'lightgreen',
+      'Engineering Experiments & Demonstrations': 'lightyellow'
+    };
+
+    function renderTimeline() {
+      timelineData.forEach(item => {
+        const timelineItem = document.createElement('div');
+        timelineItem.classList.add('timeline-item');
+        timelineItem.style.backgroundColor = categoryColors[item.category];
+        timelineItem.innerHTML = `<h3>${item.title}</h3><p>${item.date}</p>`;
+        
+        timelineItem.addEventListener('click', () => {
+          showPopup(item);
+        });
+
+        const column = document.getElementById(categories[item.category]);
+        column.appendChild(timelineItem);
+      });
+    }
+
+    function showPopup(item) {
+      document.getElementById('popup-title').textContent = item.title;
+      document.getElementById('popup-description').textContent = item.description;
+      document.getElementById('popup-date').textContent = item.date;
+      document.getElementById('popup-location').textContent = item.location;
+      document.getElementById('popup-people').textContent = item.people.join(', ');
+      
+      const connectionsElement = document.getElementById('popup-connections');
+      connectionsElement.innerHTML = '';
+      
+      if (item.connections && item.connections.length > 0) {
+        item.connections.forEach(connection => {
+          const connectionLink = document.createElement('span');
+          connectionLink.classList.add('connection-link');
+          connectionLink.textContent = connection;
+          
+          connectionLink.addEventListener('click', () => {
+            const connectedItem = timelineData.find(i => i.title === connection);
+            if (connectedItem) {
+              showPopup(connectedItem);
+            }
+          });
+          
+          connectionsElement.appendChild(connectionLink);
+          connectionsElement.appendChild(document.createTextNode(', '));
+        });
+        
+        connectionsElement.removeChild(connectionsElement.lastChild); // Remove the last comma
+      }
+      
+      document.getElementById('popup').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', renderTimeline);
+    document.addEventListener('click', (event) => {
+      if (event.target.id !== 'popup' && !event.target.closest('.popup')) {
+        document.getElementById('popup').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
