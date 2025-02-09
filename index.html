@@ -113,6 +113,7 @@
 </div>
 
 <script>
+  document.addEventListener('DOMContentLoaded', function() {
 const timelineItems = [
   {
     date: '2700s BCE',
@@ -889,7 +890,6 @@ const timelineItems = [
     
 // ============ MAIN SCRIPT LOGIC ===================
 
-document.addEventListener('DOMContentLoaded', function() {
     const categoryColors = {
       "Sociocultural Factors": "purple", 
       "Conceptual & Scientific Breakthroughs": "red",
@@ -948,16 +948,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
 
                     refLink.addEventListener('click', (e) => {
-                        e.stopPropagation(); // PREVENT PARENT CLICK EVENT 
-                        e.preventDefault(); 
-                        showPopup(targetItem);
+              console.log('Connection link clicked:', ref);
+              e.stopPropagation();
+              e.preventDefault();
+              showPopup(targetItem);
 
-                        const targetElem = document.getElementById(targetItem._domId);
-                        if (targetElem) {
-                            highlightActiveItem(targetElem);
-                            targetElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                    });
+              const targetElem = document.getElementById(targetItem._domId);
+              console.log('Target element:', targetElem);
+              if (targetElem) {
+                highlightActiveItem(targetElem);
+                targetElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            });
                 }
                 refsDiv.appendChild(refLink);
             });
