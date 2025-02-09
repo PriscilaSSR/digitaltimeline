@@ -889,7 +889,6 @@ const timelineItems = [
     
 // ============ MAIN SCRIPT LOGIC ===================
 
-// MAIN SCRIPT
 document.addEventListener('DOMContentLoaded', function() {
     const categoryColors = {
       "Sociocultural Factors": "purple",
@@ -949,7 +948,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
 
                     refLink.addEventListener('click', (e) => {
-                        e.stopPropagation();
+                        e.stopPropagation(); // PREVENT PARENT CLICK EVENT
                         e.preventDefault();
                         showPopup(targetItem);
 
