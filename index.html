@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Color-Coded Connections by Category</title>
-   <style>
+ <style>
     .timeline {
       display: flex;
       justify-content: space-between;
@@ -14,10 +14,9 @@
       box-sizing: border-box;
     }
 
-    /* General timeline item styling */
     .timeline-item {
       margin-bottom: 20px;
-      background-size: cover; /* Ensures background expands dynamically */
+      background-size: cover;
       background-position: center;
       border-left: 6px solid transparent;
       border-radius: 8px;
@@ -26,14 +25,13 @@
       padding: 12px;
       transition: all 0.3s ease;
       box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-      min-height: 120px; /* Ensures background is visible */
+      min-height: 120px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       position: relative;
     }
 
-    /* Overlay for readability */
     .timeline-item::before {
       content: '';
       position: absolute;
@@ -41,7 +39,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.7); /* Light overlay for readability */
+      background: rgba(255, 255, 255, 0.7);
       border-radius: 8px;
     }
 
@@ -50,7 +48,6 @@
       z-index: 2;
     }
 
-    /* Category-based border colors */
     .timeline-item[data-category="Sociocultural Factors"] {
       border-left-color: purple;
     }
@@ -68,11 +65,11 @@
       position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%,-50%);
+      transform: translate(-50%, -50%);
       background: #fff;
       padding: 20px;
       border-radius: 4px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
       max-width: 400px;
       width: 90%;
       z-index: 999;
@@ -83,6 +80,22 @@
       right: 5px;
       cursor: pointer;
     }
+
+    .connections a {
+      display: inline-block;
+      margin: 5px 3px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .connections a:hover {
+      opacity: 0.8;
+    }
+
   </style>
 </head>
 <body>
@@ -876,13 +889,8 @@ const timelineItems = [
     
 // ============ MAIN SCRIPT LOGIC ===================
 
+// MAIN SCRIPT
 document.addEventListener('DOMContentLoaded', function() {
-    const categories = [
-      'Sociocultural Factors',
-      'Conceptual & Scientific Breakthroughs',
-      'Engineering Experiments & Demonstrations'
-    ];
-
     const categoryColors = {
       "Sociocultural Factors": "purple",
       "Conceptual & Scientific Breakthroughs": "red",
@@ -891,7 +899,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const timelineContainer = document.querySelector('.timeline');
 
-    // Create columns dynamically
+    const categories = [
+      'Sociocultural Factors',
+      'Conceptual & Scientific Breakthroughs',
+      'Engineering Experiments & Demonstrations'
+    ];
+
     categories.forEach(cat => {
         const colDiv = document.createElement('div');
         colDiv.classList.add('timeline-column');
@@ -902,12 +915,12 @@ document.addEventListener('DOMContentLoaded', function() {
         timelineContainer.appendChild(colDiv);
     });
 
-    // STEP 1: Assign `_domId` to all items FIRST
+    // Assign `_domId` to each item for reference
     timelineItems.forEach((item, index) => {
         item._domId = `item-${index}`;
     });
 
-    // STEP 2: Render timeline items
+    // Render timeline items
     timelineItems.forEach(item => {
         const timelineItem = document.createElement('div');
         timelineItem.classList.add('timeline-item');
@@ -921,7 +934,6 @@ document.addEventListener('DOMContentLoaded', function() {
             highlightActiveItem(timelineItem);
         });
 
-        // Handle connections
         if (item.connections && item.connections.length > 0) {
             const refsDiv = document.createElement('div');
             refsDiv.classList.add('connections');
@@ -930,16 +942,11 @@ document.addEventListener('DOMContentLoaded', function() {
             item.connections.forEach(ref => {
                 const refLink = document.createElement('a');
                 refLink.textContent = ref;
-                refLink.style.margin = "5px";
                 refLink.dataset.targetTitle = ref;
 
                 const targetItem = timelineItems.find(i => i.title === ref);
                 if (targetItem) {
                     refLink.style.backgroundColor = categoryColors[targetItem.category] || '#ddd';
-                    refLink.style.color = 'white';
-                    refLink.style.padding = "3px 5px";
-                    refLink.style.borderRadius = "5px";
-                    refLink.style.cursor = "pointer";
 
                     refLink.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -959,13 +966,8 @@ document.addEventListener('DOMContentLoaded', function() {
             timelineItem.appendChild(refsDiv);
         }
 
-        // Append to correct column
         const colDiv = document.querySelector(`.timeline-column[data-category="${item.category.replace(/\s+/g, '-')}"]`);
-        if (colDiv) {
-            colDiv.appendChild(timelineItem);
-        } else {
-            console.warn(`Category column not found for ${item.category}`);
-        }
+        if (colDiv) colDiv.appendChild(timelineItem);
     });
 
     // Popup logic
@@ -985,12 +987,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     popupClose.addEventListener('click', () => popup.style.display = 'none');
-
-    document.addEventListener('click', (e) => {
-        if (!popup.contains(e.target) && !e.target.closest('.timeline-item')) {
-            popup.style.display = 'none';
-        }
-    });
 
     function highlightActiveItem(elem) {
         document.querySelectorAll('.timeline-item.active').forEach(el => el.classList.remove('active'));
