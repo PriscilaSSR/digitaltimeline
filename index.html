@@ -32,16 +32,17 @@
       position: relative;
     }
 
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 8px;
-    }
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    pointer-events: none;
+}
 
     .timeline-item h3, .timeline-item p {
       position: relative;
@@ -887,7 +888,7 @@ const timelineItems = [
 }
 
     ];
-    
+     setupConnectionLinks();
 // ============ MAIN SCRIPT LOGIC ===================
 
     const categoryColors = {
@@ -942,6 +943,7 @@ const timelineItems = [
                 const refLink = document.createElement('a');
                 refLink.textContent = ref;
                 refLink.dataset.targetTitle = ref;
+                refLink.href = "#";
 
                 const targetItem = timelineItems.find(i => i.title === ref);
                 if (targetItem) {
@@ -950,7 +952,6 @@ const timelineItems = [
                     refLink.addEventListener('click', (e) => {
               console.log('Connection link clicked:', ref);
               e.stopPropagation();
-              e.preventDefault();
               showPopup(targetItem);
 
               const targetElem = document.getElementById(targetItem._domId);
@@ -1025,7 +1026,6 @@ const timelineItems = [
           }
         });
       }
- setupConnectionLinks();
     });
 </script>
 </body>
