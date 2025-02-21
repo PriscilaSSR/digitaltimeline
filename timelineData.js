@@ -10,11 +10,11 @@ window.timelineItems = [
         category: 'Conceptual & Scientific Breakthroughs',
         connections: [
           "Early Kites", 
-          "Bartolomeu de Gusmão's Passarola", 
+          "Bartolomeu de Gusmão\'s Passarola", 
           "Montgolfier Brothers' Hot Air Balloon",
-          "Henri Giffard's Dirigible",
-          "Charles Renard and Arthur Constantin's Le France",
-          "Aída de Acosta Pilots Santos-Dumont's Dirigible"
+          "Henri Giffard\'s Dirigible",
+          "Charles Renard and Arthur Constantin\'s Le France",
+          "Aída de Acosta Pilots Santos-Dumont\'s Dirigible"
         ],
         row: 1
       },
@@ -47,7 +47,7 @@ window.timelineItems = [
         description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a ‘flying machine.’',
         img: "/api/placeholder/100/100",
         people: ['The Pushpaka Vimana'],
-        category: 'Sociocultural Factors',
+        category: \'sociocultural Factors',
         row: 1,
         connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt' ]
       },
@@ -318,7 +318,7 @@ window.timelineItems = [
       {
   date: '1799',
   location: 'England',
-  title: "George Cayley's Glider Design",
+  title: "George Cayley\'s Glider Design",
   description: "George Cayley designs the first modern glider with distinct lift, thrust, and control components.",
   img: "/api/placeholder/100/100",
   people: ['George Cayley'],
@@ -351,7 +351,7 @@ window.timelineItems = [
 {
   date: '1852',
   location: 'France',
-  title: "Henri Giffard's Dirigible",
+  title: "Henri Giffard\'s Dirigible",
   description: "Henri Giffard invents the first controllable dirigible, powered by a steam engine.",
   img: "/api/placeholder/100/100",
   people: ['Henri Giffard'],
@@ -362,7 +362,7 @@ window.timelineItems = [
 {
   date: '1843',
   location: 'England',
-  title: "William Henson's Aircraft Design",
+  title: "William Henson\'s Aircraft Design",
   description: "William Henson patents an early aircraft design with fixed wings and a steam-powered engine.",
   img: "/api/placeholder/100/100",
   people: ['William Henson'],
@@ -373,7 +373,7 @@ window.timelineItems = [
 {
   date: '1853',
   location: 'England',
-  title: "George Cayley's Manned Glider Flight",
+  title: "George Cayley\'s Manned Glider Flight",
   description: "George Cayley successfully flies the first manned glider. Developed principles of lift, drag, and fixed-wing aircraft.",
   img: "/api/placeholder/100/100",
   people: ['George Cayley'],
@@ -384,7 +384,7 @@ window.timelineItems = [
 {
   date: '1865-1904',
   location: 'England',
-  title: "Jules Verne's Novels",
+  title: "Jules Verne\'s Novels",
   description: "Verne’s meticulous detail and semi-scientific style enthralled readers. He envisioned airships and cannon-propelled moonshots, inspiring generations of inventors to consider powered flight and eventual space travel.",
   img: "/api/placeholder/100/100",
   people: ['Jules Verne'],
@@ -395,7 +395,7 @@ window.timelineItems = [
 {
   date: '1871',
   location: 'England',
-  title: "Francis Wenham's Wind Tunnel",
+  title: "Francis Wenham\'s Wind Tunnel",
   description: "Francis Wenham builds the first wind tunnel to study aerodynamics. Proved that long, narrow wings generate more lift.",
   img: "/api/placeholder/100/100",
   people: ['Francis Wenham'],
@@ -406,7 +406,7 @@ window.timelineItems = [
 {
   date: '1884',
   location: 'France',
-  title: "Charles Renard and Arthur Constantin's Le France",
+  title: "Charles Renard and Arthur Constantin\'s Le France",
   description: "Charles Renard and Arthur Constantin Krebs launch a non-rigid airship that inspires Zeppelin.",
   img: "/api/placeholder/100/100",
   people: ['Charles Renard', 'Arthur Constantin Krebs'],
@@ -439,7 +439,7 @@ window.timelineItems = [
 {
   date: '1891',
   location: 'Germany',
-  title: "Otto Lilienthal's Glider Flights",
+  title: "Otto Lilienthal\'s Glider Flights",
   description: "Otto Lilienthal achieves controlled glider flights and documents aerodynamic research, proving human flight was possible.",
   img: "/api/placeholder/100/100",
   people: ['Otto Lilienthal'],
@@ -450,7 +450,7 @@ window.timelineItems = [
 {
   date: '1896',
   location: 'United States',
-  title: "Octave Chanute's Biplane Glider",
+  title: "Octave Chanute\'s Biplane Glider",
   description: "Octave Chanute advances glider designs and builds a successful biplane glider, improving aviation theories.",
   img: "/api/placeholder/100/100",
   people: ['Octave Chanute'],
@@ -461,7 +461,7 @@ window.timelineItems = [
 {
   date: '1890',
   location: 'France',
-  title: "Clément Ader's Éole",
+  title: "Clément Ader\'s Éole",
   description: "Clément Ader builds the Éole, a bat-like steam-powered aircraft, which briefly lifts off but lacks control.",
   img: "/api/placeholder/100/100",
   people: ['Clément Ader'],
@@ -472,7 +472,7 @@ window.timelineItems = [
 {
   date: '1894',
   location: 'United States/United Kingdom',
-  title: "Hiram Maxim's Steam-Powered Biplane",
+  title: "Hiram Maxim\'s Steam-Powered Biplane",
   description: "Hiram Maxim builds and tests a massive steam-powered biplane but fails to achieve sustained flight.",
   img: "/api/placeholder/100/100",
   people: ['Hiram Maxim'],
@@ -483,7 +483,7 @@ window.timelineItems = [
 {
   date: '1896',
   location: 'United States',
-  title: "Samuel Pierpont Langley's Aerodrome",
+  title: "Samuel Pierpont Langley\'s Aerodrome",
   description: "Samuel Pierpont Langley flies small, unmanned models successfully. Built the Aerodrome A, which failed at full scale.",
   img: "/api/placeholder/100/100",
   people: ['Samuel Pierpont Langley'],
@@ -494,7 +494,7 @@ window.timelineItems = [
 {
   date: '1899',
   location: 'United Kingdom',
-  title: "Percy Pilcher's Powered Aircraft Design",
+  title: "Percy Pilcher\'s Powered Aircraft Design",
   description: "Percy Pilcher designs a powered aircraft but dies in a glider accident before testing it.",
   img: "/api/placeholder/100/100",
   people: ['Percy Pilcher'],
@@ -505,7 +505,7 @@ window.timelineItems = [
 {
   date: '1900',
   location: 'Germany',
-  title: "Ferdinand von Zeppelin's Rigid Airships",
+  title: "Ferdinand von Zeppelin\'s Rigid Airships",
   description: "Ferdinand von Zeppelin develops rigid airships, leading to widespread use of zeppelins.",
   img: "/api/placeholder/100/100",
   people: ['Ferdinand von Zeppelin'],
@@ -527,7 +527,7 @@ window.timelineItems = [
 {
   date: '1901',
   location: 'United States',
-  title: "Gustave Whitehead's Reported Flight",
+  title: "Gustave Whitehead\'s Reported Flight",
   description: "Gustave Whitehead reportedly flies in Connecticut, though documentation remains debated.",
   img: "/api/placeholder/100/100",
   people: ['Gustave Whitehead'],
@@ -538,7 +538,7 @@ window.timelineItems = [
 {
   date: '1902',
   location: 'France',
-  title: "Georges Méliès's A Trip to the Moon",
+  title: "Georges Méliès\'s A Trip to the Moon",
   description: "Georges Méliès creates the iconic silent film, launching a bullet-shaped rocket to the Moon in a whimsical scenario.",
   img: "/api/placeholder/100/100",
   people: ['Georges Méliès'],
@@ -549,7 +549,7 @@ window.timelineItems = [
 {
   date: '1902',
   location: 'New Zealand',
-  title: "Richard Pearse's Monoplane",
+  title: "Richard Pearse\'s Monoplane",
   description: "Richard Pearse builds a monoplane and makes brief, uncontrolled flights.",
   img: "/api/placeholder/100/100",
   people: ['Richard Pearse'],
@@ -560,7 +560,7 @@ window.timelineItems = [
 {
   date: '1903',
   location: 'Germany',
-  title: "Karl Jatho's Powered Aircraft",
+  title: "Karl Jatho\'s Powered Aircraft",
   description: "Karl Jatho builds an unstable monoplane that flies briefly but lacks thorough documentation.",
   img: "/api/placeholder/100/100",
   people: ['Karl Jatho'],
@@ -571,7 +571,7 @@ window.timelineItems = [
   {
   date: '1903',
   location: 'Scotland',
-  title: "Preston Watson's Alleged Flight",
+  title: "Preston Watson\'s Alleged Flight",
   description: "Preston Watson allegedly flies, though no strong evidence exists.",
   img: "/api/placeholder/100/100",
   people: ['Preston Watson'],
@@ -593,7 +593,7 @@ window.timelineItems = [
 {
   date: '1906',
   location: 'Brazil/France',
-  title: "Alberto Santos-Dumont's 14-bis Flight",
+  title: "Alberto Santos-Dumont\'s 14-bis Flight",
   description: "Alberto Santos-Dumont flies the 14-bis in Paris—the first powered airplane flight recognized by the Aéro-Club de France.",
   img: "/api/placeholder/100/100",
   people: ['Alberto Santos-Dumont'],
@@ -615,7 +615,7 @@ window.timelineItems = [
 {
   date: '1907',
   location: 'Romania',
-  title: "Traian Vuia's Monoplane",
+  title: "Traian Vuia\'s Monoplane",
   description: "Traian Vuia designs a monoplane with wheels that takes off unaided but flies only short distances.",
   img: "/api/placeholder/100/100",
   people: ['Traian Vuia'],
@@ -626,8 +626,8 @@ window.timelineItems = [
 {
   date: '1908',
   location: 'France',
-  title: "Aída de Acosta Pilots Santos-Dumont's Dirigible",
-  description: "Aída de Acosta becomes the first woman to pilot an aircraft: Santos-Dumont's dirigible No. 9.",
+  title: "Aída de Acosta Pilots Santos-Dumont\'s Dirigible",
+  description: "Aída de Acosta becomes the first woman to pilot an aircraft: Santos-Dumont\'s dirigible No. 9.",
   img: "/api/placeholder/100/100",
   people: ['Aída de Acosta', 'Alberto Santos-Dumont'],
   row: 10,
@@ -637,8 +637,8 @@ window.timelineItems = [
 {
   date: '1908',
   location: 'England',
-  title: "H.G. Wells's The War in the Air",
-  description: "H.G. Wells's novel envisions how airplanes could revolutionize warfare, foreshadowing aerial battles of WWI.",
+  title: "H.G. Wells\'s The War in the Air",
+  description: "H.G. Wells\'s novel envisions how airplanes could revolutionize warfare, foreshadowing aerial battles of WWI.",
   img: "/api/placeholder/100/100",
   people: ['H.G. Wells', 'Alberto Santos-Dumont'],
   row: 10,
@@ -648,7 +648,7 @@ window.timelineItems = [
 {
   date: '1908',
   location: 'United Kingdom',
-  title: "John William Dunne's warplanes",
+  title: "John William Dunne\'s warplanes",
   description: "Develops tailless aircraft designs with military applications.",
   img: "/api/placeholder/100/100",
   people: ['John William Dunne'],
@@ -660,7 +660,7 @@ window.timelineItems = [
   date: '1909',
   location: 'France/England',
   title: 'Louis Blériot Crosses the English Channel',
-  description: "Louis Blériot's successful Channel crossing proves the airplane's viability for transportation.",
+  description: "Louis Blériot\'s successful Channel crossing proves the airplane\'s viability for transportation.",
   img: "/api/placeholder/100/100",
   people: ['Louis Blériot'],
   row: 11,
@@ -670,7 +670,7 @@ window.timelineItems = [
 {
   date: '1910',
   location: 'Brazil',
-  title: "Dimitri Sensaud de Lavaud's Flight in Latin America",
+  title: "Dimitri Sensaud de Lavaud\'s Flight in Latin America",
   description: "Dimitri Sensaud de Lavaud completes the first powered flight in Latin America.",
   img: "/api/placeholder/100/100",
   people: ['Dimitri Sensaud de Lavaud'],
@@ -681,7 +681,7 @@ window.timelineItems = [
 {
   date: '1910',
   location: 'France',
-  title: "Henri Fabre's Seaplane Flight",
+  title: "Henri Fabre\'s Seaplane Flight",
   description: "Henri Fabre achieves the first successful seaplane flight.",
   img: "/api/placeholder/100/100",
   people: ['Henri Fabre'],
@@ -714,7 +714,7 @@ window.timelineItems = [
 {
   date: '1918',
   location: 'France',
-  title: "Henry Farman's Aircraft in World War I",
+  title: "Henry Farman\'s Aircraft in World War I",
   description: "Henry Farman develops aircraft used in World War I, advancing military aviation.",
   img: "/api/placeholder/100/100",
   people: ['Henry Farman'],
@@ -725,7 +725,7 @@ window.timelineItems = [
 {
   date: '1910',
   location: 'Romania',
-  title: "Henri Coandă's Coandă-1910",
+  title: "Henri Coandă\'s Coandă-1910",
   description: "Henri Coandă builds the Coandă-1910, possibly the first jet-propelled aircraft.",
   img: "/api/placeholder/100/100",
   people: ['Henri Coandă'],
