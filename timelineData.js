@@ -14,7 +14,6 @@ window.timelineItems = [
           "Montgolfier Brothers' Hot Air Balloon",
           "Henri Giffard\'s Dirigible",
           "Charles Renard and Arthur Constantin\'s Le France",
-          "Aída de Acosta Pilots Santos-Dumont\'s Dirigible"
         ],
         row: 1
       },
@@ -71,7 +70,7 @@ window.timelineItems = [
         people: ['Archytas of Tarentum'],
         category: 'Engineering Experiments & Demonstrations',
         row: 1,
-        connections: ['The Myth of Icarus and Daedalus'] // No connections here.
+        connections: ['The Myth of Icarus and Daedalus']
       },
       {
         date: '200s BCE',
@@ -126,7 +125,7 @@ window.timelineItems = [
         people: ['The Ebony Horse'],
         category: 'Sociocultural Factors',
         row: 2,
-        connections: ['Abbas Ibn Firnas\'s jump'] // No connections here.
+        connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt'] // No connections here.
       },
     {
     date: '900s',
@@ -169,7 +168,7 @@ window.timelineItems = [
     img: '/api/placeholder/100/100',
     people: ['Johannes Gutenberg'],
     category: 'Conceptual & Scientific Breakthroughs',
-    connections: [],
+    connections: ['Paper Production and Trade'],
     row: 2
   },
       {
@@ -181,7 +180,7 @@ window.timelineItems = [
         people: ['Leonardo da Vinci'],
         category: 'Sociocultural Factors',
         row: 2,
-        connections: ['Paper Production and Trade'] // No connections here.
+        connections: ['Paper Production and Trade']
       },
       {
         date: '1540s',
@@ -313,7 +312,7 @@ window.timelineItems = [
         people: ['Jean-François Pilâtre de Rozier', 'François Laurent d\'Arlandes', 'Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
         row: 4,
         category: 'Engineering Experiments & Demonstrations',
-        connections: [] // No connections here.
+        connections: ['Kongming\'s Sky Lantern'] 
       },
       {
   date: '1799',
@@ -323,7 +322,7 @@ window.timelineItems = [
   img: "/api/placeholder/100/100",
   people: ['George Cayley'],
   row: 4,
-  connections: [],
+  connections: ['Early Kites'],
   category: "Conceptual & Scientific Breakthroughs"
 },
     {
@@ -378,7 +377,7 @@ window.timelineItems = [
   img: "/api/placeholder/100/100",
   people: ['George Cayley'],
   row: 7,
-  connections: [],
+  connections: ['George Cayley\'s Glider Design'],
   category: "Engineering Experiments & Demonstrations"
 },
 {
@@ -433,7 +432,7 @@ window.timelineItems = [
     img: '/api/placeholder/100/100',
     people: ['Charles Martin Hall', 'Paul Héroult'],
     category: 'Conceptual & Scientific Breakthroughs',
-    connections: [],
+    connections: ['Industrial Revolution'],
     row: 7
   },
 {
@@ -510,7 +509,7 @@ window.timelineItems = [
   img: "/api/placeholder/100/100",
   people: ['Ferdinand von Zeppelin'],
   row: 9,
-  connections: ['Charles Renard and Arthur Constantin\'s Le France'],
+  connections: ['Hall–Héroult Process for Aluminum', 'Charles Renard and Arthur Constantin\'s Le France'],
   category: "Engineering Experiments & Demonstrations"
 },
     {
@@ -543,7 +542,7 @@ window.timelineItems = [
   img: "/api/placeholder/100/100",
   people: ['Georges Méliès'],
   row: 9,
-  connections: [],
+  connections: ['First Moon Landing'],
   category: "Sociocultural Factors"
 },
 {
@@ -632,7 +631,7 @@ window.timelineItems = [
   people: ['Aída de Acosta', 'Alberto Santos-Dumont'],
   row: 10,
   connections: [],
-  category: "Engineering Experiments & Demonstrations"
+  category: "Sociocultural Factors"
 },
 {
   date: '1908',
@@ -640,7 +639,7 @@ window.timelineItems = [
   title: "H.G. Wells\'s The War in the Air",
   description: "H.G. Wells\'s novel envisions how airplanes could revolutionize warfare, foreshadowing aerial battles of WWI.",
   img: "/api/placeholder/100/100",
-  people: ['H.G. Wells', 'Alberto Santos-Dumont'],
+  people: ['H.G. Wells'],
   row: 10,
   connections: [],
   category: "Sociocultural Factors"
