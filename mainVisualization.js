@@ -175,7 +175,7 @@ const simulation = d3.forceSimulation(nodes)
   .force("charge", d3.forceManyBody().strength(-300))
   .force("center", d3.forceCenter(width / 2, height / 2))
   .force("radial", radialForce)
-  .force("collide", d3.forceCollide(60)); // circle radius 180 => might need more collision
+  .force("collide", d3.forceCollide(80)); // circle radius 180 => might need more collision
 
 ///////////////////////////////
 // 13) Draw links
@@ -203,7 +203,7 @@ const node = gZoom.selectAll(".node")
 
 // Circle
 node.append("circle")
-  .attr("r", 120)    // big circles => might overlap a lot
+  .attr("r", 100)    // big circles => might overlap a lot
   .style("filter", "url(#dropShadow)")  // apply drop shadow
   .attr("fill", d => getCategoryColor(d.category))
   .attr("stroke", "#333")
@@ -228,7 +228,7 @@ node.append("text")
   .style("pointer-events", "none")
   .text(d => d.title)
   // You might want to allow more width, e.g. diameter - some padding
-  .call(wrapText, 200);  // if r=180 => diameter=360 => let's try 300 or so
+  .call(wrapText, 50);  // if r=180 => diameter=360 => let's try 300 or so
 
 ///////////////////////////////
 // 15) Ticking
