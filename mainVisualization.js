@@ -203,7 +203,7 @@ const node = gZoom.selectAll(".node")
 
 // Circle
 node.append("circle")
-  .attr("r", 180)    // big circles => might overlap a lot
+  .attr("r", 120)    // big circles => might overlap a lot
   .style("filter", "url(#dropShadow)")  // apply drop shadow
   .attr("fill", d => getCategoryColor(d.category))
   .attr("stroke", "#333")
@@ -228,7 +228,7 @@ node.append("text")
   .style("pointer-events", "none")
   .text(d => d.title)
   // You might want to allow more width, e.g. diameter - some padding
-  .call(wrapText, 300);  // if r=180 => diameter=360 => let's try 300 or so
+  .call(wrapText, 200);  // if r=180 => diameter=360 => let's try 300 or so
 
 ///////////////////////////////
 // 15) Ticking
