@@ -1,3 +1,23 @@
+// (A) Convert "500s BCE" => -500, "1969" => 1969, etc.
+function parseDateToNumeric(dateString) {
+  // Basic check: if it has "BCE" => negative
+  if (dateString.includes("BCE")) {
+    // Extract digits (e.g. "500s" => 500)
+    const match = dateString.match(/\d+/);
+    const val = match ? parseInt(match[0], 10) : 0;
+    return -val;
+  } else {
+    // For CE, just parse as integer
+    const parsed = parseInt(dateString, 10);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+}
+// (B) Gather numeric years from each node
+const numericDates = nodes.map(d => parseDateToNumeric(d.date));
+const minYear = d3.min(numericDates);
+const maxYear = d3.max(numericDates);
+
+
 // ---------------------------------------
     // 2. Build a title -> index map
     // ---------------------------------------
@@ -21,6 +41,26 @@ data.forEach((item, i) => {
       people: item.people || [],
       connections: item.connections
     }));
+
+// (C) Scale: older => smaller radius, newer => larger
+const radiusScale = d3.scaleLinear()
+  .domain([minYear, maxYear]) // e.g. [-2700, 1970]
+  .range([0, 600]);           // tweak outer range as desired
+
+// (D) Our radial force
+const radialForce = d3.forceRadial(
+  d => {
+    // for each node, parse its date
+    const year = parseDateToNumeric(d.date);
+    // map it to the radial scale
+    return radiusScale(year);
+  },
+  width / 2,   // center X
+  height / 2   // center Y
+)
+// If nodes are too locked into rings, lower strength
+// If they're too loosely arranged, raise strength
+.strength(0.05);
 
     // ---------------------------------------
     // 4. Build links array
@@ -71,10 +111,14 @@ data.forEach((item, i) => {
     // ---------------------------------------
     // 8. Create the force simulation
     // ---------------------------------------
-    const simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id(d => d.id).distance(150))
-      .force("charge", d3.forceManyBody().strength(-300))
-      .force("center", d3.forceCenter(width / 2, height / 2));
+const simulation = d3.forceSimulation(nodes)
+  .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+  .force("charge", d3.forceManyBody().strength(-300))
+  .force("center", d3.forceCenter(width / 2, height / 2))
+  // (E) Add the radial force so older => center, newer => outward
+  .force("radial", radialForce)
+   .force("collide", d3.forceCollide(60)) ;
+
 
     // ---------------------------------------
     // 9. Draw links inside gZoom
