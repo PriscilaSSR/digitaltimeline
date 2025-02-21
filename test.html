@@ -2,8 +2,11 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Interactive Web-like Timeline</title>
+  <title>Branching Timeline with Larger Circles</title>
   <style>
+    body {
+      font-family: sans-serif;
+    }
     .tooltip {
       position: absolute;
       background: #fff;
@@ -11,173 +14,191 @@
       padding: 8px;
       display: none;
       pointer-events: none;
-      max-width: 200px;
+      max-width: 250px;
     }
     .node circle {
       stroke: #333;
       stroke-width: 1px;
     }
     .node text {
-      font-family: sans-serif;
+      font-size: 12px;
+      fill: #fff;
+      text-anchor: middle;
     }
     .link {
       stroke: #999;
       stroke-width: 2px;
       opacity: 0.6;
     }
-    /* optional marker for directional arrow if you want to show flow */
-    .link.marker {
-      marker-end: url(#arrow);
-    }
   </style>
 </head>
 <body>
-  <div id="timeline"></div>
+  <div id="chart"></div>
   <div id="tooltip" class="tooltip"></div>
 
-  <!-- Include D3.js -->
+  <!-- D3.js -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
+    // Our branching data
     const data = {
       "events": [
         {
-          "id": "printingPress",
-          "title": "Printing Press",
-          "date": 1454,
+          "id": "inventionOfPaper",
+          "title": "Invention of Paper in China",
+          "date": 105,
           "type": "Engineering",
-          "description": "Johannes Gutenberg's invention that revolutionized book production...",
-          "linksTo": ["massLiteracy"]
+          "description": "Papermaking was developed in China around 105 AD...",
+          "linksTo": ["silkRoad", "literacyChina"]
         },
         {
-          "id": "massLiteracy",
-          "title": "Mass Literacy",
-          "date": 1500,
+          "id": "silkRoad",
+          "title": "The Silk Road",
+          "date": "130 BC – 1453 AD",
           "type": "Sociocultural",
-          "description": "Widespread availability of books led to societal changes and public education...",
-          "linksTo": ["scientificMethod"]
+          "description": "Trade routes linking East and West...",
+          "linksTo": ["crossCulturalExchange"]
         },
         {
-          "id": "scientificMethod",
-          "title": "Scientific Method",
-          "date": 1620,
+          "id": "literacyChina",
+          "title": "Rise of Literacy in China",
+          "date": 200,
+          "type": "Sociocultural",
+          "description": "Paper led to increased literacy...",
+          "linksTo": ["crossCulturalExchange"]
+        },
+        {
+          "id": "crossCulturalExchange",
+          "title": "Cross-Cultural Exchange",
+          "date": "Ongoing",
           "type": "Conceptual",
-          "description": "Formalized approach to research and experimentation by Bacon, Descartes, etc...",
-          "linksTo": ["engineeringAdvances"]
-        },
-        {
-          "id": "engineeringAdvances",
-          "title": "Engineering Advances",
-          "date": 1700,
-          "type": "Engineering",
-          "description": "Improvements in machinery, fueling the Industrial Revolution...",
+          "description": "The flow of ideas, religions, and inventions...",
           "linksTo": []
         }
       ]
     };
 
-    // Convert events to nodes and links
-    const nodes = data.events.map(event => ({
-      id: event.id,
-      title: event.title,
-      date: event.date,
-      type: event.type,
-      description: event.description
+    // Convert data to nodes, links
+    const nodes = data.events.map(d => ({
+      id: d.id,
+      title: d.title,
+      date: d.date,
+      type: d.type,
+      description: d.description
     }));
 
-    let links = [];
-    data.events.forEach(event => {
-      event.linksTo.forEach(targetId => {
-        links.push({ source: event.id, target: targetId });
+    const links = [];
+    data.events.forEach(d => {
+      d.linksTo.forEach(target => {
+        links.push({ source: d.id, target: target });
       });
     });
 
-    // Color map for each type
+    // Color by type
     const colorMap = {
       "Sociocultural": "#f39c12",
       "Conceptual": "#9b59b6",
       "Engineering": "#3498db"
     };
 
-    // Setup dimensions
+    // Basic dimensions
     const width = 960;
     const height = 600;
 
-    // Create SVG
-    const svg = d3.select("#timeline")
-                  .append("svg")
-                  .attr("width", width)
-                  .attr("height", height);
+    const svg = d3.select("#chart")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height);
 
     const tooltip = d3.select("#tooltip");
 
-    // OPTIONAL: define a marker for directional arrows
-    // (uncomment the "marker-end" line in link drawing below if you want them)
-    svg.append("defs").append("marker")
-      .attr("id", "arrow")
-      .attr("viewBox", "0 -5 10 10")
-      .attr("refX", 15)
-      .attr("refY", 0)
-      .attr("markerWidth", 6)
-      .attr("markerHeight", 6)
-      .attr("orient", "auto")
-      .append("path")
-      .attr("d", "M0,-5L10,0L0,5")
-      .attr("fill", "#999");
-
-    // Create a force simulation
+    // Setup force simulation
     const simulation = d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).id(d => d.id).distance(150))
       .force("charge", d3.forceManyBody().strength(-300))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
-    // Draw the links
+    // Draw links
     const link = svg.selectAll(".link")
       .data(links)
       .enter()
       .append("line")
       .attr("class", "link")
-      // .attr("class", "link marker") // for directional arrow
       .attr("stroke", "#999")
       .attr("stroke-width", 2);
 
-    // Create node groups (<g>)
+    // Create node groups
     const node = svg.selectAll(".node")
       .data(nodes)
       .enter()
       .append("g")
       .attr("class", "node")
       .call(d3.drag()
-          .on("start", dragstarted)
+          .on("start", dragStarted)
           .on("drag", dragged)
-          .on("end", dragended));
+          .on("end", dragEnded));
 
-    // Append circles to each node group
+    // Circle with a fixed radius large enough for multiple words
     node.append("circle")
-      .attr("r", 20)
+      .attr("r", 50) // Increase radius to 50 so text can fit
       .attr("fill", d => colorMap[d.type])
-      .attr("stroke", "#333")
-      .attr("stroke-width", 1)
       .on("click", (event, d) => {
-        // Display tooltip with more detail
-        tooltip.style("left", (event.pageX + 10) + "px")
-               .style("top", (event.pageY + 10) + "px")
-               .style("display", "block")
-               .html(`
-                 <strong>${d.title}</strong> (${d.date})<br/>
-                 <em>Type:</em> ${d.type}<br/>
-                 ${d.description}
-               `);
-        // Stop event from propagating to SVG click
-        event.stopPropagation();
+        // Show tooltip
+        tooltip
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY + 10) + "px")
+          .style("display", "block")
+          .html(`
+            <strong>${d.title}</strong><br/>
+            <em>${d.date}</em> &middot; <span style="color:${colorMap[d.type]}">${d.type}</span><br/>
+            ${d.description}
+          `);
+        event.stopPropagation(); // Prevent background click from firing
       });
 
-    // Append text to node group
+    // Multi-line text approach: 
+    // We'll define a maximum width for the text inside the circle and try a simple wrap.
     node.append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em")
-      .attr("fill", "#fff")
-      .style("font-size", "12px")
-      .text(d => `${d.title} (${d.date})`);
+      .each(function(d) {
+        // We'll store the full string in a variable
+        const fullText = `${d.title} (${d.date})`;
+
+        // Approximate max width in pixels for the text to fit in circle
+        const maxWidth = 80; // a bit smaller than diameter to keep inside circle
+
+        wrapText.call(d3.select(this), fullText, maxWidth);
+      });
+
+    // Basic text-wrapping function
+    // Splits text into multiple <tspan> lines if it exceeds maxWidth
+    function wrapText(textString, maxWidth) {
+      // 'this' is the d3 selection of the <text> element
+      const text = this;
+      const words = textString.split(/\s+/).reverse();
+      let line = [];
+      let lineNumber = 0;
+      const lineHeight = 1.2; // em
+      let tspan = text.append("tspan")
+        .attr("x", 0)
+        .attr("dy", "0em");
+
+      while (words.length) {
+        line.push(words.pop());
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > maxWidth) {
+          // Remove the word that caused overflow
+          line.pop();
+          tspan.text(line.join(" "));
+          line = [words.pop()];
+          tspan = text.append("tspan")
+            .attr("x", 0)
+            .attr("dy", lineHeight + "em")
+            .text(line.join(" "));
+        }
+      }
+      // Center the text after line wrapping
+      text.attr("text-anchor", "middle")
+          .attr("y", -(lineNumber * lineHeight * 10) / 2);
+    }
 
     // Simulation tick
     simulation.on("tick", () => {
@@ -187,8 +208,7 @@
         .attr("x2", d => d.target.x)
         .attr("y2", d => d.target.y);
 
-      node
-        .attr("transform", d => `translate(${d.x},${d.y})`);
+      node.attr("transform", d => `translate(${d.x},${d.y})`);
     });
 
     // Hide tooltip on background click
@@ -196,19 +216,17 @@
       tooltip.style("display", "none");
     });
 
-    // Drag functions
-    function dragstarted(event, d) {
+    // Drag behaviors
+    function dragStarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
     }
-
     function dragged(event, d) {
       d.fx = event.x;
       d.fy = event.y;
     }
-
-    function dragended(event, d) {
+    function dragEnded(event, d) {
       if (!event.active) simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
