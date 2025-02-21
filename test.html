@@ -2,10 +2,25 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Branching Timeline with Larger Circles</title>
+  <title>Flight Timeline Graph</title>
   <style>
     body {
       font-family: sans-serif;
+    }
+    svg {
+      width: 100%;
+      height: 900px; /* Increase if needed */
+      border: 1px solid #ccc;
+      background: #fafafa;
+    }
+    .link {
+      stroke: #999;
+      stroke-width: 2px;
+      opacity: 0.6;
+    }
+    .node circle {
+      stroke: #333;
+      stroke-width: 1px;
     }
     .tooltip {
       position: absolute;
@@ -16,19 +31,11 @@
       pointer-events: none;
       max-width: 250px;
     }
-    .node circle {
-      stroke: #333;
-      stroke-width: 1px;
-    }
     .node text {
-      font-size: 12px;
+      pointer-events: none; 
       fill: #fff;
-      text-anchor: middle;
-    }
-    .link {
-      stroke: #999;
-      stroke-width: 2px;
-      opacity: 0.6;
+      font-size: 12px;
+      text-anchor: middle; 
     }
   </style>
 </head>
@@ -36,73 +43,102 @@
   <div id="chart"></div>
   <div id="tooltip" class="tooltip"></div>
 
-  <!-- D3.js -->
+  <!-- Include D3.js library -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
-    // Our branching data
-    const data = {
-      "events": [
-        {
-          "id": "inventionOfPaper",
-          "title": "Invention of Paper in China",
-          "date": 105,
-          "type": "Engineering",
-          "description": "Papermaking was developed in China around 105 AD...",
-          "linksTo": ["silkRoad", "literacyChina"]
-        },
-        {
-          "id": "silkRoad",
-          "title": "The Silk Road",
-          "date": "130 BC – 1453 AD",
-          "type": "Sociocultural",
-          "description": "Trade routes linking East and West...",
-          "linksTo": ["crossCulturalExchange"]
-        },
-        {
-          "id": "literacyChina",
-          "title": "Rise of Literacy in China",
-          "date": 200,
-          "type": "Sociocultural",
-          "description": "Paper led to increased literacy...",
-          "linksTo": ["crossCulturalExchange"]
-        },
-        {
-          "id": "crossCulturalExchange",
-          "title": "Cross-Cultural Exchange",
-          "date": "Ongoing",
-          "type": "Conceptual",
-          "description": "The flow of ideas, religions, and inventions...",
-          "linksTo": []
-        }
-      ]
-    };
+    // ---------------------------------------
+    // 1. Your timeline data
+    // ---------------------------------------
+    const timelineItems = [
+      /* Paste your entire array here */
+      {
+        date: '2700s BCE',
+        location: 'China',
+        title: 'Silk Production and Trade',
+        description: 'Chinese silk becomes a prized lightweight...',
+        img: 'img/silk.jpg',
+        people: ['Legendary Empress Leizu (mythical)'],
+        category: 'Conceptual & Scientific Breakthroughs',
+        connections: [
+          "Early Kites", 
+          "Bartolomeu de Gusmão's Passarola", 
+          "Montgolfier Brothers' Hot Air Balloon",
+          "Henri Giffard's Dirigible",
+          "Charles Renard and Arthur Constantin's Le France",
+          "Aída de Acosta Pilots Santos-Dumont's Dirigible"
+        ],
+        row: 1
+      },
+      // ... rest of your items ...
+      {
+        date: '1969',
+        location: 'United States',
+        title: 'First Moon Landing',
+        description: 'Neil Armstrong and Buzz Aldrin land on the Moon...',
+        img: '/api/placeholder/100/100',
+        people: ['Neil Armstrong', 'Buzz Aldrin'],
+        row: 15,
+        connections: [],
+        category: "Engineering Experiments & Demonstrations"
+      }
+    ];
 
-    // Convert data to nodes, links
-    const nodes = data.events.map(d => ({
-      id: d.id,
-      title: d.title,
-      date: d.date,
-      type: d.type,
-      description: d.description
+    // ---------------------------------------
+    // 2. Build a title -> index map
+    // ---------------------------------------
+    const titleMap = new Map();
+    timelineItems.forEach((item, i) => {
+      titleMap.set(item.title, i);
+    });
+
+    // ---------------------------------------
+    // 3. Build nodes array
+    // ---------------------------------------
+    const nodes = timelineItems.map((item, i) => ({
+      id: i, 
+      title: item.title,
+      date: item.date,
+      location: item.location,
+      description: item.description,
+      img: item.img,
+      category: item.category,
+      people: item.people || [],
+      connections: item.connections
     }));
 
+    // ---------------------------------------
+    // 4. Build links array
+    // ---------------------------------------
     const links = [];
-    data.events.forEach(d => {
-      d.linksTo.forEach(target => {
-        links.push({ source: d.id, target: target });
+    timelineItems.forEach((item, sourceIndex) => {
+      item.connections.forEach(connTitle => {
+        const targetIndex = titleMap.get(connTitle);
+        if (targetIndex !== undefined) {
+          links.push({ source: sourceIndex, target: targetIndex });
+        }
       });
     });
 
-    // Color by type
+    // ---------------------------------------
+    // 5. Setup color scale by category
+    // ---------------------------------------
     const colorMap = {
-      "Sociocultural": "#f39c12",
-      "Conceptual": "#9b59b6",
-      "Engineering": "#3498db"
+      "Sociocultural Factors": "#e74c3c",
+      "Conceptual & Scientific Breakthroughs": "#9b59b6",
+      "Engineering Experiments & Demonstrations": "#3498db"
     };
 
-    // Basic dimensions
-    const width = 960;
-    const height = 600;
+    // If you have categories beyond these three, you can add them here:
+    // or fallback to a default color
+    function getCategoryColor(cat) {
+      return colorMap[cat] || "#95a5a6"; 
+    }
+
+    // ---------------------------------------
+    // 6. Create the SVG and tooltip
+    // ---------------------------------------
+    const width = 1200;
+    const height = 900;
 
     const svg = d3.select("#chart")
       .append("svg")
@@ -111,13 +147,17 @@
 
     const tooltip = d3.select("#tooltip");
 
-    // Setup force simulation
+    // ---------------------------------------
+    // 7. Create the force simulation
+    // ---------------------------------------
     const simulation = d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).id(d => d.id).distance(150))
       .force("charge", d3.forceManyBody().strength(-300))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
-    // Draw links
+    // ---------------------------------------
+    // 8. Draw links
+    // ---------------------------------------
     const link = svg.selectAll(".link")
       .data(links)
       .enter()
@@ -126,81 +166,57 @@
       .attr("stroke", "#999")
       .attr("stroke-width", 2);
 
-    // Create node groups
+    // Optional: define arrow markers for directions
+    // See previous examples if you want directional arrows.
+
+    // ---------------------------------------
+    // 9. Draw node groups (g)
+    // ---------------------------------------
     const node = svg.selectAll(".node")
       .data(nodes)
       .enter()
       .append("g")
       .attr("class", "node")
       .call(d3.drag()
-          .on("start", dragStarted)
+          .on("start", dragstarted)
           .on("drag", dragged)
-          .on("end", dragEnded));
+          .on("end", dragended));
 
-    // Circle with a fixed radius large enough for multiple words
+    // Large circles so multi-word titles fit
     node.append("circle")
-      .attr("r", 50) // Increase radius to 50 so text can fit
-      .attr("fill", d => colorMap[d.type])
+      .attr("r", 60) // Increase if text is still cramped
+      .attr("fill", d => getCategoryColor(d.category))
+      .attr("stroke", "#333")
+      .attr("stroke-width", 1)
       .on("click", (event, d) => {
-        // Show tooltip
-        tooltip
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY + 10) + "px")
-          .style("display", "block")
-          .html(`
-            <strong>${d.title}</strong><br/>
-            <em>${d.date}</em> &middot; <span style="color:${colorMap[d.type]}">${d.type}</span><br/>
-            ${d.description}
-          `);
-        event.stopPropagation(); // Prevent background click from firing
+        // Show detailed tooltip
+        tooltip.style("left", (event.pageX + 10) + "px")
+               .style("top", (event.pageY + 10) + "px")
+               .style("display", "block")
+               .html(`
+                 <strong>${d.title}</strong><br/>
+                 <em>${d.date} — ${d.location}</em><br/><br/>
+                 ${d.description}<br/><br/>
+                 <strong>People:</strong> ${d.people.join(", ")}
+               `);
+
+        // Stop background click from hiding tooltip
+        event.stopPropagation();
       });
 
-    // Multi-line text approach: 
-    // We'll define a maximum width for the text inside the circle and try a simple wrap.
+    // Add text labels to each node
+    // For multi-line wrapping, you'd write a small function 
+    // to break text into <tspan> lines. For brevity, let's 
+    // place it in a single line or two lines.
     node.append("text")
-      .each(function(d) {
-        // We'll store the full string in a variable
-        const fullText = `${d.title} (${d.date})`;
+      .attr("dy", "0.35em")
+      .style("font-size", "14px")
+      .style("pointer-events", "none") 
+      .text(d => d.title);
 
-        // Approximate max width in pixels for the text to fit in circle
-        const maxWidth = 80; // a bit smaller than diameter to keep inside circle
-
-        wrapText.call(d3.select(this), fullText, maxWidth);
-      });
-
-    // Basic text-wrapping function
-    // Splits text into multiple <tspan> lines if it exceeds maxWidth
-    function wrapText(textString, maxWidth) {
-      // 'this' is the d3 selection of the <text> element
-      const text = this;
-      const words = textString.split(/\s+/).reverse();
-      let line = [];
-      let lineNumber = 0;
-      const lineHeight = 1.2; // em
-      let tspan = text.append("tspan")
-        .attr("x", 0)
-        .attr("dy", "0em");
-
-      while (words.length) {
-        line.push(words.pop());
-        tspan.text(line.join(" "));
-        if (tspan.node().getComputedTextLength() > maxWidth) {
-          // Remove the word that caused overflow
-          line.pop();
-          tspan.text(line.join(" "));
-          line = [words.pop()];
-          tspan = text.append("tspan")
-            .attr("x", 0)
-            .attr("dy", lineHeight + "em")
-            .text(line.join(" "));
-        }
-      }
-      // Center the text after line wrapping
-      text.attr("text-anchor", "middle")
-          .attr("y", -(lineNumber * lineHeight * 10) / 2);
-    }
-
-    // Simulation tick
+    // ---------------------------------------
+    // 10. Simulation tick
+    // ---------------------------------------
     simulation.on("tick", () => {
       link
         .attr("x1", d => d.source.x)
@@ -208,25 +224,32 @@
         .attr("x2", d => d.target.x)
         .attr("y2", d => d.target.y);
 
-      node.attr("transform", d => `translate(${d.x},${d.y})`);
+      node
+        .attr("transform", d => `translate(${d.x},${d.y})`);
     });
 
-    // Hide tooltip on background click
+    // ---------------------------------------
+    // 11. Tooltip hide on background click
+    // ---------------------------------------
     svg.on("click", () => {
       tooltip.style("display", "none");
     });
 
-    // Drag behaviors
-    function dragStarted(event, d) {
+    // ---------------------------------------
+    // 12. Drag behavior
+    // ---------------------------------------
+    function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
     }
+
     function dragged(event, d) {
       d.fx = event.x;
       d.fy = event.y;
     }
-    function dragEnded(event, d) {
+
+    function dragended(event, d) {
       if (!event.active) simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
