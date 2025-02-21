@@ -47,7 +47,7 @@ window.timelineItems = [
         description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a ‘flying machine.’',
         img: "/api/placeholder/100/100",
         people: ['The Pushpaka Vimana'],
-        category: \'sociocultural Factors',
+        category: 'Sociocultural Factors',
         row: 1,
         connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt' ]
       },
