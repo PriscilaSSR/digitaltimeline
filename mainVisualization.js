@@ -228,7 +228,7 @@ node.append("text")
   .style("pointer-events", "none")
   .text(d => d.title)
   // You might want to allow more width, e.g. diameter - some padding
-  .call(wrapText, 50);  // if r=180 => diameter=360 => let's try 300 or so
+  .call(wrapText, 100);  // if r=180 => diameter=360 => let's try 300 or so
 
 ///////////////////////////////
 // 15) Ticking
