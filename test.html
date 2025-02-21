@@ -2,58 +2,107 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Web-like Timeline</title>
+  <title>Interactive Web-like Timeline</title>
   <style>
-    /* Basic styling, container for tooltip or pop-up */
     .tooltip {
       position: absolute;
-      background-color: #fff;
+      background: #fff;
       border: 1px solid #ccc;
       padding: 8px;
-      pointer-events: none;
       display: none;
+      pointer-events: none;
+      max-width: 200px;
     }
-    svg {
-      width: 100%;
-      height: 600px;
+    .node circle {
+      stroke: #333;
+      stroke-width: 1px;
+    }
+    .node text {
+      font-family: sans-serif;
+    }
+    .link {
+      stroke: #999;
+      stroke-width: 2px;
+      opacity: 0.6;
+    }
+    /* optional marker for directional arrow if you want to show flow */
+    .link.marker {
+      marker-end: url(#arrow);
     }
   </style>
 </head>
 <body>
   <div id="timeline"></div>
   <div id="tooltip" class="tooltip"></div>
-  
+
+  <!-- Include D3.js -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
-    // Step 1: Define your data (or fetch from a separate JSON file)
     const data = {
       "events": [
-        { "id": "paper",         "name": "Invention of Paper", "year": 105,  "description": "Papermaking in China...", "linksTo": ["lanterns"] },
-        { "id": "lanterns",      "name": "Lanterns",           "year": 200,  "description": "Paper lantern usage...",  "linksTo": ["hotAirBalloons"] },
-        { "id": "hotAirBalloons","name": "Hot Air Balloons",   "year": 1783, "description": "Montgolfier brothers...", "linksTo": ["flight"] },
-        { "id": "flight",        "name": "First Powered Flight","year": 1903,"description": "Wright brothers...",     "linksTo": [] }
+        {
+          "id": "printingPress",
+          "title": "Printing Press",
+          "date": 1454,
+          "type": "Engineering",
+          "description": "Johannes Gutenberg's invention that revolutionized book production...",
+          "linksTo": ["massLiteracy"]
+        },
+        {
+          "id": "massLiteracy",
+          "title": "Mass Literacy",
+          "date": 1500,
+          "type": "Sociocultural",
+          "description": "Widespread availability of books led to societal changes and public education...",
+          "linksTo": ["scientificMethod"]
+        },
+        {
+          "id": "scientificMethod",
+          "title": "Scientific Method",
+          "date": 1620,
+          "type": "Conceptual",
+          "description": "Formalized approach to research and experimentation by Bacon, Descartes, etc...",
+          "linksTo": ["engineeringAdvances"]
+        },
+        {
+          "id": "engineeringAdvances",
+          "title": "Engineering Advances",
+          "date": 1700,
+          "type": "Engineering",
+          "description": "Improvements in machinery, fueling the Industrial Revolution...",
+          "linksTo": []
+        }
       ]
     };
 
-    // Convert events to nodes and edges
+    // Convert events to nodes and links
     const nodes = data.events.map(event => ({
       id: event.id,
-      name: event.name,
-      year: event.year,
+      title: event.title,
+      date: event.date,
+      type: event.type,
       description: event.description
     }));
 
     let links = [];
     data.events.forEach(event => {
-      event.linksTo.forEach(linkTarget => {
-        links.push({ source: event.id, target: linkTarget });
+      event.linksTo.forEach(targetId => {
+        links.push({ source: event.id, target: targetId });
       });
     });
 
-    // Step 2: Create an SVG container
+    // Color map for each type
+    const colorMap = {
+      "Sociocultural": "#f39c12",
+      "Conceptual": "#9b59b6",
+      "Engineering": "#3498db"
+    };
+
+    // Setup dimensions
     const width = 960;
     const height = 600;
 
+    // Create SVG
     const svg = d3.select("#timeline")
                   .append("svg")
                   .attr("width", width)
@@ -61,45 +110,76 @@
 
     const tooltip = d3.select("#tooltip");
 
-    // Step 3: Create a force simulation
-    const simulation = d3.forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-300))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("link", d3.forceLink(links).id(d => d.id).distance(150));
+    // OPTIONAL: define a marker for directional arrows
+    // (uncomment the "marker-end" line in link drawing below if you want them)
+    svg.append("defs").append("marker")
+      .attr("id", "arrow")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 15)
+      .attr("refY", 0)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "#999");
 
-    // Step 4: Draw edges
+    // Create a force simulation
+    const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+      .force("charge", d3.forceManyBody().strength(-300))
+      .force("center", d3.forceCenter(width / 2, height / 2));
+
+    // Draw the links
     const link = svg.selectAll(".link")
       .data(links)
       .enter()
       .append("line")
       .attr("class", "link")
+      // .attr("class", "link marker") // for directional arrow
       .attr("stroke", "#999")
       .attr("stroke-width", 2);
 
-    // Step 5: Draw nodes
+    // Create node groups (<g>)
     const node = svg.selectAll(".node")
       .data(nodes)
       .enter()
-      .append("circle")
+      .append("g")
       .attr("class", "node")
-      .attr("r", 15)
-      .attr("fill", "#69b3a2")
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
-          .on("end", dragended))
+          .on("end", dragended));
+
+    // Append circles to each node group
+    node.append("circle")
+      .attr("r", 20)
+      .attr("fill", d => colorMap[d.type])
+      .attr("stroke", "#333")
+      .attr("stroke-width", 1)
       .on("click", (event, d) => {
-        // Display tooltip
+        // Display tooltip with more detail
         tooltip.style("left", (event.pageX + 10) + "px")
                .style("top", (event.pageY + 10) + "px")
                .style("display", "block")
                .html(`
-                 <strong>${d.name}</strong> (${d.year})<br>
+                 <strong>${d.title}</strong> (${d.date})<br/>
+                 <em>Type:</em> ${d.type}<br/>
                  ${d.description}
                `);
+        // Stop event from propagating to SVG click
+        event.stopPropagation();
       });
 
-    // Step 6: Simulation tick function
+    // Append text to node group
+    node.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", "0.35em")
+      .attr("fill", "#fff")
+      .style("font-size", "12px")
+      .text(d => `${d.title} (${d.date})`);
+
+    // Simulation tick
     simulation.on("tick", () => {
       link
         .attr("x1", d => d.source.x)
@@ -108,11 +188,15 @@
         .attr("y2", d => d.target.y);
 
       node
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y);
+        .attr("transform", d => `translate(${d.x},${d.y})`);
     });
 
-    // Functions for drag behavior
+    // Hide tooltip on background click
+    svg.on("click", () => {
+      tooltip.style("display", "none");
+    });
+
+    // Drag functions
     function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
@@ -129,11 +213,6 @@
       d.fx = null;
       d.fy = null;
     }
-
-    // Hide tooltip on background click
-    svg.on("click", () => {
-      tooltip.style("display", "none");
-    }, true);
   </script>
 </body>
 </html>
