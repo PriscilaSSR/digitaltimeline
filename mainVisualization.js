@@ -12,6 +12,43 @@ function parseDateToNumeric(dateString) {
   }
 }
 
+function wrapText(selection, maxWidth) {
+  selection.each(function() {
+    const textEl = d3.select(this);
+    const words = textEl.text().split(/\s+/).reverse();
+    let word;
+    let line = [];
+    let lineNumber = 0;
+    const lineHeight = 1.2; // em
+    const x = 0;
+    const y = 0;
+    const dy = 0;
+
+    textEl.text(null);
+
+    let tspan = textEl.append("tspan")
+      .attr("x", x)
+      .attr("y", y)
+      .attr("dy", dy + "em");
+
+    while ((word = words.pop())) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > maxWidth) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = textEl.append("tspan")
+          .attr("x", x)
+          .attr("y", y)
+          .attr("dy", ++lineNumber * lineHeight + "em")
+          .text(word);
+      }
+    }
+  });
+}
+
+
 // 2) Grab data from window.timelineItems
 const data = window.timelineItems;  
 
@@ -78,6 +115,23 @@ function getCategoryColor(cat) {
 const width = 1200;
 const height = 900;
 
+const defs = svg.append("defs");
+
+const filter = defs.append("filter")
+  .attr("id", "dropShadow");
+filter.append("feGaussianBlur")
+  .attr("in", "SourceAlpha")
+  .attr("stdDeviation", 4)
+  .attr("result", "blur");
+filter.append("feOffset")
+  .attr("in", "blur")
+  .attr("dx", 4)
+  .attr("dy", 4)
+  .attr("result", "offsetBlur");
+const feMerge = filter.append("feMerge");
+feMerge.append("feMergeNode").attr("in", "offsetBlur");
+feMerge.append("feMergeNode").attr("in", "SourceGraphic");
+
 const svg = d3.select("#chart")
   .append("svg")
   .attr("width", width)
@@ -118,25 +172,8 @@ const node = gZoom.selectAll(".node")
       .on("drag", dragged)
       .on("end", dragended));
 
-const defs = svg.append("defs");
-
-const filter = defs.append("filter")
-  .attr("id", "dropShadow");
-filter.append("feGaussianBlur")
-  .attr("in", "SourceAlpha")
-  .attr("stdDeviation", 4)
-  .attr("result", "blur");
-filter.append("feOffset")
-  .attr("in", "blur")
-  .attr("dx", 4)
-  .attr("dy", 4)
-  .attr("result", "offsetBlur");
-const feMerge = filter.append("feMerge");
-feMerge.append("feMergeNode").attr("in", "offsetBlur");
-feMerge.append("feMergeNode").attr("in", "SourceGraphic");
-
 node.append("circle")
-  .attr("r", 80)
+  .attr("r", 180)
   .attr("fill", d => getCategoryColor(d.category))
   .attr("stroke", "#333")
   .attr("stroke-width", 1)
@@ -154,10 +191,11 @@ node.append("circle")
   });
 
 node.append("text")
-  .attr("dy", "0.35em")
-  .style("font-size", "12px")
+ .attr("text-anchor", "middle")
+  .style("font-size", "14px")
   .style("pointer-events", "none")
-  .text(d => d.title);
+  .text(d => d.title)
+  .call(wrapText, 110); // maybe 110 px for ~ circle diameter - padding;
 
 // 15) On simulation tick, update positions
 simulation.on("tick", () => {
