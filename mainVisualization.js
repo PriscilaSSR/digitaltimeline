@@ -1,17 +1,21 @@
-// 1) Define parseDateToNumeric (for "500s BCE" -> -500, "1969" -> 1969, etc.)
+///////////////////////////////
+// 1) Define parseDateToNumeric
+///////////////////////////////
 function parseDateToNumeric(dateString) {
-  if (!dateString) return 0; // fallback if missing
+  if (!dateString) return 0;
   if (dateString.includes("BCE")) {
-    // e.g. "500s" => 500
     const match = dateString.match(/\d+/);
     const val = match ? parseInt(match[0], 10) : 0;
-    return -val;  // negative means older
+    return -val;  
   } else {
     const parsed = parseInt(dateString, 10);
-    return isNaN(parsed) ? 0 : parsed;  // fallback to 0 if it fails
+    return isNaN(parsed) ? 0 : parsed;
   }
 }
 
+///////////////////////////////
+// 2) Define wrapText
+///////////////////////////////
 function wrapText(selection, maxWidth) {
   selection.each(function() {
     const textEl = d3.select(this);
@@ -48,17 +52,22 @@ function wrapText(selection, maxWidth) {
   });
 }
 
+///////////////////////////////
+// 3) Get Data from timelineItems
+///////////////////////////////
+const data = window.timelineItems;
 
-// 2) Grab data from window.timelineItems
-const data = window.timelineItems;  
-
-// 3) Build a title -> index map
+///////////////////////////////
+// 4) Build title->index map
+///////////////////////////////
 const titleMap = new Map();
 data.forEach((item, i) => {
   titleMap.set(item.title, i);
 });
 
-// 4) Build nodes array (MUST happen before numericDates!)
+///////////////////////////////
+// 5) Build nodes array
+///////////////////////////////
 const nodes = data.map((item, i) => ({
   id: i,
   title: item.title,
@@ -71,7 +80,9 @@ const nodes = data.map((item, i) => ({
   connections: item.connections
 }));
 
-// 5) Build links array
+///////////////////////////////
+// 6) Build links array
+///////////////////////////////
 const links = [];
 data.forEach((item, sourceIndex) => {
   item.connections.forEach(connTitle => {
@@ -82,41 +93,57 @@ data.forEach((item, sourceIndex) => {
   });
 });
 
-// 6) Prepare numericDates AFTER nodes is defined
+///////////////////////////////
+// 7) Prepare numericDates
+///////////////////////////////
 const numericDates = nodes.map(d => parseDateToNumeric(d.date));
 const minYear = d3.min(numericDates);
 const maxYear = d3.max(numericDates);
 
-// 7) Create the radial scale (older => smaller, newer => bigger)
+// Radial scale
 const radiusScale = d3.scaleLinear()
   .domain([minYear, maxYear])
-  .range([0, 600]); // Tweak outer range as you like
+  .range([0, 600]);
 
-// 8) Create the radial force (pull older nodes to center, newer outward)
+// Radial force
 const radialForce = d3.forceRadial(
-  d => radiusScale(parseDateToNumeric(d.date)),  // radius accessor
-  // Center X/Y
-  600, // or width / 2; we define it after we set width below
-  450  // or height / 2
-)
-.strength(0.05);  // Tweak to taste
+  d => radiusScale(parseDateToNumeric(d.date)),
+  600, // x-center for radial (since 1200 wide -> 600 is center)
+  450  // y-center for radial (since 900 tall -> 450 is center)
+).strength(0.05);
 
-// 9) Setup color by category
+///////////////////////////////
+// 8) Color mapping
+///////////////////////////////
 const colorMap = {
   "Sociocultural Factors": "#e74c3c",
   "Conceptual & Scientific Breakthroughs": "#9b59b6",
   "Engineering Experiments & Demonstrations": "#3498db"
 };
 function getCategoryColor(cat) {
-  return colorMap[cat] || "#95a5a6"; 
+  return colorMap[cat] || "#95a5a6";
 }
 
-// 10) Now define width, height, and create SVG
+///////////////////////////////
+// 9) Define width, height
+///////////////////////////////
 const width = 1200;
 const height = 900;
 
+///////////////////////////////
+// 10) Create the SVG
+///////////////////////////////
+const svg = d3.select("#chart")
+  .append("svg")
+  .attr("width", width)
+  .attr("height", height);
+
+///////////////////////////////
+// IMPORTANT: Define defs AFTER svg is created
+///////////////////////////////
 const defs = svg.append("defs");
 
+// Drop shadow filter
 const filter = defs.append("filter")
   .attr("id", "dropShadow");
 filter.append("feGaussianBlur")
@@ -132,27 +159,27 @@ const feMerge = filter.append("feMerge");
 feMerge.append("feMergeNode").attr("in", "offsetBlur");
 feMerge.append("feMergeNode").attr("in", "SourceGraphic");
 
-const svg = d3.select("#chart")
-  .append("svg")
-  .attr("width", width)
-  .attr("height", height);
-
 const tooltip = d3.select("#tooltip");
 
-// 11) A <g> for zoom/pan
+///////////////////////////////
+// 11) Create a <g> for zoom/pan
+///////////////////////////////
 const gZoom = svg.append("g")
   .attr("class", "zoom-group");
 
-// 12) Finally create your simulation
-// Note the radialForce and collision added here
+///////////////////////////////
+// 12) Create force simulation
+///////////////////////////////
 const simulation = d3.forceSimulation(nodes)
   .force("link", d3.forceLink(links).id(d => d.id).distance(150))
   .force("charge", d3.forceManyBody().strength(-300))
   .force("center", d3.forceCenter(width / 2, height / 2))
   .force("radial", radialForce)
-  .force("collide", d3.forceCollide(60));
+  .force("collide", d3.forceCollide(60)); // circle radius 180 => might need more collision
 
+///////////////////////////////
 // 13) Draw links
+///////////////////////////////
 const link = gZoom.selectAll(".link")
   .data(links)
   .enter()
@@ -161,7 +188,9 @@ const link = gZoom.selectAll(".link")
   .attr("stroke", "#999")
   .attr("stroke-width", 2);
 
+///////////////////////////////
 // 14) Draw nodes
+///////////////////////////////
 const node = gZoom.selectAll(".node")
   .data(nodes)
   .enter()
@@ -172,8 +201,10 @@ const node = gZoom.selectAll(".node")
       .on("drag", dragged)
       .on("end", dragended));
 
+// Circle
 node.append("circle")
-  .attr("r", 180)
+  .attr("r", 180)    // big circles => might overlap a lot
+  .style("filter", "url(#dropShadow)")  // apply drop shadow
   .attr("fill", d => getCategoryColor(d.category))
   .attr("stroke", "#333")
   .attr("stroke-width", 1)
@@ -190,14 +221,18 @@ node.append("circle")
     event.stopPropagation();
   });
 
+// Wrapped text
 node.append("text")
- .attr("text-anchor", "middle")
+  .attr("text-anchor", "middle")
   .style("font-size", "14px")
   .style("pointer-events", "none")
   .text(d => d.title)
-  .call(wrapText, 110); // maybe 110 px for ~ circle diameter - padding;
+  // You might want to allow more width, e.g. diameter - some padding
+  .call(wrapText, 300);  // if r=180 => diameter=360 => let's try 300 or so
 
-// 15) On simulation tick, update positions
+///////////////////////////////
+// 15) Ticking
+///////////////////////////////
 simulation.on("tick", () => {
   link
     .attr("x1", d => d.source.x)
@@ -209,7 +244,9 @@ simulation.on("tick", () => {
     .attr("transform", d => `translate(${d.x},${d.y})`);
 });
 
-// 16) Add zoom behavior
+///////////////////////////////
+// 16) Zoom behavior
+///////////////////////////////
 const zoom = d3.zoom()
   .scaleExtent([0.3, 5])
   .on("zoom", (event) => {
@@ -217,12 +254,16 @@ const zoom = d3.zoom()
   });
 svg.call(zoom);
 
+///////////////////////////////
 // 17) Hide tooltip on background click
+///////////////////////////////
 svg.on("click", () => {
   tooltip.style("display", "none");
 });
 
+///////////////////////////////
 // 18) Drag behaviors
+///////////////////////////////
 function dragstarted(event, d) {
   if (!event.active) simulation.alphaTarget(0.3).restart();
   d.fx = d.x;
