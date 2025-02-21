@@ -2,14 +2,15 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Flight Timeline Graph</title>
+  <title>Flight Timeline Graph with Zoom</title>
   <style>
     body {
       font-family: sans-serif;
     }
+    /* The SVG container */
     svg {
       width: 100%;
-      height: 900px; /* Increase if needed */
+      height: 900px; /* Adjust as desired */
       border: 1px solid #ccc;
       background: #fafafa;
     }
@@ -42,7 +43,6 @@
 <body>
   <div id="chart"></div>
   <div id="tooltip" class="tooltip"></div>
-
   <!-- Include D3.js library -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
@@ -830,7 +830,7 @@
       }
     ];
 
-    // ---------------------------------------
+// ---------------------------------------
     // 2. Build a title -> index map
     // ---------------------------------------
     const titleMap = new Map();
@@ -842,7 +842,7 @@
     // 3. Build nodes array
     // ---------------------------------------
     const nodes = timelineItems.map((item, i) => ({
-      id: i, 
+      id: i,
       title: item.title,
       date: item.date,
       location: item.location,
@@ -875,8 +875,6 @@
       "Engineering Experiments & Demonstrations": "#3498db"
     };
 
-    // If you have categories beyond these three, you can add them here:
-    // or fallback to a default color
     function getCategoryColor(cat) {
       return colorMap[cat] || "#95a5a6"; 
     }
@@ -895,7 +893,14 @@
     const tooltip = d3.select("#tooltip");
 
     // ---------------------------------------
-    // 7. Create the force simulation
+    // 7. Create a <g> to hold links & nodes
+    //    This <g> will be zoomed
+    // ---------------------------------------
+    const gZoom = svg.append("g")
+      .attr("class", "zoom-group");
+
+    // ---------------------------------------
+    // 8. Create the force simulation
     // ---------------------------------------
     const simulation = d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).id(d => d.id).distance(150))
@@ -903,9 +908,9 @@
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     // ---------------------------------------
-    // 8. Draw links
+    // 9. Draw links inside gZoom
     // ---------------------------------------
-    const link = svg.selectAll(".link")
+    const link = gZoom.selectAll(".link")
       .data(links)
       .enter()
       .append("line")
@@ -913,13 +918,10 @@
       .attr("stroke", "#999")
       .attr("stroke-width", 2);
 
-    // Optional: define arrow markers for directions
-    // See previous examples if you want directional arrows.
-
     // ---------------------------------------
-    // 9. Draw node groups (g)
+    // 10. Draw node groups (g) inside gZoom
     // ---------------------------------------
-    const node = svg.selectAll(".node")
+    const node = gZoom.selectAll(".node")
       .data(nodes)
       .enter()
       .append("g")
@@ -929,14 +931,13 @@
           .on("drag", dragged)
           .on("end", dragended));
 
-    // Large circles so multi-word titles fit
+    // Large circles for multi-word titles
     node.append("circle")
-      .attr("r", 60) // Increase if text is still cramped
+      .attr("r", 60)
       .attr("fill", d => getCategoryColor(d.category))
       .attr("stroke", "#333")
       .attr("stroke-width", 1)
       .on("click", (event, d) => {
-        // Show detailed tooltip
         tooltip.style("left", (event.pageX + 10) + "px")
                .style("top", (event.pageY + 10) + "px")
                .style("display", "block")
@@ -947,22 +948,17 @@
                  <strong>People:</strong> ${d.people.join(", ")}
                `);
 
-        // Stop background click from hiding tooltip
         event.stopPropagation();
       });
 
-    // Add text labels to each node
-    // For multi-line wrapping, you'd write a small function 
-    // to break text into <tspan> lines. For brevity, let's 
-    // place it in a single line or two lines.
     node.append("text")
       .attr("dy", "0.35em")
       .style("font-size", "14px")
-      .style("pointer-events", "none") 
+      .style("pointer-events", "none")
       .text(d => d.title);
 
     // ---------------------------------------
-    // 10. Simulation tick
+    // 11. Simulation tick
     // ---------------------------------------
     simulation.on("tick", () => {
       link
@@ -976,14 +972,27 @@
     });
 
     // ---------------------------------------
-    // 11. Tooltip hide on background click
+    // 12. Add the zoom behavior to the SVG
+    //     We'll limit zoom to 0.3x - 5x
+    // ---------------------------------------
+    const zoom = d3.zoom()
+      .scaleExtent([0.3, 5])  // min, max zoom
+      .on("zoom", (event) => {
+        gZoom.attr("transform", event.transform);
+      });
+
+    // Attach the zoom to the SVG
+    svg.call(zoom);
+
+    // ---------------------------------------
+    // 13. Hide tooltip on background click
     // ---------------------------------------
     svg.on("click", () => {
       tooltip.style("display", "none");
     });
 
     // ---------------------------------------
-    // 12. Drag behavior
+    // 14. Drag behaviors
     // ---------------------------------------
     function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
