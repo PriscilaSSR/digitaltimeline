@@ -71,7 +71,7 @@ window.timelineItems = [
         people: ['Archytas of Tarentum'],
         category: 'Engineering Experiments & Demonstrations',
         row: 1,
-        connections: [] // No connections here.
+        connections: ['The Myth of Icarus and Daedalus'] // No connections here.
       },
       {
         date: '200s BCE',
@@ -104,7 +104,7 @@ window.timelineItems = [
     people: ['Hero of Alexandria'],
     category: 'Engineering Experiments & Demonstrations',
     row: 1,
-      connections: ['Archytas\' Flying Pigeon']
+      connections: ['Archytas\' Flying Pigeon', 'Henri Giffard\'s Dirigible']
   },
       {
         date: '800s',
@@ -126,7 +126,7 @@ window.timelineItems = [
         people: ['The Ebony Horse'],
         category: 'Sociocultural Factors',
         row: 2,
-        connections: [] // No connections here.
+        connections: ['Abbas Ibn Firnas\'s jump'] // No connections here.
       },
     {
     date: '900s',
@@ -200,7 +200,7 @@ window.timelineItems = [
   title: 'The Gentleman Scientist Tradition',
   description: 'Wealthy or well-connected amateurs (often aristocrats) pursued scientific research as a leisure activity, self-funding experiments without needing immediate commercial return. Figures like Sir George Cayley (an English baronet) exemplify this ethos; their private means allowed them to freely investigate aerodynamics, laying crucial groundwork for later practical aviation breakthroughs.',
   img: '/api/placeholder/100/100',
-  people: ['Sir George Cayley', 'Other Aristocratic Natural Philosophers'],
+  people: ['Sir George Cayley'],
   category: 'Sociocultural Factors',
   connections: [],
   row: 2
@@ -269,7 +269,7 @@ window.timelineItems = [
         people: ['Bartolomeu de Gusmão'],
         category: 'Engineering Experiments & Demonstrations',
         row: 3,
-        connections: ['Kongming\'s Sky Lantern','Archimedes\' Buoyancy Principle']
+        connections: ['Kongming\'s Sky Lantern', 'Archimedes\' Buoyancy Principle']
       },
         {
         date: '1726',
@@ -301,7 +301,7 @@ window.timelineItems = [
     img: '/api/placeholder/100/100',
     people: ['James Watt', 'Matthew Boulton'],
     category: 'Conceptual & Scientific Breakthroughs',
-    connections: [],
+    connections: ['Hero\'s Aeolipile'],
     row: 3
   },
       {
@@ -334,7 +334,7 @@ window.timelineItems = [
     img: '/api/placeholder/100/100',
     people: ['Charles Goodyear'],
     category: 'Conceptual & Scientific Breakthroughs',
-    connections: [],
+    connections: ['Industrial Revolution'],
     row: 4
   },
   {
@@ -345,18 +345,18 @@ window.timelineItems = [
     img: '/api/placeholder/100/100',
     people: ['Prince Albert', 'Henry Cole'],
     category: 'Sociocultural Factors',
-    connections: [],
+    connections: ['Industrial Revolution'],
     row: 4
   },
 {
   date: '1852',
   location: 'France',
   title: "Henri Giffard\'s Dirigible",
-  description: "Henri Giffard invents the first controllable dirigible, powered by a steam engine.",
+  description: "Henri Giffard invents the first controllable dirigible powered by a steam engine.",
   img: "/api/placeholder/100/100",
   people: ['Henri Giffard'],
   row: 5,
-  connections: [],
+  connections: ['Hero\'s Aeolipile'],
   category: "Engineering Experiments & Demonstrations"
 },
 {
@@ -367,7 +367,7 @@ window.timelineItems = [
   img: "/api/placeholder/100/100",
   people: ['William Henson'],
   row: 6,
-  connections: [],
+  connections: ['Hero\'s Aeolipile'],
   category: "Engineering Experiments & Demonstrations"
 },
 {
@@ -510,14 +510,14 @@ window.timelineItems = [
   img: "/api/placeholder/100/100",
   people: ['Ferdinand von Zeppelin'],
   row: 9,
-  connections: [],
+  connections: ['Charles Renard and Arthur Constantin\'s Le France'],
   category: "Engineering Experiments & Demonstrations"
 },
     {
     date: '1901',
     location: 'France',
     title: 'Deutsch de la Meurthe Prize',
-    description: 'Industrialist Henri Deutsch de la Meurthe offers prizes for airship and airplane feats, sparking fierce competition. These contests push development of powered flight in Europe.',
+    description: 'Industrialist Henri Deutsch de la Meurthe offers prizes for airship and airplane feats, sparking fierce competition. These contests push the development of powered flight in Europe.',
     img: '/api/placeholder/100/100',
     people: ['Henri Deutsch de la Meurthe'],
     category: 'Sociocultural Factors',
