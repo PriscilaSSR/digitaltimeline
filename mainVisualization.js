@@ -118,8 +118,25 @@ const node = gZoom.selectAll(".node")
       .on("drag", dragged)
       .on("end", dragended));
 
+const defs = svg.append("defs");
+
+const filter = defs.append("filter")
+  .attr("id", "dropShadow");
+filter.append("feGaussianBlur")
+  .attr("in", "SourceAlpha")
+  .attr("stdDeviation", 4)
+  .attr("result", "blur");
+filter.append("feOffset")
+  .attr("in", "blur")
+  .attr("dx", 4)
+  .attr("dy", 4)
+  .attr("result", "offsetBlur");
+const feMerge = filter.append("feMerge");
+feMerge.append("feMergeNode").attr("in", "offsetBlur");
+feMerge.append("feMergeNode").attr("in", "SourceGraphic");
+
 node.append("circle")
-  .attr("r", 60)
+  .attr("r", 80)
   .attr("fill", d => getCategoryColor(d.category))
   .attr("stroke", "#333")
   .attr("stroke-width", 1)
@@ -138,7 +155,7 @@ node.append("circle")
 
 node.append("text")
   .attr("dy", "0.35em")
-  .style("font-size", "14px")
+  .style("font-size", "12px")
   .style("pointer-events", "none")
   .text(d => d.title);
 
