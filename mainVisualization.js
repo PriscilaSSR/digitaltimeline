@@ -179,4 +179,3 @@ data.forEach((item, i) => {
       d.fx = null;
       d.fy = null;
     }
-  </script>
