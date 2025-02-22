@@ -19,13 +19,16 @@
 
     .venn-circle {
       opacity: 0.5;
-      cursor: pointer;
+      cursor: pointer; /* Indicate clickability */
     }
+
+    /* Remove Venn labels */
+    /*.venn-label { font-family: sans-serif; font-size: 14px; text-anchor: middle; pointer-events: none;}*/
 
     .node {
       stroke: #fff;
       stroke-width: 1.5px;
-      cursor: pointer;
+      cursor: pointer; /* Indicate clickability */
     }
 
     /* Dynamic link width and node size*/
@@ -43,8 +46,8 @@
       padding: 5px;
       font-family: sans-serif;
       font-size: 12px;
-      pointer-events: none;
-      display: none;
+      pointer-events: none; /* Important! */
+      display: none; /* Initially hidden */
       max-width: 250px; /* Limit tooltip width */
       white-space: pre-wrap; /* Allow text wrapping */
       z-index: 100;
@@ -128,7 +131,7 @@ timelineItems.forEach(item => {
 function getDimensions(){
     const container = document.getElementById("visualization-container");
     const width = container.clientWidth;
-    const height = container.clientHeight; // Height is now based on the container
+    const height = width * 0.75; // Maintain 4:3 aspect ratio, height is calculated
     return {width, height}
 }
 
@@ -169,15 +172,23 @@ function drawVisualization() {
      // Clear any existing SVG content
     d3.select("#visualization").selectAll("*").remove();
 
+    // Set viewBox for responsiveness
+    const svg = d3.select("#visualization")
+        .attr("viewBox", `0 0 ${width} ${height}`) // Set viewBox
+        .attr("width", width)  // Add these back for Firefox
+        .attr("height", height);
+
+
     // Create Venn diagram
     const vennChart = venn.VennDiagram().width(width * 0.5).height(height);
-    const vennSvg = d3.select("#visualization")
+    const vennSvg = svg
+    .append("g") // Group for the Venn diagram
     .datum(vennData)
     .call(vennChart);
 
     d3.selectAll(".venn-label").remove();
 
-    const svg = d3.select("#visualization");
+
 
     // Create simulation *without* a center force initially
     const simulation = d3.forceSimulation(nodes)
@@ -205,18 +216,17 @@ function drawVisualization() {
     }
 
     // --- Node and Link Creation ---
-    const link = svg.append("g")
-        .attr("class", "links")
-        .selectAll("line")
+    const linkGroup = svg.append("g").attr("class", "links"); //Separate groups
+    const nodeGroup = svg.append("g").attr("class", "nodes");
+
+    const link = linkGroup.selectAll("line")
         .data(links)
         .enter().append("line")
         .attr("class", "link")
         .attr("stroke-width", d => Math.sqrt(d.value) + 0.15 * (width/800)); //Responsive width
 
 
-    const node = svg.append("g")
-        .attr("class", "nodes")
-        .selectAll("circle")
+    const node = nodeGroup.selectAll("circle")
         .data(nodes)
         .enter().append("circle")
         .attr("class", "node")
@@ -359,8 +369,6 @@ function drawVisualization() {
 
     // --- Centering Logic ---
     function centerVisualization() {
-      const {width, height} = getDimensions();
-
       // Get bounding box of *all* content (Venn + network)
       const contentBBox = svg.node().getBBox(); // Get bounding box *after* initial layout
 
@@ -368,8 +376,9 @@ function drawVisualization() {
       const translateX = (width - contentBBox.width) / 2 - contentBBox.x;
       const translateY = (height - contentBBox.height) / 2 - contentBBox.y;
 
-      // Apply the transformation
+      // Apply the transformation to the main SVG
       svg.attr("transform", `translate(${translateX}, ${translateY})`);
+
     }
       // Call centerVisualization *after* the initial layout is complete
      simulation.on("end", centerVisualization); // Center after simulation settles
