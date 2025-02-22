@@ -73,7 +73,7 @@ d3.select("#visualization")
 
 
 // --- Network Graph ---
-
+const data = window.timelineItems;
 // 1. Prepare Nodes and Links:
 const nodes = timelineItems.map(item => ({
   id: item.title,  // Use title as unique ID
