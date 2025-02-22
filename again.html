@@ -46,6 +46,8 @@
       font-size: 12px;
       pointer-events: none;
       display: none;
+      max-width: 250px; /* Limit tooltip width */
+      white-space: pre-wrap; /* Allow text wrapping */
       z-index: 100;
     }
     .node.highlighted {
@@ -100,19 +102,6 @@ timelineItems.forEach(item => {
   }
 });
 
-// Get container dimensions (for responsiveness)
-const container = document.getElementById("visualization-container");
-const width = container.clientWidth;
-const height = container.clientHeight; // Height is now based on the container
-
-// Create Venn diagram
-const vennChart = venn.VennDiagram().width(width * 0.5).height(height); // Venn diagram takes half the width
-
-const vennSvg = d3.select("#visualization")
-  .datum(vennData)
-  .call(vennChart);
-
-d3.selectAll(".venn-label").remove(); // Remove labels
 
 
 // --- Network Graph Setup ---
@@ -134,21 +123,18 @@ timelineItems.forEach(item => {
   }
 });
 
-const svg = d3.select("#visualization");
 
-// Create simulation *without* a center force initially
-const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(width * 0.08)) // Responsive distance
-    .force("charge", d3.forceManyBody().strength(-50))
-    .force("collision", d3.forceCollide().radius(width * 0.015)) // Responsive radius
-    .on("tick", ticked);
+// --- Functions to be used multiple times ---
+// Get container dimensions (for responsiveness)
+function getDimensions(){
+    const container = document.getElementById("visualization-container");
+    const width = container.clientWidth;
+    const height = container.clientHeight; // Height is now based on the container
+    return {width, height}
+}
 
-// --- Custom Venn Force ---
-
-function customVennForce() {
-    const strength = 0.1;
-
-  function getVennRegionCenter(sets) {
+function getVennRegionCenter(sets) {
+        const {width, height} = getDimensions();
         const vennArea = d3.selectAll(".venn-area");
         if (!sets || sets.length === 0) {
             return { x: width / 2, y: height / 2 }; // Default center if no sets
@@ -173,182 +159,229 @@ function customVennForce() {
              return { x: bounds.x + bounds.width/2, y: bounds.y + bounds.height/2};
         }
 
-
         return { x: width / 2, y: height / 2 }; // Default
+}
+
+
+// --- Initial Drawing and Centering ---
+function drawVisualization() {
+    const {width, height} = getDimensions();
+
+     // Clear any existing SVG content
+    d3.select("#visualization").selectAll("*").remove();
+
+    // Create Venn diagram
+    const vennChart = venn.VennDiagram().width(width * 0.5).height(height);
+    const vennSvg = d3.select("#visualization")
+    .datum(vennData)
+    .call(vennChart);
+
+    d3.selectAll(".venn-label").remove();
+
+    const svg = d3.select("#visualization");
+
+    // Create simulation *without* a center force initially
+    const simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(width * 0.08)) // Responsive distance
+        .force("charge", d3.forceManyBody().strength(-50))
+        .force("collision", d3.forceCollide().radius(width * 0.015)) // Responsive radius
+        .force("venn", customVennForce()) //Add Venn Force
+        .on("tick", ticked);
+
+    // --- Custom Venn Force ---
+    function customVennForce() {
+        const strength = 0.1;
+      function force(alpha) {
+        nodes.forEach(node => {
+          const groups = node.group.split('-');
+          const target = getVennRegionCenter(groups);
+          if (target) {
+            node.vx += (target.x - node.x) * strength * alpha;
+            node.vy += (target.y - node.y) * strength * alpha;
+          }
+        });
+      }
+
+      return force;
     }
 
-  function force(alpha) {
+    // --- Node and Link Creation ---
+    const link = svg.append("g")
+        .attr("class", "links")
+        .selectAll("line")
+        .data(links)
+        .enter().append("line")
+        .attr("class", "link")
+        .attr("stroke-width", d => Math.sqrt(d.value) + 0.15 * (width/800)); //Responsive width
+
+
+    const node = svg.append("g")
+        .attr("class", "nodes")
+        .selectAll("circle")
+        .data(nodes)
+        .enter().append("circle")
+        .attr("class", "node")
+        .attr("r", width * 0.01) // Responsive radius
+        .attr("fill", d => {
+            const groups = d.group.split('-');
+            if (groups.includes('SF')) return "red";
+            if (groups.includes('CSB')) return "blue";
+            if (groups.includes('EED')) return "green";
+            return "gray";
+        })
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended))
+      .on("mouseover", handleMouseOver)
+      .on("mouseout", handleMouseOut)
+      .on("click", handleClick);
+
+
+    // --- Tooltip and Highlighting Functions (No changes needed) ---
+    const tooltip = d3.select("#tooltip");
+
+    function handleMouseOver(event, d) {
+      tooltip.style("display", "block")
+        .html(`
+          <strong>${d.title}</strong><br>
+          Date: ${d.date}<br>
+          Category: ${d.category}<br>
+          Description: ${d.description}  `)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 28) + "px");
+      highlightConnections(d);
+    }
+
+    function handleMouseOut() {
+      tooltip.style("display", "none");
+      resetHighlight();
+    }
+
+    function handleClick(event, d) {
+      tooltip.style("display", "block")  // Keep tooltip visible on click
+        .html(`
+            <strong>${d.title}</strong><br>
+            Date: ${d.date}<br>
+            Category: ${d.category}<br>
+            Description: ${d.description}
+        `)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 28) + "px");
+        highlightConnections(d);
+    }
+
+
+    function highlightConnections(d) {
+      const connectedNodeIds = new Set();
+      links.forEach(l => {
+        if (l.source.id === d.id) connectedNodeIds.add(l.target.id);
+        if (l.target.id === d.id) connectedNodeIds.add(l.source.id);
+      });
+
+      node.classed("highlighted", n => connectedNodeIds.has(n.id) || n.id === d.id);
+      link.classed("highlighted", l => l.source.id === d.id || l.target.id === d.id);
+    }
+
+    function resetHighlight() {
+      node.classed("highlighted", false);
+      link.classed("highlighted", false);
+    }
+
+
+    // --- Initial Node Positioning (within Venn regions) ---
     nodes.forEach(node => {
       const groups = node.group.split('-');
-      const target = getVennRegionCenter(groups);
-      if (target) {
-        node.vx += (target.x - node.x) * strength * alpha;
-        node.vy += (target.y - node.y) * strength * alpha;
+      const regionCenter = getVennRegionCenter(groups);
+        if (regionCenter) {
+        // Initial random position *around* the region center
+        node.x = regionCenter.x + (Math.random() - 0.5) * 50; // Adjust range as needed
+        node.y = regionCenter.y + (Math.random() - 0.5) * 50;
+      } else {
+        // Default position if no region found (shouldn't happen with correct data)
+        node.x = width / 2;
+        node.y = height / 2;
       }
+
     });
-  }
 
-  return force;
+
+    // --- Tick Function ---
+
+    function ticked() {
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+      node
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y);
+    }
+
+    // --- Interactivity (Venn -> Network) ---
+    d3.selectAll(".venn-area").on("click", function(event, d) {
+      const selectedSets = d.sets;
+
+        node.style("opacity", n => {
+        const nodeGroups = n.group.split('-');
+        return selectedSets.every(set => nodeGroups.includes(set)) ? 1 : 0.1;
+      });
+
+      link.style("stroke-opacity", l => {
+        const sourceGroups = l.source.group.split('-');
+        const targetGroups = l.target.group.split('-');
+        const sourceMatch = selectedSets.every(set => sourceGroups.includes(set));
+        const targetMatch = selectedSets.every(set => targetGroups.includes(set));
+        return sourceMatch && targetMatch ? 1 : 0.1;
+      });
+    });
+
+
+    // --- Drag Functions ---
+
+    function dragstarted(event) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+
+    function dragged(event) {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+
+    function dragended(event) {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+
+    // --- Centering Logic ---
+    function centerVisualization() {
+      const {width, height} = getDimensions();
+
+      // Get bounding box of *all* content (Venn + network)
+      const contentBBox = svg.node().getBBox(); // Get bounding box *after* initial layout
+
+      // Calculate translation amounts
+      const translateX = (width - contentBBox.width) / 2 - contentBBox.x;
+      const translateY = (height - contentBBox.height) / 2 - contentBBox.y;
+
+      // Apply the transformation
+      svg.attr("transform", `translate(${translateX}, ${translateY})`);
+    }
+      // Call centerVisualization *after* the initial layout is complete
+     simulation.on("end", centerVisualization); // Center after simulation settles
+
+
 }
-simulation.force("venn", customVennForce());
+// Initial drawing
+drawVisualization();
 
-
-// --- Node and Link Creation ---
-const link = svg.append("g")
-    .attr("class", "links")
-    .selectAll("line")
-    .data(links)
-    .enter().append("line")
-    .attr("class", "link")
-    .attr("stroke-width", d => Math.sqrt(d.value) + 0.15 * (width/800)); //Responsive width
-
-
-const node = svg.append("g")
-    .attr("class", "nodes")
-    .selectAll("circle")
-    .data(nodes)
-    .enter().append("circle")
-    .attr("class", "node")
-    .attr("r", width * 0.01) // Responsive radius
-    .attr("fill", d => {
-        const groups = d.group.split('-');
-        if (groups.includes('SF')) return "red";
-        if (groups.includes('CSB')) return "blue";
-        if (groups.includes('EED')) return "green";
-        return "gray";
-    })
-    .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended))
-  .on("mouseover", handleMouseOver)
-  .on("mouseout", handleMouseOut)
-  .on("click", handleClick);
-
-
-// --- Tooltip and Highlighting Functions (No changes needed) ---
-const tooltip = d3.select("#tooltip");
-
-function handleMouseOver(event, d) {
-  tooltip.style("display", "block")
-    .html(`
-      <strong>${d.title}</strong><br>
-      Date: ${d.date}<br>
-      Category: ${d.category}<br>
-      Description: ${d.description}
-    `)
-    .style("left", (event.pageX + 10) + "px")
-    .style("top", (event.pageY - 28) + "px");
-  highlightConnections(d);
-}
-
-function handleMouseOut() {
-  tooltip.style("display", "none");
-  resetHighlight();
-}
-
-function handleClick(event, d) {
-  // alert(d.description); // Or show details in a different way
-    tooltip.style("display", "block")
-    .html(`
-        <strong>${d.title}</strong><br>
-        Date: ${d.date}<br>
-        Category: ${d.category}<br>
-        Description: ${d.description}
-    `)
-    .style("left", (event.pageX + 10) + "px")
-    .style("top", (event.pageY - 28) + "px");
-
-    // Highlight connected nodes and links
-    highlightConnections(d);
-}
-
-
-function highlightConnections(d) {
-  const connectedNodeIds = new Set();
-  links.forEach(l => {
-    if (l.source.id === d.id) connectedNodeIds.add(l.target.id);
-    if (l.target.id === d.id) connectedNodeIds.add(l.source.id);
-  });
-
-  node.classed("highlighted", n => connectedNodeIds.has(n.id) || n.id === d.id);
-  link.classed("highlighted", l => l.source.id === d.id || l.target.id === d.id);
-}
-
-function resetHighlight() {
-  node.classed("highlighted", false);
-  link.classed("highlighted", false);
-}
-
-
-// --- Initial Node Positioning (within Venn regions) ---
-nodes.forEach(node => {
-  const groups = node.group.split('-');
-  const regionCenter = getVennRegionCenter(groups);
-    if (regionCenter) {
-    // Initial random position *around* the region center
-    node.x = regionCenter.x + (Math.random() - 0.5) * 50; // Adjust range as needed
-    node.y = regionCenter.y + (Math.random() - 0.5) * 50;
-  } else {
-    // Default position if no region found (shouldn't happen with correct data)
-    node.x = width / 2;
-    node.y = height / 2;
-  }
-
-});
-
-
-// --- Tick Function ---
-
-function ticked() {
-  link
-    .attr("x1", d => d.source.x)
-    .attr("y1", d => d.source.y)
-    .attr("x2", d => d.target.x)
-    .attr("y2", d => d.target.y);
-
-  node
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y);
-}
-
-// --- Interactivity (Venn -> Network) ---
-d3.selectAll(".venn-area").on("click", function(event, d) {
-  const selectedSets = d.sets;
-
-    node.style("opacity", n => {
-    const nodeGroups = n.group.split('-');
-    return selectedSets.every(set => nodeGroups.includes(set)) ? 1 : 0.1;
-  });
-
-  link.style("stroke-opacity", l => {
-    const sourceGroups = l.source.group.split('-');
-    const targetGroups = l.target.group.split('-');
-    const sourceMatch = selectedSets.every(set => sourceGroups.includes(set));
-    const targetMatch = selectedSets.every(set => targetGroups.includes(set));
-    return sourceMatch && targetMatch ? 1 : 0.1;
-  });
-});
-
-
-// --- Drag Functions ---
-
-function dragstarted(event) {
-  if (!event.active) simulation.alphaTarget(0.3).restart();
-  event.subject.fx = event.subject.x;
-  event.subject.fy = event.subject.y;
-}
-
-function dragged(event) {
-  event.subject.fx = event.x;
-  event.subject.fy = event.y;
-}
-
-function dragended(event) {
-  if (!event.active) simulation.alphaTarget(0);
-  event.subject.fx = null;
-  event.subject.fy = null;
-}
+// Redraw on window resize
+window.addEventListener("resize", drawVisualization);
 
 </script>
 
