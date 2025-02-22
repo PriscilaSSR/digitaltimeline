@@ -3,21 +3,40 @@
 <head>
   <title>Flight History: Venn Diagram & Network Graph</title>
   <style>
+    /* Container for responsiveness */
+    #visualization-container {
+      width: 100%;          /* Fill available width */
+      padding-bottom: 75%;  /* Maintain 4:3 aspect ratio (height = 75% of width) */
+      position: relative;  /* Needed for absolute positioning of SVG */
+    }
+
+    #visualization {
+      position: absolute; /* Take SVG out of normal flow */
+      top: 0;
+      left: 0;
+      width: 100%;       /* Fill container */
+      height: 100%;      /* Fill container */
+    }
+
     .venn-circle {
       opacity: 0.5;
-      cursor: pointer; /* Indicate clickability */
+      cursor: pointer;
     }
-    /* Remove Venn labels */
-    /*.venn-label { font-family: sans-serif; font-size: 14px; text-anchor: middle; pointer-events: none;}*/
+
     .node {
       stroke: #fff;
       stroke-width: 1.5px;
-      cursor: pointer; /* Indicate clickability */
+      cursor: pointer;
     }
+
+    /* Dynamic link width and node size*/
     .link {
       stroke: #999;
       stroke-opacity: 0.6;
+      /*stroke-width: calc(0.5px + 0.5vw);*/ /* Responsive stroke width */
     }
+
+
     #tooltip {
       position: absolute;
       background-color: white;
@@ -25,75 +44,77 @@
       padding: 5px;
       font-family: sans-serif;
       font-size: 12px;
-      pointer-events: none; /* Important! */
-      display: none; /* Initially hidden */
+      pointer-events: none;
+      display: none;
     }
-    /* Style for highlighted nodes */
     .node.highlighted {
       stroke: black;
       stroke-width: 3px;
     }
-    /* Style for highlighted links */
     .link.highlighted {
         stroke: black;
-        stroke-width: 2px;
+        /*stroke-width: 2px;*/
     }
-
-
   </style>
 </head>
 <body>
 
 <div id="tooltip"></div>
-<svg width="800" height="600" id="visualization"></svg>
+<div id="visualization-container">
+  <svg id="visualization"></svg>
+</div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/venn.js/0.2.20/venn.min.js"></script>
-<script src="timelineData.js"></script>
- <script>
-const data = window.timelineItems;
-// --- Venn Diagram ---
+<script src="timelineData.js"></script> <script>
 
-// Prepare data for Venn.js, counting items in each group.
+// --- Data Loading (Already Done) ---
+
+// --- Venn Diagram Setup ---
+
+// Prepare data for Venn.js (same as before)
 const vennData = [
   { sets: ['SF'], size: 0, label: 'Sociocultural Factors' },
   { sets: ['CSB'], size: 0, label: 'Conceptual & Scientific Breakthroughs' },
   { sets: ['EED'], size: 0, label: 'Engineering Experiments & Demonstrations' },
-  { sets: ['SF', 'CSB'], size: 0, label: 'SF ∩ CSB' },
-  { sets: ['CSB', 'EED'], size: 0, label: 'CSB ∩ EED' },
-  { sets: ['SF', 'EED'], size: 0, label: 'SF ∩ EED' },
-  { sets: ['SF', 'CSB', 'EED'], size: 0, label: 'SF ∩ CSB ∩ EED' },
+  { sets: ['SF', 'CSB'], size: 0 },
+  { sets: ['CSB', 'EED'], size: 0 },
+  { sets: ['SF', 'EED'], size: 0 },
+  { sets: ['SF', 'CSB', 'EED'], size: 0 },
 ];
 
 timelineItems.forEach(item => {
-    const groups = item.group.split('-');
-    let region = null;
-    if (groups.length === 1) {
-        region = vennData.find(r => r.sets.length === 1 && r.sets[0] === item.group);
-    } else if (groups.length === 2) {
-        region = vennData.find(r => r.sets.length === 2 && r.sets.includes(groups[0]) && r.sets.includes(groups[1]));
-    } else if (groups.length === 3) {
-        region = vennData.find(r => r.sets.length === 3 && r.sets.includes(groups[0]) && r.sets.includes(groups[1]) && r.sets.includes(groups[2]));
-    }
+  const groups = item.group.split('-');
+  let region = null;
+  if (groups.length === 1) {
+    region = vennData.find(r => r.sets.length === 1 && r.sets[0] === item.group);
+  } else if (groups.length === 2) {
+    region = vennData.find(r => r.sets.length === 2 && r.sets.includes(groups[0]) && r.sets.includes(groups[1]));
+  } else if (groups.length === 3) {
+    region = vennData.find(r => r.sets.length === 3 && r.sets.includes(groups[0]) && r.sets.includes(groups[1]) && r.sets.includes(groups[2]));
+  }
 
-    if (region) {
-        region.size += 1;
-    }
+  if (region) {
+    region.size += 1;
+  }
 });
 
-// Create Venn diagram (will be used for positioning nodes)
-const vennChart = venn.VennDiagram()
-  .width(400)
-  .height(400);
+// Get container dimensions (for responsiveness)
+const container = document.getElementById("visualization-container");
+const width = container.clientWidth;
+const height = container.clientHeight; // Height is now based on the container
+
+// Create Venn diagram
+const vennChart = venn.VennDiagram().width(width * 0.5).height(height); // Venn diagram takes half the width
 
 const vennSvg = d3.select("#visualization")
   .datum(vennData)
   .call(vennChart);
 
-// Remove the labels
-d3.selectAll(".venn-label").remove()
+d3.selectAll(".venn-label").remove(); // Remove labels
 
-// --- Network Graph ---
+
+// --- Network Graph Setup ---
 
 const nodes = timelineItems.map(item => ({
   id: item.title,
@@ -112,74 +133,74 @@ timelineItems.forEach(item => {
   }
 });
 
-const svg = d3.select("#visualization"); // No need to append another 'g'
+const svg = d3.select("#visualization");
 
+// Create simulation *without* a center force initially
 const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(50))
-    .force("charge", d3.forceManyBody().strength(-50)) // Reduced charge
-    .force("center", d3.forceCenter(400, 300)) // Centered in the SVG
-    .force("collision", d3.forceCollide().radius(12)) // Increased collision radius
-    .on("tick", ticked); // Move ticked function here
-
+    .force("link", d3.forceLink(links).id(d => d.id).distance(width * 0.08)) // Responsive distance
+    .force("charge", d3.forceManyBody().strength(-50))
+    .force("collision", d3.forceCollide().radius(width * 0.015)) // Responsive radius
+    .on("tick", ticked);
 
 // --- Custom Venn Force ---
+
 function customVennForce() {
-  const strength = 0.1; // Adjust force strength
+    const strength = 0.1;
 
   function getVennRegionCenter(sets) {
-      if (!sets || sets.length === 0) {
-        return { x: 400, y: 300 }; // Default center if no sets
-    }
+        const vennArea = d3.selectAll(".venn-area");
+        if (!sets || sets.length === 0) {
+            return { x: width / 2, y: height / 2 }; // Default center if no sets
+        }
 
-      if (sets.length === 1) {
+        if (sets.length === 1) {
           // Single circle centers
-          if (sets[0] === 'SF') return { x: 158, y: 245 };
-          if (sets[0] === 'CSB') return { x: 242, y: 245 };
-          if (sets[0] === 'EED') return { x: 200, y: 155 };
-      }
+            const circle = vennArea.filter(d => d.sets.length === 1 && d.sets[0] === sets[0]).select("path");
+            if (!circle.empty()) {
+                const bounds = circle.node().getBBox();
+                return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+            }
+        }
 
-      // Approximate center for intersections - using bounding box intersection centers
-      let xSum = 0;
-      let ySum = 0;
-      let count = 0;
+        // Approximate center for intersections
+        const region = vennArea.filter(d => {
+            return d.sets.length === sets.length && sets.every(s => d.sets.includes(s));
+        });
 
-    if (sets.length === 2) {
-          if (sets.includes("SF") && sets.includes("CSB")) return {x: 200, y: 265};
-          if (sets.includes("SF") && sets.includes("EED")) return {x: 177, y: 200};
-          if (sets.includes("CSB") && sets.includes("EED")) return {x: 230, y: 200};
+        if (!region.empty()) {
+             const bounds = region.node().getBBox(); //D3 selections have method .node()
+             return { x: bounds.x + bounds.width/2, y: bounds.y + bounds.height/2};
+        }
+
+
+        return { x: width / 2, y: height / 2 }; // Default
     }
-    if(sets.length === 3){
-        return {x:200, y: 200}
-    }
-  }
 
   function force(alpha) {
     nodes.forEach(node => {
       const groups = node.group.split('-');
       const target = getVennRegionCenter(groups);
       if (target) {
-          // Use .x and .y directly, no need for dx, dy
-          node.vx += (target.x - node.x) * strength * alpha;
-          node.vy += (target.y - node.y) * strength * alpha;
+        node.vx += (target.x - node.x) * strength * alpha;
+        node.vy += (target.y - node.y) * strength * alpha;
       }
     });
   }
 
   return force;
 }
-// Add the custom force to the simulation
 simulation.force("venn", customVennForce());
 
 
-// --- Node and Link Creation --- (Modified for initial positioning)
-
+// --- Node and Link Creation ---
 const link = svg.append("g")
     .attr("class", "links")
     .selectAll("line")
     .data(links)
     .enter().append("line")
     .attr("class", "link")
-     .attr("stroke-width", d => Math.sqrt(d.value));
+    .attr("stroke-width", d => Math.sqrt(d.value) + 0.15 * (width/800)); //Responsive width
+
 
 const node = svg.append("g")
     .attr("class", "nodes")
@@ -187,7 +208,7 @@ const node = svg.append("g")
     .data(nodes)
     .enter().append("circle")
     .attr("class", "node")
-    .attr("r", 8)
+    .attr("r", width * 0.01) // Responsive radius
     .attr("fill", d => {
         const groups = d.group.split('-');
         if (groups.includes('SF')) return "red";
@@ -199,14 +220,12 @@ const node = svg.append("g")
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended))
-  .on("mouseover", handleMouseOver) // Use named functions for clarity
+  .on("mouseover", handleMouseOver)
   .on("mouseout", handleMouseOut)
-  .on("click", handleClick);  // Add click handler
+  .on("click", handleClick);
 
 
-
-// --- Tooltip and Highlighting Functions ---
-
+// --- Tooltip and Highlighting Functions (No changes needed) ---
 const tooltip = d3.select("#tooltip");
 
 function handleMouseOver(event, d) {
@@ -219,8 +238,6 @@ function handleMouseOver(event, d) {
     `)
     .style("left", (event.pageX + 10) + "px")
     .style("top", (event.pageY - 28) + "px");
-
-  // Highlight connected nodes and links
   highlightConnections(d);
 }
 
@@ -229,8 +246,8 @@ function handleMouseOut() {
   resetHighlight();
 }
 
-function handleClick(event, d){
-    //alert(d.description);
+function handleClick(event, d) {
+  // alert(d.description); // Or show details in a different way
     tooltip.style("display", "block")
     .html(`
         <strong>${d.title}</strong><br>
@@ -244,6 +261,7 @@ function handleClick(event, d){
     // Highlight connected nodes and links
     highlightConnections(d);
 }
+
 
 function highlightConnections(d) {
   const connectedNodeIds = new Set();
@@ -261,55 +279,57 @@ function resetHighlight() {
   link.classed("highlighted", false);
 }
 
-// --- Initial Node Positioning (within Venn regions) ---
 
+// --- Initial Node Positioning (within Venn regions) ---
 nodes.forEach(node => {
   const groups = node.group.split('-');
   const regionCenter = getVennRegionCenter(groups);
-
-  if (regionCenter) {
+    if (regionCenter) {
     // Initial random position *around* the region center
     node.x = regionCenter.x + (Math.random() - 0.5) * 50; // Adjust range as needed
     node.y = regionCenter.y + (Math.random() - 0.5) * 50;
   } else {
     // Default position if no region found (shouldn't happen with correct data)
-    node.x = 400;
-    node.y = 300;
+    node.x = width / 2;
+    node.y = height / 2;
   }
+
 });
+
 
 // --- Tick Function ---
+
 function ticked() {
-    link
-        .attr("x1", d => d.source.x)
-        .attr("y1", d => d.source.y)
-        .attr("x2", d => d.target.x)
-        .attr("y2", d => d.target.y);
+  link
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y);
 
-    node
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y);
+  node
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y);
 }
+
 // --- Interactivity (Venn -> Network) ---
-
-// Click handler for Venn regions
 d3.selectAll(".venn-area").on("click", function(event, d) {
-    const selectedSets = d.sets;
+  const selectedSets = d.sets;
 
-      node.style("opacity", n => {
-        const nodeGroups = n.group.split('-');
-        return selectedSets.every(set => nodeGroups.includes(set)) ? 1 : 0.1;
-    });
+    node.style("opacity", n => {
+    const nodeGroups = n.group.split('-');
+    return selectedSets.every(set => nodeGroups.includes(set)) ? 1 : 0.1;
+  });
 
-   link.style("stroke-opacity", l => {
-        const sourceGroups = l.source.group.split('-');
-        const targetGroups = l.target.group.split('-');
-
-        const sourceMatch = selectedSets.every(set => sourceGroups.includes(set));
-        const targetMatch = selectedSets.every(set => targetGroups.includes(set));
-        return sourceMatch && targetMatch ? 1 : 0.1
-    });
+  link.style("stroke-opacity", l => {
+    const sourceGroups = l.source.group.split('-');
+    const targetGroups = l.target.group.split('-');
+    const sourceMatch = selectedSets.every(set => sourceGroups.includes(set));
+    const targetMatch = selectedSets.every(set => targetGroups.includes(set));
+    return sourceMatch && targetMatch ? 1 : 0.1;
+  });
 });
+
+
 // --- Drag Functions ---
 
 function dragstarted(event) {
