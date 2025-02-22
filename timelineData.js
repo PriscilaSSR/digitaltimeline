@@ -118,7 +118,7 @@ window.timelineItems = [
     date: '800s',
     location: 'Spain',
     title: "Abbas Ibn Firnas's jump",
-    description: "Abbas Ibn Firnas jumps from a tower wearing a cloak stiffened with wooden struts...",
+    description: "Abbas Ibn Firnas jumps from a tower wearing a cloak stiffened with wooden struts.",
     img: "/api/placeholder/100/100",
     people: ['Abbas Ibn Firnas'],
     category: 'Engineering Experiments & Demonstrations',
@@ -130,7 +130,7 @@ window.timelineItems = [
     date: '800s',
     location: 'Middle East and India',
     title: 'The Ebony Horse Tale',
-    description: "One of the tales from One Thousand and One Night. An inventor presents a magical mechanical horse to a Persian king...",
+    description: "One of the tales from One Thousand and One Night. An inventor presents a magical mechanical horse to a Persian king.",
     img: "/api/placeholder/100/100",
     people: ['The Ebony Horse'],
     category: 'Sociocultural Factors',
@@ -142,7 +142,7 @@ window.timelineItems = [
     date: '900s',
     location: 'China',
     title: 'Gunpowder Invention',
-    description: "Invented in China for fireworks and warfare, gunpowder also sowed the seed for rocketry...",
+    description: "Invented in China for fireworks and warfare, gunpowder also sowed the seed for rocketry.",
     img: '/api/placeholder/100/100',
     people: ['Chinese Alchemists'],
     category: 'Conceptual & Scientific Breakthroughs',
@@ -154,13 +154,13 @@ window.timelineItems = [
     date: '1000s',
     location: 'England',
     title: "Eilmer of Malmesbury's jump",
-    description: "A Benedictine monk who tries to fly with a glider-like apparatus. He may have glided a short distance...",
+    description: "A Benedictine monk who tries to fly with a glider-like apparatus. He may have glided a short distance..",
     img: "/api/placeholder/100/100",
     people: ['Eilmer of Malmesbury'],
     category: 'Engineering Experiments & Demonstrations',
     group: 'EED',
     row: 2,
-    connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "João Torto's Failed Flight Attempt"]
+    connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "João Torto's Failed Flight Attempt", 'Early Kites']
   },
   {
     date: '1290s',
@@ -178,7 +178,7 @@ window.timelineItems = [
     date: '1440s',
     location: 'Mainz, Germany',
     title: "Gutenberg's Printing Press",
-    description: "Johannes Gutenberg develops the movable-type printing press, drastically speeding the circulation of new ideas...",
+    description: "Johannes Gutenberg develops the movable-type printing press, drastically speeding the circulation of new ideas.",
     img: '/api/placeholder/100/100',
     people: ['Johannes Gutenberg'],
     category: 'Conceptual & Scientific Breakthroughs',
@@ -208,7 +208,7 @@ window.timelineItems = [
     category: 'Engineering Experiments & Demonstrations',
     group: 'EED',
     row: 2,
-    connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
+    connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump"]
   },
 {
     date: '17th–19th Centuries',
@@ -238,7 +238,7 @@ window.timelineItems = [
     date: '1638',
     location: 'England',
     title: "Francis Godwin's The Man in the Moone",
-    description: "One of the first “proto–science fiction” works. A utopian story describing lunar travel using large, trained birds...",
+    description: "One of the first “proto–science fiction” works. A utopian story describing lunar travel using large, trained birds.",
     img: "/api/placeholder/100/100",
     people: ['Francis Godwin'],
     category: 'Sociocultural Factors',
@@ -268,7 +268,7 @@ window.timelineItems = [
         category: 'Conceptual & Scientific Breakthroughs',
         group: 'CSB',
         row: 2,
-        connections: ["Archimedes' Buoyancy Principle","Roger Bacon's Air Support Theory"] // No connections here.
+        connections: ["Archimedes' Buoyancy Principle","Roger Bacon's Air Support Theory",'The Gentleman Scientist Tradition'] // No connections here.
     },
     {
         date: '1687',
@@ -280,7 +280,7 @@ window.timelineItems = [
         category: 'Conceptual & Scientific Breakthroughs',
         group: 'CSB',
         row: 2,
-        connections: [] // No connections here.
+        connections: ['The Gentleman Scientist Tradition'] // No connections here.
     },
     {
         date: '1709',
@@ -333,7 +333,7 @@ window.timelineItems = [
   {
     date: '1783',
     location: 'France',
-title: "Montgolfier Brothers' Hot Air Balloon",
+    title: "Montgolfier Brothers' Hot Air Balloon",
     description: "Jean-François Pilâtre de Rozier and François Laurent d'Arlandes make the first manned flight in a hot air balloon built by the Montgolfier brothers.",
     img: "/api/placeholder/100/100",
     people: ['Jean-François Pilâtre de Rozier', "François Laurent d'Arlandes", 'Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
@@ -350,7 +350,7 @@ title: "Montgolfier Brothers' Hot Air Balloon",
     img: "/api/placeholder/100/100",
     people: ['George Cayley'],
     row: 4,
-    connections: ['Early Kites'],
+    connections: ['Early Kites', 'The Gentleman Scientist Tradition'],
     group: 'CSB',
     category: "Conceptual & Scientific Breakthroughs"
   },
@@ -386,7 +386,7 @@ title: "Montgolfier Brothers' Hot Air Balloon",
   img: "/api/placeholder/100/100",
   people: ['Henri Giffard'],
   row: 5,
-  connections: ["Hero's Aeolipile"],
+  connections: ["Hero's Aeolipile", 'Industrial Revolution'],
     group: 'EED',
   category: "Engineering Experiments & Demonstrations"
 },
@@ -398,7 +398,7 @@ title: "Montgolfier Brothers' Hot Air Balloon",
   img: "/api/placeholder/100/100",
   people: ['William Henson'],
   row: 6,
-  connections: ["Hero's Aeolipile"],
+  connections: ["Hero's Aeolipile", "Leonardo da Vinci's Flying Machines"],
   group: 'EED',
   category: "Engineering Experiments & Demonstrations"
 },
@@ -454,7 +454,7 @@ title: "Montgolfier Brothers' Hot Air Balloon",
     date: '1885',
     location: 'Coventry, England',
     title: 'Safety Bicycle Revolution',
-    description: 'John Kemp Starley produces the “safety bicycle.” This sparks a bicycle boom...',
+    description: 'John Kemp Starley produces the “safety bicycle.” This sparks a bicycle boom.',
     img: '/api/placeholder/100/100',
     people: ['John Kemp Starley'],
     category: 'Engineering Experiments & Demonstrations',
