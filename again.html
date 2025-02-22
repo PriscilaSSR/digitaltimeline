@@ -3,32 +3,83 @@
 <head>
   <title>Flight History: Venn Diagram & Network Graph</title>
   <style>
-    .venn-circle { opacity: 0.5; cursor: pointer; /* Make circles clickable */ }
-    /* Remove Venn labels to avoid overlap with nodes */
-    /* .venn-label { font-family: sans-serif; font-size: 14px; text-anchor: middle; pointer-events: none;} */
-    .node { stroke: #fff; stroke-width: 1.5px; }
-    .link { stroke: #999; stroke-opacity: 0.6; }
-    #tooltip {
-        position: absolute;
-        background-color: white;
-        border: 1px solid black;
-        padding: 5px;
-        font-family: sans-serif;
-        font-size: 12px;
-        pointer-events: none;
-        display: none;
+    .venn-circle {
+      opacity: 0.5;
+      cursor: pointer; /* Indicate clickability */
     }
+    /* Remove Venn labels */
+    /*.venn-label { font-family: sans-serif; font-size: 14px; text-anchor: middle; pointer-events: none;}*/
+    .node {
+      stroke: #fff;
+      stroke-width: 1.5px;
+      cursor: pointer; /* Indicate clickability */
+    }
+    .link {
+      stroke: #999;
+      stroke-opacity: 0.6;
+    }
+    #tooltip {
+      position: absolute;
+      background-color: white;
+      border: 1px solid black;
+      padding: 5px;
+      font-family: sans-serif;
+      font-size: 12px;
+      pointer-events: none; /* Important! */
+      display: none; /* Initially hidden */
+    }
+    /* Style for highlighted nodes */
+    .node.highlighted {
+      stroke: black;
+      stroke-width: 3px;
+    }
+    /* Style for highlighted links */
+    .link.highlighted {
+        stroke: black;
+        stroke-width: 2px;
+    }
+
+
   </style>
 </head>
 <body>
 
 <div id="tooltip"></div>
-<svg width="1200" height="1200" id="visualization"></svg>
+<svg width="800" height="600" id="visualization"></svg>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/venn.js/0.2.20/venn.min.js"></script>
 <script src="timelineData.js"></script>
  <script>
+
+// Prepare data for Venn.js, counting items in each group.
+const vennData = [
+  { sets: ['SF'], size: 0, label: 'Sociocultural Factors' },
+  { sets: ['CSB'], size: 0, label: 'Conceptual & Scientific Breakthroughs' },
+  { sets: ['EED'], size: 0, label: 'Engineering Experiments & Demonstrations' },
+  { sets: ['SF', 'CSB'], size: 0, label: 'SF ∩ CSB' },
+  { sets: ['CSB', 'EED'], size: 0, label: 'CSB ∩ EED' },
+  { sets: ['SF', 'EED'], size: 0, label: 'SF ∩ EED' },
+  { sets: ['SF', 'CSB', 'EED'], size: 0, label: 'SF ∩ CSB ∩ EED' },
+];
+
+timelineItems.forEach(item => {
+    const groups = item.group.split('-');
+    let region = null;
+    if (groups.length === 1) {
+        region = vennData.find(r => r.sets.length === 1 && r.sets[0] === item.group);
+    } else if (groups.length === 2) {
+        region = vennData.find(r => r.sets.length === 2 && r.sets.includes(groups[0]) && r.sets.includes(groups[1]));
+    } else if (groups.length === 3) {
+        region = vennData.find(r => r.sets.length === 3 && r.sets.includes(groups[0]) && r.sets.includes(groups[1]) && r.sets.includes(groups[2]));
+    }
+
+    if (region) {
+        region.size += 1;
+    }
+});
+
+// --- Venn Diagram ---
 
 // Prepare data for Venn.js, counting items in each group.
 const vennData = [
@@ -175,32 +226,67 @@ const node = svg.append("g")
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended))
-  .on("mouseover", (event, d) => { // Tooltip on mouseover
+  .on("mouseover", handleMouseOver) // Use named functions for clarity
+  .on("mouseout", handleMouseOut)
+  .on("click", handleClick);  // Add click handler
+
+
+
+// --- Tooltip and Highlighting Functions ---
+
+const tooltip = d3.select("#tooltip");
+
+function handleMouseOver(event, d) {
+  tooltip.style("display", "block")
+    .html(`
+      <strong>${d.title}</strong><br>
+      Date: ${d.date}<br>
+      Category: ${d.category}<br>
+      Description: ${d.description}
+    `)
+    .style("left", (event.pageX + 10) + "px")
+    .style("top", (event.pageY - 28) + "px");
+
+  // Highlight connected nodes and links
+  highlightConnections(d);
+}
+
+function handleMouseOut() {
+  tooltip.style("display", "none");
+  resetHighlight();
+}
+
+function handleClick(event, d){
+    //alert(d.description);
     tooltip.style("display", "block")
-      .html(`
-          <strong>${d.title}</strong><br>
-          Date: ${d.date}<br>
-          Category: ${d.category}<br>
-          Description: ${d.description}
-      `)
-      .style("left", (event.pageX + 10) + "px")
-      .style("top", (event.pageY - 28) + "px");
+    .html(`
+        <strong>${d.title}</strong><br>
+        Date: ${d.date}<br>
+        Category: ${d.category}<br>
+        Description: ${d.description}
+    `)
+    .style("left", (event.pageX + 10) + "px")
+    .style("top", (event.pageY - 28) + "px");
 
     // Highlight connected nodes and links
-    const connectedNodeIds = new Set();
-    links.forEach(l => {
-      if (l.source.id === d.id) connectedNodeIds.add(l.target.id);
-      if (l.target.id === d.id) connectedNodeIds.add(l.source.id);
-    });
+    highlightConnections(d);
+}
 
-    node.style("opacity", n => connectedNodeIds.has(n.id) || n.id === d.id ? 1 : 0.2);
-    link.style("stroke-opacity", l => (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.1);
-  })
-    .on("mouseout", () => {
-        tooltip.style("display", "none");
-         node.style("opacity", 1); // Reset opacity on mouseout
-    link.style("stroke-opacity", 0.6);
-    });
+function highlightConnections(d) {
+  const connectedNodeIds = new Set();
+  links.forEach(l => {
+    if (l.source.id === d.id) connectedNodeIds.add(l.target.id);
+    if (l.target.id === d.id) connectedNodeIds.add(l.source.id);
+  });
+
+  node.classed("highlighted", n => connectedNodeIds.has(n.id) || n.id === d.id);
+  link.classed("highlighted", l => l.source.id === d.id || l.target.id === d.id);
+}
+
+function resetHighlight() {
+  node.classed("highlighted", false);
+  link.classed("highlighted", false);
+}
 
 // --- Initial Node Positioning (within Venn regions) ---
 
@@ -232,6 +318,8 @@ function ticked() {
         .attr("cy", d => d.y);
 }
 // --- Interactivity (Venn -> Network) ---
+
+// Click handler for Venn regions
 d3.selectAll(".venn-area").on("click", function(event, d) {
     const selectedSets = d.sets;
 
@@ -249,8 +337,8 @@ d3.selectAll(".venn-area").on("click", function(event, d) {
         return sourceMatch && targetMatch ? 1 : 0.1
     });
 });
-
 // --- Drag Functions ---
+
 function dragstarted(event) {
   if (!event.active) simulation.alphaTarget(0.3).restart();
   event.subject.fx = event.subject.x;
