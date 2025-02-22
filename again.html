@@ -7,6 +7,7 @@
     #visualization-container {
       width: 100%;          /* Fill available width */
       position: relative;  /* Needed for absolute positioning of SVG */
+      padding-bottom: 75%; /* 4:3 Aspect Ratio */
     }
 
     #visualization {
@@ -137,17 +138,23 @@ function getDimensions(){
     return {width, height}
 }
 
-// --- MODIFIED getVennRegionCenter ---
+// --- Simplified getVennRegionCenter ---
 function getVennRegionCenter(sets) {
     const { width, height } = getDimensions();
+    const vennArea = d3.selectAll(".venn-area");
 
-    // Directly use the centers calculated by Venn.js, if available.
-    const region = vennData.find(r => r.sets.length === sets.length && sets.every(s => r.sets.includes(s)));
-    if (region && region.center) {
-      return { x: region.center.x, y: region.center.y};
+    // Find the *specific* Venn area element that matches the sets
+    const region = vennArea.filter(d => {
+        return d.sets.length === sets.length && sets.every(s => d.sets.includes(s));
+    });
+
+    if (!region.empty()) {
+        // Get the bounding box of this specific region and return its center
+        const bounds = region.node().getBBox();
+        return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
     }
 
-    // Fallback to default center if no region found (shouldn't happen)
+    // Fallback (shouldn't normally happen)
     return { x: width / 2, y: height / 2 };
 }
 
@@ -168,25 +175,14 @@ function drawVisualization() {
 
     // Create Venn diagram, passing in the width and height
     const vennChart = venn.VennDiagram().width(width * 0.5).height(height);
-
-    // --- MODIFICATION: Draw Venn diagram and get centers ---
-    vennSvg = svg.append("g") // Append a group for the Venn diagram
-                  .attr("id", "venn") // Give it an ID for easy selection later
-                  .datum(vennData)
-                  .call(vennChart);
+    const vennSvg = svg
+    .append("g") // Group for the Venn diagram
+    .attr("id", "venn") // Give it an ID for easy selection later
+    .datum(vennData)
+    .call(vennChart);
 
     d3.selectAll(".venn-label").remove();
 
-    // --- Get Centers from Venn.js ---
-    vennData.forEach(region => {
-        const area = d3.select(`.venn-area[data-venn-sets="${region.sets.join('_')}"]`);
-        if (!area.empty()) {
-          const centroid = venn.layoutFunction(vennData).find(d=>d.sets.join("_") == region.sets.join("_"));
-          if (centroid){
-            region.center = {x: centroid.x, y: centroid.y}
-          }
-        }
-    });
 
 
     // Create simulation *without* a center force initially
@@ -374,7 +370,7 @@ function drawVisualization() {
 
     // --- Centering Logic ---
     function centerVisualization() {
-        const { width, height } = getDimensions();
+      const {width, height} = getDimensions();
         const vennbbox = d3.select("#venn").node().getBBox();
 
         const networkbbox = svg.node().getBBox();
@@ -393,8 +389,10 @@ function drawVisualization() {
       svg.attr("transform", `translate(${translateX}, ${translateY})`);
 
     }
-      // Call centerVisualization *after* the initial layout is complete
-     simulation.on("end", centerVisualization); // Center after simulation settles
+      // Call centerVisualization *after* the initial layout is complete and after force calculation
+     simulation.on("end", () => {
+        centerVisualization();
+     });
 
 
 }
@@ -408,3 +406,5 @@ window.addEventListener("resize", drawVisualization);
 
 </body>
 </html>
+
+      
