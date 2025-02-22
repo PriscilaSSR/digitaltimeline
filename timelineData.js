@@ -15,6 +15,7 @@ window.timelineItems = [
           "Henri Giffard\'s Dirigible",
           "Charles Renard and Arthur Constantin\'s Le France",
         ],
+       group: "CSB", // Add a 'group' property for Venn diagram
         row: 1
       },
   {
