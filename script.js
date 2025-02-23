@@ -8,12 +8,25 @@ document.addEventListener("DOMContentLoaded", function() {
   const centerX = width / 2;
   const centerY = height / 2;
 
-  // 3) Radii for each ring by category
-  const radiusMap = {
-    "Engineering Experiments & Demonstrations": 200,
-    "Conceptual & Scientific Breakthroughs": 300,
-    "Sociocultural Factors": 400
-  };
+  // 3) We define each category’s ring radius and color
+  //    (largest ring first, so it’s behind)
+  const categories = [
+    {
+      name: "Sociocultural Factors",
+      radius: 400,
+      color: "#c62828" // red
+    },
+    {
+      name: "Conceptual & Scientific Breakthroughs",
+      radius: 300,
+      color: "#1565c0" // blue
+    },
+    {
+      name: "Engineering Experiments & Demonstrations",
+      radius: 200,
+      color: "#2e7d32" // green
+    }
+  ];
 
   // 4) Create an SVG
   const svg = d3.select("#chart")
@@ -21,66 +34,76 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("width", width)
     .attr("height", height);
 
-  // Draw the three concentric circles for reference
-  svg.append("circle")
+  // 5) Draw each ring as a colored circle + label
+  //    We do this first (behind nodes & links)
+  const ringGroups = svg.selectAll("g.ring-group")
+    .data(categories)
+    .enter()
+    .append("g")
+    .attr("class", "ring-group");
+
+  // Add the colored circle for each ring
+  ringGroups.append("circle")
     .attr("cx", centerX)
     .attr("cy", centerY)
-    .attr("r", 200)
-    .style("fill", "none")
-    .style("stroke", "#ccc")
-    .style("stroke-dasharray", "4,2");
+    .attr("r", d => d.radius)
+    .style("fill", d => d.color)
+    .style("fill-opacity", 0.1)  // translucent so lines/nodes show on top
+    .style("stroke", d => d.color)
+    .style("stroke-dasharray", "3,3");
 
-  svg.append("circle")
-    .attr("cx", centerX)
-    .attr("cy", centerY)
-    .attr("r", 300)
-    .style("fill", "none")
-    .style("stroke", "#ccc")
-    .style("stroke-dasharray", "4,2");
+  // Add the text label near the top of each ring
+  ringGroups.append("text")
+    .attr("x", centerX)
+    .attr("y", d => centerY - d.radius + 20) // 20px below ring top
+    .text(d => d.name)
+    .style("fill", d => d.color)
+    .style("font-size", "16px")
+    .style("font-weight", "bold")
+    .style("text-anchor", "middle")
+    .style("opacity", 0.4); // behind the nodes
 
-  svg.append("circle")
-    .attr("cx", centerX)
-    .attr("cy", centerY)
-    .attr("r", 400)
-    .style("fill", "none")
-    .style("stroke", "#ccc")
-    .style("stroke-dasharray", "4,2");
-
-  // 5) Color scale for the nodes
+  // 6) Create a color scale that matches the ring colors above
+  //    so nodes share the same colors
   const colorScale = d3.scaleOrdinal()
     .domain(["Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
-    .range(["#d95f02", "#7570b3", "#1b9e77"]);
+    .range(["#c62828", "#1565c0", "#2e7d32"]);
 
-  // 6) FIRST, compute each node’s x,y position so we can use it for the links
+  // 7) Map each category to the ring radius
+  const radiusMap = {
+    "Sociocultural Factors": 400,
+    "Conceptual & Scientific Breakthroughs": 300,
+    "Engineering Experiments & Demonstrations": 200
+  };
+
+  // 8) Compute each node’s x,y position in its ring
   data.forEach(d => {
-    const angle = Math.random() * 2 * Math.PI;      // random angle
-    d.angle = angle;                                // store angle if needed
-    const r = radiusMap[d.category] || 200;         // fallback radius
-    d.x = centerX + r * Math.cos(angle);            // store x in data
-    d.y = centerY + r * Math.sin(angle);            // store y in data
+    const angle = Math.random() * 2 * Math.PI; // random angle
+    const r = radiusMap[d.category] || 200;    // fallback
+    d.x = centerX + r * Math.cos(angle);
+    d.y = centerY + r * Math.sin(angle);
   });
 
-  // 7) Create a map from title -> index, for easy lookup
+  // 9) Build a map from title -> index for easy “connections” lookup
   const titleToIndex = new Map();
   data.forEach((d, i) => {
     titleToIndex.set(d.title, i);
   });
 
-  // 8) Build an array of links
-  //    Each link = { source: indexOfSource, target: indexOfTarget }
-  //    To avoid duplicates (A->B & B->A), only add link if targetIndex > sourceIndex
+  // 10) Build an array of links from the "connections" field
   const links = [];
   data.forEach((d, i) => {
     if (!d.connections) return;
     d.connections.forEach(connTitle => {
       const targetIndex = titleToIndex.get(connTitle);
+      // only add link if the target index is valid and bigger, to avoid duplicates
       if (targetIndex !== undefined && targetIndex > i) {
         links.push({ source: i, target: targetIndex });
       }
     });
   });
 
-  // 9) Draw the links FIRST (so they’re behind the nodes)
+  // 11) Draw the links (behind the nodes)
   svg.selectAll("line.link")
     .data(links)
     .enter()
@@ -94,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("stroke-width", 1)
     .style("opacity", 0.5);
 
-  // 10) Draw the node circles on top
+  // 12) Draw the nodes on top
   svg.selectAll(".node")
     .data(data)
     .enter()
@@ -104,11 +127,11 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("fill", d => colorScale(d.category))
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
-    .on("click", function(event, d) {
+    .on("click", (event, d) => {
       showModal(d);
     });
 
-  // 11) Modal logic
+  // 13) Modal logic
   const modal = document.getElementById("modal");
   const closeBtn = document.getElementById("close");
 
@@ -123,11 +146,11 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("modal-image").alt = d.title;
   }
 
-  closeBtn.onclick = function() {
+  closeBtn.onclick = () => {
     modal.style.display = "none";
   };
 
-  window.onclick = function(event) {
+  window.onclick = event => {
     if (event.target === modal) {
       modal.style.display = "none";
     }
