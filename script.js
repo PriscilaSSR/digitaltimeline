@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Colors for each category
   const colorScale = d3.scaleOrdinal()
-    .domain(["The Dream of Flight", "Theoretical and Economic Breakthroughs", "Practical Results"])
+    .domain(["Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
     .range(["#c62828", "#1565c0", "#2e7d32"]);
 
   // Create the SVG + container for zoom/pan
