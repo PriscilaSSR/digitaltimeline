@@ -1,38 +1,47 @@
-body {
-  font-family: sans-serif;
+html, body {
   margin: 0;
   padding: 0;
-  background: #f9f9f9;
-}
-
-h1 {
-  text-align: center;
-  margin: 1rem 0;
+  height: 100%;
+  width: 100%;
 }
 
 #chart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* The zoom controls in a corner */
+#zoom-controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 2rem;
+  flex-direction: column;
+}
+
+#zoom-controls button {
+  font-size: 20px;
+  margin-bottom: 5px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
 }
 
 /* Basic node styling */
-.node {
+.node-group {
   cursor: pointer;
-  stroke: #333;
-  stroke-width: 1px;
 }
 
-/* Modal popup styling */
+/* Modal styling */
 .modal {
   display: none; /* Hidden by default */
   position: fixed;
   z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
   overflow: auto;
   background-color: rgba(0,0,0,0.5);
 }
