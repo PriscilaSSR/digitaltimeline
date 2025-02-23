@@ -4,16 +4,18 @@ document.addEventListener("DOMContentLoaded", function() {
   // -------------------------
   const data = window.timelineItems;
 
-  // We’ll still use an SVG coordinate system of 2000x2000,
-  // but you can adjust if you like
+  // We'll still use a 2000x2000 viewBox:
   const viewBoxSize = 2000;
-  const center = viewBoxSize / 2; // The logical center is (1000,1000)
+  const center = viewBoxSize / 2; // 1000
 
-  // We'll define a maximum outer radius for the largest ring
-  const maxOuterRadius = 400; // You can tweak for style
+  // Increase the largest ring radius so it’s huge compared to the 2000×2000 space
+  // For instance, 80% of half the viewBox => 800
+  const maxOuterRadius = center * 0.8; // 800
 
-  // Annular ranges for each category (Engineering, Conceptual, Sociocultural)
-  // [rMin, rMax]
+  // Now define annular ranges for each category:
+  //   EED: 0 to 1/3 of 800 => [0, ~266]
+  //   CSB: 1/3 to 2/3 => [~266, ~533]
+  //   SF:  2/3 to 3/3 => [~533, 800]
   const ringRanges = {
     "Engineering Experiments & Demonstrations": [0, maxOuterRadius * (1/3)],
     "Conceptual & Scientific Breakthroughs": [maxOuterRadius * (1/3), maxOuterRadius * (2/3)],
@@ -25,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .domain(["Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
     .range(["#c62828", "#1565c0", "#2e7d32"]);
 
-  // Make the <svg> fill the parent and set up a big viewBox
+  // Create the SVG + container for zoom/pan
   const svg = d3.select("#chart")
     .append("svg")
     .attr("width", "100%")
@@ -33,12 +35,10 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("viewBox", `0 0 ${viewBoxSize} ${viewBoxSize}`)
     .attr("preserveAspectRatio", "xMidYMid meet");
 
-  // Container <g> for zoom/pan
   const container = svg.append("g")
     .attr("class", "zoom-container");
 
-  // Create ring shapes & labels behind everything
-  // (just for visual reference)
+  // Draw big circles for visual reference
   const categories = [
     {
       name: "Sociocultural Factors",
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("font-weight", "bold")
     .style("opacity", 0.3);
 
-  // 2) BUILD CONNECTIONS (same as before)
+  // Build link data
   const titleToIndex = new Map();
   data.forEach((d, i) => {
     titleToIndex.set(d.title, i);
@@ -97,26 +97,20 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  // 3) MAKE D3 SIMULATION
-  // Instead of specifying x,y, we let the simulation handle it.
-  // We'll give each node a ring constraint in the 'tick' so it stays in [rMin, rMax].
+  // Force simulation with "floating" inside ring constraints
   const simulation = d3.forceSimulation(data)
-    // Keep them from drifting infinitely
     .velocityDecay(0.15)
-    // Small repulsive force so nodes don’t all cluster
     .force("charge", d3.forceManyBody().strength(10))
-    // Optionally ensure nodes don't overlap (circle radius ~ 50 => collision radius ~ 50)
     .force("collide", d3.forceCollide(60))
-    // We won't define x,y forces, because we'll do a custom "ring constraint" instead
     .on("tick", ticked);
 
-  // Random initial positions near center, so they don't all start at (0,0)
+  // Random initial positions near the center
   data.forEach(d => {
-    d.x = center + (Math.random() - 0.5) * 50; // random small offset
+    d.x = center + (Math.random() - 0.5) * 50;
     d.y = center + (Math.random() - 0.5) * 50;
   });
 
-  // 4) DRAW LINKS & NODES
+  // Draw links
   const linkSelection = container.selectAll("line.link")
     .data(linksData)
     .enter()
@@ -126,6 +120,8 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("stroke-width", 1)
     .style("opacity", 0.5);
 
+  // Draw node groups
+  const circleRadius = 50;
   const nodeGroup = container.selectAll("g.node-group")
     .data(data)
     .enter()
@@ -133,14 +129,12 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("class", "node-group")
     .on("click", (event, d) => showModal(d));
 
-  const circleRadius = 50;
   nodeGroup.append("circle")
     .attr("r", circleRadius)
     .attr("fill", d => colorScale(d.category))
     .style("stroke", "#333")
     .style("stroke-width", 1);
 
-  // Title & Date inside the circle
   nodeGroup.append("foreignObject")
     .attr("x", -circleRadius * 0.8)
     .attr("y", -circleRadius * 0.8)
@@ -157,50 +151,47 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("overflow", "hidden")
     .html(d => `<strong>${d.title}</strong><br/><em>${d.date}</em>`);
 
-  // 5) CUSTOM "RING" CONSTRAINT each tick
-  // We'll keep each node inside the ring range for its category
+  // Each tick, clamp node positions to ring
   function ticked() {
-    // clamp positions to each node's ring range
     data.forEach(d => {
       const [rMin, rMax] = ringRanges[d.category] || [0, maxOuterRadius];
-      // distance from center
       const dx = d.x - center;
       const dy = d.y - center;
       const dist = Math.sqrt(dx*dx + dy*dy);
 
       if (dist > 0) {
-        // if below rMin, push outward
+        // If too close, push outward
         if (dist < rMin) {
           const ratio = rMin / dist;
           d.x = center + dx * ratio;
           d.y = center + dy * ratio;
         }
-        // if above rMax, pull inward
+        // If too far, pull inward
         else if (dist > rMax) {
           const ratio = rMax / dist;
           d.x = center + dx * ratio;
           d.y = center + dy * ratio;
         }
       } else {
-        // if dist=0 (exactly center), just place at rMin or midpoint
+        // If exactly at center, nudge outward
         d.x = center + rMin;
         d.y = center;
       }
     });
 
-    // update link positions
+    // Update link endpoints
     linkSelection
       .attr("x1", d => data[d.source].x)
       .attr("y1", d => data[d.source].y)
       .attr("x2", d => data[d.target].x)
       .attr("y2", d => data[d.target].y);
 
-    // update node <g> transforms
+    // Update node positions
     nodeGroup
       .attr("transform", d => `translate(${d.x}, ${d.y})`);
   }
 
-  // 6) ZOOM & PAN
+  // Zoom and pan
   const zoom = d3.zoom()
     .scaleExtent([0.1, 5])
     .on("zoom", event => {
@@ -208,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   svg.call(zoom);
 
-  // 7) PLUS/MINUS Buttons
+  // Hook up plus/minus buttons
   d3.select("#zoom-in").on("click", () => {
     svg.transition().call(zoom.scaleBy, 1.2);
   });
@@ -216,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function() {
     svg.transition().call(zoom.scaleBy, 1/1.2);
   });
 
-  // 8) MODAL LOGIC
+  // Modal logic
   const modal = document.getElementById("modal");
   const closeBtn = document.getElementById("close");
   function showModal(d) {
