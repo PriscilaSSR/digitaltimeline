@@ -1,110 +1,115 @@
 document.addEventListener("DOMContentLoaded", function() {
-  // 1) Load data from timelineData.js
+  // Load data from timelineData.js
   const data = window.timelineItems;
 
-  // 2) Dimensions for the SVG
+  // Dimensions for the SVG
   const width = 800;
   const height = 800;
   const centerX = width / 2;
   const centerY = height / 2;
 
-  // 3) We define each category’s ring radius and color
-  //    (largest ring first, so it’s behind)
+  // Category definitions with ring intervals:
+  // We'll define for each category a [innerRadius, outerRadius].
+  // The node will appear randomly somewhere in that annular region.
+  const ringRanges = {
+    "Engineering Experiments & Demonstrations": [0, 200],
+    "Conceptual & Scientific Breakthroughs": [200, 300],
+    "Sociocultural Factors": [300, 400]
+  };
+
+  // Category name, color, and the outer ring radius
+  // (Used for drawing the filled circles + labels)
   const categories = [
     {
       name: "Sociocultural Factors",
-      radius: 400,
+      outerRadius: 400,
       color: "#c62828" // red
     },
     {
       name: "Conceptual & Scientific Breakthroughs",
-      radius: 300,
+      outerRadius: 300,
       color: "#1565c0" // blue
     },
     {
       name: "Engineering Experiments & Demonstrations",
-      radius: 200,
+      outerRadius: 200,
       color: "#2e7d32" // green
     }
   ];
 
-  // 4) Create an SVG
+  // Create the main SVG
   const svg = d3.select("#chart")
     .append("svg")
     .attr("width", width)
     .attr("height", height);
 
-  // 5) Draw each ring as a colored circle + label
-  //    We do this first (behind nodes & links)
-  const ringGroups = svg.selectAll("g.ring-group")
+  // We’ll place everything (rings, links, nodes) into a <g> "container"
+  // so we can apply zoom and pan transformations to it.
+  const container = svg.append("g")
+    .attr("class", "zoom-container");
+
+  // 1) Draw each ring as a colored circle with a category label
+  const ringGroups = container.selectAll("g.ring-group")
     .data(categories)
     .enter()
     .append("g")
     .attr("class", "ring-group");
 
-  // Add the colored circle for each ring
   ringGroups.append("circle")
     .attr("cx", centerX)
     .attr("cy", centerY)
-    .attr("r", d => d.radius)
+    .attr("r", d => d.outerRadius)
     .style("fill", d => d.color)
-    .style("fill-opacity", 0.1)  // translucent so lines/nodes show on top
+    .style("fill-opacity", 0.1)
     .style("stroke", d => d.color)
     .style("stroke-dasharray", "3,3");
 
-  // Add the text label near the top of each ring
   ringGroups.append("text")
     .attr("x", centerX)
-    .attr("y", d => centerY - d.radius + 20) // 20px below ring top
+    .attr("y", d => centerY - d.outerRadius + 20)
     .text(d => d.name)
     .style("fill", d => d.color)
     .style("font-size", "16px")
     .style("font-weight", "bold")
     .style("text-anchor", "middle")
-    .style("opacity", 0.4); // behind the nodes
+    .style("opacity", 0.4);
 
-  // 6) Create a color scale that matches the ring colors above
-  //    so nodes share the same colors
+  // 2) For nodes, we create a color scale matching the ring colors
   const colorScale = d3.scaleOrdinal()
     .domain(["Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
     .range(["#c62828", "#1565c0", "#2e7d32"]);
 
-  // 7) Map each category to the ring radius
-  const radiusMap = {
-    "Sociocultural Factors": 400,
-    "Conceptual & Scientific Breakthroughs": 300,
-    "Engineering Experiments & Demonstrations": 200
-  };
-
-  // 8) Compute each node’s x,y position in its ring
+  // 3) Compute each node's (x, y) position somewhere within its ring range
   data.forEach(d => {
-    const angle = Math.random() * 2 * Math.PI; // random angle
-    const r = radiusMap[d.category] || 200;    // fallback
+    const [innerR, outerR] = ringRanges[d.category] || [0, 200];
+    // pick a random radius between innerR and outerR
+    const r = innerR + (outerR - innerR) * Math.random();
+    // random angle
+    const angle = Math.random() * 2 * Math.PI;
+
     d.x = centerX + r * Math.cos(angle);
     d.y = centerY + r * Math.sin(angle);
   });
 
-  // 9) Build a map from title -> index for easy “connections” lookup
+  // 4) Build link array from "connections"
   const titleToIndex = new Map();
   data.forEach((d, i) => {
     titleToIndex.set(d.title, i);
   });
 
-  // 10) Build an array of links from the "connections" field
   const links = [];
   data.forEach((d, i) => {
     if (!d.connections) return;
     d.connections.forEach(connTitle => {
       const targetIndex = titleToIndex.get(connTitle);
-      // only add link if the target index is valid and bigger, to avoid duplicates
       if (targetIndex !== undefined && targetIndex > i) {
         links.push({ source: i, target: targetIndex });
       }
     });
   });
 
-  // 11) Draw the links (behind the nodes)
-  svg.selectAll("line.link")
+  // 5) Draw the links behind the nodes
+  container.selectAll("line.link")
     .data(links)
     .enter()
     .append("line")
@@ -117,21 +122,46 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("stroke-width", 1)
     .style("opacity", 0.5);
 
-  // 12) Draw the nodes on top
-  svg.selectAll(".node")
+  // 6) Draw each node as a group <g> with:
+  //    - a circle
+  //    - a foreignObject for multiline text (title + date)
+  // We'll make them bigger so the text is visible
+  const nodeGroup = container.selectAll("g.node")
     .data(data)
     .enter()
-    .append("circle")
-    .attr("class", "node")
-    .attr("r", 6)
-    .attr("fill", d => colorScale(d.category))
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
-    .on("click", (event, d) => {
-      showModal(d);
-    });
+    .append("g")
+    .attr("class", "node-group")
+    .attr("transform", d => `translate(${d.x}, ${d.y})`)
+    .on("click", (event, d) => showModal(d));
 
-  // 13) Modal logic
+  // Circle background
+  const circleRadius = 50; // increase radius so text can fit inside
+  nodeGroup.append("circle")
+    .attr("r", circleRadius)
+    .attr("fill", d => colorScale(d.category))
+    .style("stroke", "#333")
+    .style("stroke-width", 1);
+
+  // A small foreignObject for the text, centered in the circle.
+  // We'll create a <div> for text wrapping. 
+  // Using text-anchor won't help for multiline, so foreignObject is simpler.
+  nodeGroup.append("foreignObject")
+    .attr("x", -circleRadius * 0.8) // a bit narrower than the circle
+    .attr("y", -circleRadius * 0.8)
+    .attr("width", circleRadius * 1.6)
+    .attr("height", circleRadius * 1.6)
+    .append("xhtml:div")
+    .style("display", "flex")
+    .style("justify-content", "center")
+    .style("align-items", "center")
+    .style("text-align", "center")
+    .style("font-size", "12px")
+    .style("width", circleRadius * 1.6 + "px")
+    .style("height", circleRadius * 1.6 + "px")
+    .style("overflow", "hidden")
+    .html(d => `<strong>${d.title}</strong><br/><em>${d.date}</em>`);
+
+  // 7) Modal logic
   const modal = document.getElementById("modal");
   const closeBtn = document.getElementById("close");
 
@@ -149,10 +179,43 @@ document.addEventListener("DOMContentLoaded", function() {
   closeBtn.onclick = () => {
     modal.style.display = "none";
   };
-
   window.onclick = event => {
     if (event.target === modal) {
       modal.style.display = "none";
     }
   };
+
+  // 8) Enable zoom & pan with mouse
+  const zoom = d3.zoom()
+    .scaleExtent([0.3, 5])  // min & max zoom
+    .on("zoom", (event) => {
+      container.attr("transform", event.transform);
+    });
+
+  svg.call(zoom);
+
+  // 9) Add plus/minus buttons to control the zoom programmatically
+  const zoomControls = d3.select("body").append("div")
+    .attr("id", "zoom-controls")
+    .style("position", "absolute")
+    .style("top", "80px")
+    .style("right", "20px")
+    .style("display", "flex")
+    .style("flex-direction", "column");
+
+  zoomControls.append("button")
+    .text("+")
+    .style("font-size", "20px")
+    .style("margin-bottom", "5px")
+    .on("click", () => {
+      // "zoom.scaleBy" increments the scale by a factor
+      svg.transition().call(zoom.scaleBy, 1.2);
+    });
+
+  zoomControls.append("button")
+    .text("−")
+    .style("font-size", "20px")
+    .on("click", () => {
+      svg.transition().call(zoom.scaleBy, 1/1.2);
+    });
 });
