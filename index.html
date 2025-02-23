@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aviation Timeline Visualization</title>
+  <!-- Link to your CSS -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- Include D3 -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <h1>Aviation Timeline Visualization</h1>
+
+  <!-- Container for the D3 visualization -->
+  <div id="chart"></div>
+
+  <!-- The hidden popup/modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content" id="modal-content">
+      <span id="close">&times;</span>
+      <h2 id="modal-title"></h2>
+      <p id="modal-date"></p>
+      <img id="modal-image" />
+      <p id="modal-description"></p>
+      <p><strong>Location:</strong> <span id="modal-location"></span></p>
+      <p><strong>People:</strong> <span id="modal-people"></span></p>
+    </div>
+  </div>
+
+  <!-- Your data file -->
+  <script src="timelineData.js"></script>
+  <!-- Main D3 script -->
+  <script src="script.js"></script>
+</body>
+</html>
