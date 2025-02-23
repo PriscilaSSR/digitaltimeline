@@ -1,54 +1,66 @@
 document.addEventListener("DOMContentLoaded", function() {
-  // Load data from timelineData.js
+  // 1) Load data from timelineData.js
   const data = window.timelineItems;
 
-  // Dimensions for the SVG
-  const width = 800;
-  const height = 800;
-  const centerX = width / 2;
-  const centerY = height / 2;
+  // 2) Get the browser window size
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
 
-  // Category definitions with ring intervals:
-  // We'll define for each category a [innerRadius, outerRadius].
-  // The node will appear randomly somewhere in that annular region.
+  // We use a "viewBox" approach for responsiveness.
+  // We'll create an SVG coordinate system bigger than the window so there's room to pan around.
+  // For instance, let's make a 2000 x 2000 coordinate system,
+  // centered around (1000,1000).
+  // We'll still show it in the <svg> that is 100% of the window, but the user can drag or zoom around.
+
+  const viewBoxSize = 2000;    // total coordinate system dimension
+  const centerCoord = viewBoxSize / 2; // 1000 if viewBoxSize=2000
+
+  // 3) We define the maximum outer ring radius as ~40% of half the viewBox
+  // so it fits comfortably with some margin. You can adjust this as you like.
+  const maxOuterRadius = centerCoord * 0.4;  // 0.4 of 1000 => 400
+
+  // The ring definitions: 
+  //   Engineering: 0   to 1/3 of max
+  //   Conceptual:  1/3 to 2/3 of max
+  //   Socio:       2/3 to 3/3 of max
   const ringRanges = {
-    "Engineering Experiments & Demonstrations": [0, 200],
-    "Conceptual & Scientific Breakthroughs": [200, 300],
-    "Sociocultural Factors": [300, 400]
+    "Engineering Experiments & Demonstrations": [0, maxOuterRadius * (1/3)],
+    "Conceptual & Scientific Breakthroughs": [maxOuterRadius * (1/3), maxOuterRadius * (2/3)],
+    "Sociocultural Factors": [maxOuterRadius * (2/3), maxOuterRadius]
   };
 
-  // Category name, color, and the outer ring radius
-  // (Used for drawing the filled circles + labels)
+  // For coloring and labeling each ring
   const categories = [
     {
       name: "Sociocultural Factors",
-      outerRadius: 400,
+      outerRadius: maxOuterRadius,
       color: "#c62828" // red
     },
     {
       name: "Conceptual & Scientific Breakthroughs",
-      outerRadius: 300,
+      outerRadius: maxOuterRadius * (2/3),
       color: "#1565c0" // blue
     },
     {
       name: "Engineering Experiments & Demonstrations",
-      outerRadius: 200,
+      outerRadius: maxOuterRadius * (1/3),
       color: "#2e7d32" // green
     }
   ];
 
-  // Create the main SVG
+  // 4) Create the SVG with a large viewBox
   const svg = d3.select("#chart")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("viewBox", `0 0 ${viewBoxSize} ${viewBoxSize}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
 
-  // We’ll place everything (rings, links, nodes) into a <g> "container"
-  // so we can apply zoom and pan transformations to it.
+  // We'll use a container <g> for rings, links, nodes (so we can zoom/pan them)
   const container = svg.append("g")
     .attr("class", "zoom-container");
 
-  // 1) Draw each ring as a colored circle with a category label
+  // 5) Draw the colored rings & their labels
   const ringGroups = container.selectAll("g.ring-group")
     .data(categories)
     .enter()
@@ -56,8 +68,8 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("class", "ring-group");
 
   ringGroups.append("circle")
-    .attr("cx", centerX)
-    .attr("cy", centerY)
+    .attr("cx", centerCoord)
+    .attr("cy", centerCoord)
     .attr("r", d => d.outerRadius)
     .style("fill", d => d.color)
     .style("fill-opacity", 0.1)
@@ -65,38 +77,34 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("stroke-dasharray", "3,3");
 
   ringGroups.append("text")
-    .attr("x", centerX)
-    .attr("y", d => centerY - d.outerRadius + 20)
+    .attr("x", centerCoord)
+    .attr("y", d => centerCoord - d.outerRadius + 30)
     .text(d => d.name)
+    .attr("text-anchor", "middle")
     .style("fill", d => d.color)
-    .style("font-size", "16px")
+    .style("font-size", "24px")
     .style("font-weight", "bold")
-    .style("text-anchor", "middle")
-    .style("opacity", 0.4);
+    .style("opacity", 0.3);
 
-  // 2) For nodes, we create a color scale matching the ring colors
+  // 6) Color scale for nodes
   const colorScale = d3.scaleOrdinal()
     .domain(["Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
     .range(["#c62828", "#1565c0", "#2e7d32"]);
 
-  // 3) Compute each node's (x, y) position somewhere within its ring range
+  // 7) Randomly position each node in its ring
   data.forEach(d => {
-    const [innerR, outerR] = ringRanges[d.category] || [0, 200];
-    // pick a random radius between innerR and outerR
-    const r = innerR + (outerR - innerR) * Math.random();
-    // random angle
+    const [rMin, rMax] = ringRanges[d.category] || [0, maxOuterRadius / 3];
+    const r = rMin + (rMax - rMin) * Math.random(); // random radius
     const angle = Math.random() * 2 * Math.PI;
-
-    d.x = centerX + r * Math.cos(angle);
-    d.y = centerY + r * Math.sin(angle);
+    d.x = centerCoord + r * Math.cos(angle);
+    d.y = centerCoord + r * Math.sin(angle);
   });
 
-  // 4) Build link array from "connections"
+  // 8) Build link array from "connections"
   const titleToIndex = new Map();
   data.forEach((d, i) => {
     titleToIndex.set(d.title, i);
   });
-
   const links = [];
   data.forEach((d, i) => {
     if (!d.connections) return;
@@ -108,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  // 5) Draw the links behind the nodes
+  // 9) Draw the links
   container.selectAll("line.link")
     .data(links)
     .enter()
@@ -122,11 +130,9 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("stroke-width", 1)
     .style("opacity", 0.5);
 
-  // 6) Draw each node as a group <g> with:
-  //    - a circle
-  //    - a foreignObject for multiline text (title + date)
-  // We'll make them bigger so the text is visible
-  const nodeGroup = container.selectAll("g.node")
+  // 10) Draw bigger nodes with text inside
+  const circleRadius = 50; // bigger so we can read the text
+  const nodeGroup = container.selectAll("g.node-group")
     .data(data)
     .enter()
     .append("g")
@@ -134,19 +140,15 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("transform", d => `translate(${d.x}, ${d.y})`)
     .on("click", (event, d) => showModal(d));
 
-  // Circle background
-  const circleRadius = 50; // increase radius so text can fit inside
   nodeGroup.append("circle")
     .attr("r", circleRadius)
     .attr("fill", d => colorScale(d.category))
     .style("stroke", "#333")
     .style("stroke-width", 1);
 
-  // A small foreignObject for the text, centered in the circle.
-  // We'll create a <div> for text wrapping. 
-  // Using text-anchor won't help for multiline, so foreignObject is simpler.
+  // text inside the circle with <foreignObject> for wrapping
   nodeGroup.append("foreignObject")
-    .attr("x", -circleRadius * 0.8) // a bit narrower than the circle
+    .attr("x", -circleRadius * 0.8)
     .attr("y", -circleRadius * 0.8)
     .attr("width", circleRadius * 1.6)
     .attr("height", circleRadius * 1.6)
@@ -161,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("overflow", "hidden")
     .html(d => `<strong>${d.title}</strong><br/><em>${d.date}</em>`);
 
-  // 7) Modal logic
+  // 11) Modal logic for clicking a node
   const modal = document.getElementById("modal");
   const closeBtn = document.getElementById("close");
 
@@ -175,47 +177,35 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("modal-image").src = d.img;
     document.getElementById("modal-image").alt = d.title;
   }
-
-  closeBtn.onclick = () => {
-    modal.style.display = "none";
-  };
+  closeBtn.onclick = () => (modal.style.display = "none");
   window.onclick = event => {
     if (event.target === modal) {
       modal.style.display = "none";
     }
   };
 
-  // 8) Enable zoom & pan with mouse
+  // 12) D3 Zoom & Pan
   const zoom = d3.zoom()
-    .scaleExtent([0.3, 5])  // min & max zoom
-    .on("zoom", (event) => {
+    .scaleExtent([0.1, 5]) // allow more extreme zoom out/in
+    .on("zoom", event => {
       container.attr("transform", event.transform);
     });
 
   svg.call(zoom);
 
-  // 9) Add plus/minus buttons to control the zoom programmatically
-  const zoomControls = d3.select("body").append("div")
-    .attr("id", "zoom-controls")
-    .style("position", "absolute")
-    .style("top", "80px")
-    .style("right", "20px")
-    .style("display", "flex")
-    .style("flex-direction", "column");
+  // 13) Plus/Minus Buttons
+  const zoomInButton = document.getElementById("zoom-in");
+  const zoomOutButton = document.getElementById("zoom-out");
 
-  zoomControls.append("button")
-    .text("+")
-    .style("font-size", "20px")
-    .style("margin-bottom", "5px")
-    .on("click", () => {
-      // "zoom.scaleBy" increments the scale by a factor
-      svg.transition().call(zoom.scaleBy, 1.2);
-    });
+  zoomInButton.addEventListener("click", () => {
+    svg.transition().call(zoom.scaleBy, 1.2);
+  });
+  zoomOutButton.addEventListener("click", () => {
+    svg.transition().call(zoom.scaleBy, 1/1.2);
+  });
 
-  zoomControls.append("button")
-    .text("−")
-    .style("font-size", "20px")
-    .on("click", () => {
-      svg.transition().call(zoom.scaleBy, 1/1.2);
-    });
+  // OPTIONAL: If you want the visualization to adjust if the user resizes the window,
+  // you can add an event listener that re-measures window.innerWidth/innerHeight,
+  // redefines the 'viewBox', and re-renders. For many cases, just using the
+  // viewBox + preserveAspectRatio is enough for normal resizing.
 });
