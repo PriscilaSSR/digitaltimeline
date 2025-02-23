@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Increase the largest ring radius so it’s huge compared to the 2000×2000 space
   // For instance, 80% of half the viewBox => 800
-  const maxOuterRadius = center * 0.8; // 800
+  const maxOuterRadius = center * 0.9; // 800
 
   // Now define annular ranges for each category:
   //   EED: 0 to 1/3 of 800 => [0, ~266]
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Colors for each category
   const colorScale = d3.scaleOrdinal()
-    .domain(["Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
+    .domain(["The Dream of Flight", "Theoretical and Economic Breakthroughs", "Practical Results"])
     .range(["#c62828", "#1565c0", "#2e7d32"]);
 
   // Create the SVG + container for zoom/pan
