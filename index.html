@@ -2,19 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Aviation Timeline Visualization</title>
-  <!-- Link to your CSS -->
+  <title>Aviation Timeline Universe</title>
   <link rel="stylesheet" href="style.css" />
   <!-- Include D3 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-  <h1>Aviation Timeline Visualization</h1>
-
+  <!-- Zoom/Pan Buttons -->
+  <div id="zoom-controls">
+    <button id="zoom-in">+</button>
+    <button id="zoom-out">−</button>
+  </div>
+  
   <!-- Container for the D3 visualization -->
   <div id="chart"></div>
 
-  <!-- The hidden popup/modal -->
+  <!-- The hidden popup modal -->
   <div id="modal" class="modal">
     <div class="modal-content" id="modal-content">
       <span id="close">&times;</span>
@@ -27,9 +30,9 @@
     </div>
   </div>
 
-  <!-- Your data file -->
+  <!-- Your data -->
   <script src="timelineData.js"></script>
-  <!-- Main D3 script -->
+  <!-- Main Script -->
   <script src="script.js"></script>
 </body>
 </html>
