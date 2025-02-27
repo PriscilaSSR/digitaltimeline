@@ -72,6 +72,28 @@
       margin-right: 10px;
     }
     
+    .legend-divider {
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.2);
+      margin: 10px 0;
+    }
+    
+    .legend-size-small {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.8);
+      margin-right: 10px;
+    }
+    
+    .legend-size-large {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.8);
+      margin-right: 10px;
+    }
+    
     .timeline {
       position: absolute;
       bottom: 20px;
@@ -119,6 +141,12 @@
       padding: 2px 6px;
       border-radius: 10px;
       margin-top: 5px;
+    }
+    
+    .timeline-connections {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 3px;
     }
     
     .modal {
@@ -225,6 +253,15 @@
       <div class="legend-color" style="background-color: #c62828;"></div>
       <div>Sociocultural Factors</div>
     </div>
+    <div class="legend-divider"></div>
+    <div class="legend-item">
+      <div class="legend-size-small"></div>
+      <div>Few Connections</div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-size-large"></div>
+      <div>Many Connections</div>
+    </div>
   </div>
   
   <!-- Timeline panel -->
@@ -290,6 +327,10 @@
           <div class="timeline-title">${item.title}</div>
           <div class="timeline-category" style="background-color: ${getCategoryColor(item.category)}20; color: ${getCategoryColor(item.category)};">
             ${item.category.split(' ')[0]}
+          </div>
+          <div class="timeline-connections">
+            Connections: ${(item.connections ? item.connections.length : 0) + 
+              data.filter(other => other.connections && other.connections.includes(item.title)).length}
           </div>
         `;
         itemElement.addEventListener("click", () => showModal(item));
@@ -426,6 +467,27 @@
         });
       });
 
+      // Calculate connection counts for scaling node sizes
+      const connectionCounts = new Map();
+      data.forEach(item => {
+        // Count outgoing connections
+        const outConnections = item.connections ? item.connections.length : 0;
+        
+        // Count incoming connections
+        let inConnections = 0;
+        data.forEach(otherItem => {
+          if (otherItem.connections && otherItem.connections.includes(item.title)) {
+            inConnections++;
+          }
+        });
+        
+        // Store total connections
+        connectionCounts.set(item.title, outConnections + inConnections);
+      });
+      
+      // Find max connections for scaling
+      const maxConnections = Math.max(1, ...connectionCounts.values());
+      
       // Create nodes in 3D space
       data.forEach((item, index) => {
         const categoryInfo = categories.find(cat => cat.name === item.category);
@@ -440,8 +502,15 @@
         const y = radius * Math.sin(theta) * Math.sin(phi);
         const z = radius * Math.cos(theta);
         
+        // Calculate node size based on connections
+        const connectionCount = connectionCounts.get(item.title) || 0;
+        // Scale from minSize to maxSize based on connection count
+        const minSize = nodeRadius * 0.6;
+        const maxSize = nodeRadius * 2.5;
+        const scaledSize = minSize + ((maxSize - minSize) * (connectionCount / maxConnections));
+        
         // Create sphere for node
-        const geometry = new THREE.SphereGeometry(nodeRadius, 32, 32);
+        const geometry = new THREE.SphereGeometry(scaledSize, 32, 32);
         const material = new THREE.MeshLambertMaterial({ 
           color: colorMap[item.category] || 0xffffff,
           emissive: colorMap[item.category] || 0xffffff,
@@ -451,7 +520,8 @@
         sphere.position.set(x, y, z);
         sphere.userData = { 
           itemIndex: index,
-          item: item
+          item: item,
+          connections: connectionCount
         };
         scene.add(sphere);
         nodeObjects.push(sphere);
@@ -475,8 +545,15 @@
           transparent: true
         });
         const label = new THREE.Sprite(labelMaterial);
-        label.position.set(x, y + nodeRadius + 20, z);
-        label.scale.set(100, 50, 1);
+        // Position label based on the scaled node size
+        const connectionCount = connectionCounts.get(item.title) || 0;
+        const minSize = nodeRadius * 0.6;
+        const maxSize = nodeRadius * 2.5;
+        const scaledSize = minSize + ((maxSize - minSize) * (connectionCount / maxConnections));
+        label.position.set(x, y + scaledSize + 20, z);
+        // Scale label size proportionally to node size
+        const labelScale = 100 * (0.8 + (0.4 * (connectionCount / maxConnections)));
+        label.scale.set(labelScale, labelScale * 0.5, 1);
         scene.add(label);
         textSprites.push(label);
         
@@ -545,10 +622,48 @@
       function showModal(item) {
         modal.style.display = "block";
         document.getElementById("modal-title").innerText = item.title;
-        document.getElementById("modal-date").innerText = "Date: " + item.date;
+        
+        // Count connections for this item
+        const outConnections = item.connections ? item.connections.length : 0;
+        let inConnections = 0;
+        data.forEach(otherItem => {
+          if (otherItem.connections && otherItem.connections.includes(item.title)) {
+            inConnections++;
+          }
+        });
+        const totalConnections = outConnections + inConnections;
+        
+        document.getElementById("modal-date").innerText = `Date: ${item.date} | Connections: ${totalConnections}`;
         document.getElementById("modal-description").innerText = item.description || "No description available.";
         document.getElementById("modal-location").innerText = item.location || "Location not specified.";
         document.getElementById("modal-people").innerText = (item.people && item.people.length) ? item.people.join(", ") : "No people specified.";
+        
+        // If there are connections, list them
+        if (item.connections && item.connections.length > 0) {
+          let connectionsHTML = "<h4>Outgoing Connections</h4><ul>";
+          item.connections.forEach(conn => {
+            connectionsHTML += `<li>${conn}</li>`;
+          });
+          connectionsHTML += "</ul>";
+          
+          // Add incoming connections too
+          const incomingConnections = data.filter(other => 
+            other.connections && other.connections.includes(item.title)
+          ).map(item => item.title);
+          
+          if (incomingConnections.length > 0) {
+            connectionsHTML += "<h4>Incoming Connections</h4><ul>";
+            incomingConnections.forEach(conn => {
+              connectionsHTML += `<li>${conn}</li>`;
+            });
+            connectionsHTML += "</ul>";
+          }
+          
+          // Append connections section to modal
+          const connectionsSection = document.createElement("div");
+          connectionsSection.innerHTML = connectionsHTML;
+          document.querySelector(".modal-info").appendChild(connectionsSection);
+        }
         
         const img = document.getElementById("modal-image");
         if (item.img) {
@@ -560,10 +675,23 @@
         img.alt = item.title;
       }
       
-      closeBtn.onclick = () => (modal.style.display = "none");
+      closeBtn.onclick = () => {
+        modal.style.display = "none";
+        // Remove the connections section from the modal to avoid duplication
+        const connectionsSection = document.querySelector(".modal-info > div");
+        if (connectionsSection) {
+          connectionsSection.remove();
+        }
+      };
+      
       window.onclick = e => {
         if (e.target === modal) {
           modal.style.display = "none";
+          // Remove the connections section from the modal to avoid duplication
+          const connectionsSection = document.querySelector(".modal-info > div");
+          if (connectionsSection) {
+            connectionsSection.remove();
+          }
         }
       };
       
