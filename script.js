@@ -16,16 +16,18 @@ document.addEventListener("DOMContentLoaded", function() {
   //   EED: 0 to 1/3 of 800 => [0, ~266]
   //   CSB: 1/3 to 2/3 => [~266, ~533]
   //   SF:  2/3 to 3/3 => [~533, 800]
+  //   Human's Dream: not used for node placement, just visual
   const ringRanges = {
     "Engineering Experiments & Demonstrations": [0, maxOuterRadius * (1/3)],
     "Conceptual & Scientific Breakthroughs": [maxOuterRadius * (1/3), maxOuterRadius * (2/3)],
-    "Sociocultural Factors": [maxOuterRadius * (2/3), maxOuterRadius]
+    "Sociocultural Factors": [maxOuterRadius * (2/3), maxOuterRadius],
+    "Human's Dream of Flying": [maxOuterRadius, maxOuterRadius * 1.1] // Not used for node placement
   };
 
   // Colors for each category
   const colorScale = d3.scaleOrdinal()
-    .domain(["Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
-    .range(["#c62828", "#1565c0", "#2e7d32"]);
+    .domain(["Human's Dream of Flying", "Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
+    .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
 
   // Create the SVG + container for zoom/pan
   const svg = d3.select("#chart")
@@ -40,6 +42,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Draw big circles for visual reference
   const categories = [
+    {
+      name: "Human's Dream of Flying",
+      outerRadius: maxOuterRadius * 1.1, // Make it larger than the other rings
+      color: "#9c27b0"
+    },
     {
       name: "Sociocultural Factors",
       outerRadius: maxOuterRadius,
@@ -67,9 +74,10 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("cy", center)
     .attr("r", d => d.outerRadius)
     .style("fill", d => d.color)
-    .style("fill-opacity", 0.1)
+    .style("fill-opacity", d => d.name === "Human's Dream of Flying" ? 0.05 : 0.1)
     .style("stroke", d => d.color)
-    .style("stroke-dasharray", "3,3");
+    .style("stroke-width", d => d.name === "Human's Dream of Flying" ? 2 : 1)
+    .style("stroke-dasharray", d => d.name === "Human's Dream of Flying" ? "5,5" : "3,3");
 
   ringGroups.append("text")
     .attr("x", center)
@@ -79,7 +87,8 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("fill", d => d.color)
     .style("font-size", "24px")
     .style("font-weight", "bold")
-    .style("opacity", 0.3);
+    .style("opacity", d => d.name === "Human's Dream of Flying" ? 0.5 : 0.3)
+    .style("font-size", d => d.name === "Human's Dream of Flying" ? "30px" : "24px");
 
   // Build link data
   const titleToIndex = new Map();
