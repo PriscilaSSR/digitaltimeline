@@ -40,55 +40,222 @@ document.addEventListener("DOMContentLoaded", function() {
   const container = svg.append("g")
     .attr("class", "zoom-container");
 
-  // Draw big circles for visual reference
+  // -------------------------
+  // 2) PARSE DATES AND CREATE TIME ARCS
+  // -------------------------
+  
+  // Function to parse dates from the timeline data
+  function parseTimelineDate(dateStr) {
+    dateStr = dateStr.trim();
+    
+    // Handle BCE dates
+    if (dateStr.includes('BCE')) {
+      const year = parseInt(dateStr.replace(/[^0-9]/g, ''));
+      return -year; // Negative values for BCE
+    }
+    
+    // Handle century formats like "100s", "1600s"
+    if (dateStr.match(/^\d+s$/)) {
+      return parseInt(dateStr);
+    }
+    
+    // Handle date ranges like "1760–1840" or "1865-1904"
+    if (dateStr.includes('–') || dateStr.includes('-')) {
+      const parts = dateStr.split(/[–-]/);
+      const startYear = parseInt(parts[0]);
+      return startYear; // Just use the start year for positioning
+    }
+    
+    // Handle century descriptions like "17th–19th Centuries"
+    if (dateStr.includes('Centuries') || dateStr.includes('Century')) {
+      // Extract the first century mentioned
+      const match = dateStr.match(/(\d+)(?:st|nd|rd|th)/);
+      if (match) {
+        return (parseInt(match[1]) - 1) * 100; // 17th century starts at 1600
+      }
+    }
+    
+    // Handle simple years
+    if (dateStr.match(/^\d+$/)) {
+      return parseInt(dateStr);
+    }
+    
+    // Default fallback
+    return 0;
+  }
+
+  // Parse all dates
+  data.forEach(d => {
+    d.parsedYear = parseTimelineDate(d.date);
+    // Assign the century group
+    d.century = Math.floor(d.parsedYear / 100) * 100;
+  });
+
+  // Find date range for time slices
+  const years = data.map(d => d.parsedYear);
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+  
+  // Round to nearest millenia for BCE and nearest century for CE
+  const adjustedMinYear = Math.floor(minYear / 1000) * 1000;
+  const adjustedMaxYear = Math.ceil(maxYear / 100) * 100;
+  
+  // Create century breaks
+  const centuries = [];
+  for (let year = adjustedMinYear; year <= adjustedMaxYear; year += 100) {
+    centuries.push(year);
+  }
+  
+  // Calculate the angle each century should span
+  const totalAngle = 2 * Math.PI; // Full circle
+  const anglePerCentury = totalAngle / centuries.length;
+
+  // -------------------------
+  // 3) DRAW CATEGORY RINGS WITH TIME SLICES
+  // -------------------------
+  
+  // Draw big circles for visual reference with time slices
   const categories = [
     {
       name: "Human's Dream of Flying",
       outerRadius: maxOuterRadius * 1.1, // Make it larger than the other rings
+      innerRadius: maxOuterRadius,
       color: "#9c27b0"
     },
     {
       name: "Sociocultural Factors",
       outerRadius: maxOuterRadius,
+      innerRadius: maxOuterRadius * (2/3),
       color: "#c62828"
     },
     {
       name: "Conceptual & Scientific Breakthroughs",
       outerRadius: maxOuterRadius * (2/3),
+      innerRadius: maxOuterRadius * (1/3),
       color: "#1565c0"
     },
     {
       name: "Engineering Experiments & Demonstrations",
       outerRadius: maxOuterRadius * (1/3),
+      innerRadius: 0,
       color: "#2e7d32"
     },
   ];
 
+  // Create ring groups
   const ringGroups = container.selectAll("g.ring-group")
     .data(categories)
     .enter()
-    .append("g");
+    .append("g")
+    .attr("class", "ring-group");
 
-  ringGroups.append("circle")
-    .attr("cx", center)
-    .attr("cy", center)
-    .attr("r", d => d.outerRadius)
-    .style("fill", d => d.color)
-    .style("fill-opacity", d => d.name === "Human's Dream of Flying" ? 0.05 : 0.1)
-    .style("stroke", d => d.color)
-    .style("stroke-width", d => d.name === "Human's Dream of Flying" ? 2 : 1)
-    .style("stroke-dasharray", d => d.name === "Human's Dream of Flying" ? "5,5" : "3,3");
+  // Create the arc generator for time slices
+  const arcGenerator = d3.arc()
+    .startAngle((d, i) => i * anglePerCentury)
+    .endAngle((d, i) => (i + 1) * anglePerCentury)
+    .innerRadius(d => d.ringData.innerRadius)
+    .outerRadius(d => d.ringData.outerRadius)
+    .padAngle(0.01);
 
-  ringGroups.append("text")
-    .attr("x", center)
-    .attr("y", d => center - d.outerRadius + 30)
-    .attr("text-anchor", "middle")
-    .text(d => d.name)
-    .style("fill", d => d.color)
-    .style("font-size", "24px")
-    .style("font-weight", "bold")
-    .style("opacity", d => d.name === "Human's Dream of Flying" ? 0.5 : 0.3)
-    .style("font-size", d => d.name === "Human's Dream of Flying" ? "30px" : "24px");
+  // For each category, create century slices
+  ringGroups.each(function(categoryData) {
+    const group = d3.select(this);
+    
+    // Skip time slices for the outer "Human's Dream of Flying" ring
+    if (categoryData.name === "Human's Dream of Flying") {
+      group.append("circle")
+        .attr("cx", center)
+        .attr("cy", center)
+        .attr("r", categoryData.outerRadius)
+        .style("fill", categoryData.color)
+        .style("fill-opacity", 0.05)
+        .style("stroke", categoryData.color)
+        .style("stroke-width", 2)
+        .style("stroke-dasharray", "5,5");
+      
+      // Add the label
+      group.append("text")
+        .attr("x", center)
+        .attr("y", center - categoryData.outerRadius + 30)
+        .attr("text-anchor", "middle")
+        .text(categoryData.name)
+        .style("fill", categoryData.color)
+        .style("opacity", 0.5)
+        .style("font-size", "30px");
+        
+      return;
+    }
+    
+    // Create data for each time slice
+    const timeSliceData = centuries.map((century, i) => {
+      return {
+        century: century,
+        index: i,
+        ringData: categoryData,
+        // Count items in this category and century
+        count: data.filter(d => d.category === categoryData.name && d.century === century).length
+      };
+    });
+
+    // Draw arcs for each time slice
+    group.selectAll("path.time-slice")
+      .data(timeSliceData)
+      .enter()
+      .append("path")
+      .attr("class", "time-slice")
+      .attr("d", arcGenerator)
+      .attr("transform", `translate(${center}, ${center})`)
+      .style("fill", d => {
+        const baseColor = categoryData.color;
+        // Vary the opacity based on whether there are events in this slice
+        return d.count > 0 ? baseColor : d3.color(baseColor).copy({opacity: 0.05});
+      })
+      .style("stroke", categoryData.color)
+      .style("stroke-width", 0.5)
+      .style("opacity", d => d.count > 0 ? Math.min(0.9, 0.7 + (d.count * 0.05)) : 0.1)
+      .append("title") // Add tooltip with century and count info
+      .text(d => `${d.century < 0 ? Math.abs(d.century) + 's BCE' : d.century + 's'}: ${d.count} events`);
+
+    // Add the category label
+    group.append("text")
+      .attr("x", center)
+      .attr("y", center - categoryData.outerRadius + 30)
+      .attr("text-anchor", "middle")
+      .text(categoryData.name)
+      .style("fill", categoryData.color)
+      .style("opacity", 0.3)
+      .style("font-size", "24px");
+    
+    // Add some century labels (every few centuries)
+    const labelInterval = Math.max(1, Math.floor(centuries.length / 12)); // Don't show too many labels
+    
+    timeSliceData.forEach((d, i) => {
+      if (i % labelInterval === 0) {
+        // Calculate position on the middle of the arc
+        const angle = (i + 0.5) * anglePerCentury - Math.PI / 2; // Start at the top
+        const radius = (categoryData.innerRadius + categoryData.outerRadius) / 2;
+        const x = center + Math.cos(angle) * radius;
+        const y = center + Math.sin(angle) * radius;
+        
+        // Add century label
+        group.append("text")
+          .attr("x", x)
+          .attr("y", y)
+          .attr("text-anchor", "middle")
+          .attr("dominant-baseline", "middle")
+          .attr("transform", `rotate(${angle * 180 / Math.PI + 90}, ${x}, ${y})`) // Rotate text to follow arc
+          .text(d.century < 0 ? `${Math.abs(d.century)}s BCE` : `${d.century}s`)
+          .style("fill", "#fff")
+          .style("font-size", "14px")
+          .style("font-weight", "bold")
+          .style("opacity", 0.6);
+      }
+    });
+  });
+
+  // -------------------------
+  // 4) INITIALIZE NODE POSITIONS AND LINKS
+  // -------------------------
 
   // Build link data
   const titleToIndex = new Map();
@@ -106,20 +273,32 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
+  // Position nodes on their century arc
+  data.forEach(d => {
+    // Find the century index
+    const centuryIndex = centuries.findIndex(c => c === d.century);
+    
+    // Calculate the angle for this century
+    const angle = (centuryIndex + 0.5) * anglePerCentury;
+    
+    // Find the min/max radius for this category
+    const [rMin, rMax] = ringRanges[d.category] || [0, maxOuterRadius];
+    const avgRadius = (rMin + rMax) / 2;
+    
+    // Position at the center of the arc
+    d.x = center + Math.cos(angle) * avgRadius;
+    d.y = center + Math.sin(angle) * avgRadius;
+    
+    // Flag to determine if the node is being dragged
+    d.isDragging = false;
+  });
+
   // Force simulation with "floating" inside ring constraints
   const simulation = d3.forceSimulation(data)
     .velocityDecay(0.15)
     .force("charge", d3.forceManyBody().strength(10))
     .force("collide", d3.forceCollide(60))
     .on("tick", ticked);
-
-  // Random initial positions near the center
-  data.forEach(d => {
-    d.x = center + (Math.random() - 0.5) * 50;
-    d.y = center + (Math.random() - 0.5) * 50;
-    // Flag to determine if the node is being dragged
-    d.isDragging = false;
-  });
 
   // Draw links
   const linkSelection = container.selectAll("line.link")
@@ -144,6 +323,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .enter()
     .append("g")
     .attr("class", "node-group")
+    .attr("transform", d => `translate(${d.x}, ${d.y})`)
     .on("click", (event, d) => {
       // Only show modal if we're not dragging
       if (!d.wasDragged) {
@@ -178,6 +358,10 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("pointer-events", "none") // Make text non-interactable so it doesn't interfere with dragging
     .html(d => `<strong>${d.title}</strong><br/><em>${d.date}</em>`);
 
+  // -------------------------
+  // 5) DRAG FUNCTIONS
+  // -------------------------
+  
   // Drag functions
   function dragstarted(event, d) {
     // Stop simulation during drag
@@ -236,7 +420,6 @@ document.addEventListener("DOMContentLoaded", function() {
       d.y = center;
     }
   }
-
   // Update link positions based on node positions
   function updateLinks() {
     linkSelection
