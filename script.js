@@ -64,71 +64,57 @@ document.addEventListener("DOMContentLoaded", function() {
     return 0;
   }
 
+  // Normalize centuries to exactly 9 for Engineering
+  function normalizeEngCentury(year) {
+    // Special case: BCE dates go into their own buckets
+    if (year < 0) {
+      if (year <= -500 && year > -600) return -500; // 500s BCE
+      if (year <= -400 && year > -500) return -400; // 400s BCE
+      return year; // Other BCE dates
+    }
+    
+    // 100-700 CE gets grouped as "early CE"
+    if (year >= 0 && year < 800) return 100;
+    
+    // 800-999 CE
+    if (year >= 800 && year < 1000) return 800;
+    
+    // 1000-1499 CE
+    if (year >= 1000 && year < 1500) return 1000;
+    
+    // 1500-1699 CE
+    if (year >= 1500 && year < 1700) return 1500;
+    
+    // 1700-1799 CE
+    if (year >= 1700 && year < 1800) return 1700;
+    
+    // 1800-1899 CE (gets its own century)
+    if (year >= 1800 && year < 1900) return 1800;
+    
+    // 1900+ CE (gets its own century)
+    if (year >= 1900) return 1900;
+    
+    // Fallback
+    return Math.floor(year / 100) * 100;
+  }
+  
+  // Normalize centuries for other categories (can be different)
+  function normalizeOtherCentury(year) {
+    // For other categories, use regular century rounding
+    return Math.floor(year / 100) * 100;
+  }
+
   // Parse all dates and assign to centuries
   data.forEach(d => {
     d.parsedYear = parseTimelineDate(d.date);
     
-    // Normalize centuries for BCE to handle them properly
-    if (d.parsedYear < 0) {
-      // For BCE dates, round down to nearest century
-      d.century = Math.floor(d.parsedYear / 100) * 100;
-    } else if (d.parsedYear >= 1800) {
-      // Special case: 19th and 20th century get their own slices
-      d.century = Math.floor(d.parsedYear / 100) * 100;
+    // Apply different century normalization based on category
+    if (d.category === "Engineering Experiments & Demonstrations") {
+      d.century = normalizeEngCentury(d.parsedYear);
     } else {
-      // Group other centuries more broadly
-      // 100-799 CE = 1 slice
-      // 800-999 CE = 1 slice
-      // 1000-1499 CE = 1 slice
-      // 1500-1699 CE = 1 slice
-      // 1700-1799 CE = 1 slice
-      if (d.parsedYear >= 100 && d.parsedYear < 800) {
-        d.century = 100; // Representing 100-799 CE
-      } else if (d.parsedYear >= 800 && d.parsedYear < 1000) {
-        d.century = 800; // Representing 800-999 CE
-      } else if (d.parsedYear >= 1000 && d.parsedYear < 1500) {
-        d.century = 1000; // Representing 1000-1499 CE
-      } else if (d.parsedYear >= 1500 && d.parsedYear < 1700) {
-        d.century = 1500; // Representing 1500-1699 CE
-      } else if (d.parsedYear >= 1700 && d.parsedYear < 1800) {
-        d.century = 1700; // Representing 1700-1799 CE
-      }
+      d.century = normalizeOtherCentury(d.parsedYear);
     }
   });
-  
-  // Define the categories we're interested in
-  const categories = [
-    "Engineering Experiments & Demonstrations",
-    "Conceptual & Scientific Breakthroughs", 
-    "Sociocultural Factors"
-  ];
-  
-  // For each category, identify the unique centuries and count events
-  const categoryData = {};
-  
-  categories.forEach(category => {
-    // Get items in this category
-    const itemsInCategory = data.filter(d => d.category === category);
-    
-    // Get unique centuries for this category
-    const centuriesInCategory = [...new Set(itemsInCategory.map(d => d.century))].sort((a, b) => a - b);
-    
-    // Count events per century
-    const centuryCounts = {};
-    centuriesInCategory.forEach(century => {
-      centuryCounts[century] = itemsInCategory.filter(d => d.century === century).length;
-    });
-    
-    categoryData[category] = {
-      centuries: centuriesInCategory,
-      counts: centuryCounts,
-      totalEvents: itemsInCategory.length
-    };
-  });
-  
-  // Engineering has 9 unique centuries
-  console.log("Engineering centuries:", categoryData["Engineering Experiments & Demonstrations"].centuries);
-  console.log("Engineering counts:", categoryData["Engineering Experiments & Demonstrations"].counts);
   
   // Define fixed ring ranges
   const ringRanges = {
@@ -143,52 +129,106 @@ document.addEventListener("DOMContentLoaded", function() {
     .domain(["Human's Dream of Flying", "Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
     .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
 
-  // -------------------------
-  // 3) CALCULATE SLICE ANGLES FOR EACH CATEGORY
-  // -------------------------
+  // Calculate slice angles for Engineering category
+  // Get all Engineering events
+  const engEvents = data.filter(d => d.category === "Engineering Experiments & Demonstrations");
   
-  // Initialize angle data for each category
-  categories.forEach(category => {
-    const catData = categoryData[category];
+  // Get unique normalized centuries for Engineering
+  const engCenturies = [...new Set(engEvents.map(d => d.century))].sort((a, b) => a - b);
+  
+  console.log("Engineering centuries:", engCenturies);
+  
+  // Count events per century for Engineering
+  const engCenturyCounts = {};
+  engCenturies.forEach(century => {
+    engCenturyCounts[century] = engEvents.filter(d => d.century === century).length;
+  });
+  
+  console.log("Engineering counts:", engCenturyCounts);
+  
+  // Calculate angle spans for Engineering centuries
+  const engAngleData = {};
+  const totalEngEvents = engEvents.length;
+  const totalAngle = 2 * Math.PI; // Full circle
+  
+  // Minimum angle per century (to ensure visibility)
+  const minAngle = totalAngle / (engCenturies.length * 3); // At least 1/3 of equal distribution
+  
+  // Calculate weighted angles
+  const totalWeight = Object.values(engCenturyCounts).reduce((sum, count) => sum + count, 0);
+  
+  let startAngle = 0;
+  engCenturies.forEach(century => {
+    const count = engCenturyCounts[century];
+    // Use count as weight, but ensure minimum size
+    const rawAngle = (count / totalWeight) * totalAngle;
+    const angleSize = Math.max(minAngle, rawAngle);
     
-    // Calculate total events in this category to use as weight
-    const totalEvents = catData.totalEvents;
+    engAngleData[century] = {
+      startAngle: startAngle,
+      endAngle: startAngle + angleSize,
+      count: count
+    };
     
-    // Calculate weighted angle sizes for each century
-    // The angle size will be proportional to the number of events in that century
-    const centuryAngles = {};
-    const totalAngle = 2 * Math.PI; // Full circle
+    startAngle += angleSize;
+  });
+  
+  // Normalize to full circle (in case of rounding errors)
+  const correction = totalAngle / startAngle;
+  engCenturies.forEach(century => {
+    engAngleData[century].startAngle *= correction;
+    engAngleData[century].endAngle *= correction;
+  });
+  
+  // Also calculate similar data for other categories
+  const categoryAngles = {
+    "Engineering Experiments & Demonstrations": engAngleData
+  };
+  
+  ["Conceptual & Scientific Breakthroughs", "Sociocultural Factors"].forEach(category => {
+    const catEvents = data.filter(d => d.category === category);
+    const centuries = [...new Set(catEvents.map(d => d.century))].sort((a, b) => a - b);
+    const centuryCounts = {};
     
-    // Minimum angle size (10% of what equal distribution would be)
-    const minAngleShare = (totalAngle / catData.centuries.length) * 0.1;
-    
-    // Calculate initial angles based on event count
-    let totalWeightedEvents = 0;
-    catData.centuries.forEach(century => {
-      totalWeightedEvents += Math.max(1, catData.counts[century]);
+    centuries.forEach(century => {
+      centuryCounts[century] = catEvents.filter(d => d.century === century).length;
     });
     
-    // Allocate angles proportionally
+    const angleData = {};
+    const totalCatEvents = catEvents.length;
     let startAngle = 0;
-    catData.centuries.forEach(century => {
-      const eventCount = Math.max(1, catData.counts[century]);
-      const angleShare = Math.max(minAngleShare, (eventCount / totalWeightedEvents) * totalAngle);
+    
+    // Calculate total weight for this category
+    const catTotalWeight = Object.values(centuryCounts).reduce((sum, count) => sum + count, 0);
+    
+    // Calculate angles
+    centuries.forEach(century => {
+      const count = centuryCounts[century];
+      const angleSize = (count / catTotalWeight) * totalAngle;
       
-      centuryAngles[century] = {
+      angleData[century] = {
         startAngle: startAngle,
-        endAngle: startAngle + angleShare,
-        count: catData.counts[century]
+        endAngle: startAngle + angleSize,
+        count: count
       };
       
-      startAngle += angleShare;
+      startAngle += angleSize;
     });
     
-    // Store the angle data
-    catData.centuryAngles = centuryAngles;
+    // Normalize to full circle
+    if (startAngle > 0) {
+      const catCorrection = totalAngle / startAngle;
+      centuries.forEach(century => {
+        angleData[century].startAngle *= catCorrection;
+        angleData[century].endAngle *= catCorrection;
+      });
+    }
+    
+    categoryAngles[category] = angleData;
   });
 
   // -------------------------
-  // 4) DRAW CATEGORY RINGS WITH TIME SLICES
+  // 3) DRAW CATEGORY RINGS WITH TIME SLICES
   // -------------------------
   
   // Define ring categories for visualization
@@ -263,24 +303,22 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
     
-    // Get the angle data for this category
-    const categoryAngleData = categoryData[categoryData.name].centuryAngles;
-    
-    if (!categoryAngleData) {
-      console.error("No angle data for", categoryData.name);
+    // Get angle data for this category
+    const angles = categoryAngles[categoryData.name];
+    if (!angles) {
+      console.error("No angle data for category:", categoryData.name);
       return;
     }
     
-    // Create data for each time slice in this category
-    const timeSliceData = [];
-    
-    for (const century in categoryAngleData) {
-      if (categoryAngleData.hasOwnProperty(century)) {
-        timeSliceData.push({
+    // Create slice data
+    const slices = [];
+    for (const century in angles) {
+      if (angles.hasOwnProperty(century)) {
+        slices.push({
           century: parseInt(century),
-          startAngle: categoryAngleData[century].startAngle,
-          endAngle: categoryAngleData[century].endAngle,
-          count: categoryAngleData[century].count,
+          startAngle: angles[century].startAngle,
+          endAngle: angles[century].endAngle,
+          count: angles[century].count,
           ringData: categoryData
         });
       }
@@ -288,31 +326,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Draw arcs for each time slice
     group.selectAll("path.time-slice")
-      .data(timeSliceData)
+      .data(slices)
       .enter()
       .append("path")
       .attr("class", "time-slice")
       .attr("d", arcGenerator)
       .attr("transform", `translate(${center}, ${center})`)
-      .style("fill", d => {
-        const baseColor = categoryData.color;
-        return baseColor;
-      })
+      .style("fill", categoryData.color)
       .style("stroke", "#fff")
-      .style("stroke-width", 1)
-      .style("opacity", d => Math.min(0.9, 0.7 + (d.count * 0.01)))
-      .append("title") // Add tooltip with century and count info
+      .style("stroke-width", 1.5)
+      .style("opacity", d => Math.min(0.95, 0.7 + (d.count * 0.01)))
+      .append("title") // Add tooltip
       .text(d => {
         if (d.century < 0) {
           return `${Math.abs(d.century)}s BCE: ${d.count} events`;
-        } else if (d.century === 100) {
+        } else if (d.century === 100 && categoryData.name === "Engineering Experiments & Demonstrations") {
           return `100-799 CE: ${d.count} events`;
-        } else if (d.century === 800) {
+        } else if (d.century === 800 && categoryData.name === "Engineering Experiments & Demonstrations") {
           return `800-999 CE: ${d.count} events`;
-        } else if (d.century === 1000) {
+        } else if (d.century === 1000 && categoryData.name === "Engineering Experiments & Demonstrations") {
           return `1000-1499 CE: ${d.count} events`;
-        } else if (d.century === 1500) {
+        } else if (d.century === 1500 && categoryData.name === "Engineering Experiments & Demonstrations") {
           return `1500-1699 CE: ${d.count} events`;
+        } else if (d.century === 1700 && categoryData.name === "Engineering Experiments & Demonstrations") {
+          return `1700-1799 CE: ${d.count} events`;
         } else {
           return `${d.century}s: ${d.count} events`;
         }
@@ -324,43 +361,48 @@ document.addEventListener("DOMContentLoaded", function() {
       .attr("y", center - (categoryData.innerRadius + categoryData.outerRadius) / 2 + 15)
       .attr("text-anchor", "middle")
       .text(categoryData.name)
-      .style("fill", categoryData.color)
-      .style("opacity", 0.5)
+      .style("fill", "#fff")
+      .style("opacity", 0.8)
       .style("font-size", "22px")
       .style("font-weight", "bold");
     
-    // Add century labels to populated slices
-    timeSliceData.forEach(d => {
-      // Calculate position on the middle of the arc
+    // Add century labels
+    slices.forEach(d => {
+      // Skip very small slices
+      if (d.endAngle - d.startAngle < 0.1) return;
+      
+      // Calculate position in the middle of the arc
       const angle = (d.startAngle + d.endAngle) / 2;
       const radius = (categoryData.innerRadius + categoryData.outerRadius) / 2;
       const x = center + Math.cos(angle) * radius;
       const y = center + Math.sin(angle) * radius;
       
-      // Format century label
-      let centuryLabel;
+      // Format label text
+      let labelText;
       if (d.century < 0) {
-        centuryLabel = `${Math.abs(d.century)}s BCE`;
-      } else if (d.century === 100) {
-        centuryLabel = "100-799 CE";
-      } else if (d.century === 800) {
-        centuryLabel = "800-999 CE";
-      } else if (d.century === 1000) {
-        centuryLabel = "1000-1499 CE";
-      } else if (d.century === 1500) {
-        centuryLabel = "1500-1699 CE";
+        labelText = `${Math.abs(d.century)}s BCE`;
+      } else if (d.century === 100 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        labelText = "100-799 CE";
+      } else if (d.century === 800 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        labelText = "800-999 CE";
+      } else if (d.century === 1000 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        labelText = "1000-1499 CE";
+      } else if (d.century === 1500 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        labelText = "1500-1699 CE";
+      } else if (d.century === 1700 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        labelText = "1700-1799 CE";
       } else {
-        centuryLabel = `${d.century}s`;
+        labelText = `${d.century}s`;
       }
       
-      // Add century label
+      // Add text
       group.append("text")
         .attr("x", x)
         .attr("y", y)
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .attr("transform", `rotate(${angle * 180 / Math.PI + 90}, ${x}, ${y})`) // Rotate text to follow arc
-        .text(centuryLabel)
+        .text(labelText)
         .style("fill", "#fff")
         .style("font-size", "14px")
         .style("font-weight", "bold")
@@ -369,7 +411,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   // -------------------------
-  // 5) INITIALIZE NODE POSITIONS AND LINKS
+  // 4) INITIALIZE NODE POSITIONS AND LINKS
   // -------------------------
 
   // Build link data
@@ -391,13 +433,16 @@ document.addEventListener("DOMContentLoaded", function() {
   // Position nodes on their century arc
   data.forEach(d => {
     // Get the angle data for this node's category and century
-    const categoryAngles = categoryData[d.category]?.centuryAngles;
-    if (!categoryAngles || !categoryAngles[d.century]) {
+    const categoryAngleData = categoryAngles[d.category];
+    if (!categoryAngleData || !categoryAngleData[d.century]) {
       console.error("No angle data for", d.category, d.century);
+      // Default fallback
+      d.x = center;
+      d.y = center;
       return;
     }
     
-    const angleData = categoryAngles[d.century];
+    const angleData = categoryAngleData[d.century];
     
     // Get all events in this century and category
     const eventsInSameCenturyAndCategory = data.filter(
@@ -408,7 +453,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const nodeGroupIndex = eventsInSameCenturyAndCategory.indexOf(d);
     const totalNodesInGroup = eventsInSameCenturyAndCategory.length;
     
-    // Calculate angle with spread within the century arc
+    // Calculate angle within the century arc
     let angle;
     if (totalNodesInGroup > 1) {
       // Calculate spread within the century
@@ -439,6 +484,8 @@ document.addEventListener("DOMContentLoaded", function() {
     d.origRadius = radius;
     d.categoryMinRadius = rMin;
     d.categoryMaxRadius = rMax;
+    d.startAngle = angleData.startAngle;
+    d.endAngle = angleData.endAngle;
     
     // Flag to determine if the node is being dragged
     d.isDragging = false;
@@ -548,7 +595,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .html(d => `<strong>${d.title}</strong><br/><em>${d.date}</em>`);
 
   // -------------------------
-  // 6) DRAG FUNCTIONS
+  // 5) DRAG FUNCTIONS
   // -------------------------
   
   // Drag functions
@@ -585,6 +632,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Apply ring constraints to a specific node
   function applyRingConstraints(d) {
+    // Radial constraint (keep in ring)
     const [rMin, rMax] = ringRanges[d.category] || [0, maxOuterRadius];
     const dx = d.x - center;
     const dy = d.y - center;
@@ -609,7 +657,37 @@ document.addEventListener("DOMContentLoaded", function() {
       d.y = center;
     }
     
-    // Skip angular constraint during drag to make movement feel more natural
+    // Angular constraint (keep in century)
+    if (d.startAngle !== undefined && d.endAngle !== undefined) {
+      const currentAngle = Math.atan2(d.y - center, d.x - center);
+      let normAngle = currentAngle;
+      while (normAngle < 0) normAngle += 2 * Math.PI;
+      while (normAngle >= 2 * Math.PI) normAngle -= 2 * Math.PI;
+      
+      let startAngle = d.startAngle;
+      let endAngle = d.endAngle;
+      
+      // Normalize angles
+      while (startAngle < 0) startAngle += 2 * Math.PI;
+      while (startAngle >= 2 * Math.PI) startAngle -= 2 * Math.PI;
+      while (endAngle < 0) endAngle += 2 * Math.PI;
+      while (endAngle >= 2 * Math.PI) endAngle -= 2 * Math.PI;
+      
+      // Check if angle is outside the sector
+      let isOutside = false;
+      if (startAngle < endAngle) {
+        isOutside = normAngle < startAngle || normAngle > endAngle;
+      } else {
+        isOutside = normAngle < startAngle && normAngle > endAngle;
+      }
+      
+      if (isOutside && !d.isDragging) {
+        // If outside, move back to original position gradually
+        const moveToAngle = (startAngle + endAngle) / 2;
+        d.x = center + Math.cos(moveToAngle) * dist;
+        d.y = center + Math.sin(moveToAngle) * dist;
+      }
+    }
   }
   
   // Update link positions based on node positions
@@ -627,33 +705,6 @@ document.addEventListener("DOMContentLoaded", function() {
     data.forEach(d => {
       if (!d.isDragging) {
         applyRingConstraints(d);
-        
-        // Apply gentle angular constraints to keep nodes in their century
-        // Only if not being dragged
-        const categoryAngles = categoryData[d.category]?.centuryAngles;
-        if (categoryAngles && categoryAngles[d.century]) {
-          const angleData = categoryAngles[d.century];
-          const targetAngle = (angleData.startAngle + angleData.endAngle) / 2;
-          const currentAngle = Math.atan2(d.y - center, d.x - center);
-          
-          // Calculate angular difference, normalized to [-π, π]
-          let angleDiff = currentAngle - targetAngle;
-          while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
-          while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
-          
-          // If significantly out of sector, apply a gentle pull back
-          const angleRange = angleData.endAngle - angleData.startAngle;
-          if (Math.abs(angleDiff) > angleRange / 2) {
-            const dx = d.x - center;
-            const dy = d.y - center;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            
-            // Pull 10% of the way back toward the target angle
-            const newAngle = currentAngle - angleDiff * 0.1;
-            d.x = center + Math.cos(newAngle) * dist;
-            d.y = center + Math.sin(newAngle) * dist;
-          }
-        }
       }
     });
 
@@ -666,7 +717,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   // -------------------------
-  // 7) ZOOM AND CONTROLS
+  // 6) ZOOM AND CONTROLS
   // -------------------------
 
   // Zoom and pan
@@ -703,5 +754,3 @@ document.addEventListener("DOMContentLoaded", function() {
     if (e.target === modal) {
       modal.style.display = "none";
     }
-  };
-});
