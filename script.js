@@ -67,23 +67,70 @@ document.addEventListener("DOMContentLoaded", function() {
   // Parse all dates and assign to centuries
   data.forEach(d => {
     d.parsedYear = parseTimelineDate(d.date);
-    d.century = Math.floor(d.parsedYear / 100) * 100;
+    
+    // Normalize centuries for BCE to handle them properly
+    if (d.parsedYear < 0) {
+      // For BCE dates, round down to nearest century
+      d.century = Math.floor(d.parsedYear / 100) * 100;
+    } else if (d.parsedYear >= 1800) {
+      // Special case: 19th and 20th century get their own slices
+      d.century = Math.floor(d.parsedYear / 100) * 100;
+    } else {
+      // Group other centuries more broadly
+      // 100-799 CE = 1 slice
+      // 800-999 CE = 1 slice
+      // 1000-1499 CE = 1 slice
+      // 1500-1699 CE = 1 slice
+      // 1700-1799 CE = 1 slice
+      if (d.parsedYear >= 100 && d.parsedYear < 800) {
+        d.century = 100; // Representing 100-799 CE
+      } else if (d.parsedYear >= 800 && d.parsedYear < 1000) {
+        d.century = 800; // Representing 800-999 CE
+      } else if (d.parsedYear >= 1000 && d.parsedYear < 1500) {
+        d.century = 1000; // Representing 1000-1499 CE
+      } else if (d.parsedYear >= 1500 && d.parsedYear < 1700) {
+        d.century = 1500; // Representing 1500-1699 CE
+      } else if (d.parsedYear >= 1700 && d.parsedYear < 1800) {
+        d.century = 1700; // Representing 1700-1799 CE
+      }
+    }
   });
   
-  // Get all unique centuries that contain events
-  const uniqueCenturies = [...new Set(data.map(d => d.century))].sort((a, b) => a - b);
+  // Define the categories we're interested in
+  const categories = [
+    "Engineering Experiments & Demonstrations",
+    "Conceptual & Scientific Breakthroughs", 
+    "Sociocultural Factors"
+  ];
   
-  // Create a map for century indices (used for angle calculations)
-  const centuryIndices = {};
-  uniqueCenturies.forEach((century, index) => {
-    centuryIndices[century] = index;
+  // For each category, identify the unique centuries and count events
+  const categoryData = {};
+  
+  categories.forEach(category => {
+    // Get items in this category
+    const itemsInCategory = data.filter(d => d.category === category);
+    
+    // Get unique centuries for this category
+    const centuriesInCategory = [...new Set(itemsInCategory.map(d => d.century))].sort((a, b) => a - b);
+    
+    // Count events per century
+    const centuryCounts = {};
+    centuriesInCategory.forEach(century => {
+      centuryCounts[century] = itemsInCategory.filter(d => d.century === century).length;
+    });
+    
+    categoryData[category] = {
+      centuries: centuriesInCategory,
+      counts: centuryCounts,
+      totalEvents: itemsInCategory.length
+    };
   });
   
-  // Calculate the angle each century should span (equal angles)
-  const totalAngle = 2 * Math.PI; // Full circle
-  const anglePerCentury = totalAngle / uniqueCenturies.length;
+  // Engineering has 9 unique centuries
+  console.log("Engineering centuries:", categoryData["Engineering Experiments & Demonstrations"].centuries);
+  console.log("Engineering counts:", categoryData["Engineering Experiments & Demonstrations"].counts);
   
-  // Define fixed ring ranges (no dynamic sizing, fixed widths)
+  // Define fixed ring ranges
   const ringRanges = {
     "Engineering Experiments & Demonstrations": [0, maxOuterRadius * (1/3)],
     "Conceptual & Scientific Breakthroughs": [maxOuterRadius * (1/3), maxOuterRadius * (2/3)],
@@ -97,11 +144,55 @@ document.addEventListener("DOMContentLoaded", function() {
     .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
 
   // -------------------------
-  // 3) DRAW CATEGORY RINGS WITH TIME SLICES
+  // 3) CALCULATE SLICE ANGLES FOR EACH CATEGORY
   // -------------------------
   
-  // Draw big circles for visual reference with time slices
-  const categories = [
+  // Initialize angle data for each category
+  categories.forEach(category => {
+    const catData = categoryData[category];
+    
+    // Calculate total events in this category to use as weight
+    const totalEvents = catData.totalEvents;
+    
+    // Calculate weighted angle sizes for each century
+    // The angle size will be proportional to the number of events in that century
+    const centuryAngles = {};
+    const totalAngle = 2 * Math.PI; // Full circle
+    
+    // Minimum angle size (10% of what equal distribution would be)
+    const minAngleShare = (totalAngle / catData.centuries.length) * 0.1;
+    
+    // Calculate initial angles based on event count
+    let totalWeightedEvents = 0;
+    catData.centuries.forEach(century => {
+      totalWeightedEvents += Math.max(1, catData.counts[century]);
+    });
+    
+    // Allocate angles proportionally
+    let startAngle = 0;
+    catData.centuries.forEach(century => {
+      const eventCount = Math.max(1, catData.counts[century]);
+      const angleShare = Math.max(minAngleShare, (eventCount / totalWeightedEvents) * totalAngle);
+      
+      centuryAngles[century] = {
+        startAngle: startAngle,
+        endAngle: startAngle + angleShare,
+        count: catData.counts[century]
+      };
+      
+      startAngle += angleShare;
+    });
+    
+    // Store the angle data
+    catData.centuryAngles = centuryAngles;
+  });
+
+  // -------------------------
+  // 4) DRAW CATEGORY RINGS WITH TIME SLICES
+  // -------------------------
+  
+  // Define ring categories for visualization
+  const ringCategories = [
     {
       name: "Human's Dream of Flying",
       outerRadius: maxOuterRadius * 1.1, // Make it larger than the other rings
@@ -130,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Create ring groups
   const ringGroups = container.selectAll("g.ring-group")
-    .data(categories)
+    .data(ringCategories)
     .enter()
     .append("g")
     .attr("class", "ring-group");
@@ -172,17 +263,28 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
     
+    // Get the angle data for this category
+    const categoryAngleData = categoryData[categoryData.name].centuryAngles;
+    
+    if (!categoryAngleData) {
+      console.error("No angle data for", categoryData.name);
+      return;
+    }
+    
     // Create data for each time slice in this category
-    const timeSliceData = uniqueCenturies.map((century, i) => {
-      return {
-        century: century,
-        startAngle: i * anglePerCentury,
-        endAngle: (i + 1) * anglePerCentury,
-        ringData: categoryData,
-        // Count items in this category and century
-        count: data.filter(d => d.category === categoryData.name && d.century === century).length
-      };
-    });
+    const timeSliceData = [];
+    
+    for (const century in categoryAngleData) {
+      if (categoryAngleData.hasOwnProperty(century)) {
+        timeSliceData.push({
+          century: parseInt(century),
+          startAngle: categoryAngleData[century].startAngle,
+          endAngle: categoryAngleData[century].endAngle,
+          count: categoryAngleData[century].count,
+          ringData: categoryData
+        });
+      }
+    }
 
     // Draw arcs for each time slice
     group.selectAll("path.time-slice")
@@ -194,14 +296,27 @@ document.addEventListener("DOMContentLoaded", function() {
       .attr("transform", `translate(${center}, ${center})`)
       .style("fill", d => {
         const baseColor = categoryData.color;
-        // Vary the opacity based on whether there are events in this slice
-        return d.count > 0 ? baseColor : d3.color(baseColor).copy({opacity: 0.05});
+        return baseColor;
       })
       .style("stroke", "#fff")
       .style("stroke-width", 1)
-      .style("opacity", d => d.count > 0 ? Math.min(0.9, 0.7 + (d.count * 0.05)) : 0.1)
+      .style("opacity", d => Math.min(0.9, 0.7 + (d.count * 0.01)))
       .append("title") // Add tooltip with century and count info
-      .text(d => `${d.century < 0 ? Math.abs(d.century) + 's BCE' : d.century + 's'}: ${d.count} events`);
+      .text(d => {
+        if (d.century < 0) {
+          return `${Math.abs(d.century)}s BCE: ${d.count} events`;
+        } else if (d.century === 100) {
+          return `100-799 CE: ${d.count} events`;
+        } else if (d.century === 800) {
+          return `800-999 CE: ${d.count} events`;
+        } else if (d.century === 1000) {
+          return `1000-1499 CE: ${d.count} events`;
+        } else if (d.century === 1500) {
+          return `1500-1699 CE: ${d.count} events`;
+        } else {
+          return `${d.century}s: ${d.count} events`;
+        }
+      });
 
     // Add the category label
     group.append("text")
@@ -214,33 +329,47 @@ document.addEventListener("DOMContentLoaded", function() {
       .style("font-size", "22px")
       .style("font-weight", "bold");
     
-    // Add some century labels (only for centuries with events or every few centuries)
-    timeSliceData.forEach((d, i) => {
-      if (d.count > 0 || i % 3 === 0) {
-        // Calculate position on the middle of the arc
-        const angle = (d.startAngle + d.endAngle) / 2;
-        const radius = (categoryData.innerRadius + categoryData.outerRadius) / 2;
-        const x = center + Math.cos(angle) * radius;
-        const y = center + Math.sin(angle) * radius;
-        
-        // Add century label
-        group.append("text")
-          .attr("x", x)
-          .attr("y", y)
-          .attr("text-anchor", "middle")
-          .attr("dominant-baseline", "middle")
-          .attr("transform", `rotate(${angle * 180 / Math.PI + 90}, ${x}, ${y})`) // Rotate text to follow arc
-          .text(d.century < 0 ? `${Math.abs(d.century)}s BCE` : `${d.century}s`)
-          .style("fill", "#fff")
-          .style("font-size", d.count > 0 ? "16px" : "12px")
-          .style("font-weight", d.count > 0 ? "bold" : "normal")
-          .style("opacity", d.count > 0 ? 0.9 : 0.5);
+    // Add century labels to populated slices
+    timeSliceData.forEach(d => {
+      // Calculate position on the middle of the arc
+      const angle = (d.startAngle + d.endAngle) / 2;
+      const radius = (categoryData.innerRadius + categoryData.outerRadius) / 2;
+      const x = center + Math.cos(angle) * radius;
+      const y = center + Math.sin(angle) * radius;
+      
+      // Format century label
+      let centuryLabel;
+      if (d.century < 0) {
+        centuryLabel = `${Math.abs(d.century)}s BCE`;
+      } else if (d.century === 100) {
+        centuryLabel = "100-799 CE";
+      } else if (d.century === 800) {
+        centuryLabel = "800-999 CE";
+      } else if (d.century === 1000) {
+        centuryLabel = "1000-1499 CE";
+      } else if (d.century === 1500) {
+        centuryLabel = "1500-1699 CE";
+      } else {
+        centuryLabel = `${d.century}s`;
       }
+      
+      // Add century label
+      group.append("text")
+        .attr("x", x)
+        .attr("y", y)
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .attr("transform", `rotate(${angle * 180 / Math.PI + 90}, ${x}, ${y})`) // Rotate text to follow arc
+        .text(centuryLabel)
+        .style("fill", "#fff")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .style("opacity", 0.9);
     });
   });
 
   // -------------------------
-  // 4) INITIALIZE NODE POSITIONS AND LINKS
+  // 5) INITIALIZE NODE POSITIONS AND LINKS
   // -------------------------
 
   // Build link data
@@ -261,8 +390,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Position nodes on their century arc
   data.forEach(d => {
-    // Get the century index and calculate the angle
-    const centuryIndex = centuryIndices[d.century];
+    // Get the angle data for this node's category and century
+    const categoryAngles = categoryData[d.category]?.centuryAngles;
+    if (!categoryAngles || !categoryAngles[d.century]) {
+      console.error("No angle data for", d.category, d.century);
+      return;
+    }
+    
+    const angleData = categoryAngles[d.century];
     
     // Get all events in this century and category
     const eventsInSameCenturyAndCategory = data.filter(
@@ -277,13 +412,13 @@ document.addEventListener("DOMContentLoaded", function() {
     let angle;
     if (totalNodesInGroup > 1) {
       // Calculate spread within the century
-      const spreadFactor = 0.7; // Use 70% of the slice for spreading nodes
-      const baseAngle = centuryIndex * anglePerCentury;
+      const angleRange = angleData.endAngle - angleData.startAngle;
+      const spreadFactor = 0.8; // Use 80% of the slice for spreading nodes
       const offset = (nodeGroupIndex + 0.5) / totalNodesInGroup;
-      angle = baseAngle + (anglePerCentury * spreadFactor * offset) + (anglePerCentury * (1 - spreadFactor) / 2);
+      angle = angleData.startAngle + (angleRange * spreadFactor * offset) + (angleRange * (1 - spreadFactor) / 2);
     } else {
       // Center in the slice if only one node
-      angle = centuryIndex * anglePerCentury + anglePerCentury / 2;
+      angle = (angleData.startAngle + angleData.endAngle) / 2;
     }
     
     // Find the min/max radius for this category
@@ -413,7 +548,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .html(d => `<strong>${d.title}</strong><br/><em>${d.date}</em>`);
 
   // -------------------------
-  // 5) DRAG FUNCTIONS
+  // 6) DRAG FUNCTIONS
   // -------------------------
   
   // Drag functions
@@ -474,18 +609,7 @@ document.addEventListener("DOMContentLoaded", function() {
       d.y = center;
     }
     
-    // Optional: Keep nodes roughly within their century angle
-    // Get current angle
-    const currentAngle = Math.atan2(d.y - center, d.x - center);
-    // Get century index
-    const centuryIndex = centuryIndices[d.century];
-    // Get allowed angle range
-    const minAngle = centuryIndex * anglePerCentury;
-    const maxAngle = (centuryIndex + 1) * anglePerCentury;
-    
     // Skip angular constraint during drag to make movement feel more natural
-    // This allows movement within the ring but the simulation will
-    // gently pull nodes back toward their correct sector
   }
   
   // Update link positions based on node positions
@@ -506,25 +630,29 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Apply gentle angular constraints to keep nodes in their century
         // Only if not being dragged
-        const centuryIndex = centuryIndices[d.century];
-        const targetAngle = centuryIndex * anglePerCentury + anglePerCentury / 2;
-        const currentAngle = Math.atan2(d.y - center, d.x - center);
-        
-        // Calculate angular difference, normalized to [-π, π]
-        let angleDiff = currentAngle - targetAngle;
-        while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
-        while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
-        
-        // If significantly out of sector, apply a gentle pull back
-        if (Math.abs(angleDiff) > anglePerCentury / 2) {
-          const dx = d.x - center;
-          const dy = d.y - center;
-          const dist = Math.sqrt(dx*dx + dy*dy);
+        const categoryAngles = categoryData[d.category]?.centuryAngles;
+        if (categoryAngles && categoryAngles[d.century]) {
+          const angleData = categoryAngles[d.century];
+          const targetAngle = (angleData.startAngle + angleData.endAngle) / 2;
+          const currentAngle = Math.atan2(d.y - center, d.x - center);
           
-          // Pull 10% of the way back toward the target angle
-          const newAngle = currentAngle - angleDiff * 0.1;
-          d.x = center + Math.cos(newAngle) * dist;
-          d.y = center + Math.sin(newAngle) * dist;
+          // Calculate angular difference, normalized to [-π, π]
+          let angleDiff = currentAngle - targetAngle;
+          while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+          while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+          
+          // If significantly out of sector, apply a gentle pull back
+          const angleRange = angleData.endAngle - angleData.startAngle;
+          if (Math.abs(angleDiff) > angleRange / 2) {
+            const dx = d.x - center;
+            const dy = d.y - center;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            // Pull 10% of the way back toward the target angle
+            const newAngle = currentAngle - angleDiff * 0.1;
+            d.x = center + Math.cos(newAngle) * dist;
+            d.y = center + Math.sin(newAngle) * dist;
+          }
         }
       }
     });
@@ -538,7 +666,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   // -------------------------
-  // 6) ZOOM AND CONTROLS
+  // 7) ZOOM AND CONTROLS
   // -------------------------
 
   // Zoom and pan
