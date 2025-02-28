@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const viewBoxSize = 2000;
   const center = viewBoxSize / 2; // 1000
 
-  // Increase the largest ring radius so it’s huge compared to the 2000×2000 space
+  // Increase the largest ring radius so it's huge compared to the 2000×2000 space
   // For instance, 80% of half the viewBox => 800
   const maxOuterRadius = center * 0.9; // 800
 
@@ -108,6 +108,8 @@ document.addEventListener("DOMContentLoaded", function() {
   data.forEach(d => {
     d.x = center + (Math.random() - 0.5) * 50;
     d.y = center + (Math.random() - 0.5) * 50;
+    // Flag to determine if the node is being dragged
+    d.isDragging = false;
   });
 
   // Draw links
@@ -120,20 +122,35 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("stroke-width", 1)
     .style("opacity", 0.5);
 
-  // Draw node groups
+  // Create drag behavior
+  const drag = d3.drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended);
+
+  // Draw node groups with drag capability
   const circleRadius = 50;
   const nodeGroup = container.selectAll("g.node-group")
     .data(data)
     .enter()
     .append("g")
     .attr("class", "node-group")
-    .on("click", (event, d) => showModal(d));
+    .on("click", (event, d) => {
+      // Only show modal if we're not dragging
+      if (!d.wasDragged) {
+        showModal(d);
+      }
+      // Reset the flag
+      d.wasDragged = false;
+    })
+    .call(drag); // Add drag behavior
 
   nodeGroup.append("circle")
     .attr("r", circleRadius)
     .attr("fill", d => colorScale(d.category))
     .style("stroke", "#333")
-    .style("stroke-width", 1);
+    .style("stroke-width", 1)
+    .style("cursor", "move"); // Change cursor to indicate draggable
 
   nodeGroup.append("foreignObject")
     .attr("x", -circleRadius * 0.8)
@@ -149,42 +166,88 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("width", circleRadius * 1.6 + "px")
     .style("height", circleRadius * 1.6 + "px")
     .style("overflow", "hidden")
+    .style("pointer-events", "none") // Make text non-interactable so it doesn't interfere with dragging
     .html(d => `<strong>${d.title}</strong><br/><em>${d.date}</em>`);
 
-  // Each tick, clamp node positions to ring
-  function ticked() {
-    data.forEach(d => {
-      const [rMin, rMax] = ringRanges[d.category] || [0, maxOuterRadius];
-      const dx = d.x - center;
-      const dy = d.y - center;
-      const dist = Math.sqrt(dx*dx + dy*dy);
+  // Drag functions
+  function dragstarted(event, d) {
+    // Stop simulation during drag
+    simulation.alphaTarget(0).stop();
+    d.isDragging = true;
+    d.wasDragged = false; // Reset this flag when we start dragging
+  }
 
-      if (dist > 0) {
-        // If too close, push outward
-        if (dist < rMin) {
-          const ratio = rMin / dist;
-          d.x = center + dx * ratio;
-          d.y = center + dy * ratio;
-        }
-        // If too far, pull inward
-        else if (dist > rMax) {
-          const ratio = rMax / dist;
-          d.x = center + dx * ratio;
-          d.y = center + dy * ratio;
-        }
-      } else {
-        // If exactly at center, nudge outward
-        d.x = center + rMin;
-        d.y = center;
+  function dragged(event, d) {
+    d.wasDragged = true; // Set this flag to indicate drag happened
+    
+    // Update node positions
+    d.x = event.x;
+    d.y = event.y;
+    
+    // Apply constraints to keep nodes in their category rings
+    applyRingConstraints(d);
+    
+    // Update node group position
+    d3.select(this).attr("transform", `translate(${d.x}, ${d.y})`);
+    
+    // Update link positions connected to this node
+    updateLinks();
+  }
+
+  function dragended(event, d) {
+    d.isDragging = false;
+    // Restart simulation with a gentle alpha
+    simulation.alphaTarget(0.05).restart();
+    setTimeout(() => simulation.alphaTarget(0), 300); // Gradually stop
+  }
+
+  // Apply ring constraints to a specific node
+  function applyRingConstraints(d) {
+    const [rMin, rMax] = ringRanges[d.category] || [0, maxOuterRadius];
+    const dx = d.x - center;
+    const dy = d.y - center;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+
+    if (dist > 0) {
+      // If too close, push outward
+      if (dist < rMin) {
+        const ratio = rMin / dist;
+        d.x = center + dx * ratio;
+        d.y = center + dy * ratio;
       }
-    });
+      // If too far, pull inward
+      else if (dist > rMax) {
+        const ratio = rMax / dist;
+        d.x = center + dx * ratio;
+        d.y = center + dy * ratio;
+      }
+    } else {
+      // If exactly at center, nudge outward
+      d.x = center + rMin;
+      d.y = center;
+    }
+  }
 
-    // Update link endpoints
+  // Update link positions based on node positions
+  function updateLinks() {
     linkSelection
       .attr("x1", d => data[d.source].x)
       .attr("y1", d => data[d.source].y)
       .attr("x2", d => data[d.target].x)
       .attr("y2", d => data[d.target].y);
+  }
+
+  // Each tick, update positions
+  function ticked() {
+    // Apply ring constraints to all nodes not being dragged
+    data.forEach(d => {
+      if (!d.isDragging) {
+        applyRingConstraints(d);
+      }
+    });
+
+    // Update link endpoints
+    updateLinks();
 
     // Update node positions
     nodeGroup
