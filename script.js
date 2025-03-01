@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
     "Engineering Experiments & Demonstrations": engAngleData
   };
   
-  ["Conceptual & Scientific Breakthroughs", "Sociocultural Factors"].forEach(category => {
+  ["Theoretical Breakthroughs", "Sociocultural & Economic Factors"].forEach(category => {
     const catEvents = data.filter(d => d.category === category);
     console.log(`${category} events:`, catEvents.length);
     
