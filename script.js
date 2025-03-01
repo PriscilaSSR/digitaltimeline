@@ -596,7 +596,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("pointer-events", "none") // Make text non-interactable so it doesn't interfere with dragging
     .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
     .style("color", "white")
-    .html(d => `<strong>${d.title}</strong><br/><em>${d.date}</em>`);
+    .html(d => `<strong>${d.title}</strong>`);
 
   // -------------------------
   // 5) DRAG FUNCTIONS
