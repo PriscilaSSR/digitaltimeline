@@ -473,13 +473,41 @@ document.addEventListener("DOMContentLoaded", function() {
     // Find the min/max radius for this category
     const [rMin, rMax] = ringRanges[d.category] || [0, maxOuterRadius];
     
-    // Set position based on category radius
-    // Calculate radius with slight randomization to prevent direct overlaps
-    const radiusJitter = (rMax - rMin) * 0.25; // 25% of the ring width
-    const jitterOffset = (Math.random() - 0.5) * radiusJitter;
-    const radius = ((rMin + rMax) / 2) + jitterOffset;
+    // IMPROVED POSITIONING: Distribute nodes across the ring radius
+    // Use a deterministic pattern based on node index to avoid clumping at the edges
+    let radius;
+    if (totalNodesInGroup <= 1) {
+      // If only one node, place in middle of ring
+      radius = (rMin + rMax) / 2;
+    } else {
+      // For multiple nodes, distribute them using golden ratio to create
+      // a better distribution throughout the available radius
+      const ringWidth = rMax - rMin;
+      
+      // More advanced distribution for larger groups
+      if (totalNodesInGroup > 5) {
+        // Create a spiral-like pattern that fills the ring area
+        // Normalize index to 0-1 range
+        const normalizedIndex = nodeGroupIndex / (totalNodesInGroup - 1);
+        
+        // Calculate radius using a golden ratio spiral pattern
+        // This creates a more even distribution in the ring
+        const golden_ratio = 1.618033988749895;
+        const theta = normalizedIndex * 2 * Math.PI * golden_ratio;
+        
+        // Radius variation that ensures nodes stay within their slice
+        const radiusOffset = Math.cos(theta * 2) * ringWidth * 0.3;
+        radius = rMin + (ringWidth * 0.3) + (ringWidth * 0.4) * normalizedIndex + radiusOffset;
+      } else {
+        // For smaller groups, use simpler distribution
+        radius = rMin + (ringWidth * (nodeGroupIndex + 1)) / (totalNodesInGroup + 1);
+      }
+    }
     
-    // Position at the center of the arc
+    // Ensure radius stays within bounds
+    radius = Math.max(rMin + 20, Math.min(rMax - 20, radius));
+    
+    // Position at the calculated angle and radius
     d.x = center + Math.cos(angle) * radius;
     d.y = center + Math.sin(angle) * radius;
     
@@ -497,9 +525,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Force simulation with appropriate constraints
   const simulation = d3.forceSimulation(data)
-    .velocityDecay(0.2)
+    .velocityDecay(0.4) // Increased to stabilize nodes faster
     .force("charge", d3.forceManyBody().strength(-30))
-    .force("collide", d3.forceCollide(60).strength(0.7))
+    .force("collide", d3.forceCollide(60).strength(0.8)) // Increased to prevent overlap
+    .force("radial", d3.forceRadial(d => d.origRadius, center, center).strength(0.3)) // Added to keep nodes at their assigned radius
+    .force("angle", d3.forceX(d => {
+      // Force to maintain the correct angle
+      const angle = (d.startAngle + d.endAngle) / 2;
+      return center + Math.cos(angle) * d.origRadius * 0.8;
+    }).strength(0.1))
+    .force("angle-y", d3.forceY(d => {
+      // Force to maintain the correct angle (y-component)
+      const angle = (d.startAngle + d.endAngle) / 2;
+      return center + Math.sin(angle) * d.origRadius * 0.8;
+    }).strength(0.1))
     .on("tick", ticked);
 
   // Draw links
@@ -579,6 +618,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("stroke-width", 1)
     .style("cursor", "move"); // Change cursor to indicate draggable
 
+  // MODIFIED: Display only the title, not the date
   nodeGroup.append("foreignObject")
     .attr("x", -circleRadius * 0.8)
     .attr("y", -circleRadius * 0.8)
@@ -596,7 +636,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("pointer-events", "none") // Make text non-interactable so it doesn't interfere with dragging
     .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
     .style("color", "white")
-    .html(d => `<strong>${d.title}</strong>`);
+    .html(d => `<strong>${d.title}</strong>`); // Remove the date line
 
   // -------------------------
   // 5) DRAG FUNCTIONS
