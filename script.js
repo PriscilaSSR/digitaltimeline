@@ -1,8 +1,12 @@
+// Wait for DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", function() {
+  console.log("DOM loaded, initializing visualization");
+  
   // -------------------------
   // 1) LOAD & SETUP
   // -------------------------
   const data = window.timelineItems;
+  console.log("Data loaded, items:", data.length);
 
   // We'll use a 2000x2000 viewBox
   const viewBoxSize = 2000;
@@ -132,10 +136,10 @@ document.addEventListener("DOMContentLoaded", function() {
   // Calculate slice angles for Engineering category
   // Get all Engineering events
   const engEvents = data.filter(d => d.category === "Engineering Experiments & Demonstrations");
+  console.log("Engineering events:", engEvents.length);
   
   // Get unique normalized centuries for Engineering
   const engCenturies = [...new Set(engEvents.map(d => d.century))].sort((a, b) => a - b);
-  
   console.log("Engineering centuries:", engCenturies);
   
   // Count events per century for Engineering
@@ -143,7 +147,6 @@ document.addEventListener("DOMContentLoaded", function() {
   engCenturies.forEach(century => {
     engCenturyCounts[century] = engEvents.filter(d => d.century === century).length;
   });
-  
   console.log("Engineering counts:", engCenturyCounts);
   
   // Calculate angle spans for Engineering centuries
@@ -187,6 +190,8 @@ document.addEventListener("DOMContentLoaded", function() {
   
   ["Conceptual & Scientific Breakthroughs", "Sociocultural Factors"].forEach(category => {
     const catEvents = data.filter(d => d.category === category);
+    console.log(`${category} events:`, catEvents.length);
+    
     const centuries = [...new Set(catEvents.map(d => d.century))].sort((a, b) => a - b);
     const centuryCounts = {};
     
@@ -195,7 +200,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     
     const angleData = {};
-    const totalCatEvents = catEvents.length;
     let startAngle = 0;
     
     // Calculate total weight for this category
@@ -522,7 +526,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .append("g")
     .attr("class", "node-group")
     .attr("transform", d => `translate(${d.x}, ${d.y})`)
-    .on("click", (event, d) => {
+    .on("click", function(event, d) {
       // Only show modal if we're not dragging
       if (!d.wasDragged) {
         showModal(d);
@@ -697,9 +701,8 @@ document.addEventListener("DOMContentLoaded", function() {
       .attr("y1", d => data[d.source].y)
       .attr("x2", d => data[d.target].x)
       .attr("y2", d => data[d.target].y);
-  }
-
-  // Each tick, update positions
+ 
+    // Each tick, update positions
   function ticked() {
     // Apply ring constraints to all nodes not being dragged
     data.forEach(d => {
@@ -755,3 +758,8 @@ document.addEventListener("DOMContentLoaded", function() {
       modal.style.display = "none";
     }
   };
+  
+  // Initial centering
+  svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.9));
+  console.log("Visualization setup complete");
+});
