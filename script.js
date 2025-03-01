@@ -695,71 +695,72 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   
   // Update link positions based on node positions
-  function updateLinks() {
-    linkSelection
-      .attr("x1", d => data[d.source].x)
-      .attr("y1", d => data[d.source].y)
-      .attr("x2", d => data[d.target].x)
-      .attr("y2", d => data[d.target].y);
- 
-    // Each tick, update positions
-  function ticked() {
-    // Apply ring constraints to all nodes not being dragged
-    data.forEach(d => {
-      if (!d.isDragging) {
-        applyRingConstraints(d);
-      }
-    });
-
-    // Update link endpoints
-    updateLinks();
-
-    // Update node positions
-    nodeGroup
-      .attr("transform", d => `translate(${d.x}, ${d.y})`);
-  }
-
-  // -------------------------
-  // 6) ZOOM AND CONTROLS
-  // -------------------------
-
-  // Zoom and pan
-  const zoom = d3.zoom()
-    .scaleExtent([0.1, 5])
-    .on("zoom", event => {
-      container.attr("transform", event.transform);
-    });
-  svg.call(zoom);
-
-  // Hook up plus/minus buttons
-  d3.select("#zoom-in").on("click", () => {
-    svg.transition().call(zoom.scaleBy, 1.2);
-  });
-  d3.select("#zoom-out").on("click", () => {
-    svg.transition().call(zoom.scaleBy, 1/1.2);
-  });
-
-  // Modal logic
-  const modal = document.getElementById("modal");
-  const closeBtn = document.getElementById("close");
-  function showModal(d) {
-    modal.style.display = "block";
-    document.getElementById("modal-title").innerText = d.title;
-    document.getElementById("modal-date").innerText = "Date: " + d.date;
-    document.getElementById("modal-description").innerText = d.description;
-    document.getElementById("modal-location").innerText = d.location;
-    document.getElementById("modal-people").innerText = (d.people || []).join(", ");
-    document.getElementById("modal-image").src = d.img;
-    document.getElementById("modal-image").alt = d.title;
-  }
-  closeBtn.onclick = () => (modal.style.display = "none");
-  window.onclick = e => {
-    if (e.target === modal) {
-      modal.style.display = "none";
+// Update link positions based on node positions
+function updateLinks() {
+  linkSelection
+    .attr("x1", d => data[d.source].x)
+    .attr("y1", d => data[d.source].y)
+    .attr("x2", d => data[d.target].x)
+    .attr("y2", d => data[d.target].y);
+} // 
+  // Each tick, update positions
+function ticked() {
+  // Apply ring constraints to all nodes not being dragged
+  data.forEach(d => {
+    if (!d.isDragging) {
+      applyRingConstraints(d);
     }
-  };
-  
-  // Initial centering
-  svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.9));
-  console.log("Visualization setup complete");
+  });
+
+  // Update link endpoints
+  updateLinks();
+
+  // Update node positions
+  nodeGroup
+    .attr("transform", d => `translate(${d.x}, ${d.y})`);
+}
+
+// -------------------------
+// 6) ZOOM AND CONTROLS
+// -------------------------
+
+// Zoom and pan
+const zoom = d3.zoom()
+  .scaleExtent([0.1, 5])
+  .on("zoom", event => {
+    container.attr("transform", event.transform);
+  });
+svg.call(zoom);
+
+// Hook up plus/minus buttons
+d3.select("#zoom-in").on("click", () => {
+  svg.transition().call(zoom.scaleBy, 1.2);
+});
+d3.select("#zoom-out").on("click", () => {
+  svg.transition().call(zoom.scaleBy, 1/1.2);
+});
+
+// Modal logic
+const modal = document.getElementById("modal");
+const closeBtn = document.getElementById("close");
+function showModal(d) {
+  modal.style.display = "block";
+  document.getElementById("modal-title").innerText = d.title;
+  document.getElementById("modal-date").innerText = "Date: " + d.date;
+  document.getElementById("modal-description").innerText = d.description;
+  document.getElementById("modal-location").innerText = d.location;
+  document.getElementById("modal-people").innerText = (d.people || []).join(", ");
+  document.getElementById("modal-image").src = d.img;
+  document.getElementById("modal-image").alt = d.title;
+}
+closeBtn.onclick = () => (modal.style.display = "none");
+window.onclick = e => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+};
+
+// Initial centering
+svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.9));
+console.log("Visualization setup complete");
 });
