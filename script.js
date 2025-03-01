@@ -763,8 +763,28 @@ document.addEventListener("DOMContentLoaded", function() {
     // Sort engineering events by year
     engineeringEvents.sort((a, b) => a.parsedYear - b.parsedYear);
     
+    // Format the century for display
+    let centuryLabel;
+    if (century < 0) {
+      centuryLabel = `${Math.abs(century)}s BCE`;
+    } else if (century === 100) {
+      centuryLabel = "100-799 CE";
+    } else if (century === 800) {
+      centuryLabel = "800-1199 CE";
+    } else if (century === 1200) {
+      centuryLabel = "1200-1499 CE";
+    } else if (century === 1500) {
+      centuryLabel = "1500-1699 CE";
+    } else if (century === 1700) {
+      centuryLabel = "1700-1799 CE";
+    } else if (century === 1800) {
+      centuryLabel = "1800-1899 CE";
+    } else {
+      centuryLabel = `${century}s`;
+    }
+    
     // Update the timeline header
-    d3.select(".timeline-header h3").html(`Engineering Events: ${century}s`);
+    d3.select(".timeline-header h3").html(`Engineering Events: ${centuryLabel}`);
     
     // Clear existing timeline content
     const timelineContent = d3.select("#timeline-content").html("");
@@ -780,7 +800,10 @@ document.addEventListener("DOMContentLoaded", function() {
         <h4 style="margin: 0 0 5px 0;">${aviationNode.title}</h4>
         <p style="margin: 0 0 8px 0;font-size: 12px;opacity: 0.8;">${aviationNode.date}</p>
         <p style="margin: 0;font-size: 14px;">${aviationNode.description.substring(0, 150)}${aviationNode.description.length > 150 ? '...' : ''}</p>
-      `);
+      `)
+      .on("click", function() {
+        showModal(aviationNode);
+      });
     
     // Add a divider
     timelineContent.append("div")
