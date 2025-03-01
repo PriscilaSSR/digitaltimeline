@@ -116,11 +116,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
   
-  // Define fixed ring ranges
+  // Define fixed ring ranges - MODIFIED TO MAKE ENGINEERING SECTION LARGER
   const ringRanges = {
-    "Engineering Experiments & Demonstrations": [0, maxOuterRadius * (1/3)],
-    "Conceptual & Scientific Breakthroughs": [maxOuterRadius * (1/3), maxOuterRadius * (2/3)],
-    "Sociocultural Factors": [maxOuterRadius * (2/3), maxOuterRadius],
+    "Engineering Experiments & Demonstrations": [0, maxOuterRadius * (1/2)], // Changed from 1/3 to 1/2
+    "Conceptual & Scientific Breakthroughs": [maxOuterRadius * (1/2), maxOuterRadius * (3/4)], // Changed from 1/3-2/3 to 1/2-3/4
+    "Sociocultural Factors": [maxOuterRadius * (3/4), maxOuterRadius], // Changed from 2/3-1 to 3/4-1
     "Human's Dream of Flying": [maxOuterRadius, maxOuterRadius * 1.1] // Not used for node placement
   };
   
@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // 3) DRAW CATEGORY RINGS WITH TIME SLICES
   // -------------------------
   
-  // Define ring categories for visualization
+  // Define ring categories for visualization - MODIFIED TO MATCH NEW ringRanges
   const ringCategories = [
     {
       name: "Human's Dream of Flying",
@@ -242,18 +242,18 @@ document.addEventListener("DOMContentLoaded", function() {
     {
       name: "Sociocultural Factors",
       outerRadius: maxOuterRadius,
-      innerRadius: maxOuterRadius * (2/3),
+      innerRadius: maxOuterRadius * (3/4), // Changed from 2/3 to 3/4
       color: "#c62828"
     },
     {
       name: "Conceptual & Scientific Breakthroughs",
-      outerRadius: maxOuterRadius * (2/3),
-      innerRadius: maxOuterRadius * (1/3),
+      outerRadius: maxOuterRadius * (3/4), // Changed from 2/3 to 3/4
+      innerRadius: maxOuterRadius * (1/2), // Changed from 1/3 to 1/2
       color: "#1565c0"
     },
     {
       name: "Engineering Experiments & Demonstrations",
-      outerRadius: maxOuterRadius * (1/3),
+      outerRadius: maxOuterRadius * (1/2), // Changed from 1/3 to 1/2
       innerRadius: 0,
       color: "#2e7d32"
     },
@@ -755,4 +755,3 @@ document.addEventListener("DOMContentLoaded", function() {
       modal.style.display = "none";
     }
   };
-});
