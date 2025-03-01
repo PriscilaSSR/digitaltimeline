@@ -1,5 +1,48 @@
 window.timelineItems = [
-      /* Paste your entire array here */
+{
+    date: '1700s',
+    location: 'Europe',
+    title: 'Human-Passenger Flights on Hot Air Balloons',
+    description: 'Marked the first time humans experienced flight, sparking public fascination and further experimentation with aerial navigation.',
+    img: "/api/placeholder/100/100",
+    category: 'Aviation Technology',
+    row: 1,
+    group: "CSB",
+    connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci\'s Flying Machines']
+  },
+{
+    date: '1890s',
+    location: 'Europe',
+    title: 'Gliders and the Foundation of Controlled Flight',
+    description: 'Otto Lilienthal’s glider flights in the 1890s represented the first controlled, repeatable manned flights using fixed wings and an understanding of lift and control surfaces. Demonstrated the feasibility of heavier-than-air flight and directly influenced the Wright brothers. These gliders allowed for steering and control, essential for the development of powered aircraft.',
+    img: "/api/placeholder/100/100",
+    category: 'Aviation Technology',
+    row: 1,
+    group: "CSB",
+    connections: ['Silk Production and Trade', 'The Industrial Revolution', 'Leonardo da Vinci\'s Bird Sketches']
+  },
+{
+    date: '1900s',
+    location: 'Worldwide',
+    title: 'Dawn of Modern Aviation: Powered Flight',
+    description: 'A frenzied period of experimentation with countless inventors, engineers, and enthusiasts building prototypes to unlock the secrets of powered flight. This era was marked by a trial-and-error approach where many attempts paved the way for breakthroughs that defined the future of aviation.',
+    img: "/api/placeholder/100/100",
+    category: 'Aviation Technology',
+    row: 1,
+    group: "CSB",
+    connections: ['Silk Production and Trade', 'The Industrial Revolution', 'Leonardo da Vinci\'s Bird Sketches']
+  },
+{
+    date: '1900-1930s',
+    location: 'Worldwide',
+    title: 'Doomed Alternative: Zeppelins',
+    description: 'Zeppelins were the first technology to enable sustained, long-distance passenger travel by air, bridging the gap between balloons and modern airplanes.',
+    img: "/api/placeholder/100/100",
+    category: 'Aviation Technology',
+    row: 1,
+    group: "CSB",
+    connections: ['The Industrial Revolution']
+  },
       {
         date: '2700s BCE',
         location: 'China',
@@ -10,10 +53,9 @@ window.timelineItems = [
         category: 'Theoretical Breakthroughs',
         connections: [
           "Early Kites", 
-          "Bartolomeu de Gusmão\'s Passarola", 
-          "Montgolfier Brothers' Hot Air Balloon",
-          "Henri Giffard\'s Dirigible",
-          "Charles Renard and Arthur Constantin\'s Le France",
+          "Bartolomeu de Gusmão\'s Passarola",
+            "Human-Passenger Flights on Hot Air Balloons",
+            "Gliders and the Foundation of Controlled Flight",
         ],
        group: "CSB", // Add a 'group' property for Venn diagram,
         row: 1
@@ -37,7 +79,7 @@ window.timelineItems = [
     description: 'Kites are invented in China, an early form of human flight.',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
-    category: 'Engineering Experiments & Demonstrations',
+    category: 'Aviation Technology',
     group: 'EED',
     row: 1,
     connections: ['Paper Production and Trade']
@@ -97,7 +139,7 @@ window.timelineItems = [
     description: "Kongming invents the sky lantern, the first hot air balloon. From its military use, it became known as the Kongming lantern.",
     img: "/api/placeholder/100/100",
     people: ['Kongming'],
-    category: 'Engineering Experiments & Demonstrations',
+    category: 'Aviation Technology',
     group: 'EED',
     row: 1,
     connections: ['Early Kites', 'Paper Production and Trade']
@@ -178,10 +220,10 @@ window.timelineItems = [
     date: '1440s CE',
     location: 'Mainz, Germany',
     title: "Gutenberg's Printing Press",
-    description: "Johannes Gutenberg develops the movable-type printing press, drastically speeding the circulation of new ideas.",
+    description: "Johannes Gutenberg develops the movable-type printing press, drastically speeding the circulation of new ideas. Affordable books and journals spread knowledge of flight experiments widely.",
     img: '/api/placeholder/100/100',
     people: ['Johannes Gutenberg'],
-    category: 'Theoretical Breakthroughs',
+    category: 'Sociocultural & Economic Factors',
         group: 'CSB',
     connections: ['Paper Production and Trade'],
     row: 2
@@ -195,6 +237,18 @@ window.timelineItems = [
     people: ['Leonardo da Vinci'],
     category: 'Sociocultural & Economic Factors',
     group: "SF",
+    row: 2,
+    connections: ['Paper Production and Trade']
+  },
+  {
+    date: '1480s CE',
+    location: 'Italy',
+    title: "Leonardo da Vinci's Bird Anatomy Sketches",
+    description: "Leonardo da Vinci's studies of bird flight included detailed observations of how air interacts with wings to generate lift. His sketches showed an understanding of aerodynamic lift, drag, and control surfaces. Leonardo’s approach was empirical and mechanical.",
+    img: "/api/placeholder/100/100",
+    people: ['Leonardo da Vinci'],
+    category: 'Theoretical Breakthroughs',
+    group: "CSB",
     row: 2,
     connections: ['Paper Production and Trade']
   },
@@ -214,7 +268,7 @@ window.timelineItems = [
     date: '1600–1800s CE',
     location: 'Europe',
     title: 'The Gentleman Scientist Tradition',
-    description: 'Wealthy or well-connected amateurs (often aristocrats) pursued scientific research as a leisure activity...',
+    description: 'Wealthy or well-connected amateurs (often aristocrats) pursued scientific research as a leisure activity.',
     img: '/api/placeholder/100/100',
     people: ['Sir George Cayley'],
     category: 'Sociocultural & Economic Factors',
@@ -321,7 +375,7 @@ window.timelineItems = [
 {
   date: '1760–1840',
   location: 'Great Britain',
-  title: 'Industrial Revolution',
+  title: 'The Industrial Revolution',
   description: 'Steam power revolutionizes manufacturing and metallurgy, providing mass production methods and mechanical expertise that future aircraft builders would rely on.',
   img: '/api/placeholder/100/100',
   people: ['James Watt', 'Matthew Boulton'],
@@ -367,10 +421,10 @@ window.timelineItems = [
     row: 4
   },
 {
-  date: '1851',
+  date: '1850s',
   location: 'London, England',
-  title: 'The Great Exhibition',
-  description: 'An international fair showcasing industrial inventions.  Events like this spurred global interest...',
+  title: 'Great Exhibitions and World Fairs',
+  description: 'International fair showcasing industrial inventions. A growing public interest in science and technology created a cultural environment that celebrated inventors and encouraged further experimentation. These exhibitions allowed inventors to exchange ideas and showcase prototypes.',
   img: '/api/placeholder/100/100',
   people: ['Prince Albert', 'Henry Cole'],
   category: 'Sociocultural & Economic Factors',
