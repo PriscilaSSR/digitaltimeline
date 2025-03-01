@@ -83,11 +83,17 @@ document.addEventListener("DOMContentLoaded", function() {
     // 800-999 CE
     if (year >= 800 && year < 1000) return 800;
     
-    // 1000-1499 CE
-    if (year >= 1000 && year < 1500) return 1000;
+    // 1000-1299 CE
+    if (year >= 1000 && year < 1200) return 1000;
     
-    // 1500-1699 CE
-    if (year >= 1500 && year < 1700) return 1500;
+    // 1200-1499 CE
+    if (year >= 1200 && year < 1400) return 1200;
+
+    // 1500-1599 CE
+    if (year >= 1500 && year < 1600) return 1500;
+
+    // 1600-1699 CE
+    if (year >= 1600 && year < 1700) return 1600;
     
     // 1700-1799 CE
     if (year >= 1700 && year < 1800) return 1700;
@@ -123,14 +129,14 @@ document.addEventListener("DOMContentLoaded", function() {
   // Define fixed ring ranges - MODIFIED TO MAKE ENGINEERING SECTION LARGER
   const ringRanges = {
     "Engineering Experiments & Demonstrations": [0, maxOuterRadius * (1/2)], // Changed from 1/3 to 1/2
-    "Conceptual & Scientific Breakthroughs": [maxOuterRadius * (1/2), maxOuterRadius * (3/4)], // Changed from 1/3-2/3 to 1/2-3/4
-    "Sociocultural Factors": [maxOuterRadius * (3/4), maxOuterRadius], // Changed from 2/3-1 to 3/4-1
-    "Human's Dream of Flying": [maxOuterRadius, maxOuterRadius * 1.1] // Not used for node placement
+    "Theoretical Breakthroughs": [maxOuterRadius * (1/2), maxOuterRadius * (3/4)], // Changed from 1/3-2/3 to 1/2-3/4
+    "Sociocultural & Economic Factors": [maxOuterRadius * (3/4), maxOuterRadius], // Changed from 2/3-1 to 3/4-1
+    "Humanity's Dream of Flying": [maxOuterRadius, maxOuterRadius * 1.1] // Not used for node placement
   };
   
   // Colors for each category
   const colorScale = d3.scaleOrdinal()
-    .domain(["Human's Dream of Flying", "Sociocultural Factors", "Conceptual & Scientific Breakthroughs", "Engineering Experiments & Demonstrations"])
+    .domain(["Humanity's Dream of Flying", "Sociocultural & Economic Factors", "Theoretical Breakthroughs", "Engineering Experiments & Demonstrations"])
     .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
 
   // Calculate slice angles for Engineering category
@@ -188,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
     "Engineering Experiments & Demonstrations": engAngleData
   };
   
-  ["Conceptual & Scientific Breakthroughs", "Sociocultural Factors"].forEach(category => {
+  ["Theoretical Breakthroughs", "Sociocultural & Economic Factors"].forEach(category => {
     const catEvents = data.filter(d => d.category === category);
     console.log(`${category} events:`, catEvents.length);
     
@@ -238,19 +244,19 @@ document.addEventListener("DOMContentLoaded", function() {
   // Define ring categories for visualization - MODIFIED TO MATCH NEW ringRanges
   const ringCategories = [
     {
-      name: "Human's Dream of Flying",
+      name: "Humanity's Dream of Flying",
       outerRadius: maxOuterRadius * 1.1, // Make it larger than the other rings
       innerRadius: maxOuterRadius,
       color: "#9c27b0"
     },
     {
-      name: "Sociocultural Factors",
+      name: "Sociocultural & Economic & Economic Factors",
       outerRadius: maxOuterRadius,
       innerRadius: maxOuterRadius * (3/4), // Changed from 2/3 to 3/4
       color: "#c62828"
     },
     {
-      name: "Conceptual & Scientific Breakthroughs",
+      name: "Theoretical Breakthroughs",
       outerRadius: maxOuterRadius * (3/4), // Changed from 2/3 to 3/4
       innerRadius: maxOuterRadius * (1/2), // Changed from 1/3 to 1/2
       color: "#1565c0"
@@ -282,8 +288,8 @@ document.addEventListener("DOMContentLoaded", function() {
   ringGroups.each(function(categoryData) {
     const group = d3.select(this);
     
-    // Skip time slices for the outer "Human's Dream of Flying" ring
-    if (categoryData.name === "Human's Dream of Flying") {
+    // Skip time slices for the outer "Humanity's Dream of Flying" ring
+    if (categoryData.name === "Humanity's Dream of Flying") {
       group.append("circle")
         .attr("cx", center)
         .attr("cy", center)
@@ -595,9 +601,9 @@ document.addEventListener("DOMContentLoaded", function() {
         // Extract categories from group
         const categories = d.group.split("-").map(g => {
           switch (g) {
-            case "CSB": return "Conceptual & Scientific Breakthroughs";
+            case "CSB": return "Theoretical Breakthroughs";
             case "EED": return "Engineering Experiments & Demonstrations";
-            case "SF": return "Sociocultural Factors";
+            case "SF": return "Sociocultural & Economic & Economic  Factors";
             default: return d.category;
           }
         });
