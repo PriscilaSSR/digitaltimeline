@@ -5,8 +5,41 @@ document.addEventListener("DOMContentLoaded", function() {
   // -------------------------
   // 1) LOAD & SETUP
   // -------------------------
-  const data = window.timelineItems;
-  console.log("Data loaded, items:", data.length);
+  // Get the original data
+  const originalData = window.timelineItems;
+  console.log("Original data loaded, items:", originalData.length);
+
+  // Create a copy of the data and modify it to add the new Aviation Technology category
+  const data = originalData.map(item => {
+    // Create a deep copy of the item
+    const newItem = {...item};
+
+    // Check if this is an Engineering event that should be classified as Aviation Technology
+    // For this example, we'll consider items with keywords related to flight in the title
+    // You can adjust these criteria based on your needs
+    const flightKeywords = ['airplane', 'glider', 'flight', 'dirigible', 'balloon', 'airship', 'plane', 'monoplane', 'biplane', 'aviation'];
+    
+    if (newItem.category === "Engineering Experiments & Demonstrations") {
+      const titleLower = newItem.title.toLowerCase();
+      
+      // Check if title contains any flight keywords
+      const isAviationTech = flightKeywords.some(keyword => titleLower.includes(keyword));
+      
+      // Or if it's specifically about flying machines or aircraft
+      const isFlyingMachine = titleLower.includes('flying') || titleLower.includes('aircraft') || 
+                             titleLower.includes('aerial') || titleLower.includes('aviation');
+      
+      if (isAviationTech || isFlyingMachine) {
+        newItem.originalCategory = "Engineering Experiments & Demonstrations";
+        newItem.category = "Aviation Technology";
+        newItem.group = "AT"; // New group label
+      }
+    }
+    
+    return newItem;
+  });
+  
+  console.log("Modified data, items:", data.length);
 
   // We'll use a 2000x2000 viewBox
   const viewBoxSize = 2000;
@@ -23,6 +56,43 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const container = svg.append("g")
     .attr("class", "zoom-container");
+    
+  // Add a scrolling timeline container to the page
+  const timelineContainer = d3.select("body")
+    .append("div")
+    .attr("id", "timeline-container")
+    .style("display", "none") // Initially hidden
+    .style("position", "fixed")
+    .style("top", "50px")
+    .style("right", "20px")
+    .style("width", "300px")
+    .style("max-height", "80vh")
+    .style("overflow-y", "auto")
+    .style("background-color", "rgba(40, 40, 40, 0.9)")
+    .style("border-radius", "8px")
+    .style("padding", "15px")
+    .style("box-shadow", "0 4px 8px rgba(0,0,0,0.5)")
+    .style("z-index", "100")
+    .style("color", "white");
+    
+  // Add a header to the timeline
+  timelineContainer.append("div")
+    .attr("class", "timeline-header")
+    .style("display", "flex")
+    .style("justify-content", "space-between")
+    .style("align-items", "center")
+    .style("margin-bottom", "10px")
+    .html(`<h3 style="margin: 0;">Related Engineering Events</h3>
+           <button id="close-timeline" style="background: none; border: none; font-size: 20px; color: white; cursor: pointer;">&times;</button>`);
+    
+  // Add a content div for the timeline items
+  timelineContainer.append("div")
+    .attr("id", "timeline-content");
+    
+  // Add event listener to close button
+  d3.select("#close-timeline").on("click", function() {
+    d3.select("#timeline-container").style("display", "none");
+  });
     
   // -------------------------
   // 2) PARSE DATES AND PREPARE DATA
@@ -68,8 +138,8 @@ document.addEventListener("DOMContentLoaded", function() {
     return 0;
   }
 
-  // Normalize centuries to exactly 9 for Engineering
-  function normalizeEngCentury(year) {
+  // Normalize centuries to exactly 9 for Aviation Technology
+  function normalizeAviationCentury(year) {
     // Special case: BCE dates go into their own buckets
     if (year < 0) {
       if (year <= -500 && year > -600) return -500; // 500s BCE
@@ -119,45 +189,46 @@ document.addEventListener("DOMContentLoaded", function() {
     d.parsedYear = parseTimelineDate(d.date);
     
     // Apply different century normalization based on category
-    if (d.category === "Engineering Experiments & Demonstrations") {
-      d.century = normalizeEngCentury(d.parsedYear);
+    if (d.category === "Aviation Technology") {
+      d.century = normalizeAviationCentury(d.parsedYear);
     } else {
       d.century = normalizeOtherCentury(d.parsedYear);
     }
   });
   
-  // Define fixed ring ranges - MODIFIED TO MAKE ENGINEERING SECTION LARGER
+  // Define fixed ring ranges - MODIFIED TO INCLUDE AVIATION TECHNOLOGY
   const ringRanges = {
-    "Engineering Experiments & Demonstrations": [0, maxOuterRadius * (1/2)], // Changed from 1/3 to 1/2
-    "Theoretical Breakthroughs": [maxOuterRadius * (1/2), maxOuterRadius * (3/4)], // Changed from 1/3-2/3 to 1/2-3/4
-    "Sociocultural & Economic Factors": [maxOuterRadius * (3/4), maxOuterRadius], // Changed from 2/3-1 to 3/4-1
-    "Humanity's Dream of Flying": [maxOuterRadius, maxOuterRadius * 1.1] // Not used for node placement
+    "Aviation Technology": [0, maxOuterRadius * (1/2)], // Innermost circle (was Engineering)
+    "Engineering Experiments & Demonstrations": [maxOuterRadius * (1/2), maxOuterRadius * (5/8)], // New position for Engineering
+    "Theoretical Breakthroughs": [maxOuterRadius * (5/8), maxOuterRadius * (3/4)], // Slightly adjusted
+    "Sociocultural & Economic Factors": [maxOuterRadius * (3/4), maxOuterRadius], // Unchanged
+    "Humanity's Dream of Flying": [maxOuterRadius, maxOuterRadius * 1.1] // Unchanged
   };
   
-  // Colors for each category
+  // Colors for each category - UPDATED with Aviation Technology
   const colorScale = d3.scaleOrdinal()
-    .domain(["Humanity's Dream of Flying", "Sociocultural & Economic Factors", "Theoretical Breakthroughs", "Engineering Experiments & Demonstrations"])
-    .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
-
-  // Calculate slice angles for Engineering category
-  // Get all Engineering events
-  const engEvents = data.filter(d => d.category === "Engineering Experiments & Demonstrations");
-  console.log("Engineering events:", engEvents.length);
+    .domain(["Humanity's Dream of Flying", "Sociocultural & Economic Factors", "Theoretical Breakthroughs", "Engineering Experiments & Demonstrations", "Aviation Technology"])
+    .range(["#9c27b0", "#c62828", "#1565c0", "#ff9800", "#2e7d32"]); // Added orange for Engineering, kept green for Aviation
   
-  // Get unique normalized centuries for Engineering
-  const engCenturies = [...new Set(engEvents.map(d => d.century))].sort((a, b) => a - b);
-  console.log("Engineering centuries:", engCenturies);
+  // Calculate slice angles for Aviation Technology category (formerly Engineering)
+  // Get all Aviation Technology events
+  const aviationEvents = data.filter(d => d.category === "Aviation Technology");
+  console.log("Aviation Technology events:", aviationEvents.length);
   
-  // Count events per century for Engineering
-  const engCenturyCounts = {};
-  engCenturies.forEach(century => {
-    engCenturyCounts[century] = engEvents.filter(d => d.century === century).length;
+  // Get unique normalized centuries for Aviation Technology
+  const aviationCenturies = [...new Set(aviationEvents.map(d => d.century))].sort((a, b) => a - b);
+  console.log("Aviation Technology centuries:", aviationCenturies);
+  
+  // Count events per century for Aviation Technology
+  const aviationCenturyCounts = {};
+  aviationCenturies.forEach(century => {
+    aviationCenturyCounts[century] = aviationEvents.filter(d => d.century === century).length;
   });
-  console.log("Engineering counts:", engCenturyCounts);
+  console.log("Aviation Technology counts:", aviationCenturyCounts);
   
-  // Calculate angle spans for Engineering centuries
-  const engAngleData = {};
-  const totalEngEvents = engEvents.length;
+  // Calculate angle spans for Aviation Technology centuries
+  const aviationAngleData = {};
+  const totalAviationEvents = aviationEvents.length;
   const totalAngle = 2 * Math.PI; // Full circle
   
   // MODIFIED: Make slice size proportional to event count with a minimum size
@@ -165,15 +236,15 @@ document.addEventListener("DOMContentLoaded", function() {
   let startAngle = 0;
   // Calculate total weight = sum of all events + minimum slice per century
   const minSliceWeight = 1; // Minimum weight for a century with few events
-  const totalWeight = Object.values(engCenturyCounts).reduce((sum, count) => sum + Math.max(count, minSliceWeight), 0);
+  const totalWeight = Object.values(aviationCenturyCounts).reduce((sum, count) => sum + Math.max(count, minSliceWeight), 0);
   
-  engCenturies.forEach(century => {
-    const count = engCenturyCounts[century];
+  aviationCenturies.forEach(century => {
+    const count = aviationCenturyCounts[century];
     // Use count as weight, but ensure minimum size for visibility
     const weight = Math.max(count, minSliceWeight);
     const angleSize = (weight / totalWeight) * totalAngle;
     
-    engAngleData[century] = {
+    aviationAngleData[century] = {
       startAngle: startAngle,
       endAngle: startAngle + angleSize,
       count: count
@@ -184,17 +255,17 @@ document.addEventListener("DOMContentLoaded", function() {
   
   // Normalize to full circle (in case of rounding errors)
   const correction = totalAngle / startAngle;
-  engCenturies.forEach(century => {
-    engAngleData[century].startAngle *= correction;
-    engAngleData[century].endAngle *= correction;
+  aviationCenturies.forEach(century => {
+    aviationAngleData[century].startAngle *= correction;
+    aviationAngleData[century].endAngle *= correction;
   });
   
   // Also calculate similar data for other categories
   const categoryAngles = {
-    "Engineering Experiments & Demonstrations": engAngleData
+    "Aviation Technology": aviationAngleData
   };
   
-  ["Theoretical Breakthroughs", "Sociocultural & Economic Factors"].forEach(category => {
+  ["Theoretical Breakthroughs", "Sociocultural & Economic Factors", "Engineering Experiments & Demonstrations"].forEach(category => {
     const catEvents = data.filter(d => d.category === category);
     console.log(`${category} events:`, catEvents.length);
     
@@ -244,31 +315,37 @@ document.addEventListener("DOMContentLoaded", function() {
   // 3) DRAW CATEGORY RINGS WITH TIME SLICES
   // -------------------------
   
-  // Define ring categories for visualization - MODIFIED TO MATCH NEW ringRanges
+  // Define ring categories for visualization - MODIFIED TO INCLUDE AVIATION TECHNOLOGY
   const ringCategories = [
     {
       name: "Humanity's Dream of Flying",
-      outerRadius: maxOuterRadius * 1.1, // Make it larger than the other rings
+      outerRadius: maxOuterRadius * 1.1, // Unchanged
       innerRadius: maxOuterRadius,
       color: "#9c27b0"
     },
     {
       name: "Sociocultural & Economic Factors",
       outerRadius: maxOuterRadius,
-      innerRadius: maxOuterRadius * (3/4), // Changed from 2/3 to 3/4
+      innerRadius: maxOuterRadius * (3/4), // Unchanged
       color: "#c62828"
     },
     {
       name: "Theoretical Breakthroughs",
-      outerRadius: maxOuterRadius * (3/4), // Changed from 2/3 to 3/4
-      innerRadius: maxOuterRadius * (1/2), // Changed from 1/3 to 1/2
+      outerRadius: maxOuterRadius * (3/4), // Unchanged
+      innerRadius: maxOuterRadius * (5/8), // Adjusted
       color: "#1565c0"
     },
     {
       name: "Engineering Experiments & Demonstrations",
-      outerRadius: maxOuterRadius * (1/2), // Changed from 1/3 to 1/2
+      outerRadius: maxOuterRadius * (5/8), // New position
+      innerRadius: maxOuterRadius * (1/2), // New position
+      color: "#ff9800" // New color (orange)
+    },
+    {
+      name: "Aviation Technology",
+      outerRadius: maxOuterRadius * (1/2), // Was Engineering
       innerRadius: 0,
-      color: "#2e7d32"
+      color: "#2e7d32" // Keep the green color
     },
   ];
 
@@ -353,17 +430,17 @@ document.addEventListener("DOMContentLoaded", function() {
       .text(d => {
         if (d.century < 0) {
           return `${Math.abs(d.century)}s BCE: ${d.count} events`;
-        } else if (d.century === 100 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        } else if (d.century === 100 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `100-799 CE: ${d.count} events`;
-        } else if (d.century === 800 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        } else if (d.century === 800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `800-1199 CE: ${d.count} events`;
-        } else if (d.century === 1200 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        } else if (d.century === 1200 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `1200-1499 CE: ${d.count} events`;
-        } else if (d.century === 1500 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        } else if (d.century === 1500 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `1500-1699 CE: ${d.count} events`;
-        } else if (d.century === 1700 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        } else if (d.century === 1700 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `1700-1799 CE: ${d.count} events`;
-       } else if (d.century === 1800 && categoryData.name === "Engineering Experiments & Demonstrations") {
+       } else if (d.century === 1800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `1800-1899 CE: ${d.count} events`;
         } else {
           return `${d.century}s: ${d.count} events`;
@@ -396,17 +473,17 @@ document.addEventListener("DOMContentLoaded", function() {
       let labelText;
       if (d.century < 0) {
         labelText = `${Math.abs(d.century)}s BCE`;
-      } else if (d.century === 100 && categoryData.name === "Engineering Experiments & Demonstrations") {
+      } else if (d.century === 100 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
         labelText = "100-799 CE";
-      } else if (d.century === 800 && categoryData.name === "Engineering Experiments & Demonstrations") {
+      } else if (d.century === 800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
         labelText = "800-1199 CE";
-      } else if (d.century === 1200 && categoryData.name === "Engineering Experiments & Demonstrations") {
+      } else if (d.century === 1200 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
         labelText = "1200-1499 CE";
-      } else if (d.century === 1500 && categoryData.name === "Engineering Experiments & Demonstrations") {
+      } else if (d.century === 1500 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
         labelText = "1500-1699 CE";
-      } else if (d.century === 1700 && categoryData.name === "Engineering Experiments & Demonstrations") {
+      } else if (d.century === 1700 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
         labelText = "1700-1799 CE";
-      } else if (d.century === 1800 && categoryData.name === "Engineering Experiments & Demonstrations") {
+      } else if (d.century === 1800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
         labelText = "1800-1899 CE";
       } else {
         labelText = `${d.century}s`;
@@ -579,8 +656,12 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("class", "node-group")
     .attr("transform", d => `translate(${d.x}, ${d.y})`)
     .on("click", function(event, d) {
-      // Only show modal if we're not dragging
-      if (!d.wasDragged) {
+      // If it's an Aviation Technology node, show the timeline
+      if (d.category === "Aviation Technology" && !d.wasDragged) {
+        showEngineeringTimeline(d);
+      } 
+      // For any node, show the modal if we're not dragging
+      else if (!d.wasDragged) {
         showModal(d);
       }
       // Reset the flag
@@ -611,6 +692,7 @@ document.addEventListener("DOMContentLoaded", function() {
             case "CSB": return "Theoretical Breakthroughs";
             case "EED": return "Engineering Experiments & Demonstrations";
             case "SF": return "Sociocultural & Economic Factors";
+            case "AT": return "Aviation Technology";
             default: return d.category;
           }
         });
@@ -628,7 +710,7 @@ document.addEventListener("DOMContentLoaded", function() {
       return colorScale(d.category);
     })
     .style("stroke", "#333")
-    .style("stroke-width", 1)
+    .style("stroke-width", d => d.category === "Aviation Technology" ? 2 : 1) // Thicker border for Aviation Tech
     .style("cursor", "move"); // Change cursor to indicate draggable
 
   // MODIFIED: Display only the title, not the date
@@ -649,10 +731,92 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("pointer-events", "none") // Make text non-interactable so it doesn't interfere with dragging
     .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
     .style("color", "white")
-    .html(d => `<strong>${d.title}</strong>`); // Remove the date line
+    .html(d => {
+      // Add a small icon to Aviation Technology nodes to indicate they can open the timeline
+      if (d.category === "Aviation Technology") {
+        return `<strong>${d.title}</strong><span style="display:block;font-size:8px;margin-top:3px;">🔎 Click for details</span>`;
+      }
+      return `<strong>${d.title}</strong>`;
+    });
+    
+  // -------------------------
+  // 5) ENGINEERING TIMELINE FUNCTIONS
+  // -------------------------
+  
+  // Function to show the engineering timeline for a specific Aviation Technology node
+  function showEngineeringTimeline(aviationNode) {
+    // Get the century of the clicked Aviation node
+    const century = aviationNode.century;
+    const yearStart = aviationNode.parsedYear;
+    
+    // Get all Engineering events from the same century
+    const engineeringEvents = data.filter(d => 
+      d.category === "Engineering Experiments & Demonstrations" && 
+      d.century === century
+    );
+    
+    // Sort engineering events by year
+    engineeringEvents.sort((a, b) => a.parsedYear - b.parsedYear);
+    
+    // Update the timeline header
+    d3.select(".timeline-header h3").html(`Engineering Events: ${century}s`);
+    
+    // Clear existing timeline content
+    const timelineContent = d3.select("#timeline-content").html("");
+    
+    // Add the selected Aviation Technology event at the top
+    timelineContent.append("div")
+      .attr("class", "timeline-item selected-item")
+      .style("border-left", "4px solid #2e7d32")
+      .style("padding", "10px 15px")
+      .style("margin-bottom", "15px")
+      .style("background-color", "rgba(46, 125, 50, 0.15)")
+      .html(`
+        <h4 style="margin: 0 0 5px 0;">${aviationNode.title}</h4>
+        <p style="margin: 0 0 8px 0;font-size: 12px;opacity: 0.8;">${aviationNode.date}</p>
+        <p style="margin: 0;font-size: 14px;">${aviationNode.description.substring(0, 150)}${aviationNode.description.length > 150 ? '...' : ''}</p>
+      `);
+    
+    // Add a divider
+    timelineContent.append("div")
+      .style("border-bottom", "1px solid rgba(255,255,255,0.2)")
+      .style("margin", "10px 0 15px 0");
+      
+    // Add a heading for related events
+    if (engineeringEvents.length > 0) {
+      timelineContent.append("h4")
+        .style("margin", "0 0 10px 0")
+        .text("Related Engineering Events:");
+    } else {
+      timelineContent.append("p")
+        .style("font-style", "italic")
+        .text("No related engineering events found for this time period.");
+    }
+    
+    // Add each engineering event
+    engineeringEvents.forEach(event => {
+      timelineContent.append("div")
+        .attr("class", "timeline-item")
+        .style("border-left", "4px solid #ff9800")
+        .style("padding", "10px 15px")
+        .style("margin-bottom", "10px")
+        .style("cursor", "pointer")
+        .html(`
+          <h4 style="margin: 0 0 5px 0;">${event.title}</h4>
+          <p style="margin: 0 0 8px 0;font-size: 12px;opacity: 0.8;">${event.date}</p>
+          <p style="margin: 0;font-size: 14px;">${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}</p>
+        `)
+        .on("click", function() {
+          showModal(event);
+        });
+    });
+    
+    // Make the timeline visible
+    d3.select("#timeline-container").style("display", "block");
+  }
 
   // -------------------------
-  // 5) DRAG FUNCTIONS
+  // 6) DRAG FUNCTIONS
   // -------------------------
   
   // Drag functions
@@ -748,72 +912,99 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   
   // Update link positions based on node positions
-// Update link positions based on node positions
-function updateLinks() {
-  linkSelection
-    .attr("x1", d => data[d.source].x)
-    .attr("y1", d => data[d.source].y)
-    .attr("x2", d => data[d.target].x)
-    .attr("y2", d => data[d.target].y);
-} // 
-  // Each tick, update positions
-function ticked() {
-  // Apply ring constraints to all nodes not being dragged
-  data.forEach(d => {
-    if (!d.isDragging) {
-      applyRingConstraints(d);
-    }
-  });
-
-  // Update link endpoints
-  updateLinks();
-
-  // Update node positions
-  nodeGroup
-    .attr("transform", d => `translate(${d.x}, ${d.y})`);
-}
-
-// -------------------------
-// 6) ZOOM AND CONTROLS
-// -------------------------
-
-// Zoom and pan
-const zoom = d3.zoom()
-  .scaleExtent([0.1, 5])
-  .on("zoom", event => {
-    container.attr("transform", event.transform);
-  });
-svg.call(zoom);
-
-// Hook up plus/minus buttons
-d3.select("#zoom-in").on("click", () => {
-  svg.transition().call(zoom.scaleBy, 1.2);
-});
-d3.select("#zoom-out").on("click", () => {
-  svg.transition().call(zoom.scaleBy, 1/1.2);
-});
-
-// Modal logic
-const modal = document.getElementById("modal");
-const closeBtn = document.getElementById("close");
-function showModal(d) {
-  modal.style.display = "block";
-  document.getElementById("modal-title").innerText = d.title;
-  document.getElementById("modal-date").innerText = "Date: " + d.date;
-  document.getElementById("modal-description").innerText = d.description;
-  document.getElementById("modal-location").innerText = d.location;
-  document.getElementById("modal-people").innerText = (d.people || []).join(", ");
-  document.getElementById("modal-image").src = d.img;
-  document.getElementById("modal-image").alt = d.title;
-}
-closeBtn.onclick = () => (modal.style.display = "none");
-window.onclick = e => {
-  if (e.target === modal) {
-    modal.style.display = "none";
+  function updateLinks() {
+    linkSelection
+      .attr("x1", d => data[d.source].x)
+      .attr("y1", d => data[d.source].y)
+      .attr("x2", d => data[d.target].x)
+      .attr("y2", d => data[d.target].y);
   }
-};
+  
+  // Each tick, update positions
+  function ticked() {
+    // Apply ring constraints to all nodes not being dragged
+    data.forEach(d => {
+      if (!d.isDragging) {
+        applyRingConstraints(d);
+      }
+    });
 
-// Initial centering
-svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.9));
-console.log("Visualization setup complete");
+    // Update link endpoints
+    updateLinks();
+
+    // Update node positions
+    nodeGroup
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+  }
+
+  // -------------------------
+  // 7) ZOOM AND CONTROLS
+  // -------------------------
+
+  // Zoom and pan
+  const zoom = d3.zoom()
+    .scaleExtent([0.1, 5])
+    .on("zoom", event => {
+      container.attr("transform", event.transform);
+    });
+  svg.call(zoom);
+
+  // Hook up plus/minus buttons
+  d3.select("#zoom-in").on("click", () => {
+    svg.transition().call(zoom.scaleBy, 1.2);
+  });
+  d3.select("#zoom-out").on("click", () => {
+    svg.transition().call(zoom.scaleBy, 1/1.2);
+  });
+
+  // Modal logic
+  const modal = document.getElementById("modal");
+  const closeBtn = document.getElementById("close");
+  function showModal(d) {
+    modal.style.display = "block";
+    document.getElementById("modal-title").innerText = d.title;
+    document.getElementById("modal-date").innerText = "Date: " + d.date;
+    document.getElementById("modal-description").innerText = d.description;
+    document.getElementById("modal-location").innerText = d.location || "Unknown";
+    document.getElementById("modal-people").innerText = (d.people || []).join(", ") || "Unknown";
+    
+    // Set modal image with fallback
+    const modalImage = document.getElementById("modal-image");
+    modalImage.src = d.img || "/api/placeholder/400/300";
+    modalImage.alt = d.title;
+    
+    // Add category information to the modal
+    const categoryText = d.originalCategory ? `${d.category} (originally ${d.originalCategory})` : d.category;
+    
+    // Add category info if not already present in the modal
+    let categoryElement = document.getElementById("modal-category");
+    if (!categoryElement) {
+      categoryElement = document.createElement("p");
+      categoryElement.id = "modal-category";
+      const categoryStrong = document.createElement("strong");
+      categoryStrong.textContent = "Category: ";
+      categoryElement.appendChild(categoryStrong);
+      const categorySpan = document.createElement("span");
+      categorySpan.id = "modal-category-span";
+      categoryElement.appendChild(categorySpan);
+      
+      // Insert after location
+      const locationElement = document.querySelector("#modal-location").parentElement;
+      locationElement.parentElement.insertBefore(categoryElement, locationElement.nextSibling);
+    }
+    
+    // Update category text
+    document.getElementById("modal-category-span").innerText = categoryText;
+  }
+  
+  closeBtn.onclick = () => (modal.style.display = "none");
+  window.onclick = e => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  // Initial centering
+  svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.9));
+  console.log("Visualization setup complete");
 });
