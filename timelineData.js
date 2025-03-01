@@ -7,7 +7,7 @@ window.timelineItems = [
         description: 'Chinese silk becomes a prized lightweight...',
         img: 'img/silk.jpg',
         people: ['Legendary Empress Leizu (mythical)'],
-        category: 'Conceptual & Scientific Breakthroughs',
+        category: 'Theoretical Breakthroughs',
         connections: [
           "Early Kites", 
           "Bartolomeu de Gusmão\'s Passarola", 
@@ -25,7 +25,7 @@ window.timelineItems = [
     description: 'Paper is invented in China and then spreads to the Arabic world in the 700s BC, then to Medieval Europe. A key material innovation that aided future flight experiments. The lightweight material was later used in hot air lanterns in China. Even later, Leonardo da Vinci and George Cayley used paper and other lightweight materials to create models and test their theories of flight ',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Theoretical Breakthroughs',
     row: 1,
     group: "CSB",
     connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci\'s Flying Machines']
@@ -49,7 +49,7 @@ window.timelineItems = [
         description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a ‘flying machine.’',
         img: "/api/placeholder/100/100",
         people: ['The Pushpaka Vimana'],
-        category: 'Sociocultural Factors',
+        category: 'Sociocultural & Economic & Economic Factors',
         row: 1,
        group: 'SF',
         connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt' ]
@@ -61,7 +61,7 @@ window.timelineItems = [
     description: 'This myth, often depicted in classical art and referenced by poets and playwrights...',
     img: "/api/placeholder/100/100",
     people: ['The Myth of Icarus and Daedalus'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic & Economic Factors',
     group: 'SF',
     row: 1,
     connections: ["Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
@@ -85,7 +85,7 @@ window.timelineItems = [
     description: "Archimedes discovers the principles of buoyancy, which later influence theories of flight.",
     img: "/api/placeholder/100/100",
     people: ['Archimedes'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Theoretical Breakthroughs',
     group: 'CSB',
     row: 1,
     connections: ["Roger Bacon's Air Support Theory", "Robert Hooke's Airflow"]
@@ -133,7 +133,7 @@ window.timelineItems = [
     description: "One of the tales from One Thousand and One Night. An inventor presents a magical mechanical horse to a Persian king.",
     img: "/api/placeholder/100/100",
     people: ['The Ebony Horse'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic & Economic Factors',
         group: 'SF',
     row: 2,
     connections: ["Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]  // No connections here.
@@ -145,7 +145,7 @@ window.timelineItems = [
     description: "Invented in China for fireworks and warfare, gunpowder also sowed the seed for rocketry.",
     img: '/api/placeholder/100/100',
     people: ['Chinese Alchemists'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Theoretical Breakthroughs',
         group: 'CSB',
     connections: [],
     row: 2
@@ -169,7 +169,7 @@ window.timelineItems = [
     description: "Roger Bacon theorizes that air can support objects like water supports boats.",
     img: "/api/placeholder/100/100",
     people: ['Roger Bacon'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Theoretical Breakthroughs',
     group: 'CSB',
     row: 2,
     connections: ["Archimedes' Buoyancy Principle", "Robert Hooke's Airflow"]
@@ -181,7 +181,7 @@ window.timelineItems = [
     description: "Johannes Gutenberg develops the movable-type printing press, drastically speeding the circulation of new ideas.",
     img: '/api/placeholder/100/100',
     people: ['Johannes Gutenberg'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Theoretical Breakthroughs',
         group: 'CSB',
     connections: ['Paper Production and Trade'],
     row: 2
@@ -193,7 +193,7 @@ window.timelineItems = [
     description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
     img: "/api/placeholder/100/100",
     people: ['Leonardo da Vinci'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic & Economic Factors',
     group: "SF",
     row: 2,
     connections: ['Paper Production and Trade']
@@ -217,7 +217,7 @@ window.timelineItems = [
     description: 'Wealthy or well-connected amateurs (often aristocrats) pursued scientific research as a leisure activity...',
     img: '/api/placeholder/100/100',
     people: ['Sir George Cayley'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic & Economic Factors',
     group: 'SF',
     connections: [],
     row: 2
@@ -229,7 +229,7 @@ window.timelineItems = [
     description: "One of the first “proto–science fiction” works. A fictional narrative describing a journey to the Moon...",
     img: "/api/placeholder/100/100",
     people: ['Johannes Kepler'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic & Economic Factors',
     group: 'SF',
     row: 2,
     connections: [] // No connections here.
@@ -241,7 +241,7 @@ window.timelineItems = [
     description: "One of the first “proto–science fiction” works. A utopian story describing lunar travel using large, trained birds.",
     img: "/api/placeholder/100/100",
     people: ['Francis Godwin'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic & Economic Factors',
     group: 'SF',
     row: 2,
     connections: [] // No connections here.
@@ -253,7 +253,7 @@ window.timelineItems = [
     description: "One of the first “proto–science fiction” works. Although comedic, it proposed mechanical means of leaving Earth...",
     img: "/api/placeholder/100/100",
     people: ['Cyrano de Bergerac'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic & Economic Factors',
     group: 'SF',
     row: 2,
     connections: [] // No connections here.
@@ -265,7 +265,7 @@ window.timelineItems = [
         description: 'Robert Hooke investigates concepts of drag and airflow, contributing to the body of knowledge that would eventually be applied to flight.',
         img: "/api/placeholder/100/100",
         people: ['Robert Hooke'],
-        category: 'Conceptual & Scientific Breakthroughs',
+        category: 'Theoretical Breakthroughs',
         group: 'CSB',
         row: 2,
         connections: ["Archimedes' Buoyancy Principle","Roger Bacon's Air Support Theory",'The Gentleman Scientist Tradition'] // No connections here.
@@ -277,7 +277,7 @@ window.timelineItems = [
         description: 'Lays out the three laws of motion and universal gravitation, essential to understanding how and why aircraft can generate lift...',
         img: "/api/placeholder/100/100",
         people: ['Isaac Newton'],
-        category: 'Conceptual & Scientific Breakthroughs',
+        category: 'Theoretical Breakthroughs',
         group: 'CSB',
         row: 2,
         connections: ['The Gentleman Scientist Tradition'] // No connections here.
@@ -301,7 +301,7 @@ window.timelineItems = [
         description: 'Though satire, Laputa symbolizes the human longing to master flight and the sky—exaggerated to the point of political power...',
         img: "/api/placeholder/100/100",
         people: ['Jonathan Swift'],
-        category: 'Sociocultural Factors',
+        category: 'Sociocultural & Economic & Economic Factors',
             group: 'SF',
         row: 3,
         connections: [] // No connections here.
@@ -313,7 +313,7 @@ window.timelineItems = [
         description: 'Describes how pressure in a moving fluid decreases as velocity increases; foundational for many aerodynamic analyses of wing lift.',
         img: "/api/placeholder/100/100",
         people: ['Daniel Bernoulli'],
-        category: 'Conceptual & Scientific Breakthroughs',
+        category: 'Theoretical Breakthroughs',
         group: 'CSB',
         row: 3,
         connections: [] // No connections here.
@@ -325,7 +325,7 @@ window.timelineItems = [
   description: 'Steam power revolutionizes manufacturing and metallurgy, providing mass production methods and mechanical expertise that future aircraft builders would rely on.',
   img: '/api/placeholder/100/100',
   people: ['James Watt', 'Matthew Boulton'],
-  category: 'Conceptual & Scientific Breakthroughs',
+  category: 'Theoretical Breakthroughs',
     group: 'CSB',
   connections: ["Hero's Aeolipile"],
   row: 3
@@ -352,7 +352,7 @@ window.timelineItems = [
     row: 4,
     connections: ['Early Kites', 'The Gentleman Scientist Tradition'],
     group: 'CSB',
-    category: "Conceptual & Scientific Breakthroughs"
+    category: "Theoretical Breakthroughs"
   },
   {
     date: '1839',
@@ -361,7 +361,7 @@ window.timelineItems = [
     description: "Charles Goodyear discovers how to vulcanize rubber, producing stronger, more elastic material...",
     img: '/api/placeholder/100/100',
     people: ['Charles Goodyear'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Theoretical Breakthroughs',
     group: 'CSB',
     connections: ['Industrial Revolution'],
     row: 4
@@ -373,7 +373,7 @@ window.timelineItems = [
   description: 'An international fair showcasing industrial inventions.  Events like this spurred global interest...',
   img: '/api/placeholder/100/100',
   people: ['Prince Albert', 'Henry Cole'],
-  category: 'Sociocultural Factors',
+  category: 'Sociocultural & Economic & Economic Factors',
     group: 'SF',
   connections: ['Industrial Revolution'],
   row: 4
@@ -424,7 +424,7 @@ window.timelineItems = [
  row: 7,
  connections: [],
     group: 'SF',
- category: "Sociocultural Factors"
+ category: "Sociocultural & Economic & Economic Factors"
 },
 {
   date: '1871',
@@ -436,7 +436,7 @@ window.timelineItems = [
   row: 7,
     group: 'CSB',
   connections: [],
-  category: "Conceptual & Scientific Breakthroughs"
+  category: "Theoretical Breakthroughs"
 },
 {
   date: '1884',
@@ -469,7 +469,7 @@ window.timelineItems = [
     description: 'Charles Martin Hall and Paul Héroult separately discover a cost-effective method to produce aluminum...',
     img: '/api/placeholder/100/100',
     people: ['Charles Martin Hall', 'Paul Héroult'],
-    category: 'Conceptual & Scientific Breakthroughs',
+    category: 'Theoretical Breakthroughs',
         group: 'CSB',
     connections: ['Industrial Revolution'],
     row: 7
@@ -544,7 +544,7 @@ window.timelineItems = [
   row: 9,
     group: 'CSB',
   connections: [],
-  category: "Conceptual & Scientific Breakthroughs"
+  category: "Theoretical Breakthroughs"
 },
 {
   date: '1900',
@@ -565,7 +565,7 @@ window.timelineItems = [
     description: 'Industrialist Henri Deutsch de la Meurthe offers prizes for airship and airplane feats...',
     img: '/api/placeholder/100/100',
     people: ['Henri Deutsch de la Meurthe'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic & Economic Factors',
         group: 'SF',
     connections: [],
     row: 9
@@ -592,7 +592,7 @@ window.timelineItems = [
   row: 9,
   connections: ['First Moon Landing'],
     group: 'SF',
-  category: "Sociocultural Factors"
+  category: "Sociocultural & Economic & Economic Factors"
 },
 {
   date: '1902',
@@ -640,7 +640,7 @@ window.timelineItems = [
   row: 9,
     group: 'CSB',
   connections: [],
-  category: "Conceptual & Scientific Breakthroughs"
+  category: "Theoretical Breakthroughs"
 },
 {
   date: '1906',
@@ -664,7 +664,7 @@ window.timelineItems = [
   row: 9,
     group: 'CSB',
   connections: [],
-  category: "Conceptual & Scientific Breakthroughs"
+  category: "Theoretical Breakthroughs"
 },
 {
   date: '1907',
@@ -688,7 +688,7 @@ window.timelineItems = [
   row: 10,
     group: 'SF',
   connections: [],
-  category: "Sociocultural Factors"
+  category: "Sociocultural & Economic & Economic Factors"
 },
 {
   date: '1908',
@@ -700,7 +700,7 @@ window.timelineItems = [
   row: 10,
   connections: [],
     group: 'SF',
-  category: "Sociocultural Factors"
+  category: "Sociocultural & Economic Factors"
 },
 {
  date: '1908',
@@ -712,7 +712,7 @@ window.timelineItems = [
  row: 11,
     group: 'CSB-EED-SF',
  connections: [],
- category: "Conceptual & Scientific Breakthroughs"
+ category: "Theoretical Breakthroughs"
 },
 {
   date: '1909',
@@ -768,7 +768,7 @@ window.timelineItems = [
     description: 'World War I massively accelerates aircraft innovation...',
     img: '/api/placeholder/100/100',
     people: ['Various WWI Aircraft Pioneers'],
-    category: 'Sociocultural Factors',
+    category: 'Sociocultural & Economic Factors',
         group: 'SF',
     connections: [],
     row: 12
@@ -783,7 +783,7 @@ window.timelineItems = [
   row: 12,
     group: 'CSB',
   connections: [],
-  category: "Conceptual & Scientific Breakthroughs"
+  category: "Theoretical Breakthroughs"
 },
 {
  date: '1910',
@@ -855,6 +855,6 @@ window.timelineItems = [
     row: 15,
         group: 'SF',
     connections: [],
-    category: "Sociocultural Factors"
+    category: "Sociocultural & Economic Factors"
   }
 ];
