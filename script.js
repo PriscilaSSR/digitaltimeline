@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function() {
       color: "#9c27b0"
     },
     {
-      name: "Sociocultural & Economic & Economic Factors",
+      name: "Sociocultural & Economic Factors",
       outerRadius: maxOuterRadius,
       innerRadius: maxOuterRadius * (3/4), // Changed from 2/3 to 3/4
       color: "#c62828"
@@ -603,7 +603,7 @@ document.addEventListener("DOMContentLoaded", function() {
           switch (g) {
             case "CSB": return "Theoretical Breakthroughs";
             case "EED": return "Engineering Experiments & Demonstrations";
-            case "SF": return "Sociocultural & Economic & Economic  Factors";
+            case "SF": return "Sociocultural & Economic Factors";
             default: return d.category;
           }
         });
