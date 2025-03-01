@@ -196,19 +196,19 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
   
-  // Define fixed ring ranges - MODIFIED TO INCLUDE AVIATION TECHNOLOGY
+  // Define fixed ring ranges - MODIFIED TO REMOVE ENGINEERING CIRCLE
   const ringRanges = {
     "Aviation Technology": [0, maxOuterRadius * (1/2)], // Innermost circle (was Engineering)
-    "Engineering Experiments & Demonstrations": [maxOuterRadius * (1/2), maxOuterRadius * (5/8)], // New position for Engineering
-    "Theoretical Breakthroughs": [maxOuterRadius * (5/8), maxOuterRadius * (3/4)], // Slightly adjusted
+    "Theoretical Breakthroughs": [maxOuterRadius * (1/2), maxOuterRadius * (3/4)], // Back to original position
     "Sociocultural & Economic Factors": [maxOuterRadius * (3/4), maxOuterRadius], // Unchanged
     "Humanity's Dream of Flying": [maxOuterRadius, maxOuterRadius * 1.1] // Unchanged
+    // Engineering events removed from visual - will only appear in timeline
   };
   
-  // Colors for each category - UPDATED with Aviation Technology
+  // Colors for each category - UPDATED to remove Engineering from visualization
   const colorScale = d3.scaleOrdinal()
-    .domain(["Humanity's Dream of Flying", "Sociocultural & Economic Factors", "Theoretical Breakthroughs", "Engineering Experiments & Demonstrations", "Aviation Technology"])
-    .range(["#9c27b0", "#c62828", "#1565c0", "#ff9800", "#2e7d32"]); // Added orange for Engineering, kept green for Aviation
+    .domain(["Humanity's Dream of Flying", "Sociocultural & Economic Factors", "Theoretical Breakthroughs", "Aviation Technology"])
+    .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]); // Removed orange for Engineering, keeping only visible categories
   
   // Calculate slice angles for Aviation Technology category (formerly Engineering)
   // Get all Aviation Technology events
@@ -315,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // 3) DRAW CATEGORY RINGS WITH TIME SLICES
   // -------------------------
   
-  // Define ring categories for visualization - MODIFIED TO INCLUDE AVIATION TECHNOLOGY
+  // Define ring categories for visualization - MODIFIED TO REMOVE ENGINEERING
   const ringCategories = [
     {
       name: "Humanity's Dream of Flying",
@@ -332,14 +332,8 @@ document.addEventListener("DOMContentLoaded", function() {
     {
       name: "Theoretical Breakthroughs",
       outerRadius: maxOuterRadius * (3/4), // Unchanged
-      innerRadius: maxOuterRadius * (5/8), // Adjusted
+      innerRadius: maxOuterRadius * (1/2), // Back to original
       color: "#1565c0"
-    },
-    {
-      name: "Engineering Experiments & Demonstrations",
-      outerRadius: maxOuterRadius * (5/8), // New position
-      innerRadius: maxOuterRadius * (1/2), // New position
-      color: "#ff9800" // New color (orange)
     },
     {
       name: "Aviation Technology",
@@ -347,6 +341,7 @@ document.addEventListener("DOMContentLoaded", function() {
       innerRadius: 0,
       color: "#2e7d32" // Keep the green color
     },
+    // Engineering removed - will only appear in timeline
   ];
 
   // Create ring groups
@@ -526,6 +521,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Position nodes on their century arc
   data.forEach(d => {
+    // Skip Engineering nodes - they'll only appear in the timeline
+    if (d.category === "Engineering Experiments & Demonstrations") {
+      // Position them off-screen so they're not visible
+      d.x = -9999;
+      d.y = -9999;
+      d.hidden = true;
+      return;
+    }
+    
     // Get the angle data for this node's category and century
     const categoryAngleData = categoryAngles[d.category];
     if (!categoryAngleData || !categoryAngleData[d.century]) {
@@ -647,13 +651,14 @@ document.addEventListener("DOMContentLoaded", function() {
     .on("drag", dragged)
     .on("end", dragended);
 
-  // Draw node groups with drag capability
+  // Draw node groups with drag capability - filter out Engineering nodes
   const circleRadius = 50;
   const nodeGroup = container.selectAll("g.node-group")
-    .data(data)
+    .data(data.filter(d => d.category !== "Engineering Experiments & Demonstrations")) // Filter out Engineering nodes
     .enter()
     .append("g")
     .attr("class", "node-group")
+    .attr("data-category", d => d.category) // Add data attribute for styling
     .attr("transform", d => `translate(${d.x}, ${d.y})`)
     .on("click", function(event, d) {
       // If it's an Aviation Technology node, show the timeline
