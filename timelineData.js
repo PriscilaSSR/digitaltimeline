@@ -49,7 +49,7 @@ window.timelineItems = [
         description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a ‘flying machine.’',
         img: "/api/placeholder/100/100",
         people: ['The Pushpaka Vimana'],
-        category: 'Sociocultural & Economic & Economic Factors',
+        category: 'Sociocultural & Economic Factors',
         row: 1,
        group: 'SF',
         connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt' ]
@@ -61,7 +61,7 @@ window.timelineItems = [
     description: 'This myth, often depicted in classical art and referenced by poets and playwrights...',
     img: "/api/placeholder/100/100",
     people: ['The Myth of Icarus and Daedalus'],
-    category: 'Sociocultural & Economic & Economic Factors',
+    category: 'Sociocultural & Economic Factors',
     group: 'SF',
     row: 1,
     connections: ["Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
@@ -133,7 +133,7 @@ window.timelineItems = [
     description: "One of the tales from One Thousand and One Night. An inventor presents a magical mechanical horse to a Persian king.",
     img: "/api/placeholder/100/100",
     people: ['The Ebony Horse'],
-    category: 'Sociocultural & Economic & Economic Factors',
+    category: 'Sociocultural & Economic Factors',
         group: 'SF',
     row: 2,
     connections: ["Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]  // No connections here.
@@ -193,7 +193,7 @@ window.timelineItems = [
     description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
     img: "/api/placeholder/100/100",
     people: ['Leonardo da Vinci'],
-    category: 'Sociocultural & Economic & Economic Factors',
+    category: 'Sociocultural & Economic Factors',
     group: "SF",
     row: 2,
     connections: ['Paper Production and Trade']
@@ -217,7 +217,7 @@ window.timelineItems = [
     description: 'Wealthy or well-connected amateurs (often aristocrats) pursued scientific research as a leisure activity...',
     img: '/api/placeholder/100/100',
     people: ['Sir George Cayley'],
-    category: 'Sociocultural & Economic & Economic Factors',
+    category: 'Sociocultural & Economic Factors',
     group: 'SF',
     connections: [],
     row: 2
@@ -229,7 +229,7 @@ window.timelineItems = [
     description: "One of the first “proto–science fiction” works. A fictional narrative describing a journey to the Moon...",
     img: "/api/placeholder/100/100",
     people: ['Johannes Kepler'],
-    category: 'Sociocultural & Economic & Economic Factors',
+    category: 'Sociocultural & Economic Factors',
     group: 'SF',
     row: 2,
     connections: [] // No connections here.
@@ -241,7 +241,7 @@ window.timelineItems = [
     description: "One of the first “proto–science fiction” works. A utopian story describing lunar travel using large, trained birds.",
     img: "/api/placeholder/100/100",
     people: ['Francis Godwin'],
-    category: 'Sociocultural & Economic & Economic Factors',
+    category: 'Sociocultural & Economic Factors',
     group: 'SF',
     row: 2,
     connections: [] // No connections here.
@@ -253,7 +253,7 @@ window.timelineItems = [
     description: "One of the first “proto–science fiction” works. Although comedic, it proposed mechanical means of leaving Earth...",
     img: "/api/placeholder/100/100",
     people: ['Cyrano de Bergerac'],
-    category: 'Sociocultural & Economic & Economic Factors',
+    category: 'Sociocultural & Economic Factors',
     group: 'SF',
     row: 2,
     connections: [] // No connections here.
@@ -301,7 +301,7 @@ window.timelineItems = [
         description: 'Though satire, Laputa symbolizes the human longing to master flight and the sky—exaggerated to the point of political power...',
         img: "/api/placeholder/100/100",
         people: ['Jonathan Swift'],
-        category: 'Sociocultural & Economic & Economic Factors',
+        category: 'Sociocultural & Economic Factors',
             group: 'SF',
         row: 3,
         connections: [] // No connections here.
@@ -373,7 +373,7 @@ window.timelineItems = [
   description: 'An international fair showcasing industrial inventions.  Events like this spurred global interest...',
   img: '/api/placeholder/100/100',
   people: ['Prince Albert', 'Henry Cole'],
-  category: 'Sociocultural & Economic & Economic Factors',
+  category: 'Sociocultural & Economic Factors',
     group: 'SF',
   connections: ['Industrial Revolution'],
   row: 4
@@ -424,7 +424,7 @@ window.timelineItems = [
  row: 7,
  connections: [],
     group: 'SF',
- category: "Sociocultural & Economic & Economic Factors"
+ category: "Sociocultural & Economic Factors"
 },
 {
   date: '1871',
@@ -565,7 +565,7 @@ window.timelineItems = [
     description: 'Industrialist Henri Deutsch de la Meurthe offers prizes for airship and airplane feats...',
     img: '/api/placeholder/100/100',
     people: ['Henri Deutsch de la Meurthe'],
-    category: 'Sociocultural & Economic & Economic Factors',
+    category: 'Sociocultural & Economic Factors',
         group: 'SF',
     connections: [],
     row: 9
@@ -592,7 +592,7 @@ window.timelineItems = [
   row: 9,
   connections: ['First Moon Landing'],
     group: 'SF',
-  category: "Sociocultural & Economic & Economic Factors"
+  category: "Sociocultural & Economic Factors"
 },
 {
   date: '1902',
@@ -688,7 +688,7 @@ window.timelineItems = [
   row: 10,
     group: 'SF',
   connections: [],
-  category: "Sociocultural & Economic & Economic Factors"
+  category: "Sociocultural & Economic Factors"
 },
 {
   date: '1908',
