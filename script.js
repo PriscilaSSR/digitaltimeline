@@ -353,13 +353,15 @@ document.addEventListener("DOMContentLoaded", function() {
         } else if (d.century === 100 && categoryData.name === "Engineering Experiments & Demonstrations") {
           return `100-799 CE: ${d.count} events`;
         } else if (d.century === 800 && categoryData.name === "Engineering Experiments & Demonstrations") {
-          return `800-999 CE: ${d.count} events`;
-        } else if (d.century === 1000 && categoryData.name === "Engineering Experiments & Demonstrations") {
-          return `1000-1499 CE: ${d.count} events`;
+          return `800-1199 CE: ${d.count} events`;
+        } else if (d.century === 1200 && categoryData.name === "Engineering Experiments & Demonstrations") {
+          return `1200-1499 CE: ${d.count} events`;
         } else if (d.century === 1500 && categoryData.name === "Engineering Experiments & Demonstrations") {
           return `1500-1699 CE: ${d.count} events`;
         } else if (d.century === 1700 && categoryData.name === "Engineering Experiments & Demonstrations") {
           return `1700-1799 CE: ${d.count} events`;
+       } else if (d.century === 1800 && categoryData.name === "Engineering Experiments & Demonstrations") {
+          return `1800-1899 CE: ${d.count} events`;
         } else {
           return `${d.century}s: ${d.count} events`;
         }
@@ -394,13 +396,15 @@ document.addEventListener("DOMContentLoaded", function() {
       } else if (d.century === 100 && categoryData.name === "Engineering Experiments & Demonstrations") {
         labelText = "100-799 CE";
       } else if (d.century === 800 && categoryData.name === "Engineering Experiments & Demonstrations") {
-        labelText = "800-999 CE";
-      } else if (d.century === 1000 && categoryData.name === "Engineering Experiments & Demonstrations") {
-        labelText = "1000-1499 CE";
+        labelText = "800-1199 CE";
+      } else if (d.century === 1200 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        labelText = "1200-1499 CE";
       } else if (d.century === 1500 && categoryData.name === "Engineering Experiments & Demonstrations") {
         labelText = "1500-1699 CE";
       } else if (d.century === 1700 && categoryData.name === "Engineering Experiments & Demonstrations") {
         labelText = "1700-1799 CE";
+      } else if (d.century === 1800 && categoryData.name === "Engineering Experiments & Demonstrations") {
+        labelText = "1800-1899 CE";
       } else {
         labelText = `${d.century}s`;
       }
