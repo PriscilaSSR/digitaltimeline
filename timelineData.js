@@ -103,7 +103,7 @@ window.timelineItems = [
     connections: ['Early Kites', 'Paper Production and Trade']
   },
   {
-    date: '100s',
+    date: '100s BCE',
     location: 'Alexandria, Egypt',
     title: "Hero's Aeolipile",
     description: "Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.",
@@ -115,7 +115,7 @@ window.timelineItems = [
     connections: ["Archytas' Flying Pigeon", "Henri Giffard's Dirigible"]
   },
   {
-    date: '800s',
+    date: '800s CE',
     location: 'Spain',
     title: "Abbas Ibn Firnas's jump",
     description: "Abbas Ibn Firnas jumps from a tower wearing a cloak stiffened with wooden struts.",
@@ -127,7 +127,7 @@ window.timelineItems = [
     connections: ["The Myth of Icarus and Daedalus", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
   },
   {
-    date: '800s',
+    date: '800s CE',
     location: 'Middle East and India',
     title: 'The Ebony Horse Tale',
     description: "One of the tales from One Thousand and One Night. An inventor presents a magical mechanical horse to a Persian king.",
@@ -139,7 +139,7 @@ window.timelineItems = [
     connections: ["Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]  // No connections here.
   },
   {
-    date: '900s',
+    date: '900s CE',
     location: 'China',
     title: 'Gunpowder Invention',
     description: "Invented in China for fireworks and warfare, gunpowder also sowed the seed for rocketry.",
@@ -151,7 +151,7 @@ window.timelineItems = [
     row: 2
   },
   {
-    date: '1000s',
+    date: '1000s CE',
     location: 'England',
     title: "Eilmer of Malmesbury's jump",
     description: "A Benedictine monk who tries to fly with a glider-like apparatus. He may have glided a short distance..",
@@ -163,7 +163,7 @@ window.timelineItems = [
     connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "João Torto's Failed Flight Attempt", 'Early Kites']
   },
   {
-    date: '1290s',
+    date: '1290s CE',
     location: 'England',
     title: "Roger Bacon's Air Support Theory",
     description: "Roger Bacon theorizes that air can support objects like water supports boats.",
@@ -175,7 +175,7 @@ window.timelineItems = [
     connections: ["Archimedes' Buoyancy Principle", "Robert Hooke's Airflow"]
   },
   {
-    date: '1440s',
+    date: '1440s CE',
     location: 'Mainz, Germany',
     title: "Gutenberg's Printing Press",
     description: "Johannes Gutenberg develops the movable-type printing press, drastically speeding the circulation of new ideas.",
@@ -187,7 +187,7 @@ window.timelineItems = [
     row: 2
   },
   {
-    date: '1480s',
+    date: '1480s CE',
     location: 'Italy',
     title: "Leonardo da Vinci's Flying Machines",
     description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
@@ -199,7 +199,7 @@ window.timelineItems = [
     connections: ['Paper Production and Trade']
   },
   {
-    date: '1540s',
+    date: '1540s CE',
     location: 'Portugal',
     title: "João Torto's Failed Flight Attempt",
     description: "João Torto, a Portuguese barber, attempts human flight with fabric wings but falls to his death.",
@@ -211,7 +211,7 @@ window.timelineItems = [
     connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump"]
   },
 {
-    date: '17th–19th Centuries',
+    date: '1600–1800s CE',
     location: 'Europe',
     title: 'The Gentleman Scientist Tradition',
     description: 'Wealthy or well-connected amateurs (often aristocrats) pursued scientific research as a leisure activity...',
@@ -223,7 +223,7 @@ window.timelineItems = [
     row: 2
 },
   {
-    date: '1634',
+    date: '1634 CE',
     location: 'Holy Roman Empire',
     title: "Kepler's Somnium",
     description: "One of the first “proto–science fiction” works. A fictional narrative describing a journey to the Moon...",
@@ -235,7 +235,7 @@ window.timelineItems = [
     connections: [] // No connections here.
   },
   {
-    date: '1638',
+    date: '1638 CE',
     location: 'England',
     title: "Francis Godwin's The Man in the Moone",
     description: "One of the first “proto–science fiction” works. A utopian story describing lunar travel using large, trained birds.",
@@ -247,7 +247,7 @@ window.timelineItems = [
     connections: [] // No connections here.
   },
 {
-    date: '1657',
+    date: '1657 CE',
     location: 'France',
     title: "Cyrano de Bergerac's Comical History of the States and Empires of the Moon",
     description: "One of the first “proto–science fiction” works. Although comedic, it proposed mechanical means of leaving Earth...",
@@ -259,7 +259,7 @@ window.timelineItems = [
     connections: [] // No connections here.
 },
         {
-        date: '1659',
+        date: '1659 CE',
         location: 'England',
         title: 'Robert Hooke\'s Airflow',
         description: 'Robert Hooke investigates concepts of drag and airflow, contributing to the body of knowledge that would eventually be applied to flight.',
@@ -271,7 +271,7 @@ window.timelineItems = [
         connections: ["Archimedes' Buoyancy Principle","Roger Bacon's Air Support Theory",'The Gentleman Scientist Tradition'] // No connections here.
     },
     {
-        date: '1687',
+        date: '1687 CE',
         location: 'England',
         title: 'Newton\'s Laws of Motion',
         description: 'Lays out the three laws of motion and universal gravitation, essential to understanding how and why aircraft can generate lift...',
