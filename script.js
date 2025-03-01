@@ -160,18 +160,18 @@ document.addEventListener("DOMContentLoaded", function() {
   const totalEngEvents = engEvents.length;
   const totalAngle = 2 * Math.PI; // Full circle
   
-  // Minimum angle per century (to ensure visibility)
-  const minAngle = totalAngle / (engCenturies.length * 3); // At least 1/3 of equal distribution
-  
-  // Calculate weighted angles
-  const totalWeight = Object.values(engCenturyCounts).reduce((sum, count) => sum + count, 0);
-  
+  // MODIFIED: Make slice size proportional to event count with a minimum size
+  // Calculate weighted angles - directly proportional to the number of events
   let startAngle = 0;
+  // Calculate total weight = sum of all events + minimum slice per century
+  const minSliceWeight = 1; // Minimum weight for a century with few events
+  const totalWeight = Object.values(engCenturyCounts).reduce((sum, count) => sum + Math.max(count, minSliceWeight), 0);
+  
   engCenturies.forEach(century => {
     const count = engCenturyCounts[century];
-    // Use count as weight, but ensure minimum size
-    const rawAngle = (count / totalWeight) * totalAngle;
-    const angleSize = Math.max(minAngle, rawAngle);
+    // Use count as weight, but ensure minimum size for visibility
+    const weight = Math.max(count, minSliceWeight);
+    const angleSize = (weight / totalWeight) * totalAngle;
     
     engAngleData[century] = {
       startAngle: startAngle,
@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
     "Engineering Experiments & Demonstrations": engAngleData
   };
   
-  ["Theoretical Breakthroughs", "Sociocultural & Economic Factors"].forEach(category => {
+  ["Conceptual & Scientific Breakthroughs", "Sociocultural Factors"].forEach(category => {
     const catEvents = data.filter(d => d.category === category);
     console.log(`${category} events:`, catEvents.length);
     
@@ -208,13 +208,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const angleData = {};
     let startAngle = 0;
     
-    // Calculate total weight for this category
-    const catTotalWeight = Object.values(centuryCounts).reduce((sum, count) => sum + count, 0);
+    // MODIFIED: Similar proportional approach for other categories
+    // Calculate total weight for this category with minimum slice size
+    const catTotalWeight = Object.values(centuryCounts).reduce((sum, count) => sum + Math.max(count, minSliceWeight), 0);
     
-    // Calculate angles
+    // Calculate angles - proportional to event count with minimum
     centuries.forEach(century => {
       const count = centuryCounts[century];
-      const angleSize = (count / catTotalWeight) * totalAngle;
+      const weight = Math.max(count, minSliceWeight);
+      const angleSize = (weight / catTotalWeight) * totalAngle;
       
       angleData[century] = {
         startAngle: startAngle,
@@ -236,6 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     categoryAngles[category] = angleData;
   });
+
 
   // -------------------------
   // 3) DRAW CATEGORY RINGS WITH TIME SLICES
