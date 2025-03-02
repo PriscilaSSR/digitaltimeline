@@ -139,8 +139,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // 1800-1899 CE (gets its own century)
     if (year >= 1800 && year < 1900) return 1800;
     
-    // 1900+ CE (gets its own century)
-    if (year >= 1900) return 1900;
+    // 1900-1945 CE
+    if (year >= 1900 && year < 1946) return 1900;
+    
+    // NEW: Post-1945 division
+    if (year >= 1946) return 1946;
     
     // Fallback
     return Math.floor(year / 100) * 100;
@@ -392,6 +395,8 @@ document.addEventListener("DOMContentLoaded", function() {
       .text(d => {
         if (d.century < 0) {
           return `${Math.abs(d.century)}s BCE: ${d.count} events`;
+        } else if (d.century === 1946 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
+          return `Post-1945: ${d.count} events`;
         } else if (d.century === 100 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `100-799 CE: ${d.count} events`;
         } else if (d.century === 800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
@@ -402,8 +407,10 @@ document.addEventListener("DOMContentLoaded", function() {
           return `1500-1699 CE: ${d.count} events`;
         } else if (d.century === 1700 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `1700-1799 CE: ${d.count} events`;
-       } else if (d.century === 1800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
+        } else if (d.century === 1800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
           return `1800-1899 CE: ${d.count} events`;
+        } else if (d.century === 1900 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
+          return `1900-1945: ${d.count} events`;
         } else {
           return `${d.century}s: ${d.count} events`;
         }
@@ -435,6 +442,8 @@ document.addEventListener("DOMContentLoaded", function() {
       let labelText;
       if (d.century < 0) {
         labelText = `${Math.abs(d.century)}s BCE`;
+      } else if (d.century === 1946 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
+        labelText = "Post-1945";
       } else if (d.century === 100 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
         labelText = "100-799 CE";
       } else if (d.century === 800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
@@ -447,6 +456,8 @@ document.addEventListener("DOMContentLoaded", function() {
         labelText = "1700-1799 CE";
       } else if (d.century === 1800 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
         labelText = "1800-1899 CE";
+      } else if (d.century === 1900 && (categoryData.name === "Aviation Technology" || categoryData.name === "Engineering Experiments & Demonstrations")) {
+        labelText = "1900-1945";
       } else {
         labelText = `${d.century}s`;
       }
@@ -727,13 +738,34 @@ document.addEventListener("DOMContentLoaded", function() {
       d.century === century
     );
     
+    // Find all Zeppelin events related to this Aviation Node
+    const zeppelinEvents = [];
+    
+    // Check if this Aviation node has connections to Zeppelin events
+    if (aviationNode.connections) {
+      // Find Zeppelin events that match the connection titles
+      const connectedZeppelins = data.filter(d => 
+        (d.category === "Zeppelins" || 
+         (d.group && d.group === "Zeppelins")) && 
+        aviationNode.connections.includes(d.title)
+      );
+      
+      // Add to our zeppelin events array
+      zeppelinEvents.push(...connectedZeppelins);
+    }
+    
     // Sort engineering events by year
     engineeringEvents.sort((a, b) => a.parsedYear - b.parsedYear);
+    
+    // Sort zeppelin events by year
+    zeppelinEvents.sort((a, b) => a.parsedYear - b.parsedYear);
     
     // Format the century for display
     let centuryLabel;
     if (century < 0) {
       centuryLabel = `${Math.abs(century)}s BCE`;
+    } else if (century === 1946) {
+      centuryLabel = "Post-1945";
     } else if (century === 100) {
       centuryLabel = "100-799 CE";
     } else if (century === 800) {
@@ -746,12 +778,17 @@ document.addEventListener("DOMContentLoaded", function() {
       centuryLabel = "1700-1799 CE";
     } else if (century === 1800) {
       centuryLabel = "1800-1899 CE";
+    } else if (century === 1900) {
+      centuryLabel = "1900-1945";
     } else {
       centuryLabel = `${century}s`;
     }
     
     // Update the timeline header
-    d3.select(".timeline-header h3").html(`Engineering Events: ${centuryLabel}`);
+    const headerText = zeppelinEvents.length > 0 
+      ? `Engineering & Zeppelin Events: ${centuryLabel}`
+      : `Engineering Events: ${centuryLabel}`;
+    d3.select(".timeline-header h3").html(headerText);
     
     // Clear existing timeline content
     const timelineContent = d3.select("#timeline-content").html("");
@@ -777,39 +814,74 @@ document.addEventListener("DOMContentLoaded", function() {
       .style("border-bottom", "1px solid rgba(255,255,255,0.2)")
       .style("margin", "10px 0 15px 0");
       
-    // Add a heading for related events
-    if (engineeringEvents.length > 0) {
-      timelineContent.append("h4")
-        .style("margin", "0 0 10px 0")
-        .text("Related Engineering Events:");
+    const hasEvents = engineeringEvents.length > 0 || zeppelinEvents.length > 0;
+    
+    if (hasEvents) {
+      // Check if we have engineering events
+      if (engineeringEvents.length > 0) {
+        timelineContent.append("h4")
+          .style("margin", "0 0 10px 0")
+          .text("Related Engineering Events:");
+          
+        // Add each engineering event
+        engineeringEvents.forEach(event => {
+          timelineContent.append("div")
+            .attr("class", "timeline-item")
+            .style("border-left", "4px solid #ff9800")
+            .style("padding", "10px 15px")
+            .style("margin-bottom", "10px")
+            .style("cursor", "pointer")
+            .html(`
+              <h4 style="margin: 0 0 5px 0;">${event.title}</h4>
+              <p style="margin: 0 0 8px 0;font-size: 12px;opacity: 0.8;">${event.date}</p>
+              <p style="margin: 0;font-size: 14px;">${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}</p>
+            `)
+            .on("click", function() {
+              showModal(event);
+            });
+        });
+      }
+      
+      // Check if we have Zeppelin events
+      if (zeppelinEvents.length > 0) {
+        // Add a divider if we already displayed engineering events
+        if (engineeringEvents.length > 0) {
+          timelineContent.append("div")
+            .style("border-bottom", "1px solid rgba(255,255,255,0.2)")
+            .style("margin", "15px 0");
+        }
+        
+        timelineContent.append("h4")
+          .style("margin", "15px 0 10px 0")
+          .text("Related Zeppelin Events:");
+          
+        // Add each Zeppelin event
+        zeppelinEvents.forEach(event => {
+          timelineContent.append("div")
+            .attr("class", "timeline-item")
+            .style("border-left", "4px solid #9c27b0") // Different color for Zeppelin events
+            .style("padding", "10px 15px")
+            .style("margin-bottom", "10px")
+            .style("cursor", "pointer")
+            .html(`
+              <h4 style="margin: 0 0 5px 0;">${event.title}</h4>
+              <p style="margin: 0 0 8px 0;font-size: 12px;opacity: 0.8;">${event.date}</p>
+              <p style="margin: 0;font-size: 14px;">${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}</p>
+            `)
+            .on("click", function() {
+              showModal(event);
+            });
+        });
+      }
     } else {
       timelineContent.append("p")
         .style("font-style", "italic")
-        .text("No related engineering events found for this time period.");
+        .text("No related engineering or zeppelin events found for this time period.");
     }
-    
-    // Add each engineering event
-    engineeringEvents.forEach(event => {
-      timelineContent.append("div")
-        .attr("class", "timeline-item")
-        .style("border-left", "4px solid #ff9800")
-        .style("padding", "10px 15px")
-        .style("margin-bottom", "10px")
-        .style("cursor", "pointer")
-        .html(`
-          <h4 style="margin: 0 0 5px 0;">${event.title}</h4>
-          <p style="margin: 0 0 8px 0;font-size: 12px;opacity: 0.8;">${event.date}</p>
-          <p style="margin: 0;font-size: 14px;">${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}</p>
-        `)
-        .on("click", function() {
-          showModal(event);
-        });
-    });
     
     // Make the timeline visible
     d3.select("#timeline-container").style("display", "block");
   }
-
   // -------------------------
   // 6) DRAG FUNCTIONS
   // -------------------------
