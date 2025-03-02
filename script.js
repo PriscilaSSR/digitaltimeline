@@ -5,41 +5,9 @@ document.addEventListener("DOMContentLoaded", function() {
   // -------------------------
   // 1) LOAD & SETUP
   // -------------------------
-  // Get the original data
-  const originalData = window.timelineItems;
-  console.log("Original data loaded, items:", originalData.length);
-
-  // Create a copy of the data and modify it to add the new Aviation Technology category
-  const data = originalData.map(item => {
-    // Create a deep copy of the item
-    const newItem = {...item};
-
-    // Check if this is an Engineering event that should be classified as Aviation Technology
-    // For this example, we'll consider items with keywords related to flight in the title
-    // You can adjust these criteria based on your needs
-    const flightKeywords = ['airplane', 'glider', 'flight', 'dirigible', 'balloon', 'airship', 'plane', 'monoplane', 'biplane', 'aviation'];
-    
-    if (newItem.category === "Engineering Experiments & Demonstrations") {
-      const titleLower = newItem.title.toLowerCase();
-      
-      // Check if title contains any flight keywords
-      const isAviationTech = flightKeywords.some(keyword => titleLower.includes(keyword));
-      
-      // Or if it's specifically about flying machines or aircraft
-      const isFlyingMachine = titleLower.includes('flying') || titleLower.includes('aircraft') || 
-                             titleLower.includes('aerial') || titleLower.includes('aviation');
-      
-      if (isAviationTech || isFlyingMachine) {
-        newItem.originalCategory = "Engineering Experiments & Demonstrations";
-        newItem.category = "Aviation Technology";
-        newItem.group = "AT"; // New group label
-      }
-    }
-    
-    return newItem;
-  });
-  
-  console.log("Modified data, items:", data.length);
+  // Get the data directly from the source
+  const data = window.timelineItems;
+  console.log("Data loaded, items:", data.length);
 
   // We'll use a 2000x2000 viewBox
   const viewBoxSize = 2000;
@@ -138,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
     return 0;
   }
 
-  // Normalize centuries to exactly 9 for Aviation Technology
+  // Function to normalize centuries to exactly 9 for desired Aviation Technology timeline grouping
   function normalizeAviationCentury(year) {
     // Special case: BCE dates go into their own buckets
     if (year < 0) {
@@ -198,18 +166,18 @@ document.addEventListener("DOMContentLoaded", function() {
   
   // Define fixed ring ranges - MODIFIED TO REMOVE ENGINEERING CIRCLE
   const ringRanges = {
-    "Aviation Technology": [0, maxOuterRadius * (1/2)], // Innermost circle (was Engineering)
+    "Aviation Technology": [0, maxOuterRadius * (1/2)], // Innermost circle
     "Theoretical Breakthroughs": [maxOuterRadius * (1/2), maxOuterRadius * (3/4)], // Back to original position
     "Sociocultural & Economic Factors": [maxOuterRadius * (3/4), maxOuterRadius], // Unchanged
     "Humanity's Dream of Flying": [maxOuterRadius, maxOuterRadius * 1.1] // Unchanged
     // Engineering events removed from visual - will only appear in timeline
   };
   
-  // Colors for each category - UPDATED to remove Engineering from visualization
+  // Colors for each category
   const colorScale = d3.scaleOrdinal()
     .domain(["Humanity's Dream of Flying", "Sociocultural & Economic Factors", "Theoretical Breakthroughs", "Aviation Technology"])
-    .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]); // Removed orange for Engineering, keeping only visible categories
-  
+    .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
+
   // Calculate slice angles for Aviation Technology category (formerly Engineering)
   // Get all Aviation Technology events
   const aviationEvents = data.filter(d => d.category === "Aviation Technology");
@@ -265,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function() {
     "Aviation Technology": aviationAngleData
   };
   
-  ["Theoretical Breakthroughs", "Sociocultural & Economic Factors", "Engineering Experiments & Demonstrations"].forEach(category => {
+  ["Theoretical Breakthroughs", "Sociocultural & Economic Factors"].forEach(category => {
     const catEvents = data.filter(d => d.category === category);
     console.log(`${category} events:`, catEvents.length);
     
@@ -309,7 +277,6 @@ document.addEventListener("DOMContentLoaded", function() {
     
     categoryAngles[category] = angleData;
   });
-
 
   // -------------------------
   // 3) DRAW CATEGORY RINGS WITH TIME SLICES
