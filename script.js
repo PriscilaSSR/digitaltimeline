@@ -177,9 +177,9 @@ document.addEventListener("DOMContentLoaded", function() {
   };
   
   // Colors for each category
-  const colorScale = d3.scaleOrdinal()
-    .domain(["Humanity's Dream of Flying", "Sociocultural & Economic Factors", "Theoretical Breakthroughs", "Aviation Technology"])
-    .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
+const colorScale = d3.scaleOrdinal()
+  .domain(["Humanity's Dream of Flying", "Sociocultural & Economic Factors", "Theoretical Breakthroughs", "Aviation Technology", "Zeppelins"])
+  .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32", "#ff9800"]); // Added orange color for Zeppelins
 
   // Calculate slice angles for Aviation Technology category (formerly Engineering)
   // Get all Aviation Technology events
@@ -500,7 +500,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Position nodes on their century arc
   data.forEach(d => {
     // Skip Engineering nodes - they'll only appear in the timeline
-    if (d.category === "Engineering Experiments & Demonstrations", "Zeppelins") {
+    if (d.category === "Engineering Experiments & Demonstrations") || d.category === "Zeppelins") {
       // Position them off-screen so they're not visible
       d.x = -9999;
       d.y = -9999;
@@ -632,7 +632,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Draw node groups with drag capability - filter out Engineering nodes
   const circleRadius = 50;
   const nodeGroup = container.selectAll("g.node-group")
-    .data(data.filter(d => d.category !== "Engineering Experiments & Demonstrations","Zeppelins")) // Filter out Engineering nodes
+    .data(data.filter(d => d.category !== "Engineering Experiments & Demonstrations" && d.category !== "Zeppelins")) // Filter out Engineering nodes
     .enter()
     .append("g")
     .attr("class", "node-group")
@@ -671,14 +671,14 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Extract categories from group
         const categories = d.group.split("-").map(g => {
-          switch (g) {
-            case "CSB": return "Theoretical Breakthroughs";
-            case "EED": return "Engineering Experiments & Demonstrations";
-            case "SF": return "Sociocultural & Economic Factors";
-            case "AT": return "Aviation Technology";
-            case "Zeppelins": return "Zeppelins";
-            default: return d.category;
-          }
+         switch (g) {
+  case "CSB": return "Theoretical Breakthroughs";
+  case "EED": return "Engineering Experiments & Demonstrations";
+  case "SF": return "Sociocultural & Economic Factors";
+  case "AT": return "Aviation Technology";
+  case "Zeppelins": return "Zeppelins";
+  default: return d.category;
+}
         });
         
         // Add gradient stops
@@ -745,11 +745,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // Check if this Aviation node has connections to Zeppelin events
     if (aviationNode.connections) {
       // Find Zeppelin events that match the connection titles
-      const connectedZeppelins = data.filter(d => 
-        (d.category === "Zeppelins" || 
-         (d.group && d.group === "Zeppelins")) && 
-        aviationNode.connections.includes(d.title)
-      );
+const connectedZeppelins = data.filter(d => 
+  (d.category === "Zeppelins" || 
+   (d.group && (d.group === "Zeppelins" || d.group.includes("Zeppelins")))) && 
+  aviationNode.connections.includes(d.title)
+);
       
       // Add to our zeppelin events array
       zeppelinEvents.push(...connectedZeppelins);
