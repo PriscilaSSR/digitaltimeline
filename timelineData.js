@@ -608,9 +608,69 @@ window.timelineItems = [
   img: "/api/placeholder/100/100",
   people: ['Ferdinand von Zeppelin'],
   row: 9,
-    group: 'EED',
+    group: 'Zeppelins',
   connections: ['Hall–Héroult Process for Aluminum', "Charles Renard and Arthur Constantin's Le France"],
-  category: "Engineering Experiments & Demonstrations"
+  category: "Zeppelins"
+},
+{
+  date: '1906',
+  location: 'Germany',
+  title: "LZ 3 and Military Adoption",
+  description: "Marked the beginning of military funding for Zeppelin development, establishing airships as potential reconnaissance and bomber platforms.",
+  img: "/api/placeholder/100/100",
+  people: ['Ferdinand von Zeppelin'],
+  row: 9,
+    group: 'Zeppelins',
+  connections: ['Hall–Héroult Process for Aluminum'],
+  category: "Zeppelins"
+},
+{
+  date: '1909',
+  location: 'Germany',
+  title: "Zeppelin’s First Commercial Service",
+  description: "The DELAG airline was the world’s first commercial airline, operating Zeppelin airships and carrying over 34,000 passengers without a fatal accident until World War I.",
+  img: "/api/placeholder/100/100",
+  people: ['Ferdinand von Zeppelin'],
+  row: 9,
+    group: 'Zeppelins',
+  connections: ['Hall–Héroult Process for Aluminum'],
+  category: "Zeppelins"
+},
+{
+  date: '1919',
+  location: 'Germany',
+  title: "Treaty of Versailles",
+  description: "The Treaty of Versailles imposed severe restrictions on Germany’s ability to build military airships, crippling Zeppelin development. Zeppelin development was forced to pivot to civilian roles, which proved unsustainable without military funding.",
+  img: "/api/placeholder/100/100",
+  people: ['Ferdinand von Zeppelin'],
+  row: 9,
+    group: 'Zeppelins',
+  connections: ['Hall–Héroult Process for Aluminum'],
+  category: "Zeppelins"
+},
+{
+  date: '1937',
+  location: 'Germany',
+  title: "Hindenburg Disaster",
+  description: "The dramatic end of the Hindenburg became one of the most famous disasters in aviation history, leaving a lasting legacy on the public consciousness.",
+  img: "/api/placeholder/100/100",
+  people: ['Ferdinand von Zeppelin'],
+  row: 9,
+    group: 'SF',
+  connections: ['Hall–Héroult Process for Aluminum'],
+  category: "Sociocultural & Economic Factors"
+},
+{
+  date: '1939-1945',
+  location: 'Europe',
+  title: "Military Demand in World War II",
+  description: "The typical cruising speed was 60–80 mph for Zappelin while early airplanes achieved speeds of 150–300 mph and continued to improve rapidly. During World War I, Zeppelins were slow-moving targets for fighter planes and anti-aircraft guns. Many were shot down, highlighting their fragility in combat.",
+  img: "/api/placeholder/100/100",
+  people: ['Ferdinand von Zeppelin'],
+  row: 9,
+    group: 'SF',
+  connections: ['Hall–Héroult Process for Aluminum'],
+  category: "Sociocultural & Economic Factors"
 },
   {
     date: '1901',
