@@ -500,7 +500,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Position nodes on their century arc
   data.forEach(d => {
     // Skip Engineering nodes - they'll only appear in the timeline
-    if (d.category === "Engineering Experiments & Demonstrations") {
+    if (d.category === "Engineering Experiments & Demonstrations", "Zeppelins") {
       // Position them off-screen so they're not visible
       d.x = -9999;
       d.y = -9999;
@@ -632,7 +632,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Draw node groups with drag capability - filter out Engineering nodes
   const circleRadius = 50;
   const nodeGroup = container.selectAll("g.node-group")
-    .data(data.filter(d => d.category !== "Engineering Experiments & Demonstrations")) // Filter out Engineering nodes
+    .data(data.filter(d => d.category !== "Engineering Experiments & Demonstrations","Zeppelins")) // Filter out Engineering nodes
     .enter()
     .append("g")
     .attr("class", "node-group")
@@ -676,6 +676,7 @@ document.addEventListener("DOMContentLoaded", function() {
             case "EED": return "Engineering Experiments & Demonstrations";
             case "SF": return "Sociocultural & Economic Factors";
             case "AT": return "Aviation Technology";
+            case "Zeppelins": return "Zeppelins";
             default: return d.category;
           }
         });
