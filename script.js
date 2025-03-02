@@ -500,14 +500,20 @@ const colorScale = d3.scaleOrdinal()
   // Position nodes on their century arc
   data.forEach(d => {
     // Skip Engineering nodes - they'll only appear in the timeline
-    if (d.category === "Engineering Experiments & Demonstrations") || d.category === "Zeppelins") {
+if (d.category === "Engineering Experiments & Demonstrations") {
       // Position them off-screen so they're not visible
       d.x = -9999;
       d.y = -9999;
       d.hidden = true;
       return;
     }
-    
+    if (d.category === "Zeppelins") {
+      // Position them off-screen so they're not visible
+      d.x = -9999;
+      d.y = -9999;
+      d.hidden = true;
+      return;
+    }
     // Get the angle data for this node's category and century
     const categoryAngleData = categoryAngles[d.category];
     if (!categoryAngleData || !categoryAngleData[d.century]) {
