@@ -80,7 +80,7 @@ window.timelineItems = [
     img: "img/earlykites.jpg",
     people: ['Mozi', 'Lu Ban'],
     category: 'Aviation Technology',
-    group: 'EED',
+    group: 'AT',
     row: 1,
     connections: ['Paper Production and Trade']
   },
@@ -356,7 +356,7 @@ window.timelineItems = [
         img: "img/laputa.jpg",
         people: ['Jonathan Swift'],
         category: 'Sociocultural & Economic Factors',
-            group: 'SF',
+        group: 'SF',
         row: 3,
         connections: [] // No connections here.
     },
@@ -764,7 +764,7 @@ window.timelineItems = [
   img: "/api/placeholder/100/100",
   people: ['Alberto Santos-Dumont'],
   row: 10,
-    group: 'CSB-EED-SF',
+    group: 'EED',
   connections: [],
   category: "Engineering Experiments & Demonstrations"
 },
@@ -824,7 +824,7 @@ window.timelineItems = [
  img: "/api/placeholder/100/100",
  people: ['John William Dunne'],
  row: 11,
-    group: 'CSB-EED-SF',
+    group: 'CSB',
  connections: [],
  category: "Theoretical Breakthroughs"
 },
@@ -849,7 +849,8 @@ window.timelineItems = [
   people: ['Dimitri Sensaud de Lavaud'],
   row: 11,
     group: 'EED',
-  connections: [],category: "Engineering Experiments & Demonstrations"
+  connections: [],
+ category: "Engineering Experiments & Demonstrations"
 },
 {
   date: '1910',
