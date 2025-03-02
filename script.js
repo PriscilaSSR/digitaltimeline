@@ -745,21 +745,42 @@ if (d.category === "Engineering Experiments & Demonstrations") {
       d.century === century
     );
     
-    // Find all Zeppelin events related to this Aviation Node
-    const zeppelinEvents = [];
-    
-    // Check if this Aviation node has connections to Zeppelin events
-    if (aviationNode.connections) {
-      // Find Zeppelin events that match the connection titles
-const connectedZeppelins = data.filter(d => 
-  (d.category === "Zeppelins" || 
-   (d.group && (d.group === "Zeppelins" || d.group.includes("Zeppelins")))) && 
-  aviationNode.connections.includes(d.title)
-);
-      
-      // Add to our zeppelin events array
-      zeppelinEvents.push(...connectedZeppelins);
+   // Find all Zeppelin events related to this Aviation Node
+const zeppelinEvents = [];
+
+// Check if this Aviation node is related to Zeppelins either through connections or its own properties
+const isZeppelinRelated = 
+  (aviationNode.category && aviationNode.category === "Zeppelins") || 
+  (aviationNode.group && (aviationNode.group === "Zeppelins" || aviationNode.group.includes("Zeppelins")));
+
+// If the node has direct connections to Zeppelin events, add those
+if (aviationNode.connections) {
+  // Find Zeppelin events that match the connection titles
+  const connectedZeppelins = data.filter(d => 
+    (d.category === "Zeppelins" || 
+     (d.group && (d.group === "Zeppelins" || d.group.includes("Zeppelins")))) && 
+    aviationNode.connections.includes(d.title)
+  );
+  
+  // Add to our zeppelin events array
+  zeppelinEvents.push(...connectedZeppelins);
+}
+
+// If the Aviation node itself is Zeppelin-related (by category or group), show all Zeppelin events
+if (isZeppelinRelated) {
+  // Find all Zeppelin events regardless of connections
+  const allZeppelinEvents = data.filter(d => 
+    d.category === "Zeppelins" || 
+    (d.group && (d.group === "Zeppelins" || d.group.includes("Zeppelins")))
+  );
+  
+  // Combine with any connected Zeppelins, avoiding duplicates
+  allZeppelinEvents.forEach(event => {
+    if (!zeppelinEvents.some(e => e.title === event.title)) {
+      zeppelinEvents.push(event);
     }
+  });
+}
     
     // Sort engineering events by year
     engineeringEvents.sort((a, b) => a.parsedYear - b.parsedYear);
