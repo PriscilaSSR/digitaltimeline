@@ -40,7 +40,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     category: 'Aviation Technology',
     row: 1,
-    group: "AT",
+    group: "AT-Zeppelins",
     connections: ['The Industrial Revolution']
   },
       {
