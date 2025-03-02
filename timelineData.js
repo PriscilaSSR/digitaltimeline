@@ -7,7 +7,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     category: 'Aviation Technology',
     row: 1,
-    group: "CSB",
+    group: "AT",
     connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci\'s Flying Machines']
   },
 {
@@ -18,7 +18,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     category: 'Aviation Technology',
     row: 1,
-    group: "CSB",
+    group: "AT",
     connections: ['Silk Production and Trade', 'The Industrial Revolution', 'Leonardo da Vinci\'s Bird Sketches']
   },
 {
@@ -29,7 +29,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     category: 'Aviation Technology',
     row: 1,
-    group: "CSB",
+    group: "AT",
     connections: ['Silk Production and Trade', 'The Industrial Revolution', 'Leonardo da Vinci\'s Bird Sketches']
   },
 {
@@ -40,7 +40,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     category: 'Aviation Technology',
     row: 1,
-    group: "CSB",
+    group: "AT",
     connections: ['The Industrial Revolution']
   },
       {
@@ -50,14 +50,14 @@ window.timelineItems = [
         description: 'Chinese silk becomes a prized lightweight...',
         img: 'img/silk.jpg',
         people: ['Legendary Empress Leizu (mythical)'],
-        category: 'Theoretical Breakthroughs',
+        category: 'Sociocultural & Economic Factors',
         connections: [
           "Early Kites", 
           "Bartolomeu de Gusmão\'s Passarola",
             "Human-Passenger Flights on Hot Air Balloons",
             "Gliders and the Foundation of Controlled Flight",
         ],
-       group: "CSB", // Add a 'group' property for Venn diagram,
+       group: "SF", 
         row: 1
       },
   {
@@ -67,9 +67,9 @@ window.timelineItems = [
     description: 'Paper is invented in China and then spreads to the Arabic world in the 700s BC, then to Medieval Europe. A key material innovation that aided future flight experiments. The lightweight material was later used in hot air lanterns in China. Even later, Leonardo da Vinci and George Cayley used paper and other lightweight materials to create models and test their theories of flight ',
     img: "img/paper.gif",
     people: ['Mozi', 'Lu Ban'],
-    category: 'Theoretical Breakthroughs',
+    category: 'Sociocultural & Economic Factors',
     row: 1,
-    group: "CSB",
+    group: "SF",
     connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci\'s Flying Machines']
   },
   {
@@ -115,8 +115,8 @@ window.timelineItems = [
     description: "Archytas of Tarentum creates a wooden pigeon that could \"fly\" using a jet of air.",
     img: "img/pigeon.jpg",
     people: ['Archytas of Tarentum'],
-    category: 'Engineering Experiments & Demonstrations',
-    group: 'EED',
+    category: 'Aviation Technology',
+    group: 'AT',
     row: 1,
     connections: ['The Myth of Icarus and Daedalus']
   },
@@ -140,7 +140,7 @@ window.timelineItems = [
     img: "img/skylanterns.jpg",
     people: ['Kongming'],
     category: 'Aviation Technology',
-    group: 'EED',
+    group: 'AT',
     row: 1,
     connections: ['Early Kites', 'Paper Production and Trade']
   },
@@ -151,8 +151,8 @@ window.timelineItems = [
     description: "Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.",
     img: "img/Aeolipile.png",
     people: ['Hero of Alexandria'],
-    category: 'Engineering Experiments & Demonstrations',
-    group: 'EED',
+    category: 'Theoretical Breakthroughs',
+    group: 'CSB',
     row: 1,
     connections: ["Archytas' Flying Pigeon", "Henri Giffard's Dirigible"]
   },
@@ -163,8 +163,8 @@ window.timelineItems = [
     description: "Abbas Ibn Firnas jumps from a tower wearing a cloak stiffened with wooden struts.",
     img: "img/abbas.jpg",
     people: ['Abbas Ibn Firnas'],
-    category: 'Engineering Experiments & Demonstrations',
-    group: 'EED',
+    category: 'Aviation Technology',
+    group: 'AT',
     row: 2,
     connections: ["The Myth of Icarus and Daedalus", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
   },
@@ -199,8 +199,8 @@ window.timelineItems = [
     description: "A Benedictine monk who tries to fly with a glider-like apparatus. He may have glided a short distance..",
     img: "img/Eilmer.jpg",
     people: ['Eilmer of Malmesbury'],
-    category: 'Engineering Experiments & Demonstrations',
-    group: 'EED',
+    category: 'Aviation Technology',
+    group: 'AT',
     row: 2,
     connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "João Torto's Failed Flight Attempt", 'Early Kites']
   },
@@ -224,7 +224,7 @@ window.timelineItems = [
     img: 'img/Gutenberg.jpg',
     people: ['Johannes Gutenberg'],
     category: 'Sociocultural & Economic Factors',
-        group: 'CSB',
+    group: 'SF',
     connections: ['Paper Production and Trade'],
     row: 2
   },
@@ -259,8 +259,8 @@ window.timelineItems = [
     description: "João Torto, a Portuguese barber, attempts human flight with fabric wings but falls to his death.",
     img: "img/Torto.jpg",
     people: ['João Torto'],
-    category: 'Engineering Experiments & Demonstrations',
-    group: 'EED',
+    category: 'Aviation Technology',
+    group: 'AT',
     row: 2,
     connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump"]
   },
