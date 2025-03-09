@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aviation History Timeline</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #222;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    
+    #visualization {
+      width: 100%;
+      max-width: 1200px;
+      height: 1200px;
+    }
+    
+    .node {
+      cursor: pointer;
+    }
+    
+    .node circle {
+      fill-opacity: 0.9;
+      stroke: white;
+      stroke-width: 1.5px;
+    }
+    
+    .node text {
+      font-size: 10px;
+      fill: white;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    
+    .link {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.2);
+      stroke-width: 1.5px;
+    }
+    
+    .ring-label {
+      font-size: 14px;
+      font-weight: bold;
+      fill: white;
+      text-anchor: middle;
+    }
+    
+    .time-segment-label {
+      font-size: 12px;
+      fill: white;
+      font-weight: bold;
+    }
+    
+    .tooltip {
+      position: absolute;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 5px;
+      pointer-events: none;
+      max-width: 300px;
+      z-index: 10;
+      display: none;
+    }
+    
+    .tooltip h3 {
+      margin: 0 0 5px 0;
+      font-size: 14px;
+    }
+    
+    .tooltip p {
+      margin: 0;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="visualization"></div>
+  <div class="tooltip"></div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script>
+  // Set up dimensions
+  const width = 1200;
+  const height = 1200;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  
+  // Color scheme based on the PNG example
+  const colors = {
+    culturalWorks: "#9c27b0", // Purple for outer ring
+    socioeconomicFactors: "#4b6cb7", // Blue for middle-outer ring
+    scientificTheories: "#00acc1", // Teal for middle-inner ring
+    practicalImplementations: "#c62828", // Red for inner ring
+    coreMilestones: "#ef5350" // Brighter red for core achievements
+  };
+  
+  // Create SVG
+  const svg = d3.select("#visualization")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", `translate(${centerX}, ${centerY})`);
+    
+  // Define the four concentric rings and their radii
+  const rings = [
+    { name: "Humanity's Dream of Flight", radius: 580, color: colors.culturalWorks },
+    { name: "Socioeconomic Factors", radius: 480, color: colors.socioeconomicFactors },
+    { name: "Scientific Theories Breakthroughs", radius: 380, color: colors.scientificTheories },
+    { name: "Practical Implementations", radius: 280, color: colors.practicalImplementations },
+    { name: "Core Aviation Milestones", radius: 120, color: colors.coreMilestones }
+  ];
+  
+  // Draw the main rings
+  rings.forEach((ring, i) => {
+    svg.append("circle")
+      .attr("cx", 0)
+      .attr("cy", 0)
+      .attr("r", ring.radius)
+      .attr("fill", "none")
+      .attr("stroke", ring.color)
+      .attr("stroke-width", i === 0 ? 60 : 100)
+      .attr("stroke-opacity", 0.2);
+    
+    // Add ring labels
+    if (i === 0) {
+      // Special case for outer ring text - curved along the top
+      const outerRingArc = d3.arc()
+        .innerRadius(ring.radius - 25)
+        .outerRadius(ring.radius - 25)
+        .startAngle(-Math.PI/4)
+        .endAngle(Math.PI/4);
+      
+      svg.append("path")
+        .attr("id", `ring-label-path-${i}`)
+        .attr("d", outerRingArc())
+        .style("fill", "none")
+        .style("stroke", "none");
+      
+      svg.append("text")
+        .append("textPath")
+        .attr("href", `#ring-label-path-${i}`)
+        .attr("startOffset", "50%")
+        .attr("text-anchor", "middle")
+        .attr("font-size", "24px")
+        .attr("fill", ring.color)
+        .attr("font-weight", "bold")
+        .text(ring.name);
+    } else {
+      // Place other ring labels at the top
+      svg.append("text")
+        .attr("class", "ring-label")
+        .attr("x", 0)
+        .attr("y", -ring.radius + (i === 0 ? 25 : 50))
+        .attr("fill", ring.color)
+        .attr("font-size", i === 0 ? "24px" : "20px")
+        .text(ring.name);
+    }
+  });
+  
+  // Define the time periods (segments)
+  const timeSegments = [
+    { id: "1a", name: "500s BCE to 1399s CE", startAngle: -Math.PI * 0.9, endAngle: -Math.PI * 0.5 },
+    { id: "1b", name: "1400 CE to 1799s CE", startAngle: -Math.PI * 0.5, endAngle: -Math.PI * 0.1 },
+    { id: "1c", name: "1800s CE to 1945 CE", startAngle: -Math.PI * 0.1, endAngle: Math.PI * 0.3 },
+    { id: "1d", name: "Post-1945 CE", startAngle: Math.PI * 0.3, endAngle: Math.PI * 0.7 },
+    { id: "1e", name: "Modern Era", startAngle: Math.PI * 0.7, endAngle: Math.PI * 1.1 }
+  ];
+  
+  // Draw segment dividers as lines from center to beyond outer ring
+  timeSegments.forEach(segment => {
+    // Calculate coordinates for the divider line
+    const outerX = Math.cos(segment.startAngle) * (rings[0].radius + 50);
+    const outerY = Math.sin(segment.startAngle) * (rings[0].radius + 50);
+    
+    // Draw the divider line
+    svg.append("line")
+      .attr("x1", 0)
+      .attr("y1", 0)
+      .attr("x2", outerX)
+      .attr("y2", outerY)
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .attr("stroke-opacity", 0.5);
+    
+    // Add the time period label
+    const labelAngle = (segment.startAngle + segment.endAngle) / 2;
+    const labelRadius = rings[0].radius + 30;
+    const labelX = Math.cos(labelAngle) * labelRadius;
+    const labelY = Math.sin(labelAngle) * labelRadius;
+    
+    svg.append("text")
+      .attr("class", "time-segment-label")
+      .attr("x", labelX)
+      .attr("y", labelY)
+      .attr("transform", `rotate(${labelAngle * 180 / Math.PI + 90}, ${labelX}, ${labelY})`)
+      .text(segment.name)
+      .style("font-size", "16px")
+      .style("fill", "#fff")
+      .style("text-anchor", "middle");
+  });
+  
+  // Define the data structure based on the PDF
+  const aviationData = {
+    culturalWorks: [
+      { id: "1xMA001", period: "1a", name: "The Myth of Icarus and Daedalus", date: "500s BCE", x: 0, y: 0 },
+      { id: "1xMA002", period: "1a", name: "The Pushpaka Vimana", date: "500s BCE", x: 0, y: 0 },
+      { id: "1xMA003", period: "1a", name: "The Ebony Horse Tale", date: "800s CE", x: 0, y: 0 },
+      { id: "1xMA004", period: "1b", name: "Kepler's Somnium", date: "1634", x: 0, y: 0 },
+      { id: "1xMA005", period: "1b", name: "Francis Godwin's The Man in the Moone", date: "1638", x: 0, y: 0 },
+      { id: "1xMA006", period: "1b", name: "Cyrano de Bergerac's Comical History", date: "1657", x: 0, y: 0 },
+      { id: "1xMA007", period: "1b", name: "Jonathan Swift's Flying Island of Laputa", date: "1726", x: 0, y: 0 },
+      { id: "1xMA008", period: "1c", name: "Jules Verne's Novels", date: "1865-1904", x: 0, y: 0 },
+      { id: "1xMA009", period: "1c", name: "Georges Méliès's A Trip to the Moon", date: "1902", x: 0, y: 0 },
+      { id: "1xMA010", period: "1c", name: "H.G. Wells's The War in the Air", date: "1908", x: 0, y: 0 }
+    ],
+    socioeconomicFactors: [
+      { id: "2xMA001", period: "1a", name: "The Silk Road Trade Network", date: "200s BCE", connections: ["1xMA002", "1xMA003"], x: 0, y: 0 },
+      { id: "2xCIRCLE3", period: "1a", name: "Paper Production and Trade", date: "100s BCE", connections: ["3xCIRCLE1"], x: 0, y: 0 },
+      { id: "2xCIRCLE4", period: "1a", name: "Gunpowder Production", date: "", connections: [], x: 0, y: 0 },
+      { id: "2xMA002", period: "1a", name: "Renaissance Patronage System", date: "1400s", connections: ["1xMA001"], x: 0, y: 0 },
+      { id: "2xCIRCLE6", period: "1b", name: "Leonardo da Vinci's Flying Machines", date: "1480s", connections: ["3xCIRCLE3"], x: 0, y: 0 },
+      { id: "2xMA003", period: "1b", name: "The Printing Press", date: "1440s", connections: ["3xCIRCLE5"], x: 0, y: 0 },
+      { id: "2xMA004", period: "1b", name: "The Gentleman Scientist Tradition", date: "1600-1800s", connections: ["3xCIRCLE5", "3xCIRCLE10"], x: 0, y: 0 },
+      { id: "2xMA005", period: "1b", name: "The Industrial Revolution", date: "1760-1840", connections: ["3xCIRCLE9"], x: 0, y: 0 },
+      { id: "2xCIRCLE5", period: "1b", name: "Goodyear's Vulcanization of Rubber", date: "1839", connections: ["4xCIRCLE5"], x: 0, y: 0 },
+      { id: "2xCIRCLE8", period: "1b", name: "Hall–Héroult Process for Aluminum", date: "1886", connections: ["4xCIRCLE6"], x: 0, y: 0 },
+      { id: "2xMA006", period: "1c", name: "Great Exhibitions, World Fairs and Prizes", date: "1850s", connections: ["3xCIRCLE13"], x: 0, y: 0 },
+      { id: "2xCIRCLE7", period: "1c", name: "Deutsch de la Meurthe Prize", date: "1901", connections: ["4xTimeline6"], x: 0, y: 0 },
+      { id: "2xCIRCLE8", period: "1c", name: "Cross-Channel Prize", date: "", connections: ["4xTimeline6"], x: 0, y: 0 },
+      { id: "2xMA007", period: "1c", name: "Military Demands in World War I", date: "1914-1918", connections: ["3xCIRCLE15"], x: 0, y: 0 },
+      { id: "2xCIRCLE9", period: "1c", name: "Henry Farman's Aircraft in World War I", date: "1918", connections: ["4xTimeline8"], x: 0, y: 0 },
+      { id: "2xCIRCLE10", period: "1c", name: "LZ 3 and Military Adoption", date: "1906", connections: ["4fTimeline4"], x: 0, y: 0 },
+      { id: "2xMA008", period: "1d", name: "Post-War Commercial Aviation Infrastructure", date: "", connections: ["3xCIRCLE17"], x: 0, y: 0 },
+      { id: "2xCIRCLE11", period: "1d", name: "Calbraith Perry Rodgers' Transcontinental Flight", date: "1911", connections: ["3xCIRCLE18"], x: 0, y: 0 },
+      { id: "2xCIRCLE12", period: "1d", name: "First Commercial Airline", date: "1914", connections: ["3xCIRCLE17"], x: 0, y: 0 },
+      { id: "2xMA009", period: "1d", name: "Military-Industrial Complex (Post-WWII)", date: "", connections: ["3xCIRCLE19"], x: 0, y: 0 },
+      { id: "2xCIRCLE13", period: "1d", name: "Breaking the Sound Barrier", date: "1947", connections: ["4gTimeline1"], x: 0, y: 0 },
+      { id: "2xCIRCLE14", period: "1d", name: "Satellite Launch", date: "1957", connections: ["4gTimeline2"], x: 0, y: 0 },
+      { id: "2xCIRCLE15", period: "1d", name: "First Moon Landing", date: "1969", connections: ["4gTimeline3"], x: 0, y: 0 }
+    ],
+    scientificTheories: [
+      { id: "3xCIRCLE1", period: "1a", name: "Hero's Aeolipile", date: "100s BCE", connections: ["4cTimeline1"], x: 0, y: 0 },
+      { id: "3xCIRCLE2", period: "1a", name: "Leonardo da Vinci's Bird Anatomy Sketches", date: "", connections: ["4cTimeline2"], x: 0, y: 0 },
+      { id: "3xCIRCLE3", period: "1a", name: "Roger Bacon's Air Support Theory", date: "", connections: ["4cTimeline2"], x: 0, y: 0 },
+      { id: "3xCIRCLE4", period: "1a", name: "Archimedes' Buoyancy Principle", date: "200s BCE", connections: ["4cTimeline3"], x: 0, y: 0 },
+      { id: "3xCIRCLE5", period: "1b", name: "Robert Hooke's Airflow", date: "1659", connections: ["4cTimeline3"], x: 0, y: 0 },
+      { id: "3xCIRCLE6", period: "1b", name: "Newton's Laws of Motion", date: "1687", connections: ["4cTimeline3"], x: 0, y: 0 },
+      { id: "3xCIRCLE7", period: "1b", name: "Bartolomeu de Gusmão's Passarola Design", date: "1709", connections: ["4cTimeline1"], x: 0, y: 0 },
+      { id: "3xCIRCLE8", period: "1b", name: "Daniel Bernoulli's Hydrodynamica", date: "1738", connections: ["4dTimeline1"], x: 0, y: 0 },
+      { id: "3xCIRCLE9", period: "1c", name: "James Watt's steam engine work", date: "1760s-1790s", connections: ["4eTimeline1"], x: 0, y: 0 },
+      { id: "3xCIRCLE10", period: "1c", name: "George Cayley's Glider Design", date: "1799", connections: ["4dTimeline1"], x: 0, y: 0 },
+      { id: "3xCIRCLE11", period: "1c", name: "Cayley's Fixed-Wing Concept", date: "1799", connections: ["4dTimeline1"], x: 0, y: 0 },
+      { id: "3xCIRCLE12", period: "1c", name: "Sadi Carnot's cycle", date: "1824", connections: ["4eTimeline2"], x: 0, y: 0 },
+      { id: "3xCIRCLE13", period: "1c", name: "Francis Wenham's Wind Tunnel", date: "1871", connections: ["4dTimeline2"], x: 0, y: 0 },
+      { id: "3xCIRCLE14", period: "1c", name: "Wenham and Browning's systematic testing of aerodynamic shapes", date: "1871", connections: ["4dTimeline2"], x: 0, y: 0 },
+      { id: "3xCIRCLE15", period: "1c", name: "Nikolaus Otto's Thermodynamic principles applied to lighter engines", date: "1876", connections: ["4eTimeline3"], x: 0, y: 0 },
+      { id: "3xCIRCLE16", period: "1c", name: "Otto and Daimler's improved engine designs", date: "1880s", connections: ["4eTimeline4"], x: 0, y: 0 },
+      { id: "3xCIRCLE17", period: "1c", name: "Samuel Pierpont Langley's Aerodrome models", date: "1896", connections: ["4eTimeline5"], x: 0, y: 0 },
+      { id: "3xCIRCLE18", period: "1c", name: "Percy Pilcher's Powered Aircraft Design", date: "1899", connections: ["4eTimeline5"], x: 0, y: 0 },
+      { id: "3xCIRCLE19", period: "1d", name: "Prandtl's Boundary-Layer Theory", date: "1904", connections: ["4eTimeline11"], x: 0, y: 0 },
+      { id: "3xCIRCLE20", period: "1d", name: "Martin Wilhelm Kutta & Nikolai Zhukovsky's Lift Theorem", date: "1906", connections: ["4eTimeline11"], x: 0, y: 0 },
+      { id: "3xCIRCLE21", period: "1d", name: "John William Dunne's tailless aircraft designs", date: "1908", connections: ["4eTimeline5"], x: 0, y: 0 },
+      { id: "3xCIRCLE22", period: "1d", name: "Henri Coandă's theoretical work", date: "1910", connections: ["4eTimeline5"], x: 0, y: 0 },
+      { id: "3xCIRCLE23", period: "1d", name: "John William Dunne's Mathematical principles of inherent stability", date: "1908", connections: ["4eTimeline11"], x: 0, y: 0 },
+      { id: "3xCIRCLE24", period: "1d", name: "Operational envelopes and performance limitations developed by practical testing by early aviators during WWI", date: "1914-1918", connections: ["4eTimeline8"], x: 0, y: 0 }
+    ],
+    practicalImplementations: [
+      { id: "4xCIRCLE1", period: "1a", name: "Non-Human Flight", connections: ["3xCIRCLE1"], children: [
+        { id: "4cTimeline1", name: "Early Kites", date: "500s BCE" },
+        { id: "4cTimeline2", name: "Archytas' Flying Pigeon", date: "400s BCE" },
+        { id: "4cTimeline3", name: "Kongming's Sky Lantern", date: "200s BCE" }
+      ], x: 0, y: 0 },
+      { id: "4xCIRCLE2", period: "1a", name: "Early Attempts at Human Flight", connections: ["3xCIRCLE4"], children: [
+        { id: "4dTimeline1", name: "Abbas Ibn Firnas's jump", date: "800s CE" },
+        { id: "4dTimeline2", name: "Eilmer of Malmesbury's jump", date: "1000s CE" },
+        { id: "4dTimeline3", name: "João Torto's Failed Flight Attempt", date: "1540s" }
+      ], x: 0, y: 0 },
+      { id: "4xCIRCLE3", period: "1b", name: "The Age of the Balloon", connections: ["3xCIRCLE7"], children: [
+        { id: "4cTimeline1", name: "Bartolomeu de Gusmão's Passarola", date: "1709" },
+        { id: "4cTimeline2", name: "Montgolfier Brothers' Hot Air Balloon", date: "1783" },
+        { id: "4cTimeline3", name: "Human-Passenger Flights on Hot Air Balloons", date: "1700s" }
+      ], x: 0, y: 0 },
+      { id: "4xCIRCLE4", period: "1c", name: "Early Glider Experiments", connections: ["3xCIRCLE10"], children: [
+        { id: "4dTimeline1", name: "George Cayley's Manned Glider Flight", date: "1853" },
+        { id: "4dTimeline2", name: "Otto Lilienthal's Glider Flights", date: "1891" },
+        { id: "4dTimeline3", name: "Octave Chanute's Biplane Glider", date: "1896" }
+      ], x: 0, y: 0 },
+      { id: "4xCIRCLE5", period: "1c", name: "Race Toward Modern Aviation", connections: ["3xCIRCLE15"], children: [
+        { id: "4eTimeline1", name: "William Henson's Aircraft Design", date: "1843" },
+        { id: "4eTimeline2", name: "Clément Ader's Éole", date: "1890" },
+        { id: "4eTimeline3", name: "Hiram Maxim's Steam-Powered Biplane", date: "1894" },
+        { id: "4eTimeline4", name: "Samuel Pierpont Langley's Aerodrome", date: "1896" },
+        { id: "4eTimeline5", name: "Gustave Whitehead's Reported Flight", date: "1901" },
+        { id: "4eTimeline6", name: "Richard Pearse's Monoplane", date: "1902" },
+        { id: "4eTimeline7", name: "Karl Jatho's Powered Aircraft", date: "1903" },
+        { id: "4eTimeline8", name: "Preston Watson's Alleged Flight", date: "1903" },
+        { id: "4eTimeline9", name: "Alberto Santos-Dumont's 14-bis Flight", date: "1906" },
+        { id: "4eTimeline10", name: "Traian Vuia's Monoplane", date: "1907" },
+        { id: "4eTimeline11", name: "Wright Brothers' Flights", date: "1903-1906" },
+        { id: "4eTimeline12", name: "Dimitri Sensaud de Lavaud's Flight in Latin America", date: "1910" }
+      ], x: 0, y: 0 },
+      { id: "4xCIRCLE6", period: "1c", name: "Parallel Alternative: The Zeppelin", connections: ["3xCIRCLE15"], children: [
+        { id: "4fTimeline1", name: "Henri Giffard's Dirigible", date: "1852" },
+        { id: "4fTimeline2", name: "Charles Renard and Arthur Constantin's Le France", date: "1884" },
+        { id: "4fTimeline3", name: "Ferdinand von Zeppelin's Rigid Airships", date: "1900" },
+        { id: "4fTimeline4", name: "LZ 3 and Military Adoption", date: "1906" },
+        { id: "4fTimeline4", name: "Zeppelin's First Commercial Service", date: "1909" },
+        { id: "4fTimeline5", name: "The Graf Zeppelin", date: "1928" },
+        { id: "4fTimeline6", name: "Hindenburg Disaster", date: "1937" }
+      ], x: 0, y: 0 },
+      { id: "4xCIRCLE7", period: "1d", name: "Post-War Advancements", connections: ["3xCIRCLE19"], children: [
+        { id: "4gTimeline1", name: "Breaking the Sound Barrier", date: "1947" },
+        { id: "4gTimeline2", name: "Satellite Launch", date: "1957" },
+        { id: "4gTimeline3", name: "First Moon Landing", date: "1969" }
+      ], x: 0, y: 0 }
+    ],
+    coreMilestones: [
+      { id: "core1", name: "Wright Brothers First Flight", date: "1903", x: 0, y: 0 },
+      { id: "core2", name: "First Transatlantic Flight", date: "1919", x: 0, y: 0 },
+      { id: "core3", name: "First Jet Aircraft", date: "1939", x: 0, y: 0 },
+      { id: "core4", name: "Sound Barrier Broken", date: "1947", x: 0, y: 0 },
+      { id: "core5", name: "First Moon Landing", date: "1969", x: 0, y: 0 }
+    ]
+  };
+  
+  // Position nodes in their respective rings and time segments
+  function positionNodes() {
+    // Position nodes for each category
+    positionCategoryNodes(aviationData.culturalWorks, rings[0].radius - 30, 20);
+    positionCategoryNodes(aviationData.socioeconomicFactors, rings[1].radius - 50, 25);
+    positionCategoryNodes(aviationData.scientificTheories, rings[2].radius - 50, 20);
+    positionMainCategoryNodes(aviationData.practicalImplementations, rings[3].radius - 50, 25);
+    
+    // Position core milestones in the center
+    const coreMilestonesRadius = rings[4].radius - 40;
+    aviationData.coreMilestones.forEach((node, i) => {
+      const angle = 2 * Math.PI * (i / aviationData.coreMilestones.length) - Math.PI/2;
+      node.x = Math.cos(angle) * coreMilestonesRadius;
+      node.y = Math.sin(angle) * coreMilestonesRadius;
+    });
+  }
+  
+  // Position nodes within a category based on time segments
+  function positionCategoryNodes(nodes, radius, nodeRadius) {
+    // Group nodes by time period
+    const nodesByPeriod = {};
+    timeSegments.forEach(segment => {
+      nodesByPeriod[segment.id] = nodes.filter(node => node.period === segment.id);
+    });
+    
+    // Position nodes within each time segment
+    timeSegments.forEach(segment => {
+      const periodNodes = nodesByPeriod[segment.id] || [];
+      const segmentAngle = segment.endAngle - segment.startAngle;
+      const angleStep = segmentAngle / (periodNodes.length + 1);
+      
+      periodNodes.forEach((node, i) => {
+        const angle = segment.startAngle + angleStep * (i + 1);
+        node.x = Math.cos(angle) * radius;
+        node.y = Math.sin(angle) * radius;
+        node.angle = angle; // Store angle for connecting lines
+      });
+    });
+  }
+  
+  // Position main category nodes and their children
+  function positionMainCategoryNodes(nodes, radius, nodeRadius) {
+    // Group nodes by time period
+    const nodesByPeriod = {};
+    timeSegments.forEach(segment => {
+      nodesByPeriod[segment.id] = nodes.filter(node => node.period === segment.id);
+    });
+    
+    // Position nodes within each time segment
+    timeSegments.forEach(segment => {
+      const periodNodes = nodesByPeriod[segment.id] || [];
+      const segmentAngle = segment.endAngle - segment.startAngle;
+      const angleStep = segmentAngle / (periodNodes.length + 1);
+      
+      periodNodes.forEach((node, i) => {
+        const angle = segment.startAngle + angleStep * (i + 1);
+        node.x = Math.cos(angle) * radius;
+        node.y = Math.sin(angle) * radius;
+        node.angle = angle; // Store angle for connecting lines
+        
+        // Position any child nodes in an arc around the parent
+        if (node.children && node.children.length > 0) {
+          const childRadius = radius - 40;
+          const childAngleRange = angleStep * 0.8; // Use part of the parent's angle allocation
+          const childAngleStep = childAngleRange / (node.children.length + 1);
+          
+          node.children.forEach((child, j) => {
+            const childAngle = angle - (childAngleRange / 2) + childAngleStep * (j + 1);
+            child.x = Math.cos(childAngle) * childRadius;
+            child.y = Math.sin(childAngle) * childRadius;
+            child.angle = childAngle;
+            child.parentNode = node;
+          });
+        }
+      });
+    });
+  }
