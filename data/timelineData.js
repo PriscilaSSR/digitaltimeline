@@ -1,4 +1,4 @@
-window.timelineItems = [
+const timelineData = [
 {
     date: '1700s',
     location: 'Europe',
@@ -973,3 +973,4 @@ window.timelineItems = [
     category: "Sociocultural & Economic Factors"
   }
 ];
+export default timelineData;
