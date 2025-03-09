@@ -1,1 +1,3 @@
-npm start
+npx create-react-app aviation-timeline
+cd aviation-timeline
+npm install d3
