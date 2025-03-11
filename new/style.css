@@ -1,0 +1,214 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #222;
+  color: white;
+  overflow: hidden;
+}
+
+#chart {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  cursor: grab;
+}
+
+#chart:active {
+  cursor: grabbing;
+}
+
+#zoom-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+#zoom-controls button {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  margin-right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: 1px solid #666;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#zoom-controls button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+  background-color: #333;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #666;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+#close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#close:hover {
+  color: white;
+}
+
+#modal-title {
+  margin-top: 0;
+  color: #4CAF50;
+}
+
+#modal-image {
+  max-width: 100%;
+  max-height: 300px;
+  display: block;
+  margin: 10px auto;
+  border-radius: 4px;
+}
+
+/* Timeline Styling */
+#timeline-container {
+  transition: all 0.3s ease;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#timeline-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+#timeline-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+#timeline-container::-webkit-scrollbar-thumb {
+  background: #4CAF50;
+  border-radius: 10px;
+}
+
+.timeline-item {
+  transition: all 0.2s ease;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.timeline-item:hover {
+  transform: translateX(5px);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Category legends */
+.category-legend {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 4px;
+  z-index: 1000;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend-color {
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+.legend-marker {
+  display: inline-block;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid white;
+  margin-right: 8px;
+}
+
+/* For better visibility of node connections */
+.link {
+  pointer-events: none;
+}
+
+/* Style nodes based on Excel categories */
+.node-group[data-category="1. Key Literary & Cultural Works"] circle {
+  stroke: #9c27b0;
+  stroke-width: 2px;
+}
+
+.node-group[data-category="2. Socioeconomic Factors"] circle {
+  stroke: #c62828;
+  stroke-width: 2px;
+}
+
+.node-group[data-category="3. Scientific Theories Breakthroughs"] circle {
+  stroke: #1565c0;
+  stroke-width: 2px;
+}
+
+.node-group[data-category="4. Practical Implementations"] circle {
+  stroke: #2e7d32;
+  stroke-width: 2px;
+}
+
+/* Highlight time period sections */
+.time-slice {
+  transition: opacity 0.3s ease;
+}
+
+.time-slice:hover {
+  opacity: 0.9;
+  stroke-width: 2.5px;
+}
+
+/* Add pulsing animation to special nodes */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.node-group[data-category="4. Practical Implementations"] circle {
+  animation: pulse 3s infinite ease-in-out;
+}
