@@ -106,20 +106,64 @@ document.addEventListener("DOMContentLoaded", function() {
     return 0;
   }
 
-  // MODIFIED: Define timeline periods based on Excel structure
-  function assignTimePeriod(year) {
-    if (year <= -100 || (year >= 0 && year < 1400)) {
-      return "500s BCE to 1399s CE";
-    } else if (year >= 1400 && year < 1600) {
-      return "1400 CE to 1599s CE";
-    } else if (year >= 1600 && year < 1760) {
-      return "1600s CE to 1760s CE";
-    } else if (year >= 1760 && year < 1800) {
-      return "1760s CE to 1799s CE";
-    } else if (year >= 1800 && year < 1900) {
-      return "1800s CE to 1899s CE";
-    } else {
-      return "1900s CE to 1945 CE";
+  // Define timeline periods specific to each category based on Excel structure
+  function assignTimePeriod(year, category) {
+    // Category 1: Key Literary & Cultural Works
+    if (category === "1. Key Literary & Cultural Works") {
+      if (year <= -100 || (year >= 0 && year < 1400)) {
+        return "1a. 500s BCE to 1399s CE";
+      } else if (year >= 1400 && year < 1800) {
+        return "1b. 1400 CE to 1799s CE";
+      } else {
+        return "1c. 1800s CE to 1945 CE";
+      }
+    }
+    // Category 2: Socioeconomic Factors
+    else if (category === "2. Socioeconomic Factors") {
+      if (year <= -100 || (year >= 0 && year < 1400)) {
+        return "2a. 500s BCE to 1399s CE";
+      } else if (year >= 1400 && year < 1700) {
+        return "2b. 1400 CE to 1699s CE";
+      } else if (year >= 1700 && year < 1890) {
+        return "2c. 1760s CE to 1890s CE";
+      } else {
+        return "2d. 1890s CE to 1980s CE";
+      }
+    }
+    // Category 3: Scientific Theories Breakthroughs
+    else if (category === "3. Scientific Theories Breakthroughs") {
+      if (year <= -100 || (year >= 0 && year < 1600)) {
+        return "3a. 500s BCE to 1599s CE";
+      } else if (year >= 1600 && year < 1760) {
+        return "3b. 1600s CE to 1760s CE";
+      } else if (year >= 1760 && year < 1900) {
+        return "3c. 1770s CE to 1899s CE";
+      } else {
+        return "3d. 1900s CE to 1945 CE";
+      }
+    }
+    // Category 4: Practical Implementations - has the most subcategories
+    else if (category === "4. Practical Implementations") {
+      // We'll need to further refine this based on your Excel subcategories
+      if (year <= -100 || (year >= 0 && year < 800)) {
+        return "4a. Non-Human Flight";
+      } else if (year >= 800 && year < 1700) {
+        return "4b. Early Attempts at Human Flight";
+      } else if (year >= 1700 && year < 1800) {
+        return "4c. The Age of the Balloon";
+      } else if (year >= 1800 && year < 1890) {
+        return "4d. Early Glider Experiments";
+      } else if (year >= 1890 && year < 1930) {
+        return "4e. Race Toward Modern Aviation";
+      } else if (year >= 1900 && year < 1940) {
+        return "4f. Parallel Alternative: The Zeppelin";
+      } else {
+        return "4g. Post-War Advancements";
+      }
+    }
+    // Default fallback
+    else {
+      return "Unknown Period";
     }
   }
 
@@ -140,11 +184,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  // Parse all dates and assign to time periods
+  // Parse all dates and assign to time periods with category-specific divisions
   data.forEach(d => {
     d.parsedYear = parseTimelineDate(d.date);
-    d.timePeriod = assignTimePeriod(d.parsedYear);
-    d.normalizedTimePeriod = normalizeTimePeriod(d.parsedYear);
     
     // MODIFIED: Map category to Excel structure
     // Map the existing categories to the Excel structure
@@ -164,14 +206,25 @@ document.addEventListener("DOMContentLoaded", function() {
       // Default for anything we missed
       d.excelCategory = d.category;
     }
+    
+    // Now assign the time period based on both date and category
+    d.timePeriod = assignTimePeriod(d.parsedYear, d.excelCategory);
   });
   
-  // Define fixed ring ranges for the Excel categories
-  const ringRanges = {
-    "1. Key Literary & Cultural Works": [maxOuterRadius * 0.9, maxOuterRadius * 1.1],
-    "2. Socioeconomic Factors": [maxOuterRadius * 0.7, maxOuterRadius * 0.9],
-    "3. Scientific Theories Breakthroughs": [maxOuterRadius * 0.4, maxOuterRadius * 0.7],
-    "4. Practical Implementations": [0, maxOuterRadius * 0.4]
+  // Define circular boundaries for the Excel categories - these will be the dividing lines
+  const categoryBoundaries = {
+    "1. Key Literary & Cultural Works": maxOuterRadius,
+    "2. Socioeconomic Factors": maxOuterRadius * 0.75,
+    "3. Scientific Theories Breakthroughs": maxOuterRadius * 0.5,
+    "4. Practical Implementations": maxOuterRadius * 0.25
+  };
+  
+  // Define the spaces between boundaries where nodes will be positioned
+  const nodePlacementRanges = {
+    "1. Key Literary & Cultural Works": [categoryBoundaries["2. Socioeconomic Factors"], categoryBoundaries["1. Key Literary & Cultural Works"]],
+    "2. Socioeconomic Factors": [categoryBoundaries["3. Scientific Theories Breakthroughs"], categoryBoundaries["2. Socioeconomic Factors"]],
+    "3. Scientific Theories Breakthroughs": [categoryBoundaries["4. Practical Implementations"], categoryBoundaries["3. Scientific Theories Breakthroughs"]],
+    "4. Practical Implementations": [0, categoryBoundaries["4. Practical Implementations"]]
   };
   
   // Colors for each Excel category
@@ -183,149 +236,123 @@ document.addEventListener("DOMContentLoaded", function() {
   // 3) CALCULATE TIME PERIOD ANGLES
   // -------------------------
   
-  // Get unique time periods
-  const timePeriods = [...new Set(data.map(d => d.timePeriod))].sort((a, b) => {
-    // Sort based on the first year mentioned in each period
-    const getFirstYear = (period) => {
-      const match = period.match(/-?\d+/);
-      return match ? parseInt(match[0]) : 0;
-    };
-    return getFirstYear(a) - getFirstYear(b);
-  });
-  console.log("Time periods:", timePeriods);
+  // Get category-specific time periods
+  const categoryTimePeriods = {};
   
-  // Calculate angle spans for time periods
-  const timePeriodAngles = {};
+  // Get unique time periods for each category
+  Object.keys(nodePlacementRanges).forEach(category => {
+    categoryTimePeriods[category] = [...new Set(
+      data
+        .filter(d => d.excelCategory === category)
+        .map(d => d.timePeriod)
+    )].sort((a, b) => {
+      // Sort based on the first year or the prefix (1a, 1b, etc.)
+      const getPrefix = (period) => {
+        const match = period.match(/(\d+[a-z])/);
+        return match ? match[0] : period;
+      };
+      return getPrefix(a).localeCompare(getPrefix(b));
+    });
+  });
+  
+  console.log("Category time periods:", categoryTimePeriods);
+  
+  // Calculate angle spans for time periods within each category
+  const categoryTimePeriodAngles = {};
   const totalAngle = 2 * Math.PI; // Full circle
   
-  // MODIFIED: Make each time period have an equal angle span
-  timePeriods.forEach((period, index) => {
-    const angleSize = totalAngle / timePeriods.length;
-    const startAngle = index * angleSize;
-    const endAngle = startAngle + angleSize;
+  // For each category, calculate the angles for its time periods
+  Object.keys(categoryTimePeriods).forEach(category => {
+    const periods = categoryTimePeriods[category];
     
-    timePeriodAngles[period] = {
-      startAngle: startAngle,
-      endAngle: endAngle
-    };
+    if (periods.length === 0) {
+      return; // Skip if no periods for this category
+    }
+    
+    // Initialize the angles object for this category
+    categoryTimePeriodAngles[category] = {};
+    
+    // Calculate equal angle spans for each period in this category
+    periods.forEach((period, index) => {
+      const angleSize = totalAngle / periods.length;
+      const startAngle = index * angleSize;
+      const endAngle = startAngle + angleSize;
+      
+      categoryTimePeriodAngles[category][period] = {
+        startAngle: startAngle,
+        endAngle: endAngle
+      };
+    });
   });
   
   // -------------------------
-  // 4) DRAW CATEGORY RINGS WITH TIME PERIOD SLICES
+  // 4) DRAW CATEGORY BOUNDARY CIRCLES AND TIME PERIOD DIVISIONS
   // -------------------------
   
-  // Define ring categories for visualization based on Excel structure
-  const ringCategories = [
-    {
-      name: "1. Key Literary & Cultural Works",
-      outerRadius: maxOuterRadius * 1.1,
-      innerRadius: maxOuterRadius * 0.9,
-      color: "#9c27b0"
-    },
-    {
-      name: "2. Socioeconomic Factors",
-      outerRadius: maxOuterRadius * 0.9,
-      innerRadius: maxOuterRadius * 0.7,
-      color: "#c62828"
-    },
-    {
-      name: "3. Scientific Theories Breakthroughs",
-      outerRadius: maxOuterRadius * 0.7,
-      innerRadius: maxOuterRadius * 0.4,
-      color: "#1565c0"
-    },
-    {
-      name: "4. Practical Implementations",
-      outerRadius: maxOuterRadius * 0.4,
-      innerRadius: 0,
-      color: "#2e7d32"
-    }
-  ];
-
-  // Create ring groups
-  const ringGroups = container.selectAll("g.ring-group")
-    .data(ringCategories)
-    .enter()
-    .append("g")
-    .attr("class", "ring-group");
-
-  // Create the arc generator for time slices
-  const arcGenerator = d3.arc()
-    .startAngle(d => d.startAngle)
-    .endAngle(d => d.endAngle)
-    .innerRadius(d => d.ringData.innerRadius)
-    .outerRadius(d => d.ringData.outerRadius)
-    .padAngle(0.01);
-
-  // For each category, create time period slices
-  ringGroups.each(function(categoryData) {
-    const group = d3.select(this);
+  // First, draw the category boundary circles
+  const boundaryGroup = container.append("g")
+    .attr("class", "boundary-group");
     
-    // Create slice data for all time periods
-    const slices = [];
-    for (const period in timePeriodAngles) {
-      if (timePeriodAngles.hasOwnProperty(period)) {
-        slices.push({
-          timePeriod: period,
-          startAngle: timePeriodAngles[period].startAngle,
-          endAngle: timePeriodAngles[period].endAngle,
-          ringData: categoryData
-        });
-      }
-    }
-
-    // Draw arcs for each time slice
-    group.selectAll("path.time-slice")
-      .data(slices)
-      .enter()
-      .append("path")
-      .attr("class", "time-slice")
-      .attr("d", arcGenerator)
-      .attr("transform", `translate(${center}, ${center})`)
-      .style("fill", categoryData.color)
-      .style("stroke", "#fff")
-      .style("stroke-width", 1.5)
-      .style("opacity", 0.7)
-      .append("title") // Add tooltip
-      .text(d => `${d.timePeriod} - ${categoryData.name}`);
-
-    // Add the category label
-    group.append("text")
+  // Draw each category boundary as a circle
+  Object.entries(categoryBoundaries).forEach(([category, radius]) => {
+    boundaryGroup.append("circle")
+      .attr("cx", center)
+      .attr("cy", center)
+      .attr("r", radius)
+      .attr("fill", "none")
+      .attr("stroke", colorScale(category))
+      .attr("stroke-width", 2)
+      .attr("stroke-opacity", 0.7);
+      
+    // Add the category label along the top of each circle
+    boundaryGroup.append("text")
       .attr("x", center)
-      .attr("y", center - (categoryData.innerRadius + categoryData.outerRadius) / 2 + 15)
+      .attr("y", center - radius + 20)
       .attr("text-anchor", "middle")
-      .text(categoryData.name)
-      .style("fill", "#fff")
-      .style("opacity", 0.8)
-      .style("font-size", "22px")
+      .attr("dominant-baseline", "middle")
+      .text(category)
+      .style("fill", colorScale(category))
+      .style("font-size", "18px")
       .style("font-weight", "bold");
+  });
+  
+  // Now draw the time period dividing lines for each category
+  Object.entries(categoryTimePeriodAngles).forEach(([category, periodAngles]) => {
+    const [innerRadius, outerRadius] = nodePlacementRanges[category];
     
-    // Add time period labels
-    slices.forEach(d => {
-      // Skip very small slices
-      if (d.endAngle - d.startAngle < 0.1) return;
+    // Draw dividing lines for each time period in this category
+    Object.entries(periodAngles).forEach(([period, angles]) => {
+      // Draw start angle line
+      boundaryGroup.append("line")
+        .attr("x1", center + Math.cos(angles.startAngle) * innerRadius)
+        .attr("y1", center + Math.sin(angles.startAngle) * innerRadius)
+        .attr("x2", center + Math.cos(angles.startAngle) * outerRadius)
+        .attr("y2", center + Math.sin(angles.startAngle) * outerRadius)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.5)
+        .attr("stroke-opacity", 0.6);
       
-      // Calculate position in the middle of the arc
-      const angle = (d.startAngle + d.endAngle) / 2;
-      const radius = (categoryData.innerRadius + categoryData.outerRadius) / 2;
-      const x = center + Math.cos(angle) * radius;
-      const y = center + Math.sin(angle) * radius;
+      // Add time period label at the middle of the section
+      const labelAngle = (angles.startAngle + angles.endAngle) / 2;
+      const labelRadius = (innerRadius + outerRadius) / 2;
+      const labelX = center + Math.cos(labelAngle) * labelRadius;
+      const labelY = center + Math.sin(labelAngle) * labelRadius;
       
-      // Format label text
-      let labelText = d.timePeriod;
+      // Calculate rotation for the text so it follows the arc
+      const rotation = (labelAngle * 180 / Math.PI + 90) % 360;
       
-      // Add text
-      group.append("text")
-        .attr("x", x)
-        .attr("y", y)
+      boundaryGroup.append("text")
+        .attr("x", labelX)
+        .attr("y", labelY)
+        .attr("transform", `rotate(${rotation}, ${labelX}, ${labelY})`)
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
-        .attr("transform", `rotate(${angle * 180 / Math.PI + 90}, ${x}, ${y})`) // Rotate text to follow arc
-        .text(labelText)
+        .text(period)
         .style("fill", "#fff")
         .style("font-size", "14px")
         .style("font-weight", "bold")
-        .style("opacity", 0.9);
+        .style("text-shadow", "1px 1px 2px black")
+        .style("pointer-events", "none");
     });
   });
 
@@ -349,17 +376,19 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  // Position nodes in their category and time period
+  // Position nodes between the category boundary circles based on their time period
   data.forEach(d => {    
-    // Get the angle data for this node's time period
-    const periodAngleData = timePeriodAngles[d.timePeriod];
-    if (!periodAngleData) {
-      console.error("No angle data for time period:", d.timePeriod);
+    // Get the angle data for this node's category and time period
+    const categoryPeriodAngles = categoryTimePeriodAngles[d.excelCategory];
+    if (!categoryPeriodAngles || !categoryPeriodAngles[d.timePeriod]) {
+      console.error("No angle data for category/period:", d.excelCategory, d.timePeriod);
       // Default fallback
       d.x = center;
       d.y = center;
       return;
     }
+    
+    const periodAngleData = categoryPeriodAngles[d.timePeriod];
     
     // Get all events in this time period and category
     const eventsInSamePeriodAndCategory = data.filter(
@@ -383,29 +412,29 @@ document.addEventListener("DOMContentLoaded", function() {
       angle = (periodAngleData.startAngle + periodAngleData.endAngle) / 2;
     }
     
-    // Find the min/max radius for this category
-    const [rMin, rMax] = ringRanges[d.excelCategory] || [0, maxOuterRadius];
+    // Get the radius range for this category from nodePlacementRanges
+    const [rMin, rMax] = nodePlacementRanges[d.excelCategory] || [0, maxOuterRadius];
     
-    // Distribute nodes across the ring radius
+    // Distribute nodes between the category boundaries
     let radius;
     if (totalNodesInGroup <= 1) {
-      // If only one node, place in middle of ring
+      // If only one node, place in middle of the area
       radius = (rMin + rMax) / 2;
     } else {
-      // For multiple nodes, distribute them using golden ratio
-      const ringWidth = rMax - rMin;
+      // For multiple nodes, distribute them throughout the area
+      const areaWidth = rMax - rMin;
       
       // More advanced distribution for larger groups
       if (totalNodesInGroup > 5) {
-        // Create a spiral-like pattern that fills the ring area
+        // Create a pattern that fills the area between circles
         const normalizedIndex = nodeGroupIndex / (totalNodesInGroup - 1);
         const golden_ratio = 1.618033988749895;
         const theta = normalizedIndex * 2 * Math.PI * golden_ratio;
-        const radiusOffset = Math.cos(theta * 2) * ringWidth * 0.3;
-        radius = rMin + (ringWidth * 0.3) + (ringWidth * 0.4) * normalizedIndex + radiusOffset;
+        const radiusOffset = Math.cos(theta * 2) * areaWidth * 0.3;
+        radius = rMin + (areaWidth * 0.3) + (areaWidth * 0.4) * normalizedIndex + radiusOffset;
       } else {
         // For smaller groups, use simpler distribution
-        radius = rMin + (ringWidth * (nodeGroupIndex + 1)) / (totalNodesInGroup + 1);
+        radius = rMin + (areaWidth * (nodeGroupIndex + 1)) / (totalNodesInGroup + 1);
       }
     }
     
@@ -544,35 +573,7 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => simulation.alphaTarget(0), 300); // Gradually stop
   }
 
-  // Apply ring constraints to a specific node
-  function applyRingConstraints(d) {
-    // Radial constraint (keep in ring)
-    const [rMin, rMax] = ringRanges[d.excelCategory] || [0, maxOuterRadius];
-    const dx = d.x - center;
-    const dy = d.y - center;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-
-    if (dist > 0) {
-      // If too close, push outward
-      if (dist < rMin) {
-        const ratio = rMin / dist;
-        d.x = center + dx * ratio;
-        d.y = center + dy * ratio;
-      }
-      // If too far, pull inward
-      else if (dist > rMax) {
-        const ratio = rMax / dist;
-        d.x = center + dx * ratio;
-        d.y = center + dy * ratio;
-      }
-    } else {
-      // If exactly at center, nudge outward
-      d.x = center + rMin + 10;
-      d.y = center;
-    }
-    
-    // Angular constraint (keep in time period)
-    if (d.startAngle !== undefined && d.endAngle !== undefined) {
+Angle !== undefined && d.endAngle !== undefined) {
       const currentAngle = Math.atan2(d.y - center, d.x - center);
       let normAngle = currentAngle;
       while (normAngle < 0) normAngle += 2 * Math.PI;
@@ -749,30 +750,32 @@ document.addEventListener("DOMContentLoaded", function() {
         
       legendItem.append("div")
         .text(cat.name);
-    });
-    
-    // Add time period section
-    d3.select(".category-legend")
-      .append("h3")
-      .style("margin-top", "15px")
-      .text("Time Periods");
-      
-    // Add legend for time periods
-    timePeriods.forEach(period => {
-      const legendItem = d3.select(".category-legend")
-        .append("div")
-        .attr("class", "legend-item")
-        .style("margin-top", "5px");
         
-      legendItem.append("div")
-        .attr("class", "legend-marker")
-        .style("width", "10px")
-        .style("height", "10px")
-        .style("border-right", "2px solid white")
-        .style("margin-right", "8px");
-        
-      legendItem.append("div")
-        .text(period);
+      // Add sub-periods for this category
+      if (categoryTimePeriods[cat.name] && categoryTimePeriods[cat.name].length > 0) {
+        const subPeriodContainer = d3.select(".category-legend")
+          .append("div")
+          .style("margin-left", "20px")
+          .style("margin-bottom", "10px");
+          
+        categoryTimePeriods[cat.name].forEach(period => {
+          const periodItem = subPeriodContainer
+            .append("div")
+            .attr("class", "legend-item")
+            .style("margin-top", "3px");
+            
+          periodItem.append("div")
+            .attr("class", "legend-marker")
+            .style("width", "8px")
+            .style("height", "8px")
+            .style("border-right", "1px solid " + cat.color)
+            .style("margin-right", "8px");
+            
+          periodItem.append("div")
+            .text(period)
+            .style("font-size", "13px");
+        });
+      }
     });
   }
   
