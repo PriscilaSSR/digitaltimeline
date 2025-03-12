@@ -836,7 +836,7 @@ window.timelineItems = [
     date: '1890s',
     location: 'Europe',
     title: 'Gliders and the Foundation of Controlled Flight',
-    description: 'Otto Lilienthal's glider flights in the 1890s represented the first controlled, repeatable manned flights using fixed wings and an understanding of lift and control surfaces.',
+    description: 'Otto Lilienthal\'s glider flights in the 1890s represented the first controlled, repeatable manned flights using fixed wings and an understanding of lift and control surfaces.',
     img: "/api/placeholder/100/100",
     category: 'Aviation Technology',
     excelCategory: "4. Practical Implementations",
