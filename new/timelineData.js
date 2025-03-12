@@ -7,32 +7,30 @@
 function standardizeTimelineData() {
   window.timelineItems.forEach(item => {
     // Ensure proper category structure
-    if (item.category === "Humanity's Dream of Flying") {
-      item.excelCategory = "1. Key Literary & Cultural Works";
+    if (item.category === "Key Literary & Cultural Works";
       // Assign timePeriod based on date
       const year = parseTimelineDate(item.date); // This function needs to be available
       if (year < 1400) {
-        item.timePeriod = "1a. 500s BCE to 1399s CE";
+        item.timePeriod = "500 BCE to 1399 CE";
       } else if (year < 1800) {
-        item.timePeriod = "1b. 1400 CE to 1799s CE";
+        item.timePeriod = "1400 CE to 1799 CE";
       } else {
-        item.timePeriod = "1c. 1800s CE to 1945 CE";
+        item.timePeriod = "1800 CE to 1945 CE";
       }
       item.nodeType = "MAJOR";
     } 
-    else if (item.category === "Sociocultural & Economic Factors") {
-      item.excelCategory = "2. Socioeconomic Factors";
+    else if (item.category === "Socioeconomic Factors";
       
       // Assign timePeriod based on date
       const year = parseTimelineDate(item.date);
       if (year < 1400) {
-        item.timePeriod = "2a. 500s BCE to 1399s CE";
+        item.timePeriod = "500 BCE to 1399 CE";
       } else if (year < 1700) {
-        item.timePeriod = "2b. 1400 CE to 1699s CE";
+        item.timePeriod = "1400 CE to 1699 CE";
       } else if (year < 1890) {
-        item.timePeriod = "2c. 1760s CE to 1890s CE";
+        item.timePeriod = "1760 CE to 1890 CE";
       } else {
-        item.timePeriod = "2d. 1890s CE to 1980s CE";
+        item.timePeriod = "1890 CE to 1980 CE";
       }
       
       // Assign MAJOR or CIRCLE based on title keywords
@@ -47,60 +45,26 @@ function standardizeTimelineData() {
         item.nodeType = "CIRCLE";
       }
     } 
-    else if (item.category === "Theoretical Breakthroughs") {
-      item.excelCategory = "3. Scientific Theories Breakthroughs";
+    else if (item.category === "Scientific Theories and Breakthroughs";
       
       // Assign timePeriod based on date
       const year = parseTimelineDate(item.date);
       if (year < 1600) {
-        item.timePeriod = "3a. 500s BCE to 1599s CE";
+        item.timePeriod = "500 BCE to 1599 CE";
       } else if (year < 1770) {
-        item.timePeriod = "3b. 1600s CE to 1760s CE";
+        item.timePeriod = "1600 CE to 1760 CE";
       } else if (year < 1900) {
-        item.timePeriod = "3c. 1770s CE to 1899s CE";
+        item.timePeriod = "1770 CE to 1899 CE";
       } else {
-        item.timePeriod = "3d. 1900s CE to 1945 CE";
+        item.timePeriod = "1900s CE to 1945 CE";
       }
       
       item.nodeType = "CIRCLE";
     } 
-    else if (item.category === "Aviation Technology" || 
-             item.category === "Engineering Experiments & Demonstrations" || 
-             item.category === "Zeppelins") {
-      item.excelCategory = "4. Practical Implementations";
+    else if (item.category === "Practical Implementations";
       
-      // Assign thematic groups for category 4
-      if (item.title.includes("Kite") || 
-          item.title.includes("Pigeon") || 
-          item.title.includes("Lantern")) {
-        item.timePeriod = "4a. Non-Human Flight";
-      } 
-      else if (item.title.includes("jump") || 
-               item.title.includes("Failed Flight")) {
-        item.timePeriod = "4b. Early Attempts at Human Flight";
-      } 
-      else if (item.title.includes("Balloon") || 
-               item.title.includes("Passarola")) {
-        item.timePeriod = "4c. The Age of the Balloon";
-      } 
-      else if (item.title.includes("Glider")) {
-        item.timePeriod = "4d. Early Glider Experiments";
-      } 
-      else if (item.title.includes("Dirigible") || 
-               item.title.includes("Zeppelin") || 
-               item.title.includes("Airship") ||
-               item.category === "Zeppelins") {
-        item.timePeriod = "4f. Parallel Alternative: The Zeppelin";
-      } 
-      else if (parseTimelineDate(item.date) >= 1945) {
-        item.timePeriod = "4g. Post-War Advancements";
-      } 
-      else {
-        item.timePeriod = "4e. Race Toward Modern Aviation"; // Default for Category 4
+    item.nodeType = "CIRCLE";     
       }
-      
-      item.nodeType = "Timeline";
-    }
     
     // Default catch-all (should not happen with proper data)
     if (!item.excelCategory) {
@@ -110,22 +74,7 @@ function standardizeTimelineData() {
       item.nodeType = "Timeline";
     }
   });
-  
-  // Add missing Wright Brothers node
-  window.timelineItems.push({
-    date: '1903',
-    location: 'United States',
-    title: "Wright Brothers' Flights",
-    description: "The Wright brothers, Orville and Wilbur, make the first successful sustained, controlled, powered flight in their Wright Flyer at Kitty Hawk, North Carolina.",
-    img: "/api/placeholder/100/100",
-    people: ['Orville Wright', 'Wilbur Wright'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    timePeriod: "4e. Race Toward Modern Aviation",
-    nodeType: "Timeline",
-    connections: []
-  });
-}
+  }
 
 // Call this function after the timeline data is loaded
 // standardizeTimelineData();
@@ -145,9 +94,9 @@ window.timelineItems = [
     description: 'This myth, often depicted in classical art and referenced by poets and playwrights...',
     img: "/api/placeholder/100/100",
     people: ['The Myth of Icarus and Daedalus'],
-    category: "Humanity's Dream of Flying",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1a. 500s BCE to 1399s CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "500s BCE to 1399s CE",
     connections: ["Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
   },
   {
@@ -157,9 +106,9 @@ window.timelineItems = [
     description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a flying machine.',
     img: "/api/placeholder/100/100",
     people: ['The Pushpaka Vimana'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1a. 500s BCE to 1399s CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "500s BCE to 1399s CE",
     connections: ['Abbas Ibn Firnas\'s jump', 'Eilmer of Malmesbury\'s jump', 'João Torto\'s Failed Flight Attempt']
   },
   {
@@ -169,13 +118,13 @@ window.timelineItems = [
     description: "One of the tales from One Thousand and One Night. An inventor presents a magical mechanical horse to a Persian king.",
     img: "/api/placeholder/100/100",
     people: ['The Ebony Horse'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1a. 500s BCE to 1399s CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "500s BCE to 1399s CE",
     connections: ["Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
   },
   
-  // 1b. 1400 CE to 1799s CE
+  // 1b. 1400 CE to 1799 CE
   {
     date: '1634',
     location: 'Holy Roman Empire',
@@ -183,9 +132,9 @@ window.timelineItems = [
     description: "One of the first 'proto–science fiction' works. A fictional narrative describing a journey to the Moon...",
     img: "/api/placeholder/100/100",
     people: ['Johannes Kepler'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1b. 1400 CE to 1799s CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "1400 CE to 1799 CE",
     connections: []
   },
   {
@@ -195,9 +144,9 @@ window.timelineItems = [
     description: "One of the first 'proto–science fiction' works. A utopian story describing lunar travel using large, trained birds.",
     img: "/api/placeholder/100/100",
     people: ['Francis Godwin'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1b. 1400 CE to 1799s CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "1400 CE to 1799 CE",
     connections: []
   },
   {
@@ -207,9 +156,9 @@ window.timelineItems = [
     description: "One of the first 'proto–science fiction' works. Although comedic, it proposed mechanical means of leaving Earth...",
     img: "/api/placeholder/100/100",
     people: ['Cyrano de Bergerac'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1b. 1400 CE to 1799s CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "1400 CE to 1799 CE",
     connections: []
   },
   {
@@ -219,9 +168,9 @@ window.timelineItems = [
     description: 'Though satire, Laputa symbolizes the human longing to master flight and the sky—exaggerated to the point of political power...',
     img: "/api/placeholder/100/100",
     people: ['Jonathan Swift'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1b. 1400 CE to 1799s CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "1400 CE to 1799 CE",
     connections: []
   },
   
@@ -233,9 +182,9 @@ window.timelineItems = [
     description: "Verne's meticulous detail and semi-scientific style enthralled readers...",
     img: "/api/placeholder/100/100",
     people: ['Jules Verne'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1c. 1800s CE to 1945 CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "1800 CE to 1945 CE",
     connections: []
   },
   {
@@ -245,9 +194,9 @@ window.timelineItems = [
     description: "Georges Méliès creates the iconic silent film, launching a bullet-shaped rocket to the Moon in a whimsical scenario.",
     img: "/api/placeholder/100/100",
     people: ['Georges Méliès'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1c. 1800s CE to 1945 CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "1800 CE to 1945 CE",
     connections: ['First Moon Landing']
   },
   {
@@ -257,9 +206,9 @@ window.timelineItems = [
     description: "H.G. Wells's novel envisions how airplanes could revolutionize warfare, foreshadowing aerial battles of WWI.",
     img: "/api/placeholder/100/100",
     people: ['H.G. Wells'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "1. Key Literary & Cultural Works",
-    excelSubcategory: "1c. 1800s CE to 1945 CE",
+    Category: "Key Literary & Cultural Works",
+    Subcategory: "MAJOR",
+    TimePeriod: "1800 CE to 1945 CE",
     connections: []
   },
   
@@ -269,13 +218,13 @@ window.timelineItems = [
   {
     date: '2700s BCE',
     location: 'China',
-    title: 'Silk Production and Trade',
+    title: 'The Silk Road',
     description: 'Chinese silk becomes a prized lightweight...',
     img: "/api/placeholder/100/100",
     people: ['Legendary Empress Leizu (mythical)'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2a. 500s BCE to 1399s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "500s BCE to 1399s CE",
     connections: [
       "Early Kites", 
       "Bartolomeu de Gusmão\'s Passarola",
@@ -290,21 +239,23 @@ window.timelineItems = [
     description: 'Paper is invented in China and then spreads to the Arabic world in the 700s BC, then to Medieval Europe. A key material innovation that aided future flight experiments.',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2a. 500s BCE to 1399s CE",
-    connections: ['Early Kites', "Kongming's Sky Lantern", "Leonardo da Vinci's Flying Machines"]
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "500s BCE to 1350 CE",
+    connections: ['The Silk Road', 'Early Kites', "Kongming's Sky Lantern", "Leonardo da Vinci's Flying Machines"]
   },
+
+  // 2b. 1400 CE to 1699 CE
   {
-    date: '1200s CE',
+    date: '1400s CE',
     location: 'Europe',
     title: 'Renaissance Patronage System',
     description: 'Wealthy patrons supporting scientific and artistic endeavors that advanced flight concepts.',
     img: "/api/placeholder/100/100",
     people: ['Various Renaissance Patrons'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2a. 500s BCE to 1399s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "1400 CE to 1699 CE",
     connections: ["Leonardo da Vinci's Flying Machines"]
   },
   {
@@ -314,13 +265,11 @@ window.timelineItems = [
     description: "Leonardo da Vinci sketches various flying machines, including an ornithopter and a precursor to the helicopter.",
     img: "/api/placeholder/100/100",
     people: ['Leonardo da Vinci'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2a. 500s BCE to 1399s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1400 CE to 1699 CE",
     connections: ['Paper Production and Trade']
   },
-  
-  // 2b. 1400 CE to 1699s CE
   {
     date: '1440s CE',
     location: 'Mainz, Germany',
@@ -328,9 +277,9 @@ window.timelineItems = [
     description: "Johannes Gutenberg develops the movable-type printing press, drastically speeding the circulation of new ideas.",
     img: "/api/placeholder/100/100",
     people: ['Johannes Gutenberg'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2b. 1400 CE to 1699s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "1400 CE to 1699 CE",
     connections: ['Paper Production and Trade']
   },
   {
@@ -340,9 +289,9 @@ window.timelineItems = [
     description: 'Wealthy or well-connected amateurs (often aristocrats) pursued scientific research as a leisure activity.',
     img: "/api/placeholder/100/100",
     people: ['Sir George Cayley'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2b. 1400 CE to 1699s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "1400 CE to 1699 CE",
     connections: []
   },
   
@@ -354,9 +303,9 @@ window.timelineItems = [
     description: 'Steam power revolutionizes manufacturing and metallurgy, providing mass production methods and mechanical expertise that future aircraft builders would rely on.',
     img: "/api/placeholder/100/100",
     people: ['James Watt', 'Matthew Boulton'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2c. 1760s CE to 1890s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "1760 CE to 1890 CE",
     connections: ["Hero's Aeolipile"]
   },
   {
@@ -366,21 +315,21 @@ window.timelineItems = [
     description: "Charles Goodyear discovers how to vulcanize rubber, producing stronger, more elastic material...",
     img: "/api/placeholder/100/100",
     people: ['Charles Goodyear'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2c. 1760s CE to 1890s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1760 CE to 1890 CE",
     connections: ['Industrial Revolution']
   },
   {
     date: '1850s',
     location: 'London, England',
-    title: 'Great Exhibitions and World Fairs',
+    title: 'Great Exhibitions, Prizes, and World Fairs',
     description: 'International fair showcasing industrial inventions. A growing public interest in science and technology.',
     img: "/api/placeholder/100/100",
     people: ['Prince Albert', 'Henry Cole'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2c. 1760s CE to 1890s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "1760 CE to 1890 CE",
     connections: ['Industrial Revolution']
   },
   {
@@ -390,11 +339,12 @@ window.timelineItems = [
     description: 'Charles Martin Hall and Paul Héroult separately discover a cost-effective method to produce aluminum...',
     img: "/api/placeholder/100/100",
     people: ['Charles Martin Hall', 'Paul Héroult'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2c. 1760s CE to 1890s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1760 CE to 1890 CE",
     connections: ['Industrial Revolution']
   },
+    // 2d. 1890 CE to 1980 CE
   {
     date: '1901',
     location: 'France',
@@ -402,23 +352,46 @@ window.timelineItems = [
     description: 'Industrialist Henri Deutsch de la Meurthe offers prizes for airship and airplane feats...',
     img: "/api/placeholder/100/100",
     people: ['Henri Deutsch de la Meurthe'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2c. 1760s CE to 1890s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: []
   },
   
-  // 2d. 1890s CE to 1980s CE
-  {
+ {
     date: '1914–1918',
     location: 'Europe/Worldwide',
     title: 'Military Demand in World War I',
     description: 'World War I massively accelerates aircraft innovation...',
     img: "/api/placeholder/100/100",
     people: ['Various WWI Aircraft Pioneers'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "1890 CE to 1980 CE",
+    connections: []
+  },
+ {
+    date: '1920-1950',
+    location: 'Europe/Worldwide',
+    title: 'Post-War Commercial Aviation Infrastructure',
+    description: 'World War I massively accelerates aircraft innovation...',
+    img: "/api/placeholder/100/100",
+    people: ['Various Aircraft Pioneers'],
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "1890 CE to 1980 CE",
+    connections: []
+  },
+ {
+    date: '1950-1980',
+    location: 'USA and USSR',
+    title: 'Military-Industrial Complex and Cold War',
+    description: 'World War I massively accelerates aircraft innovation...',
+    img: "/api/placeholder/100/100",
+    people: ['Various Aircraft Pioneers'],
+    Category: "Socioeconomic Factors",
+    Subcategory: "MAJOR",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: []
   },
   {
@@ -428,9 +401,9 @@ window.timelineItems = [
     description: "Henry Farman develops aircraft used in World War I, advancing military aviation.",
     img: "/api/placeholder/100/100",
     people: ['Henry Farman'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: []
   },
   {
@@ -440,9 +413,10 @@ window.timelineItems = [
     description: "Marked the beginning of military funding for Zeppelin development, establishing airships as potential reconnaissance and bomber platforms.",
     img: "/api/placeholder/100/100",
     people: ['Ferdinand von Zeppelin'],
-    category: "Zeppelins",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    TimeLineCategory: "Zeppelins",
+    Category: "Socioeconomic Factors",
+    Subcategory: "TIMELINE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: ['Hall–Héroult Process for Aluminum']
   },
   {
@@ -452,9 +426,9 @@ window.timelineItems = [
     description: "Calbraith Perry Rodgers completes the first transcontinental flight across the United States.",
     img: "/api/placeholder/100/100",
     people: ['Calbraith Perry Rodgers'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: []
   },
   {
@@ -464,9 +438,9 @@ window.timelineItems = [
     description: "The St. Petersburg-Tampa Airboat Line starts commercial flights, pioneering airline service.",
     img: "/api/placeholder/100/100",
     people: ['Thomas Benoist', 'Percival Fansler'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: []
   },
   {
@@ -476,21 +450,10 @@ window.timelineItems = [
     description: "The dramatic end of the Hindenburg became one of the most famous disasters in aviation history, leaving a lasting legacy on the public consciousness.",
     img: "/api/placeholder/100/100",
     people: ['Ferdinand von Zeppelin'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
-    connections: ['Hall–Héroult Process for Aluminum']
-  },
-  {
-    date: '1939-1945',
-    location: 'Europe',
-    title: "Military Demand in World War II",
-    description: "The typical cruising speed was 60–80 mph for Zappelin while early airplanes achieved speeds of 150–300 mph and continued to improve rapidly.",
-    img: "/api/placeholder/100/100",
-    people: ['Ferdinand von Zeppelin'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    TimeLineCategory: "Zeppelins",
+    Category: "Socioeconomic Factors",
+    Subcategory: "TIMELINE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: ['Hall–Héroult Process for Aluminum']
   },
   {
@@ -500,9 +463,9 @@ window.timelineItems = [
     description: "Chuck Yeager pilots the Bell X-1 to become the first to break the sound barrier in level flight.",
     img: "/api/placeholder/100/100",
     people: ['Chuck Yeager'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "2. Socioeconomic Factors", 
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: []
   },
   {
@@ -512,9 +475,9 @@ window.timelineItems = [
     description: 'First artificial satellite',
     img: "/api/placeholder/100/100",
     people: ['Sergei Korolev'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: []
   },
   {
@@ -524,9 +487,9 @@ window.timelineItems = [
     description: 'Neil Armstrong and Buzz Aldrin land on the Moon...',
     img: "/api/placeholder/100/100",
     people: ['Neil Armstrong', 'Buzz Aldrin'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "2. Socioeconomic Factors",
-    excelSubcategory: "2d. 1890s CE to 1980s CE",
+    Category: "Socioeconomic Factors",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1890 CE to 1980 CE",
     connections: []
   },
   
@@ -540,9 +503,9 @@ window.timelineItems = [
     description: "Archimedes discovers the principles of buoyancy, which later influence theories of flight.",
     img: "/api/placeholder/100/100",
     people: ['Archimedes'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3a. 500s BCE to 1599s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "500 BCE to 1599 CE",
     connections: ["Roger Bacon's Air Support Theory", "Robert Hooke's Airflow"]
   },
   {
@@ -552,9 +515,9 @@ window.timelineItems = [
     description: "Hero of Alexandria designs the aeolipile, a simple steam turbine. While not used for flight, it demonstrated the potential of steam power.",
     img: "/api/placeholder/100/100",
     people: ['Hero of Alexandria'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3a. 500s BCE to 1599s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "500 BCE to 1599 CE",
     connections: ["Archytas' Flying Pigeon", "Henri Giffard's Dirigible"]
   },
   {
@@ -564,9 +527,9 @@ window.timelineItems = [
     description: "Roger Bacon theorizes that air can support objects like water supports boats.",
     img: "/api/placeholder/100/100",
     people: ['Roger Bacon'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3a. 500s BCE to 1599s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "500 BCE to 1599 CE",
     connections: ["Archimedes' Buoyancy Principle", "Robert Hooke's Airflow"]
   },
   {
@@ -576,9 +539,9 @@ window.timelineItems = [
     description: "Leonardo da Vinci's studies of bird flight included detailed observations of how air interacts with wings to generate lift.",
     img: "/api/placeholder/100/100",
     people: ['Leonardo da Vinci'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3a. 500s BCE to 1599s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "500 BCE to 1599 CE",
     connections: ['Paper Production and Trade']
   },
   
@@ -590,9 +553,9 @@ window.timelineItems = [
     description: 'Robert Hooke investigates concepts of drag and airflow, contributing to the body of knowledge that would eventually be applied to flight.',
     img: "/api/placeholder/100/100",
     people: ['Robert Hooke'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3b. 1600s CE to 1760s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "500 BCE to 1599 CE",
     connections: ["Archimedes' Buoyancy Principle", "Roger Bacon's Air Support Theory", 'The Gentleman Scientist Tradition']
   },
   {
@@ -602,9 +565,9 @@ window.timelineItems = [
     description: 'Lays out the three laws of motion and universal gravitation, essential to understanding how and why aircraft can generate lift...',
     img: "/api/placeholder/100/100",
     people: ['Isaac Newton'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3b. 1600s CE to 1760s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1600 CE to 1760 CE",
     connections: ['The Gentleman Scientist Tradition']
   },
   {
@@ -614,9 +577,9 @@ window.timelineItems = [
     description: 'Theoretical design for a hot air balloon called the "Passarola."',
     img: "/api/placeholder/100/100",
     people: ['Bartolomeu de Gusmão'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3b. 1600s CE to 1760s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1600 CE to 1760 CE",
     connections: ["Kongming's Sky Lantern", "Archimedes' Buoyancy Principle"]
   },
   {
@@ -626,9 +589,9 @@ window.timelineItems = [
     description: 'Describes how pressure in a moving fluid decreases as velocity increases; foundational for many aerodynamic analyses of wing lift.',
     img: "/api/placeholder/100/100",
     people: ['Daniel Bernoulli'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3b. 1600s CE to 1760s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1600 CE to 1760 CE",
     connections: []
   },
   
@@ -640,9 +603,9 @@ window.timelineItems = [
     description: "George Cayley designs the first modern glider with distinct lift, thrust, and control components.",
     img: "/api/placeholder/100/100",
     people: ['George Cayley'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: ['Early Kites', 'The Gentleman Scientist Tradition']
   },
   {
@@ -652,9 +615,9 @@ window.timelineItems = [
     description: "George Cayley's fixed-wing concept revolutionizes flight theory.",
     img: "/api/placeholder/100/100",
     people: ['George Cayley'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: ["George Cayley's Glider Design"]
   },
   {
@@ -664,9 +627,9 @@ window.timelineItems = [
     description: "Sadi Carnot describes the theoretical limits of heat engines, influencing future aircraft engine design.",
     img: "/api/placeholder/100/100",
     people: ['Sadi Carnot'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: []
   },
   {
@@ -676,9 +639,9 @@ window.timelineItems = [
     description: "Francis Wenham builds the first wind tunnel to study aerodynamics. Proved that long, narrow wings generate more lift.",
     img: "/api/placeholder/100/100",
     people: ['Francis Wenham'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: []
   },
   {
@@ -688,9 +651,9 @@ window.timelineItems = [
     description: "Systematic testing of different wing shapes and configurations.",
     img: "/api/placeholder/100/100",
     people: ['Francis Wenham', 'John Browning'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: ["Francis Wenham's Wind Tunnel"]
   },
   {
@@ -700,9 +663,9 @@ window.timelineItems = [
     description: "Development of more efficient internal combustion engines.",
     img: "/api/placeholder/100/100",
     people: ['Nikolaus Otto'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: []
   },
   {
@@ -712,9 +675,9 @@ window.timelineItems = [
     description: "Octave Chanute's theoretical improvements to aircraft design.",
     img: "/api/placeholder/100/100",
     people: ['Octave Chanute'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: []
   },
   {
@@ -724,9 +687,9 @@ window.timelineItems = [
     description: "Theoretical models that influenced early aircraft design.",
     img: "/api/placeholder/100/100",
     people: ['Samuel Pierpont Langley'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: []
   },
   {
@@ -736,9 +699,9 @@ window.timelineItems = [
     description: "Percy Pilcher designs a powered aircraft but dies in a glider accident before testing it.",
     img: "/api/placeholder/100/100",
     people: ['Percy Pilcher'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3c. 1770s CE to 1899s CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1770 CE to 1899 CE",
     connections: []
   },
   
@@ -750,9 +713,9 @@ window.timelineItems = [
     description: "Prandtl's insight that a thin layer of fluid near a surface governs most aerodynamic drag/energy loss...",
     img: "/api/placeholder/100/100",
     people: ['Ludwig Prandtl'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3d. 1900s CE to 1945 CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1900 CE to 1945 CE",
     connections: []
   },
   {
@@ -762,9 +725,9 @@ window.timelineItems = [
     description: "Established the relationship between circulation around an airfoil and the lift force...",
     img: "/api/placeholder/100/100",
     people: ['Martin Wilhelm Kutta', 'Nikolai Zhukovsky'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3d. 1900s CE to 1945 CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1900 CE to 1945 CE",
     connections: []
   },
   {
@@ -774,9 +737,9 @@ window.timelineItems = [
     description: "Develops tailless aircraft designs with military applications.",
     img: "/api/placeholder/100/100",
     people: ['John William Dunne'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3d. 1900s CE to 1945 CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1900 CE to 1945 CE",
     connections: []
   },
   {
@@ -786,9 +749,9 @@ window.timelineItems = [
     description: "Theoretical principles for aircraft stability.",
     img: "/api/placeholder/100/100",
     people: ['John William Dunne'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3d. 1900s CE to 1945 CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1900 CE to 1945 CE",
     connections: []
   },
   {
@@ -798,9 +761,9 @@ window.timelineItems = [
     description: "Henri Coandă's theoretical contributions to jet propulsion.",
     img: "/api/placeholder/100/100",
     people: ['Henri Coandă'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3d. 1900s CE to 1945 CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1900 CE to 1945 CE",
     connections: []
   },
   {
@@ -810,9 +773,9 @@ window.timelineItems = [
     description: "Theoretical understanding of aircraft performance limitations.",
     img: "/api/placeholder/100/100",
     people: ['Various WWI Aviators'],
-    category: "Theoretical Breakthroughs",
-    excelCategory: "3. Scientific Theories Breakthroughs",
-    excelSubcategory: "3d. 1900s CE to 1945 CE",
+    Category: "Scientific Theories and Breakthroughs",
+    Subcategory: "CIRCLE",
+    TimePeriod: "1900 CE to 1945 CE",
     connections: []
   },
   
@@ -826,9 +789,9 @@ window.timelineItems = [
     description: 'Kites are invented in China, an early form of human flight.',
     img: "/api/placeholder/100/100",
     people: ['Mozi', 'Lu Ban'],
-    category: "Aviation Technology",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4a. Non-Human Flight",
+    TimeLineCategory: "Non-Human Flight",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['Paper Production and Trade']
   },
   {
@@ -838,9 +801,9 @@ window.timelineItems = [
     description: "Archytas of Tarentum creates a wooden pigeon that could \"fly\" using a jet of air.",
     img: "/api/placeholder/100/100",
     people: ['Archytas of Tarentum'],
-    category: "Aviation Technology",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4a. Non-Human Flight",
+    TimeLineCategory: "Non-Human Flight",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['The Myth of Icarus and Daedalus']
   },
   {
@@ -850,9 +813,9 @@ window.timelineItems = [
     description: "Kongming invents the sky lantern, the first hot air balloon. From its military use, it became known as the Kongming lantern.",
     img: "/api/placeholder/100/100",
     people: ['Kongming'],
-    category: "Aviation Technology",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4a. Non-Human Flight",
+    TimeLineCategory: "Non-Human Flight",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['Early Kites', 'Paper Production and Trade']
   },
   
@@ -864,9 +827,9 @@ window.timelineItems = [
     description: "Abbas Ibn Firnas jumps from a tower wearing a cloak stiffened with wooden struts.",
     img: "/api/placeholder/100/100",
     people: ['Abbas Ibn Firnas'],
-    category: "Aviation Technology",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4b. Early Attempts at Human Flight",
+    TimeLineCategory: "Early Attempts at Human Flight",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ["The Myth of Icarus and Daedalus", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
   },
   {
@@ -876,9 +839,9 @@ window.timelineItems = [
     description: "A Benedictine monk who tries to fly with a glider-like apparatus. He may have glided a short distance..",
     img: "/api/placeholder/100/100",
     people: ['Eilmer of Malmesbury'],
-    category: "Aviation Technology",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4b. Early Attempts at Human Flight",
+    TimeLineCategory: "Early Attempts at Human Flight",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "João Torto's Failed Flight Attempt", 'Early Kites']
   },
   {
@@ -888,9 +851,9 @@ window.timelineItems = [
     description: "João Torto, a Portuguese barber, attempts human flight with fabric wings but falls to his death.",
     img: "/api/placeholder/100/100",
     people: ['João Torto'],
-    category: "Aviation Technology",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4b. Early Attempts at Human Flight",
+    TimeLineCategory: "Early Attempts at Human Flight",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump"]
   },
   
@@ -902,9 +865,9 @@ window.timelineItems = [
     description: 'Bartolomeu de Gusmão, a Brazilian-Portuguese priest, demonstrates a hot air balloon prototype called the "Passarola."',
     img: "/api/placeholder/100/100",
     people: ['Bartolomeu de Gusmão'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4c. The Age of the Balloon",
+    TimeLineCategory: "The Age of the Balloon",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ["Kongming's Sky Lantern", "Archimedes' Buoyancy Principle"]
   },
   {
@@ -914,9 +877,9 @@ window.timelineItems = [
     description: "Jean-François Pilâtre de Rozier and François Laurent d'Arlandes make the first manned flight in a hot air balloon built by the Montgolfier brothers.",
     img: "/api/placeholder/100/100",
     people: ['Jean-François Pilâtre de Rozier', "François Laurent d'Arlandes", 'Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4c. The Age of the Balloon",
+    TimeLineCategory: "The Age of the Balloon",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ["Kongming's Sky Lantern"]
   },
   {
@@ -925,9 +888,9 @@ window.timelineItems = [
     title: 'Human-Passenger Flights on Hot Air Balloons',
     description: 'Marked the first time humans experienced flight, sparking public fascination and further experimentation with aerial navigation.',
     img: "/api/placeholder/100/100",
-    category: 'Aviation Technology',
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4c. The Age of the Balloon",
+    TimeLineCategory: "The Age of the Balloon",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci\'s Flying Machines']
   },
   
@@ -939,9 +902,9 @@ window.timelineItems = [
     description: "George Cayley successfully flies the first manned glider. Developed principles of lift, drag, and fixed-wing aircraft.",
     img: "/api/placeholder/100/100",
     people: ['George Cayley'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4d. Early Glider Experiments",
+    TimeLineCategory: "Early Glider Experiments",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ["George Cayley's Glider Design"]
   },
   {
@@ -951,9 +914,9 @@ window.timelineItems = [
     description: "Otto Lilienthal achieves controlled glider flights and documents aerodynamic research, proving human flight was possible.",
     img: "/api/placeholder/100/100",
     people: ['Otto Lilienthal'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4d. Early Glider Experiments",
+    TimeLineCategory: "Early Glider Experiments",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -963,9 +926,9 @@ window.timelineItems = [
     description: "Octave Chanute advances glider designs and builds a successful biplane glider, improving aviation theories.",
     img: "/api/placeholder/100/100",
     people: ['Octave Chanute'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4d. Early Glider Experiments",
+    TimeLineCategory: "Early Glider Experiments",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -974,9 +937,9 @@ window.timelineItems = [
     title: 'Gliders and the Foundation of Controlled Flight',
     description: 'Otto Lilienthal\'s glider flights in the 1890s represented the first controlled, repeatable manned flights using fixed wings and an understanding of lift and control surfaces.',
     img: "/api/placeholder/100/100",
-    category: 'Aviation Technology',
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4d. Early Glider Experiments",
+    TimeLineCategory: "Early Glider Experiments",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['Silk Production and Trade', 'The Industrial Revolution', 'Leonardo da Vinci\'s Bird Sketches']
   },
   
@@ -988,9 +951,9 @@ window.timelineItems = [
     description: "William Henson patents an early aircraft design with fixed wings and a steam-powered engine.",
     img: "/api/placeholder/100/100",
     people: ['William Henson'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ["Hero's Aeolipile", "Leonardo da Vinci's Flying Machines"]
   },
   {
@@ -1000,9 +963,9 @@ window.timelineItems = [
     description: "Clément Ader builds the Éole, a bat-like steam-powered aircraft, which briefly lifts off but lacks control.",
     img: "/api/placeholder/100/100",
     people: ['Clément Ader'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1012,9 +975,9 @@ window.timelineItems = [
     description: "Hiram Maxim builds and tests a massive steam-powered biplane but fails to achieve sustained flight.",
     img: "/api/placeholder/100/100",
     people: ['Hiram Maxim'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1024,9 +987,9 @@ window.timelineItems = [
     description: "Samuel Pierpont Langley flies small, unmanned models successfully. Built the Aerodrome A, which failed at full scale.",
     img: "/api/placeholder/100/100",
     people: ['Samuel Pierpont Langley'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1035,9 +998,9 @@ window.timelineItems = [
     title: 'Dawn of Modern Aviation: Powered Flight',
     description: 'A frenzied period of experimentation with countless inventors, engineers, and enthusiasts building prototypes to unlock the secrets of powered flight.',
     img: "/api/placeholder/100/100",
-    category: 'Aviation Technology',
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['Silk Production and Trade', 'The Industrial Revolution', 'Leonardo da Vinci\'s Bird Sketches']
   },
   {
@@ -1047,9 +1010,9 @@ window.timelineItems = [
     description: "Gustave Whitehead reportedly flies in Connecticut, though documentation remains debated.",
     img: "/api/placeholder/100/100",
     people: ['Gustave Whitehead'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1059,9 +1022,9 @@ window.timelineItems = [
     description: "Richard Pearse builds a monoplane and makes brief, uncontrolled flights.",
     img: "/api/placeholder/100/100",
     people: ['Richard Pearse'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1071,9 +1034,9 @@ window.timelineItems = [
     description: "Karl Jatho builds an unstable monoplane that flies briefly but lacks thorough documentation.",
     img: "/api/placeholder/100/100",
     people: ['Karl Jatho'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1083,9 +1046,9 @@ window.timelineItems = [
     description: "Preston Watson allegedly flies, though no strong evidence exists.",
     img: "/api/placeholder/100/100",
     people: ['Preston Watson'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1095,9 +1058,22 @@ window.timelineItems = [
     description: "Alberto Santos-Dumont flies the 14-bis in Paris—the first powered airplane flight recognized by the Aéro-Club de France.",
     img: "/api/placeholder/100/100",
     people: ['Alberto Santos-Dumont'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+    connections: []
+  },
+  { 
+    date: '1903',
+    location: 'United States',
+    title: "Wright Brothers' Flights",
+    description: "The Wright brothers, Orville and Wilbur, make the first successful sustained, controlled, powered flight in their Wright Flyer at Kitty Hawk, North Carolina.",
+    img: "/api/placeholder/100/100",
+    people: ['Orville Wright', 'Wilbur Wright'],
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+    nodeType: "Timeline",
     connections: []
   },
   {
@@ -1107,21 +1083,9 @@ window.timelineItems = [
     description: "Traian Vuia designs a monoplane with wheels that takes off unaided but flies only short distances.",
     img: "/api/placeholder/100/100",
     people: ['Traian Vuia'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
-    connections: []
-  },
-  {
-    date: '1908',
-    location: 'France',
-    title: "Aída de Acosta Pilots Santos-Dumont's Dirigible",
-    description: "Aída de Acosta becomes the first woman to pilot an aircraft: Santos-Dumont's dirigible No. 9.",
-    img: "/api/placeholder/100/100",
-    people: ['Aída de Acosta', 'Alberto Santos-Dumont'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1131,9 +1095,9 @@ window.timelineItems = [
     description: "Louis Blériot's successful Channel crossing proves the airplane's viability for transportation.",
     img: "/api/placeholder/100/100",
     people: ['Louis Blériot'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1143,9 +1107,9 @@ window.timelineItems = [
     description: "Dimitri Sensaud de Lavaud completes the first powered flight in Latin America.",
     img: "/api/placeholder/100/100",
     people: ['Dimitri Sensaud de Lavaud'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1155,9 +1119,9 @@ window.timelineItems = [
     description: "Henri Fabre achieves the first successful seaplane flight.",
     img: "/api/placeholder/100/100",
     people: ['Henri Fabre'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1167,9 +1131,9 @@ window.timelineItems = [
     description: "Henri Coandă builds the Coandă-1910, possibly the first jet-propelled aircraft.",
     img: "/api/placeholder/100/100",
     people: ['Henri Coandă'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4e. Race Toward Modern Aviation",
+    TimeLineCategory: "Race Toward Modern Aviation",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   
@@ -1181,9 +1145,9 @@ window.timelineItems = [
     description: "Henri Giffard invents the first controllable dirigible powered by a steam engine.",
     img: "/api/placeholder/100/100",
     people: ['Henri Giffard'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4f. Parallel Alternative: The Zeppelin",
+    TimeLineCategory: "Parallel Alternative: The Zeppelin",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ["Hero's Aeolipile", 'Industrial Revolution']
   },
   {
@@ -1193,9 +1157,9 @@ window.timelineItems = [
     description: "Charles Renard and Arthur Constantin Krebs launch a non-rigid airship that inspires Zeppelin.",
     img: "/api/placeholder/100/100",
     people: ['Charles Renard', 'Arthur Constantin Krebs'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4f. Parallel Alternative: The Zeppelin",
+    TimeLineCategory: "Parallel Alternative: The Zeppelin",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1205,9 +1169,9 @@ window.timelineItems = [
     description: "Ferdinand von Zeppelin develops rigid airships, leading to widespread use of zeppelins.",
     img: "/api/placeholder/100/100",
     people: ['Ferdinand von Zeppelin'],
-    category: "Zeppelins",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4f. Parallel Alternative: The Zeppelin",
+    TimeLineCategory: "Parallel Alternative: The Zeppelin",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['Hall–Héroult Process for Aluminum', "Charles Renard and Arthur Constantin's Le France"]
   },
   {
@@ -1217,9 +1181,9 @@ window.timelineItems = [
     description: "The DELAG airline was the world's first commercial airline, operating Zeppelin airships and carrying over 34,000 passengers without a fatal accident until World War I.",
     img: "/api/placeholder/100/100",
     people: ['Ferdinand von Zeppelin'],
-    category: "Zeppelins",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4f. Parallel Alternative: The Zeppelin",
+    TimeLineCategory: "Parallel Alternative: The Zeppelin",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['Hall–Héroult Process for Aluminum']
   },
   {
@@ -1228,9 +1192,9 @@ window.timelineItems = [
     title: 'Doomed Alternative: Zeppelins',
     description: 'Zeppelins were the first technology to enable sustained, long-distance passenger travel by air, bridging the gap between balloons and modern airplanes.',
     img: "/api/placeholder/100/100",
-    category: 'Aviation Technology',
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4f. Parallel Alternative: The Zeppelin",
+    TimeLineCategory: "Parallel Alternative: The Zeppelin",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: ['The Industrial Revolution']
   },
   {
@@ -1240,9 +1204,9 @@ window.timelineItems = [
     description: "The LZ 127 Graf Zeppelin, a large passenger-carrying rigid airship, enters commercial service...",
     img: "/api/placeholder/100/100",
     people: ['Ferdinand von Zeppelin'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4f. Parallel Alternative: The Zeppelin",
+    TimeLineCategory: "Parallel Alternative: The Zeppelin",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   
@@ -1254,9 +1218,9 @@ window.timelineItems = [
     description: "Chuck Yeager pilots the Bell X-1 to become the first to break the sound barrier in level flight.",
     img: "/api/placeholder/100/100",
     people: ['Chuck Yeager'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4g. Post-War Advancements",
+    TimeLineCategory: "Post-War Advancements",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1266,9 +1230,9 @@ window.timelineItems = [
     description: 'First artificial satellite',
     img: "/api/placeholder/100/100",
     people: ['Sergei Korolev'],
-    category: "Sociocultural & Economic Factors",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4g. Post-War Advancements",
+    TimeLineCategory: "Post-War Advancements",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   },
   {
@@ -1278,9 +1242,9 @@ window.timelineItems = [
     description: 'Neil Armstrong and Buzz Aldrin land on the Moon...',
     img: "/api/placeholder/100/100",
     people: ['Neil Armstrong', 'Buzz Aldrin'],
-    category: "Engineering Experiments & Demonstrations",
-    excelCategory: "4. Practical Implementations",
-    excelSubcategory: "4g. Post-War Advancements",
+    TimeLineCategory: "Post-War Advancements",
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
     connections: []
   }
 ];
