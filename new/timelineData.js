@@ -18,7 +18,7 @@ window.timelineItems = [
     date: '500s BCE',
     location: 'India',
     title: 'The Pushpaka Vimana',
-    description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a 'flying machine.'',
+    description: 'A mythical self-moving aerial vehicle described in the Ramayana epic; one of the earliest stories featuring a flying machine.',
     img: "/api/placeholder/100/100",
     people: ['The Pushpaka Vimana'],
     category: "Sociocultural & Economic Factors",
