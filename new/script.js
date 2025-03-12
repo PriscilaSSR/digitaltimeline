@@ -569,7 +569,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .style("pointer-events", "none")
         .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
         .style("color", "white")
-        .html(`<strong>${d.TimeLineCategory || d.title}</strong>`);
+        .html(`<strong>${d.TimeLineCategory}</strong>`);
     });
 
     
@@ -857,7 +857,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
       
       // Add legend for node types if this is the first category
-      if (categoryName === "1. Key Literary & Cultural Works") {
+      if (categoryName === "Key Literary & Cultural Works") {
         const nodeTypeLegend = d3.select(".category-legend")
           .append("div")
           .style("margin-top", "20px")
@@ -913,106 +913,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // -------------------------
-  // 8) ADD MISSING NODES FROM NEWORDEREVENT
-  // -------------------------
-  
-  // This function would add any missing nodes that are in the NewOrderEvents.docx file
-  // but not in the current visualization
-  function addMissingNodesFromNewOrderEvents() {
-    // In a real implementation, this would compare the current data
-    // with the nodes from NewOrderEvents.docx
-    console.log("Function ready to add missing nodes from NewOrderEvents.docx when parsed");
-    
-    // Example of how to add nodes from the missing Wright Brothers event
-    const missingNodes = [
-      {
-        title: "Wright Brothers' Flights",
-        date: "1903-1906",
-        description: "Orville and Wilbur Wright achieve the first sustained, controlled, powered flight with their Wright Flyer.",
-        img: "/api/placeholder/100/100",
-        people: ['Orville Wright', 'Wilbur Wright'],
-        category: "Engineering Experiments & Demonstrations",
-        excelCategory: "4. Practical Implementations",
-        timePeriod: "4e. Race Toward Modern Aviation",
-        nodeType: "Timeline",
-        connections: []
-      }
-    ];
-    
-    // Add each missing node
-    missingNodes.forEach(newNode => {
-      // Parse the date
-      newNode.parsedYear = parseTimelineDate(newNode.date);
-      
-      // Add to data array
-      data.push(newNode);
-      
-      // Position the node based on its category and time period
-      const categoryPeriodAngles = categoryTimePeriodAngles[newNode.excelCategory];
-      if (!categoryPeriodAngles || !categoryPeriodAngles[newNode.timePeriod]) {
-        console.error("No angle data for category/period:", newNode.excelCategory, newNode.timePeriod);
-        return;
-      }
-      
-      const periodAngleData = categoryPeriodAngles[newNode.timePeriod];
-      const angle = (periodAngleData.startAngle + periodAngleData.endAngle) / 2;
-      
-      const [rMin, rMax] = nodePlacementRanges[newNode.excelCategory];
-      const radius = (rMin + rMax) / 2;
-      
-      newNode.x = center + Math.cos(angle) * radius;
-      newNode.y = center + Math.sin(angle) * radius;
-      
-      // Add the node to the visualization
-      const newNodeGroup = container.append("g")
-        .datum(newNode)
-        .attr("class", `node-group node-type-${newNode.nodeType}`)
-        .attr("data-category", newNode.excelCategory)
-        .attr("data-node-type", newNode.nodeType)
-        .attr("transform", `translate(${newNode.x}, ${newNode.y})`)
-        .on("click", function(event, d) {
-          showModal(d);
-        })
-        .call(drag);
-      
-      // Add the circle for the node
-      newNodeGroup.append("circle")
-        .attr("r", newNode.nodeType === "Timeline" ? 40 : 50)
-        .attr("fill", colorScale(newNode.excelCategory))
-        .style("stroke", "#333")
-        .style("stroke-width", 1)
-        .style("cursor", "move");
-      
-      // Add the label
-      newNodeGroup.append("foreignObject")
-        .attr("x", -40)
-        .attr("y", -40)
-        .attr("width", 80)
-        .attr("height", 80)
-        .append("xhtml:div")
-        .style("display", "flex")
-        .style("justify-content", "center")
-        .style("align-items", "center")
-        .style("text-align", "center")
-        .style("font-size", "10px")
-        .style("width", "100%")
-        .style("height", "100%")
-        .style("overflow", "hidden")
-        .style("pointer-events", "none")
-        .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
-        .style("color", "white")
-        .html(`<strong>${newNode.title}</strong><br><small>${newNode.date}</small>`);
-      
-      // Add to simulation
-      simulation.nodes().push(newNode);
-      simulation.alpha(0.3).restart();
-    });
-  }
-  
-  // Call this function to add the Wright Brothers node
-  // Uncomment this line to add the missing Wright Brothers node:
-  // addMissingNodesFromNewOrderEvents();
-  
+ 
   console.log("Visualization setup complete");
 });
