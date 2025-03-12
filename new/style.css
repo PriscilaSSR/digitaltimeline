@@ -163,32 +163,33 @@ body {
 }
 
 /* Style nodes based on categories */
+/* Style nodes based on categories */
+.node-group[data-category="1. Key Literary & Cultural Works"] rect,
 .node-group[data-category="1. Key Literary & Cultural Works"] circle {
   fill: #9c27b0;
   stroke: #9c27b0;
-  stroke-width: 2px;
 }
 
+.node-group[data-category="2. Socioeconomic Factors"] rect,
 .node-group[data-category="2. Socioeconomic Factors"] circle {
   fill: #1565c0; 
   stroke: #1565c0;
-  stroke-width: 2px;
 }
 
+.node-group[data-category="3. Scientific Theories Breakthroughs"] rect,
 .node-group[data-category="3. Scientific Theories Breakthroughs"] circle {
   fill: #00897b;
   stroke: #00897b;
-  stroke-width: 2px;
 }
 
+.node-group[data-category="4. Practical Implementations"] rect,
 .node-group[data-category="4. Practical Implementations"] circle {
   fill: #c62828;
   stroke: #c62828;
-  stroke-width: 2px;
 }
 
 /* Style nodes based on node types */
-.node-group[data-node-type="MAJOR"] circle {
+.node-group[data-node-type="MAJOR"] rect {
   stroke-width: 3px;
 }
 
@@ -218,9 +219,10 @@ body {
   }
 }
 
-.node-group[data-node-type="MAJOR"] circle {
+.node-group[data-node-type="MAJOR"] rect {
   animation: pulse 3s infinite ease-in-out;
 }
+`;
 
 /* Highlight time period sections */
 .time-slice {
