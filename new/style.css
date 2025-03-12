@@ -162,38 +162,47 @@ body {
   pointer-events: none;
 }
 
-/* Style nodes based on Excel categories */
+/* Style nodes based on categories */
 .node-group[data-category="1. Key Literary & Cultural Works"] circle {
+  fill: #9c27b0;
   stroke: #9c27b0;
   stroke-width: 2px;
 }
 
 .node-group[data-category="2. Socioeconomic Factors"] circle {
-  stroke: #c62828;
-  stroke-width: 2px;
-}
-
-.node-group[data-category="3. Scientific Theories Breakthroughs"] circle {
+  fill: #1565c0; 
   stroke: #1565c0;
   stroke-width: 2px;
 }
 
-.node-group[data-category="4. Practical Implementations"] circle {
-  stroke: #2e7d32;
+.node-group[data-category="3. Scientific Theories Breakthroughs"] circle {
+  fill: #00897b;
+  stroke: #00897b;
   stroke-width: 2px;
 }
 
-/* Highlight time period sections */
-.time-slice {
-  transition: opacity 0.3s ease;
+.node-group[data-category="4. Practical Implementations"] circle {
+  fill: #c62828;
+  stroke: #c62828;
+  stroke-width: 2px;
 }
 
-.time-slice:hover {
+/* Style nodes based on node types */
+.node-group[data-node-type="MAJOR"] circle {
+  stroke-width: 3px;
+}
+
+.node-group[data-node-type="CIRCLE"] circle {
+  stroke-width: 2px;
   opacity: 0.9;
-  stroke-width: 2.5px;
 }
 
-/* Add pulsing animation to special nodes */
+.node-group[data-node-type="Timeline"] circle {
+  stroke-width: 1px;
+  opacity: 0.8;
+}
+
+/* Add pulsing animation to MAJOR nodes */
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -209,6 +218,16 @@ body {
   }
 }
 
-.node-group[data-category="4. Practical Implementations"] circle {
+.node-group[data-node-type="MAJOR"] circle {
   animation: pulse 3s infinite ease-in-out;
+}
+
+/* Highlight time period sections */
+.time-slice {
+  transition: opacity 0.3s ease;
+}
+
+.time-slice:hover {
+  opacity: 0.9;
+  stroke-width: 2.5px;
 }
