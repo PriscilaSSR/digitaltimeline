@@ -140,6 +140,12 @@ body {
   display: flex;
   align-items: center;
   margin-bottom: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+  transform: translateX(3px);
 }
 
 .legend-color {
@@ -162,48 +168,50 @@ body {
   pointer-events: none;
 }
 
-/* Style nodes based on categories */
-/* Style nodes based on categories */
-.node-group[data-category="1. Key Literary & Cultural Works"] rect,
+/* Style nodes based on Excel categories */
 .node-group[data-category="1. Key Literary & Cultural Works"] circle {
   fill: #9c27b0;
-  stroke: #9c27b0;
-}
-
-.node-group[data-category="2. Socioeconomic Factors"] rect,
-.node-group[data-category="2. Socioeconomic Factors"] circle {
-  fill: #1565c0; 
-  stroke: #1565c0;
-}
-
-.node-group[data-category="3. Scientific Theories Breakthroughs"] rect,
-.node-group[data-category="3. Scientific Theories Breakthroughs"] circle {
-  fill: #00897b;
-  stroke: #00897b;
-}
-
-.node-group[data-category="4. Practical Implementations"] rect,
-.node-group[data-category="4. Practical Implementations"] circle {
-  fill: #c62828;
-  stroke: #c62828;
-}
-
-/* Style nodes based on node types */
-.node-group[data-node-type="MAJOR"] rect {
-  stroke-width: 3px;
-}
-
-.node-group[data-node-type="CIRCLE"] circle {
+  stroke: #fff;
   stroke-width: 2px;
-  opacity: 0.9;
 }
 
-.node-group[data-node-type="Timeline"] circle {
-  stroke-width: 1px;
-  opacity: 0.8;
+.node-group[data-category="2. Socioeconomic Factors"] circle {
+  fill: #c62828;
+  stroke: #fff;
+  stroke-width: 2px;
 }
 
-/* Add pulsing animation to MAJOR nodes */
+.node-group[data-category="3. Scientific Theories Breakthroughs"] circle {
+  fill: #1565c0;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+.node-group[data-category="4. Practical Implementations"] circle {
+  fill: #2e7d32;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+/* Specific styling for different node types */
+.node-major circle {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.node-timeline circle {
+  animation: pulse 3s infinite ease-in-out;
+  stroke-dasharray: 4,4;
+}
+
+.node-circle circle {
+  transition: all 0.2s ease;
+}
+
+.node-circle:hover circle {
+  transform: scale(1.05);
+}
+
+/* Add pulsing animation to special nodes */
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -219,12 +227,7 @@ body {
   }
 }
 
-.node-group[data-node-type="MAJOR"] rect {
-  animation: pulse 3s infinite ease-in-out;
-}
-`;
-
-/* Highlight time period sections */
+/* Time period highlight styles */
 .time-slice {
   transition: opacity 0.3s ease;
 }
@@ -232,4 +235,29 @@ body {
 .time-slice:hover {
   opacity: 0.9;
   stroke-width: 2.5px;
+}
+
+/* Enhanced timeline styling */
+.timeline-item {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.timeline-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.timeline-item h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+/* Arc text styling */
+.node-major textPath {
+  font-weight: bold;
+  text-shadow: 0 0 3px #000;
 }
