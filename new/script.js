@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // We'll use a 2000x2000 viewBox
   const viewBoxSize = 2000;
   const center = viewBoxSize / 2; // 1000
-  const maxOuterRadius = center * 0.9; // 900
+  const maxOuterRadius = center * 0.9; // 800
   
   // Create the SVG + container for zoom/pan
   const svg = d3.select("#chart")
@@ -61,231 +61,62 @@ document.addEventListener("DOMContentLoaded", function() {
   d3.select("#close-timeline").on("click", function() {
     d3.select("#timeline-container").style("display", "none");
   });
-    
+  
   // -------------------------
-  // 2) DEFINE CATEGORIES AND STRUCTURE
+  // 2) DEFINE CIRCULAR BOUNDARIES
   // -------------------------
   
-  // Define the main categories based on the new structure
-  const mainCategories = {
-    "1. Key Literary & Cultural Works": {
-      color: "#9c27b0", // Purple
-      radius: maxOuterRadius,
-      timePeriods: {
-        "1a. 500s BCE to 1399s CE": { startYear: -500, endYear: 1399 },
-        "1b. 1400 CE to 1799s CE": { startYear: 1400, endYear: 1799 },
-        "1c. 1800s CE to 1945 CE": { startYear: 1800, endYear: 1945 }
-      }
-    },
-    "2. Socioeconomic Factors": {
-      color: "#1565c0", // Blue
-      radius: maxOuterRadius * 0.75,
-      timePeriods: {
-        "2a. 500s BCE to 1399s CE": { startYear: -500, endYear: 1399 },
-        "2b. 1400 CE to 1699s CE": { startYear: 1400, endYear: 1699 },
-        "2c. 1760s CE to 1890s CE": { startYear: 1760, endYear: 1890 },
-        "2d. 1890s CE to 1980s CE": { startYear: 1890, endYear: 1980 }
-      }
-    },
-    "3. Scientific Theories Breakthroughs": {
-      color: "#00897b", // Teal
-      radius: maxOuterRadius * 0.5,
-      timePeriods: {
-        "3a. 500s BCE to 1599s CE": { startYear: -500, endYear: 1599 },
-        "3b. 1600s CE to 1760s CE": { startYear: 1600, endYear: 1760 },
-        "3c. 1770s CE to 1899s CE": { startYear: 1770, endYear: 1899 },
-        "3d. 1900s CE to 1945 CE": { startYear: 1900, endYear: 1945 }
-      }
-    },
-    "4. Practical Implementations": {
-      color: "#c62828", // Red
-      radius: maxOuterRadius * 0.25,
-      // Note: Category 4 uses thematic groups instead of time periods
-      thematicGroups: {
-        "4a. Non-Human Flight": {},
-        "4b. Early Attempts at Human Flight": {},
-        "4c. The Age of the Balloon": {},
-        "4d. Early Glider Experiments": {},
-        "4e. Race Toward Modern Aviation": {},
-        "4f. Parallel Alternative: The Zeppelin": {},
-        "4g. Post-War Advancements": {}
-      }
-    }
+  // Define circular boundaries for the Excel categories - these will be the dividing lines
+  const categoryBoundaries = {
+    "1. Key Literary & Cultural Works": maxOuterRadius,
+    "2. Socioeconomic Factors": maxOuterRadius * 0.75,
+    "3. Scientific Theories Breakthroughs": maxOuterRadius * 0.5,
+    "4. Practical Implementations": maxOuterRadius * 0.25
   };
-
+  
   // Define the spaces between boundaries where nodes will be positioned
   const nodePlacementRanges = {
-    "1. Key Literary & Cultural Works": [mainCategories["2. Socioeconomic Factors"].radius, mainCategories["1. Key Literary & Cultural Works"].radius],
-    "2. Socioeconomic Factors": [mainCategories["3. Scientific Theories Breakthroughs"].radius, mainCategories["2. Socioeconomic Factors"].radius],
-    "3. Scientific Theories Breakthroughs": [mainCategories["4. Practical Implementations"].radius, mainCategories["3. Scientific Theories Breakthroughs"].radius],
-    "4. Practical Implementations": [0, mainCategories["4. Practical Implementations"].radius]
+    "1. Key Literary & Cultural Works": [categoryBoundaries["2. Socioeconomic Factors"], categoryBoundaries["1. Key Literary & Cultural Works"]],
+    "2. Socioeconomic Factors": [categoryBoundaries["3. Scientific Theories Breakthroughs"], categoryBoundaries["2. Socioeconomic Factors"]],
+    "3. Scientific Theories Breakthroughs": [categoryBoundaries["4. Practical Implementations"], categoryBoundaries["3. Scientific Theories Breakthroughs"]],
+    "4. Practical Implementations": [0, categoryBoundaries["4. Practical Implementations"]]
   };
   
   // Colors for each Excel category
   const colorScale = d3.scaleOrdinal()
-    .domain(Object.keys(mainCategories))
-    .range(Object.values(mainCategories).map(cat => cat.color));
+    .domain(["1. Key Literary & Cultural Works", "2. Socioeconomic Factors", "3. Scientific Theories Breakthroughs", "4. Practical Implementations"])
+    .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
 
   // -------------------------
-  // 3) PARSE DATES AND PREPARE DATA
+  // 3) CALCULATE TIME PERIOD ANGLES
   // -------------------------
   
-  // Function to parse dates from the timeline data
-  function parseTimelineDate(dateStr) {
-    dateStr = dateStr.trim();
-    
-    // Handle BCE dates
-    if (dateStr.includes('BCE')) {
-      const year = parseInt(dateStr.replace(/[^0-9]/g, ''));
-      return -year; // Negative values for BCE
-    }
-    
-    // Handle century formats like "100s", "1600s"
-    if (dateStr.match(/^\d+s$/)) {
-      return parseInt(dateStr);
-    }
-    
-    // Handle date ranges like "1760–1840" or "1865-1904"
-    if (dateStr.includes('–') || dateStr.includes('-')) {
-      const parts = dateStr.split(/[–-]/);
-      const startYear = parseInt(parts[0]);
-      return startYear; // Just use the start year for positioning
-    }
-    
-    // Handle century descriptions like "17th–19th Centuries"
-    if (dateStr.includes('Centuries') || dateStr.includes('Century')) {
-      // Extract the first century mentioned
-      const match = dateStr.match(/(\d+)(?:st|nd|rd|th)/);
-      if (match) {
-        return (parseInt(match[1]) - 1) * 100; // 17th century starts at 1600
-      }
-    }
-    
-    // Handle simple years
-    if (dateStr.match(/^\d+$/)) {
-      return parseInt(dateStr);
-    }
-    
-    // Default fallback
-    return 0;
-  }
-
-  // Determine the time period or thematic group for an event
-  function assignCategoryAndGroup(item) {
-  // First, map the original category to the new structure
-  if (item.category === "Humanity's Dream of Flying") {
-    item.excelCategory = "1. Key Literary & Cultural Works";
-  } else if (item.category === "Sociocultural & Economic Factors") {
-    item.excelCategory = "2. Socioeconomic Factors";
-  } else if (item.category === "Theoretical Breakthroughs") {
-    item.excelCategory = "3. Scientific Theories Breakthroughs";
-  } else if (item.category === "Aviation Technology" || item.category === "Engineering Experiments & Demonstrations" || item.category === "Zeppelins") {
-    item.excelCategory = "4. Practical Implementations";
-  } else {
-    // Default for anything we missed
-    item.excelCategory = item.category;
-  }
-
-  // Process based on the category
-  const year = item.parsedYear;
-  
-  // For categories 1-3, assign a time period based on year
-  if (item.excelCategory === "1. Key Literary & Cultural Works" || 
-      item.excelCategory === "2. Socioeconomic Factors" || 
-      item.excelCategory === "3. Scientific Theories Breakthroughs") {
-      
-    const categoryObj = mainCategories[item.excelCategory];
-    
-    // Check each time period in this category
-    for (const [periodName, periodRange] of Object.entries(categoryObj.timePeriods)) {
-      if (year >= periodRange.startYear && year <= periodRange.endYear) {
-        item.timePeriod = periodName;
-        break;
-      }
-    }
-    
-    // If no time period was assigned, use the default
-    if (!item.timePeriod) {
-      const periods = Object.keys(categoryObj.timePeriods);
-      item.timePeriod = periods[periods.length - 1]; // Use the last period as default
-    }
-  }
-  // For category 4, assign a thematic group
-  else if (item.excelCategory === "4. Practical Implementations") {
-    // Assign thematic group based on title or content
-    if (item.title.includes("Kite") || item.title.includes("Pigeon") || item.title.includes("Lantern")) {
-      item.timePeriod = "4a. Non-Human Flight";
-    } else if (item.title.includes("jump") || item.title.includes("Failed Flight")) {
-      item.timePeriod = "4b. Early Attempts at Human Flight";
-    } else if (item.title.includes("Balloon") || item.title.includes("Passarola")) {
-      item.timePeriod = "4c. The Age of the Balloon";
-    } else if (item.title.includes("Glider")) {
-      item.timePeriod = "4d. Early Glider Experiments";
-    } else if (item.title.includes("Dirigible") || item.title.includes("Zeppelin") || item.title.includes("Airship")) {
-      item.timePeriod = "4f. Parallel Alternative: The Zeppelin";
-    } else if (year >= 1945) {
-      item.timePeriod = "4g. Post-War Advancements";
-    } else {
-      item.timePeriod = "4e. Race Toward Modern Aviation"; // Default for Category 4
-    }
-  }
-  
-  // Determine if the item is MAJOR, CIRCLE, or Timeline
-  if (item.excelCategory === "1. Key Literary & Cultural Works") {
-    item.nodeType = "MAJOR";
-  } else if (item.excelCategory === "2. Socioeconomic Factors") {
-    // For category 2, some items are MAJOR and some are CIRCLE
-    if (item.title.includes("Revolution") || item.title.includes("System") || item.title.includes("Tradition") || item.title.includes("Military Demand")) {
-      item.nodeType = "MAJOR";
-    } else {
-      item.nodeType = "CIRCLE";
-    }
-  } else if (item.excelCategory === "3. Scientific Theories Breakthroughs") {
-    item.nodeType = "CIRCLE";
-  } else if (item.excelCategory === "4. Practical Implementations") {
-    // UPDATED: Check if this is a CIRCLE node in category 4
-    if (item.timePeriod === "4a. Non-Human Flight" && item.title.match(/4aCIRCLE\d+/) ||
-        item.timePeriod === "4b. Early Attempts at Human Flight" && item.title.match(/4bCIRCLE\d+/) ||
-        item.timePeriod === "4c. The Age of the Balloon" && item.title.match(/4cCIRCLE\d+/) ||
-        item.timePeriod === "4d. Early Glider Experiments" && item.title.match(/4dCIRCLE\d+/) ||
-        item.timePeriod === "4e. Race Toward Modern Aviation" && item.title.match(/4eCIRCLE\d+/) ||
-        item.timePeriod === "4f. Parallel Alternative: The Zeppelin" && item.title.match(/4fCIRCLE\d+/) ||
-        item.timePeriod === "4g. Post-War Advancements" && item.title.match(/4gCIRCLE\d+/)) {
-      item.nodeType = "CIRCLE";
-    } else {
-      item.nodeType = "Timeline";
-    }
-  }
-}
-
-  // Parse all dates and assign categories and groups
-  data.forEach(d => {
-    d.parsedYear = parseTimelineDate(d.date);
-    assignCategoryAndGroup(d);
-  });
-  
-  // -------------------------
-  // 4) CALCULATE TIME PERIOD ANGLES
-  // -------------------------
-  
-  // Get all time periods for each category
+  // Get category-specific time periods
   const categoryTimePeriods = {};
   
-  // For categories 1-3 (time-based), get the time periods
-  ["1. Key Literary & Cultural Works", "2. Socioeconomic Factors", "3. Scientific Theories Breakthroughs"].forEach(category => {
-    categoryTimePeriods[category] = Object.keys(mainCategories[category].timePeriods);
+  // Get unique time periods for each category
+  Object.keys(nodePlacementRanges).forEach(category => {
+    categoryTimePeriods[category] = [...new Set(
+      data
+        .filter(d => d.excelCategory === category)
+        .map(d => d.timePeriod)
+    )].sort((a, b) => {
+      // Sort based on the first year or the prefix (1a, 1b, etc.)
+      const getPrefix = (period) => {
+        const match = period.match(/(\d+[a-z])/);
+        return match ? match[0] : period;
+      };
+      return getPrefix(a).localeCompare(getPrefix(b));
+    });
   });
-  
-  // For category 4 (thematic), get the thematic groups
-  categoryTimePeriods["4. Practical Implementations"] = Object.keys(mainCategories["4. Practical Implementations"].thematicGroups);
   
   console.log("Category time periods:", categoryTimePeriods);
   
-  // Calculate angle spans for time periods/thematic groups within each category
+  // Calculate angle spans for time periods within each category
   const categoryTimePeriodAngles = {};
   const totalAngle = 2 * Math.PI; // Full circle
   
-  // For each category, calculate the angles for its time periods/groups
+  // For each category, calculate the angles for its time periods
   Object.keys(categoryTimePeriods).forEach(category => {
     const periods = categoryTimePeriods[category];
     
@@ -310,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   
   // -------------------------
-  // 5) DRAW CATEGORY BOUNDARY CIRCLES AND TIME PERIOD DIVISIONS
+  // 4) DRAW CATEGORY BOUNDARY CIRCLES AND TIME PERIOD DIVISIONS
   // -------------------------
   
   // First, draw the category boundary circles
@@ -318,90 +149,70 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("class", "boundary-group");
     
   // Draw each category boundary as a circle
-  Object.entries(mainCategories).forEach(([category, info]) => {
+  Object.entries(categoryBoundaries).forEach(([category, radius]) => {
     boundaryGroup.append("circle")
       .attr("cx", center)
       .attr("cy", center)
-      .attr("r", info.radius)
+      .attr("r", radius)
       .attr("fill", "none")
-      .attr("stroke", info.color)
+      .attr("stroke", colorScale(category))
       .attr("stroke-width", 2)
       .attr("stroke-opacity", 0.7);
       
     // Add the category label along the top of each circle
     boundaryGroup.append("text")
       .attr("x", center)
-      .attr("y", center - info.radius + 20)
+      .attr("y", center - radius + 20)
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .text(category)
-      .style("fill", info.color)
+      .style("fill", colorScale(category))
       .style("font-size", "18px")
       .style("font-weight", "bold");
   });
   
   // Now draw the time period dividing lines for each category
- Object.entries(categoryTimePeriodAngles).forEach(([category, periodAngles]) => {
-  const [innerRadius, outerRadius] = nodePlacementRanges[category];
-  
-  // Draw dividing lines and triangles for each time period in this category
-  Object.entries(periodAngles).forEach(([period, angles]) => {
-    // Draw start angle line
-    boundaryGroup.append("line")
-      .attr("x1", center + Math.cos(angles.startAngle) * innerRadius)
-      .attr("y1", center + Math.sin(angles.startAngle) * innerRadius)
-      .attr("x2", center + Math.cos(angles.startAngle) * outerRadius)
-      .attr("y2", center + Math.sin(angles.startAngle) * outerRadius)
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
-      .attr("stroke-opacity", 0.6);
+  Object.entries(categoryTimePeriodAngles).forEach(([category, periodAngles]) => {
+    const [innerRadius, outerRadius] = nodePlacementRanges[category];
     
-    // Add triangle marker at the dividing line
-    const triangleSize = 12;
-    const trianglePos = innerRadius + (outerRadius - innerRadius) * 0.2; // Position near inner radius
-    const triangleX = center + Math.cos(angles.startAngle) * trianglePos;
-    const triangleY = center + Math.sin(angles.startAngle) * trianglePos;
-    
-    // Create points for triangle pointing along the dividing line
-    const angle = angles.startAngle + Math.PI/2; // Perpendicular to the radius
-    const triangle = [
-      [triangleX - Math.cos(angle) * triangleSize/2, triangleY - Math.sin(angle) * triangleSize/2],
-      [triangleX + Math.cos(angle) * triangleSize/2, triangleY + Math.sin(angle) * triangleSize/2],
-      [triangleX + Math.cos(angles.startAngle) * triangleSize, triangleY + Math.sin(angles.startAngle) * triangleSize]
-    ];
-    
-    boundaryGroup.append("polygon")
-      .attr("points", triangle.map(p => p.join(",")).join(" "))
-      .attr("fill", mainCategories[category].color)
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1);
-    
-    // Add time period label at the middle of the section
-    const labelAngle = (angles.startAngle + angles.endAngle) / 2;
-    const labelRadius = (innerRadius + outerRadius) / 2;
-    const labelX = center + Math.cos(labelAngle) * labelRadius;
-    const labelY = center + Math.sin(labelAngle) * labelRadius;
-    
-    // Calculate rotation for the text so it follows the arc
-    const rotation = (labelAngle * 180 / Math.PI + 90) % 360;
-    
-    boundaryGroup.append("text")
-      .attr("x", labelX)
-      .attr("y", labelY)
-      .attr("transform", `rotate(${rotation}, ${labelX}, ${labelY})`)
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .text(period)
-      .style("fill", "#fff")
-      .style("font-size", "14px")
-      .style("font-weight", "bold")
-      .style("text-shadow", "1px 1px 2px black")
-      .style("pointer-events", "none");
+    // Draw dividing lines for each time period in this category
+    Object.entries(periodAngles).forEach(([period, angles]) => {
+      // Draw start angle line
+      boundaryGroup.append("line")
+        .attr("x1", center + Math.cos(angles.startAngle) * innerRadius)
+        .attr("y1", center + Math.sin(angles.startAngle) * innerRadius)
+        .attr("x2", center + Math.cos(angles.startAngle) * outerRadius)
+        .attr("y2", center + Math.sin(angles.startAngle) * outerRadius)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.5)
+        .attr("stroke-opacity", 0.6);
+      
+      // Add time period label at the middle of the section
+      const labelAngle = (angles.startAngle + angles.endAngle) / 2;
+      const labelRadius = (innerRadius + outerRadius) / 2;
+      const labelX = center + Math.cos(labelAngle) * labelRadius;
+      const labelY = center + Math.sin(labelAngle) * labelRadius;
+      
+      // Calculate rotation for the text so it follows the arc
+      const rotation = (labelAngle * 180 / Math.PI + 90) % 360;
+      
+      boundaryGroup.append("text")
+        .attr("x", labelX)
+        .attr("y", labelY)
+        .attr("transform", `rotate(${rotation}, ${labelX}, ${labelY})`)
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .text(period)
+        .style("fill", "#fff")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .style("text-shadow", "1px 1px 2px black")
+        .style("pointer-events", "none");
+    });
   });
-});
 
   // -------------------------
-  // 6) INITIALIZE NODE POSITIONS AND LINKS
+  // 5) INITIALIZE NODE POSITIONS AND LINKS
   // -------------------------
 
   // Build link data
@@ -420,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  // Position nodes according to their categories, time periods, and node types
+  // Position nodes between the category boundary circles based on their time period
   data.forEach(d => {    
     // Get the angle data for this node's category and time period
     const categoryPeriodAngles = categoryTimePeriodAngles[d.excelCategory];
@@ -434,16 +245,14 @@ document.addEventListener("DOMContentLoaded", function() {
     
     const periodAngleData = categoryPeriodAngles[d.timePeriod];
     
-    // Get all events in this time period and category with the same nodeType
-    const eventsInSameGroup = data.filter(
-      item => item.timePeriod === d.timePeriod && 
-             item.excelCategory === d.excelCategory &&
-             item.nodeType === d.nodeType
+    // Get all events in this time period and category
+    const eventsInSamePeriodAndCategory = data.filter(
+      item => item.timePeriod === d.timePeriod && item.excelCategory === d.excelCategory
     );
     
-    // Find index of this node within its group
-    const nodeGroupIndex = eventsInSameGroup.indexOf(d);
-    const totalNodesInGroup = eventsInSameGroup.length;
+    // Find index of this node within its period+category group
+    const nodeGroupIndex = eventsInSamePeriodAndCategory.indexOf(d);
+    const totalNodesInGroup = eventsInSamePeriodAndCategory.length;
     
     // Calculate angle within the time period
     let angle;
@@ -461,31 +270,34 @@ document.addEventListener("DOMContentLoaded", function() {
     // Get the radius range for this category from nodePlacementRanges
     const [rMin, rMax] = nodePlacementRanges[d.excelCategory] || [0, maxOuterRadius];
     
-    // Distribute nodes between the category boundaries
+    // Distribute nodes between the category boundaries based on node type
     let radius;
     
-    // Different radius positioning based on node type
     if (d.nodeType === "MAJOR") {
-      // MAJOR nodes are positioned near the outer edge
-      radius = rMin + (rMax - rMin) * 0.8;
-    } else if (d.nodeType === "CIRCLE") {
-      // CIRCLE nodes are positioned in the middle area
-      radius = rMin + (rMax - rMin) * 0.5;
-    } else { // Timeline nodes
-      // Timeline nodes are distributed throughout the area
+      // MAJOR nodes are placed at the outer edge of their category ring to follow the arch
+      radius = rMax - 30; // Slight inset from the boundary
+    } else if (d.nodeType === "TIMELINE") {
+      // TIMELINE nodes are placed in the middle area
+      radius = (rMin + rMax) / 2;
+    } else {
+      // CIRCLE nodes are distributed throughout the ring
       if (totalNodesInGroup <= 1) {
+        // If only one node, place in middle of the area
         radius = (rMin + rMax) / 2;
       } else {
+        // For multiple nodes, distribute them throughout the area
         const areaWidth = rMax - rMin;
         
-        // Advanced distribution for larger groups
+        // More advanced distribution for larger groups
         if (totalNodesInGroup > 5) {
+          // Create a pattern that fills the area between circles
           const normalizedIndex = nodeGroupIndex / (totalNodesInGroup - 1);
           const golden_ratio = 1.618033988749895;
           const theta = normalizedIndex * 2 * Math.PI * golden_ratio;
           const radiusOffset = Math.cos(theta * 2) * areaWidth * 0.3;
           radius = rMin + (areaWidth * 0.3) + (areaWidth * 0.4) * normalizedIndex + radiusOffset;
         } else {
+          // For smaller groups, use simpler distribution
           radius = rMin + (areaWidth * (nodeGroupIndex + 1)) / (totalNodesInGroup + 1);
         }
       }
