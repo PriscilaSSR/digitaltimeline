@@ -344,7 +344,7 @@ window.timelineItems = [
     people: ['Mozi', 'Lu Ban'],
     Category: "Socioeconomic Factors",
     Subcategory: "CIRCLE",
-    TimePeriod: "500s BCE to 1350 CE",
+    TimePeriod: "500s BCE to 1400 CE",
     connections: ['The Silk Road', 'Early Kites', "Kongming's Sky Lantern", "Leonardo da Vinci's Flying Machines"]
   },
 
@@ -358,7 +358,7 @@ window.timelineItems = [
     people: ['Various Renaissance Patrons'],
     Category: "Socioeconomic Factors",
     Subcategory: "MAJOR",
-    TimePeriod: "1400 CE to 1699 CE",
+    TimePeriod: "500s BCE to 1400 CE",
     connections: ["Leonardo da Vinci's Flying Machines"]
   },
   {
@@ -370,7 +370,7 @@ window.timelineItems = [
     people: ['Leonardo da Vinci'],
     Category: "Socioeconomic Factors",
     Subcategory: "CIRCLE",
-    TimePeriod: "1400 CE to 1699 CE",
+    TimePeriod: "1450 CE to 1699 CE",
     connections: ['Paper Production and Trade']
   },
   {
@@ -382,7 +382,7 @@ window.timelineItems = [
     people: ['Johannes Gutenberg'],
     Category: "Socioeconomic Factors",
     Subcategory: "MAJOR",
-    TimePeriod: "1400 CE to 1699 CE",
+    TimePeriod: "1450 CE to 1699 CE",
     connections: ['Paper Production and Trade']
   },
   {
@@ -394,7 +394,7 @@ window.timelineItems = [
     people: ['Sir George Cayley'],
     Category: "Socioeconomic Factors",
     Subcategory: "MAJOR",
-    TimePeriod: "1400 CE to 1699 CE",
+    TimePeriod: "1450 CE to 1699 CE",
     connections: []
   },
   
@@ -457,7 +457,7 @@ window.timelineItems = [
     people: ['Henri Deutsch de la Meurthe'],
     Category: "Socioeconomic Factors",
     Subcategory: "CIRCLE",
-    TimePeriod: "1890 CE to 1980 CE",
+    TimePeriod: "1760 CE to 1890 CE",
     connections: []
   },
   
@@ -886,6 +886,41 @@ window.timelineItems = [
   // ==============================
   // 4a. Non-Human Flight
   {
+    title: 'Non-Human Flight',
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+  },
+  {
+    title: 'Early Attempts at Human Flight',
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+  },
+  {
+    title: 'The Age of the Balloon',
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+  },
+  {
+    title: 'Early Glider Experiments',
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+  },
+  {
+    title: 'Race Toward Modern Aviation',
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+  },
+  {
+    title: 'Parallel Alternative: The Zeppelin',
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+  },
+  {
+    title: 'Post-War Advancements',
+    Category: "Practical Implementations",
+    Subcategory: "CIRCLE",
+  },
+  {
     date: '500s BCE',
     location: 'China',
     title: 'Early Kites',
@@ -894,7 +929,7 @@ window.timelineItems = [
     people: ['Mozi', 'Lu Ban'],
     TimeLineCategory: "Non-Human Flight",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['Paper Production and Trade']
   },
   {
@@ -906,7 +941,7 @@ window.timelineItems = [
     people: ['Archytas of Tarentum'],
     TimeLineCategory: "Non-Human Flight",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['The Myth of Icarus and Daedalus']
   },
   {
@@ -918,7 +953,7 @@ window.timelineItems = [
     people: ['Kongming'],
     TimeLineCategory: "Non-Human Flight",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['Early Kites', 'Paper Production and Trade']
   },
   
@@ -932,7 +967,7 @@ window.timelineItems = [
     people: ['Abbas Ibn Firnas'],
     TimeLineCategory: "Early Attempts at Human Flight",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ["The Myth of Icarus and Daedalus", "Eilmer of Malmesbury's jump", "João Torto's Failed Flight Attempt"]
   },
   {
@@ -944,7 +979,7 @@ window.timelineItems = [
     people: ['Eilmer of Malmesbury'],
     TimeLineCategory: "Early Attempts at Human Flight",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "João Torto's Failed Flight Attempt", 'Early Kites']
   },
   {
@@ -956,7 +991,7 @@ window.timelineItems = [
     people: ['João Torto'],
     TimeLineCategory: "Early Attempts at Human Flight",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ["The Myth of Icarus and Daedalus", "Abbas Ibn Firnas's jump", "Eilmer of Malmesbury's jump"]
   },
   
@@ -970,7 +1005,7 @@ window.timelineItems = [
     people: ['Bartolomeu de Gusmão'],
     TimeLineCategory: "The Age of the Balloon",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ["Kongming's Sky Lantern", "Archimedes' Buoyancy Principle"]
   },
   {
@@ -982,7 +1017,7 @@ window.timelineItems = [
     people: ['Jean-François Pilâtre de Rozier', "François Laurent d'Arlandes", 'Joseph-Michel Montgolfier', 'Jacques-Étienne Montgolfier'],
     TimeLineCategory: "The Age of the Balloon",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ["Kongming's Sky Lantern"]
   },
   {
@@ -993,7 +1028,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     TimeLineCategory: "The Age of the Balloon",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['Early Kites', 'Kongming\'s Sky Lantern', 'Leonardo da Vinci\'s Flying Machines']
   },
   
@@ -1007,7 +1042,7 @@ window.timelineItems = [
     people: ['George Cayley'],
     TimeLineCategory: "Early Glider Experiments",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ["George Cayley's Glider Design"]
   },
   {
@@ -1019,7 +1054,7 @@ window.timelineItems = [
     people: ['Otto Lilienthal'],
     TimeLineCategory: "Early Glider Experiments",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1031,7 +1066,7 @@ window.timelineItems = [
     people: ['Octave Chanute'],
     TimeLineCategory: "Early Glider Experiments",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1042,7 +1077,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     TimeLineCategory: "Early Glider Experiments",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['Silk Production and Trade', 'The Industrial Revolution', 'Leonardo da Vinci\'s Bird Sketches']
   },
   
@@ -1056,7 +1091,7 @@ window.timelineItems = [
     people: ['William Henson'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ["Hero's Aeolipile", "Leonardo da Vinci's Flying Machines"]
   },
   {
@@ -1068,7 +1103,7 @@ window.timelineItems = [
     people: ['Clément Ader'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1080,7 +1115,7 @@ window.timelineItems = [
     people: ['Hiram Maxim'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1092,7 +1127,7 @@ window.timelineItems = [
     people: ['Samuel Pierpont Langley'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1103,7 +1138,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['Silk Production and Trade', 'The Industrial Revolution', 'Leonardo da Vinci\'s Bird Sketches']
   },
   {
@@ -1115,7 +1150,7 @@ window.timelineItems = [
     people: ['Gustave Whitehead'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1127,7 +1162,7 @@ window.timelineItems = [
     people: ['Richard Pearse'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1139,7 +1174,7 @@ window.timelineItems = [
     people: ['Karl Jatho'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1151,7 +1186,7 @@ window.timelineItems = [
     people: ['Preston Watson'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1163,7 +1198,7 @@ window.timelineItems = [
     people: ['Alberto Santos-Dumont'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   { 
@@ -1175,8 +1210,7 @@ window.timelineItems = [
     people: ['Orville Wright', 'Wilbur Wright'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
-    nodeType: "Timeline",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1188,7 +1222,7 @@ window.timelineItems = [
     people: ['Traian Vuia'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1200,7 +1234,7 @@ window.timelineItems = [
     people: ['Louis Blériot'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1212,7 +1246,7 @@ window.timelineItems = [
     people: ['Dimitri Sensaud de Lavaud'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1224,7 +1258,7 @@ window.timelineItems = [
     people: ['Henri Fabre'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1236,7 +1270,7 @@ window.timelineItems = [
     people: ['Henri Coandă'],
     TimeLineCategory: "Race Toward Modern Aviation",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   
@@ -1250,7 +1284,7 @@ window.timelineItems = [
     people: ['Henri Giffard'],
     TimeLineCategory: "Parallel Alternative: The Zeppelin",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ["Hero's Aeolipile", 'Industrial Revolution']
   },
   {
@@ -1262,7 +1296,7 @@ window.timelineItems = [
     people: ['Charles Renard', 'Arthur Constantin Krebs'],
     TimeLineCategory: "Parallel Alternative: The Zeppelin",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1274,7 +1308,7 @@ window.timelineItems = [
     people: ['Ferdinand von Zeppelin'],
     TimeLineCategory: "Parallel Alternative: The Zeppelin",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['Hall–Héroult Process for Aluminum', "Charles Renard and Arthur Constantin's Le France"]
   },
   {
@@ -1286,7 +1320,7 @@ window.timelineItems = [
     people: ['Ferdinand von Zeppelin'],
     TimeLineCategory: "Parallel Alternative: The Zeppelin",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['Hall–Héroult Process for Aluminum']
   },
   {
@@ -1297,7 +1331,7 @@ window.timelineItems = [
     img: "/api/placeholder/100/100",
     TimeLineCategory: "Parallel Alternative: The Zeppelin",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: ['The Industrial Revolution']
   },
   {
@@ -1309,7 +1343,7 @@ window.timelineItems = [
     people: ['Ferdinand von Zeppelin'],
     TimeLineCategory: "Parallel Alternative: The Zeppelin",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   
@@ -1323,7 +1357,7 @@ window.timelineItems = [
     people: ['Chuck Yeager'],
     TimeLineCategory: "Post-War Advancements",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1335,7 +1369,7 @@ window.timelineItems = [
     people: ['Sergei Korolev'],
     TimeLineCategory: "Post-War Advancements",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   },
   {
@@ -1347,7 +1381,7 @@ window.timelineItems = [
     people: ['Neil Armstrong', 'Buzz Aldrin'],
     TimeLineCategory: "Post-War Advancements",
     Category: "Practical Implementations",
-    Subcategory: "CIRCLE",
+    Subcategory: "TIMELINE",
     connections: []
   }
 ];
