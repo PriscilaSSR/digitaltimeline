@@ -1,9 +1,12 @@
 // Standardization function for timeline data
 function standardizeTimelineData() {
+  // First, organize timeline events by their TimeLineCategory
+  window.timelineGroups = {};
+  
+  // Process all items
   window.timelineItems.forEach(item => {
-    // First, ensure 'category' is converted to 'excelCategory' for consistency
-    if (!item.excelCategory && item.Category) {
-      // Map existing categories to the Excel structure
+    // 1. Handle Category and excelCategory mapping
+    if (item.Category) {
       if (item.Category === "Key Literary & Cultural Works") {
         item.excelCategory = "1. Key Literary & Cultural Works";
       } else if (item.Category === "Socioeconomic Factors") {
@@ -13,45 +16,107 @@ function standardizeTimelineData() {
       } else if (item.Category === "Practical Implementations") {
         item.excelCategory = "4. Practical Implementations";
       } else {
-        // Default if not matched
+        // Default fallback
         item.excelCategory = item.Category;
       }
     }
     
-    // Process subcategories and assign node types
+    // 2. Set up nodeType and visibility based on Subcategory
     if (item.Subcategory) {
       if (item.Subcategory === "MAJOR") {
         item.nodeType = "MAJOR";
-        item.renderStyle = "arch-text"; // Text that follows the circle arch
+        item.renderStyle = "arch-text";
+        item.visible = true;
       } else if (item.Subcategory === "CIRCLE") {
         item.nodeType = "CIRCLE";
-        item.renderStyle = "circle"; // Regular circle node
+        item.renderStyle = "circle";
+        item.visible = true;
       } else if (item.Subcategory === "TIMELINE") {
-        item.nodeType = "TIMELINE";
-        item.renderStyle = "timeline-trigger"; // Will trigger timeline popup
+        // TIMELINE subcategory items should be hidden in main view
+        // but organized in timelineGroups for popups
+        item.nodeType = "TIMELINE_ITEM";
+        item.renderStyle = "hidden";
+        item.visible = false; // Don't show as node
+        
+        // Add to timeline groups if it has a TimeLineCategory
+        if (item.TimeLineCategory) {
+          if (!window.timelineGroups[item.TimeLineCategory]) {
+            window.timelineGroups[item.TimeLineCategory] = [];
+          }
+          window.timelineGroups[item.TimeLineCategory].push(item);
+        }
       }
-    } else if (item.TimeLineCategory) {
-      // If it has a TimeLineCategory but no Subcategory, it's a timeline event
-      item.nodeType = "TIMELINE";
+    } 
+    // Special case for items with TimeLineCategory but no Subcategory
+    else if (item.TimeLineCategory) {
+      // These are the timeline trigger nodes - they should be visible 
+      // and trigger the popup for their TimeLineCategory
+      item.nodeType = "TIMELINE_TRIGGER";
       item.renderStyle = "timeline-trigger";
-      item.timelineGroup = item.TimeLineCategory; // Group for timeline display
+      item.visible = true;
+      
+      // Ensure this timeline category exists in timelineGroups
+      if (!window.timelineGroups[item.TimeLineCategory]) {
+        window.timelineGroups[item.TimeLineCategory] = [];
+      }
     }
     
-    // Ensure proper time period assignment
+    // 3. Ensure timePeriod is set
     if (!item.timePeriod && item.TimePeriod) {
       item.timePeriod = item.TimePeriod;
-    } else if (!item.timePeriod) {
-      // Assign time period based on date and category if not already set
-      const year = parseTimelineDate(item.date);
-      item.timePeriod = assignTimePeriod(year, item.excelCategory);
     }
     
-    // Extract a year value for positioning on the timeline
-    item.year = parseTimelineDate(item.date);
+    // 4. Parse the date for positioning
+    item.parsedYear = parseTimelineDate(item.date);
   });
   
-  // Group timeline events for popup display
-  createTimelineGroups();
+  // Sort each timeline group chronologically
+  Object.keys(window.timelineGroups).forEach(groupName => {
+    window.timelineGroups[groupName].sort((a, b) => {
+      return parseTimelineDate(a.date) - parseTimelineDate(b.date);
+    });
+  });
+  
+  // Create trigger nodes for timeline categories that don't have a trigger node yet
+  Object.keys(window.timelineGroups).forEach(timelineCategory => {
+    // Check if this category already has a trigger node
+    const hasTrigger = window.timelineItems.some(item => 
+      item.nodeType === "TIMELINE_TRIGGER" && 
+      item.TimeLineCategory === timelineCategory
+    );
+    
+    if (!hasTrigger && window.timelineGroups[timelineCategory].length > 0) {
+      // Get first item from this category to use its data
+      const firstItem = window.timelineGroups[timelineCategory][0];
+      
+      // Create a new trigger node
+      const triggerNode = {
+        title: timelineCategory,
+        date: firstItem.date,
+        description: `Timeline of ${timelineCategory} events`,
+        TimeLineCategory: timelineCategory,
+        Category: firstItem.Category,
+        excelCategory: firstItem.excelCategory,
+        timePeriod: firstItem.timePeriod,
+        nodeType: "TIMELINE_TRIGGER",
+        renderStyle: "timeline-trigger",
+        visible: true,
+        parsedYear: parseTimelineDate(firstItem.date)
+      };
+      
+      // Add to main data array
+      window.timelineItems.push(triggerNode);
+    }
+  });
+  
+  // Filter out non-visible items from the main visualization
+  const visibleItems = window.timelineItems.filter(item => item.visible !== false);
+  
+  // Store the filtered list back (this will be used for the visualization)
+  window.visibleTimelineItems = visibleItems;
+  
+  console.log(`Processed ${window.timelineItems.length} items, ${visibleItems.length} visible`);
+  console.log(`Created ${Object.keys(window.timelineGroups).length} timeline groups`);
 }
 
 // Function to parse dates from timeline data
@@ -94,92 +159,6 @@ function parseTimelineDate(dateStr) {
   
   // Default fallback
   return 0;
-}
-
-// Define timeline periods specific to each category
-function assignTimePeriod(year, category) {
-  // Category 1: Key Literary & Cultural Works
-  if (category === "1. Key Literary & Cultural Works") {
-    if (year <= -100 || (year >= 0 && year < 1400)) {
-      return "1a. 500s BCE to 1399s CE";
-    } else if (year >= 1400 && year < 1800) {
-      return "1b. 1400 CE to 1799s CE";
-    } else {
-      return "1c. 1800s CE to 1945 CE";
-    }
-  }
-  // Category 2: Socioeconomic Factors
-  else if (category === "2. Socioeconomic Factors") {
-    if (year <= -100 || (year >= 0 && year < 1400)) {
-      return "2a. 500s BCE to 1399s CE";
-    } else if (year >= 1400 && year < 1700) {
-      return "2b. 1400 CE to 1699s CE";
-    } else if (year >= 1700 && year < 1890) {
-      return "2c. 1760s CE to 1890s CE";
-    } else {
-      return "2d. 1890s CE to 1980s CE";
-    }
-  }
-  // Category 3: Scientific Theories Breakthroughs
-  else if (category === "3. Scientific Theories Breakthroughs") {
-    if (year <= -100 || (year >= 0 && year < 1600)) {
-      return "3a. 500s BCE to 1599s CE";
-    } else if (year >= 1600 && year < 1760) {
-      return "3b. 1600s CE to 1760s CE";
-    } else if (year >= 1760 && year < 1900) {
-      return "3c. 1770s CE to 1899s CE";
-    } else {
-      return "3d. 1900s CE to 1945 CE";
-    }
-  }
-  // Category 4: Practical Implementations - has the most subcategories
-  else if (category === "4. Practical Implementations") {
-    if (year <= -100 || (year >= 0 && year < 800)) {
-      return "4a. Non-Human Flight";
-    } else if (year >= 800 && year < 1700) {
-      return "4b. Early Attempts at Human Flight";
-    } else if (year >= 1700 && year < 1800) {
-      return "4c. The Age of the Balloon";
-    } else if (year >= 1800 && year < 1890) {
-      return "4d. Early Glider Experiments";
-    } else if (year >= 1890 && year < 1930) {
-      return "4e. Race Toward Modern Aviation";
-    } else if (year >= 1900 && year < 1940) {
-      return "4f. Parallel Alternative: The Zeppelin";
-    } else {
-      return "4g. Post-War Advancements";
-    }
-  }
-  // Default fallback
-  else {
-    return "Unknown Period";
-  }
-}
-
-// Create grouped timeline events for popup display
-function createTimelineGroups() {
-  // Create an object to hold timeline events by group
-  window.timelineGroups = {};
-  
-  // Find all items with timelineGroup attribute and organize them
-  window.timelineItems.forEach(item => {
-    if (item.timelineGroup || (item.TimeLineCategory && item.nodeType === "TIMELINE")) {
-      const groupName = item.timelineGroup || item.TimeLineCategory;
-      
-      if (!window.timelineGroups[groupName]) {
-        window.timelineGroups[groupName] = [];
-      }
-      
-      window.timelineGroups[groupName].push(item);
-    }
-  });
-  
-  // Sort events in each group by year
-  Object.keys(window.timelineGroups).forEach(groupName => {
-    window.timelineGroups[groupName].sort((a, b) => {
-      return parseTimelineDate(a.date) - parseTimelineDate(b.date);
-    });
-  });
 }
 
 
