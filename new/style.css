@@ -123,6 +123,264 @@ body {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
+/* Timeline vertical display */
+.timeline-vertical-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.timeline-dot {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: white;
+  transform: translateX(-5px);
+  transition: all 0.2s ease;
+}
+
+.timeline-date {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.timeline-description {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 5px;
+}
+
+.timeline-bar-container {
+  position: relative;
+  padding-left: 20px;
+}
+
+/* Enhanced timeline styling */
+.timeline-item {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 10px;
+  padding-left: 30px;
+  margin-bottom: 20px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.timeline-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.timeline-item:hover .timeline-dot {
+  transform: translateX(-5px) scale(1.2);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.timeline-item h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+/* Category legends */
+.category-legend {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 4px;
+  z-index: 1000;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+  transform: translateX(3px);
+}
+
+.legend-color {
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+.triangle-marker {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 8px solid;
+  margin-right: 8px;
+}
+
+/* Style for period items in legend */
+.period-item {
+  padding: 2px 5px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.period-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.period-item.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(5px);
+}
+
+/* For better visibility of node connections */
+.link {
+  pointer-events: none;
+}
+
+/* Style nodes based on Excel categories */
+.node-group[data-category="1. Key Literary & Cultural Works"] circle {
+  fill: #9c27b0;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+.node-group[data-category="2. Socioeconomic Factors"] circle {
+  fill: #c62828;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+.node-group[data-category="3. Scientific Theories Breakthroughs"] circle {
+  fill: #1565c0;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+.node-group[data-category="4. Practical Implementations"] circle {
+  fill: #2e7d32;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+/* Specific styling for different node types */
+.node-major circle {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.node-timeline_trigger circle {
+  animation: pulse 3s infinite ease-in-out;
+  stroke-dasharray: 4,4;
+}
+
+.node-circle circle {
+  transition: all 0.2s ease;
+}
+
+.node-circle:hover circle {
+  transform: scale(1.05);
+}
+
+/* Add pulsing animation to special nodes */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Time period highlight styles */
+.time-slice {
+  transition: opacity 0.3s ease;
+}
+
+.time-slice:hover {
+  opacity: 0.9;
+  stroke-width: 2.5px;
+}
+
+/* Period arrows */
+.period-arrow {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.period-arrow:hover {
+  transform: scale(1.2);
+  stroke-width: 2;
+}
+
+/* Arc text styling */
+.node-major textPath {
+  font-weight: bold;
+  text-shadow: 0 0 3px #000;
+}
+
+/* Timeline trigger icon styling */
+.timeline-icon {
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .category-legend {
+    max-width: 40%;
+    font-size: 0.9em;
+  }
+  
+  #timeline-container {
+    width: 90%;
+    max-width: 350px;
+  }
+}
+
+#timeline-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+#timeline-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+#timeline-container::-webkit-scrollbar-thumb {
+  background: #4CAF50;
+  border-radius: 10px;
+}
+
+.timeline-item {
+  transition: all 0.2s ease;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.timeline-item:hover {
+  transform: translateX(5px);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 /* Category legends */
 .category-legend {
   position: fixed;
