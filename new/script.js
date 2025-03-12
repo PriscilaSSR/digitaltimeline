@@ -5,9 +5,9 @@ document.addEventListener("DOMContentLoaded", function() {
   // -------------------------
   // 1) LOAD & SETUP
   // -------------------------
-  // Get the data directly from the source
-  const data = window.timelineItems;
-  console.log("Data loaded, items:", data.length);
+  // Get the data directly from the source - only visible items
+  const data = window.visibleTimelineItems || window.timelineItems;
+  console.log("Data loaded, visible items:", data.length);
 
   // We'll use a 2000x2000 viewBox
   const viewBoxSize = 2000;
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("position", "fixed")
     .style("top", "50px")
     .style("right", "20px")
-    .style("width", "300px")
+    .style("width", "380px")
     .style("max-height", "80vh")
     .style("overflow-y", "auto")
     .style("background-color", "rgba(40, 40, 40, 0.9)")
@@ -49,8 +49,8 @@ document.addEventListener("DOMContentLoaded", function() {
     .style("display", "flex")
     .style("justify-content", "space-between")
     .style("align-items", "center")
-    .style("margin-bottom", "10px")
-    .html(`<h3 style="margin: 0;">Related Events</h3>
+    .style("margin-bottom", "15px")
+    .html(`<h3 style="margin: 0;">Timeline Events</h3>
            <button id="close-timeline" style="background: none; border: none; font-size: 20px; color: white; cursor: pointer;">&times;</button>`);
     
   // Add a content div for the timeline items
@@ -207,7 +207,11 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("class", "period-arrow")
         .attr("data-period", period)
         .style("stroke", "#fff")
-        .style("stroke-width", 1);
+        .style("stroke-width", 1)
+        .style("cursor", "pointer")
+        .on("click", function() {
+          highlightTimePeriod(period);
+        });
       
       // Add time period label at the middle of the section
       const labelAngle = (angles.startAngle + angles.endAngle) / 2;
@@ -249,7 +253,11 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("fill-opacity", 0.1)
         .attr("stroke", colorScale(category))
         .attr("stroke-width", 1)
-        .attr("stroke-opacity", 0.3);
+        .attr("stroke-opacity", 0.3)
+        .style("cursor", "pointer")
+        .on("click", function() {
+          highlightTimePeriod(period);
+        });
     });
   });
 
@@ -318,8 +326,8 @@ document.addEventListener("DOMContentLoaded", function() {
     if (d.nodeType === "MAJOR") {
       // MAJOR nodes are placed at the outer edge of their category ring to follow the arch
       radius = rMax - 30; // Slight inset from the boundary
-    } else if (d.nodeType === "TIMELINE") {
-      // TIMELINE nodes are placed in the middle area
+    } else if (d.nodeType === "TIMELINE_TRIGGER") {
+      // TIMELINE_TRIGGER nodes are placed in the middle area
       radius = (rMin + rMax) / 2;
     } else {
       // CIRCLE nodes are distributed throughout the ring
@@ -364,15 +372,16 @@ document.addEventListener("DOMContentLoaded", function() {
     d.isDragging = false;
   });
 
+  // -------------------------
+  // 6) RENDERING AND INTERACTIVITY
+  // -------------------------
+  
   // Force simulation with appropriate constraints
   const simulation = d3.forceSimulation(data)
     .velocityDecay(0.4) // Increased to stabilize nodes faster
     .force("charge", d3.forceManyBody().strength(-30))
-    .force("collide", d3.forceCollide(d => {
-      // Larger collision radius for MAJOR nodes
-      return d.nodeType === "MAJOR" ? 70 : 50;
-    }).strength(0.8))
-    .force("radial", d3.forceRadial(d => d.origRadius, center, center).strength(0.3))
+    .force("collide", d3.forceCollide(d => d.nodeType === "MAJOR" ? 40 : 60).strength(0.8)) // Adjust collision by node type
+    .force("radial", d3.forceRadial(d => d.origRadius, center, center).strength(0.3)) // Keep nodes at their assigned radius
     .force("angle", d3.forceX(d => {
       // Force to maintain the correct angle
       const angle = (d.startAngle + d.endAngle) / 2;
@@ -402,112 +411,166 @@ document.addEventListener("DOMContentLoaded", function() {
     .on("end", dragended);
 
   // Draw node groups with drag capability
-  const nodeGroup = container.selectAll("g.node-group")
-  .data(data)
-  .enter()
-  .append("g")
-  .attr("class", d => `node-group node-type-${d.nodeType}`)
-  .attr("data-category", d => d.excelCategory)
-  .attr("data-node-type", d => d.nodeType)
-  .attr("transform", d => `translate(${d.x}, ${d.y})`)
-  .on("click", function(event, d) {
-    // Show the modal if we're not dragging
-    if (!d.wasDragged) {
-      showModal(d);
-    }
-    // Reset the flag
-    d.wasDragged = false;
-  })
-  .call(drag); // Add drag behavior
-
-// Different visual representation based on node type
-nodeGroup.each(function(d) {
-  const node = d3.select(this);
+  const circleRadius = 50; // Standard circle radius
+  const majorNodeHeight = 30; // Height for MAJOR category text displays
   
-  if (d.nodeType === "MAJOR") {
-    // MAJOR nodes as text labels with background
-    node.append("rect")
-      .attr("x", -100)
-      .attr("y", -20)
-      .attr("width", 200)
-      .attr("height", 40)
-      .attr("rx", 5)
-      .attr("ry", 5)
-      .attr("fill", colorScale(d.excelCategory))
-      .attr("fill-opacity", 0.8)
-      .attr("stroke", colorScale(d.excelCategory))
-      .attr("stroke-width", 2);
+  const nodeGroup = container.selectAll("g.node-group")
+    .data(data)
+    .enter()
+    .append("g")
+    .attr("class", d => `node-group node-${d.nodeType.toLowerCase()}`)
+    .attr("data-category", d => d.excelCategory)
+    .attr("data-type", d => d.nodeType)
+    .attr("data-period", d => d.timePeriod)
+    .attr("transform", d => `translate(${d.x}, ${d.y})`)
+    .on("click", function(event, d) {
+      // If not dragging, show info
+      if (!d.wasDragged) {
+        if (d.nodeType === "TIMELINE_TRIGGER" && d.TimeLineCategory) {
+          // For timeline nodes, show timeline popup
+          showTimelinePopup(d);
+        } else {
+          // For other nodes, show the regular modal
+          showModal(d);
+        }
+      }
+      // Reset the flag
+      d.wasDragged = false;
+    })
+    .call(drag); // Add drag behavior
+
+  // HANDLE DIFFERENT NODE TYPES
+  // 1. CIRCLE nodes - regular circles
+  nodeGroup.filter(d => d.nodeType === "CIRCLE")
+    .each(function(d) {
+      // Add circle
+      d3.select(this).append("circle")
+        .attr("r", circleRadius)
+        .attr("fill", colorScale(d.excelCategory))
+        .style("stroke", "#333")
+        .style("stroke-width", 1)
+        .style("cursor", "pointer");
       
-    node.append("text")
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .attr("fill", "white")
-      .attr("font-weight", "bold")
-      .attr("font-size", "14px")
-      .attr("pointer-events", "none")
-      .text(d.title);
-  } 
-  else if (d.nodeType === "CIRCLE") {
-    // CIRCLE nodes as circles
-    node.append("circle")
-      .attr("r", 50)
-      .attr("fill", colorScale(d.excelCategory))
-      .attr("fill-opacity", 0.9)
-      .attr("stroke", "#333")
-      .attr("stroke-width", 1)
-      .style("cursor", "move");
+      // Add title text
+      d3.select(this).append("foreignObject")
+        .attr("x", -circleRadius * 0.8)
+        .attr("y", -circleRadius * 0.8)
+        .attr("width", circleRadius * 1.6)
+        .attr("height", circleRadius * 1.6)
+        .append("xhtml:div")
+        .style("display", "flex")
+        .style("justify-content", "center")
+        .style("align-items", "center")
+        .style("text-align", "center")
+        .style("font-size", "12px")
+        .style("width", circleRadius * 1.6 + "px")
+        .style("height", circleRadius * 1.6 + "px")
+        .style("overflow", "hidden")
+        .style("pointer-events", "none")
+        .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
+        .style("color", "white")
+        .html(`<strong>${d.title}</strong>`);
+    });
+  
+  // 2. MAJOR nodes - text that follows the circular arch
+  nodeGroup.filter(d => d.nodeType === "MAJOR")
+    .each(function(d) {
+      const angle = d.origAngle;
+      const radius = d.origRadius;
       
-    // Add label
-    node.append("foreignObject")
-      .attr("x", -45)
-      .attr("y", -45)
-      .attr("width", 90)
-      .attr("height", 90)
-      .append("xhtml:div")
-      .style("display", "flex")
-      .style("justify-content", "center")
-      .style("align-items", "center")
-      .style("text-align", "center")
-      .style("font-size", "12px")
-      .style("width", "100%")
-      .style("height", "100%")
-      .style("overflow", "hidden")
-      .style("pointer-events", "none")
-      .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
-      .style("color", "white")
-      .html(`<strong>${d.title}</strong>`);
-  } 
-  else { // Timeline nodes
-    // Timeline nodes as smaller circles
-    node.append("circle")
-      .attr("r", 35)
-      .attr("fill", colorScale(d.excelCategory))
-      .attr("fill-opacity", 0.7)
-      .attr("stroke", "#333")
-      .attr("stroke-width", 1)
-      .style("cursor", "move");
+      // Create curved path for the text to follow
+      // The ID needs to be unique for each path
+      const pathId = `textPath-${d.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
       
-    // Add label with date
-    node.append("foreignObject")
-      .attr("x", -30)
-      .attr("y", -30)
-      .attr("width", 60)
-      .attr("height", 60)
-      .append("xhtml:div")
-      .style("display", "flex")
-      .style("justify-content", "center")
-      .style("align-items", "center")
-      .style("text-align", "center")
-      .style("font-size", "10px")
-      .style("width", "100%")
-      .style("height", "100%")
-      .style("overflow", "hidden")
-      .style("pointer-events", "none")
-      .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
-      .style("color", "white")
-      .html(`<strong>${d.title}</strong><br><small>${d.date}</small>`);
-  }
-});
+      // Add path for text to follow
+      d3.select(this).append("path")
+        .attr("id", pathId)
+        .attr("d", () => {
+          // Calculate path parameters
+          const sweep = Math.min(Math.PI * 0.5, 2.0 * Math.PI / data.filter(item => item.nodeType === "MAJOR" && item.timePeriod === d.timePeriod).length);
+          const startAngle = angle - sweep / 2;
+          const endAngle = angle + sweep / 2;
+          
+          // Use arc generator for the path
+          const arcGenerator = d3.arc()
+            .innerRadius(radius)
+            .outerRadius(radius)
+            .startAngle(startAngle)
+            .endAngle(endAngle);
+            
+          return arcGenerator();
+        })
+        .style("fill", "none")
+        .style("stroke", "none");
+        
+      // Add text that follows the path
+      d3.select(this).append("text")
+        .append("textPath")
+        .attr("href", `#${pathId}`)
+        .attr("startOffset", "50%")
+        .attr("text-anchor", "middle")
+        .text(d.title)
+        .style("fill", colorScale(d.excelCategory))
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .style("text-shadow", "0px 0px 3px black, 0px 0px 2px black")
+        .style("pointer-events", "none");
+      
+      // Add a small indicator dot
+      d3.select(this).append("circle")
+        .attr("r", 8)
+        .attr("fill", colorScale(d.excelCategory))
+        .style("stroke", "#333")
+        .style("stroke-width", 1)
+        .style("cursor", "pointer");
+    });
+  
+  // 3. TIMELINE_TRIGGER nodes - nodes that trigger a timeline popup
+  nodeGroup.filter(d => d.nodeType === "TIMELINE_TRIGGER")
+    .each(function(d) {
+      // Create a special indicator node that looks different
+      d3.select(this).append("circle")
+        .attr("r", circleRadius * 0.8)
+        .attr("fill", colorScale(d.excelCategory))
+        .style("stroke", "#fff")
+        .style("stroke-width", 2)
+        .style("cursor", "pointer")
+        .style("stroke-dasharray", "4,4") // Dashed outline
+        .style("filter", "drop-shadow(0 0 4px rgba(255,255,255,0.5))"); // Glow effect
+    
+      // Add a timeline icon
+      const iconSize = 16;
+      d3.select(this).append("g")
+        .attr("class", "timeline-icon")
+        .html(`
+          <rect x="${-iconSize}" y="${-iconSize/2}" width="${iconSize*2}" height="${2}" fill="white"></rect>
+          <rect x="${-iconSize}" y="${-iconSize/2-6}" width="${iconSize*2}" height="${2}" fill="white"></rect>
+          <rect x="${-iconSize}" y="${-iconSize/2+6}" width="${iconSize*2}" height="${2}" fill="white"></rect>
+          <circle cx="${-iconSize+4}" cy="${-iconSize/2}" r="3" fill="white"></circle>
+          <circle cx="${-iconSize+4}" cy="${-iconSize/2-6}" r="3" fill="white"></circle>
+          <circle cx="${iconSize-4}" cy="${-iconSize/2+6}" r="3" fill="white"></circle>
+        `);
+      
+      // Add category label (e.g., "Zeppelins", "Non-Human Flight", etc.)
+      d3.select(this).append("foreignObject")
+        .attr("x", -circleRadius * 0.7)
+        .attr("y", -circleRadius * 0.7 + 15) // Offset to make room for the icon
+        .attr("width", circleRadius * 1.4)
+        .attr("height", circleRadius * 1.4)
+        .append("xhtml:div")
+        .style("display", "flex")
+        .style("justify-content", "center")
+        .style("align-items", "center")
+        .style("text-align", "center")
+        .style("font-size", "12px")
+        .style("width", circleRadius * 1.4 + "px")
+        .style("height", circleRadius * 1.4 + "px")
+        .style("overflow", "hidden")
+        .style("pointer-events", "none")
+        .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
+        .style("color", "white")
+        .html(`<strong>${d.TimeLineCategory || d.title}</strong>`);
+    });
 
     
   // -------------------------
