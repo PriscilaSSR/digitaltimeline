@@ -1,83 +1,186 @@
-// The following code contains the key parts that need to be modified 
-// in the timelineData.js file to match the new structure
-
-// 1. You'll need to update the entire file, but here are the critical changes:
-
-// MODIFIED MAPPING FUNCTION to ensure consistent structure:
+// Standardization function for timeline data
 function standardizeTimelineData() {
   window.timelineItems.forEach(item => {
-    // Ensure proper category structure
-    if (item.category === "Key Literary & Cultural Works";
-      // Assign timePeriod based on date
-      const year = parseTimelineDate(item.date); // This function needs to be available
-      if (year < 1400) {
-        item.timePeriod = "500 BCE to 1399 CE";
-      } else if (year < 1800) {
-        item.timePeriod = "1400 CE to 1799 CE";
+    // First, ensure 'category' is converted to 'excelCategory' for consistency
+    if (!item.excelCategory && item.Category) {
+      // Map existing categories to the Excel structure
+      if (item.Category === "Key Literary & Cultural Works") {
+        item.excelCategory = "1. Key Literary & Cultural Works";
+      } else if (item.Category === "Socioeconomic Factors") {
+        item.excelCategory = "2. Socioeconomic Factors";
+      } else if (item.Category === "Scientific Theories and Breakthroughs") {
+        item.excelCategory = "3. Scientific Theories Breakthroughs";
+      } else if (item.Category === "Practical Implementations") {
+        item.excelCategory = "4. Practical Implementations";
       } else {
-        item.timePeriod = "1800 CE to 1945 CE";
+        // Default if not matched
+        item.excelCategory = item.Category;
       }
-      item.nodeType = "MAJOR";
-    } 
-    else if (item.category === "Socioeconomic Factors";
-      
-      // Assign timePeriod based on date
-      const year = parseTimelineDate(item.date);
-      if (year < 1400) {
-        item.timePeriod = "500 BCE to 1399 CE";
-      } else if (year < 1700) {
-        item.timePeriod = "1400 CE to 1699 CE";
-      } else if (year < 1890) {
-        item.timePeriod = "1760 CE to 1890 CE";
-      } else {
-        item.timePeriod = "1890 CE to 1980 CE";
-      }
-      
-      // Assign MAJOR or CIRCLE based on title keywords
-      if (item.title.includes("Revolution") || 
-          item.title.includes("System") || 
-          item.title.includes("Tradition") || 
-          item.title.includes("Military Demand") ||
-          item.title.includes("Commercial Aviation") ||
-          item.title.includes("World Fairs")) {
-        item.nodeType = "MAJOR";
-      } else {
-        item.nodeType = "CIRCLE";
-      }
-    } 
-    else if (item.category === "Scientific Theories and Breakthroughs";
-      
-      // Assign timePeriod based on date
-      const year = parseTimelineDate(item.date);
-      if (year < 1600) {
-        item.timePeriod = "500 BCE to 1599 CE";
-      } else if (year < 1770) {
-        item.timePeriod = "1600 CE to 1760 CE";
-      } else if (year < 1900) {
-        item.timePeriod = "1770 CE to 1899 CE";
-      } else {
-        item.timePeriod = "1900s CE to 1945 CE";
-      }
-      
-      item.nodeType = "CIRCLE";
-    } 
-    else if (item.category === "Practical Implementations";
-      
-    item.nodeType = "CIRCLE";     
-      }
+    }
     
-    // Default catch-all (should not happen with proper data)
-    if (!item.excelCategory) {
-      console.warn("Item missing category assignment:", item.title);
-      item.excelCategory = "4. Practical Implementations";
-      item.timePeriod = "4e. Race Toward Modern Aviation";
-      item.nodeType = "Timeline";
+    // Process subcategories and assign node types
+    if (item.Subcategory) {
+      if (item.Subcategory === "MAJOR") {
+        item.nodeType = "MAJOR";
+        item.renderStyle = "arch-text"; // Text that follows the circle arch
+      } else if (item.Subcategory === "CIRCLE") {
+        item.nodeType = "CIRCLE";
+        item.renderStyle = "circle"; // Regular circle node
+      } else if (item.Subcategory === "TIMELINE") {
+        item.nodeType = "TIMELINE";
+        item.renderStyle = "timeline-trigger"; // Will trigger timeline popup
+      }
+    } else if (item.TimeLineCategory) {
+      // If it has a TimeLineCategory but no Subcategory, it's a timeline event
+      item.nodeType = "TIMELINE";
+      item.renderStyle = "timeline-trigger";
+      item.timelineGroup = item.TimeLineCategory; // Group for timeline display
+    }
+    
+    // Ensure proper time period assignment
+    if (!item.timePeriod && item.TimePeriod) {
+      item.timePeriod = item.TimePeriod;
+    } else if (!item.timePeriod) {
+      // Assign time period based on date and category if not already set
+      const year = parseTimelineDate(item.date);
+      item.timePeriod = assignTimePeriod(year, item.excelCategory);
+    }
+    
+    // Extract a year value for positioning on the timeline
+    item.year = parseTimelineDate(item.date);
+  });
+  
+  // Group timeline events for popup display
+  createTimelineGroups();
+}
+
+// Function to parse dates from timeline data
+function parseTimelineDate(dateStr) {
+  if (!dateStr) return 0;
+  
+  dateStr = dateStr.toString().trim();
+  
+  // Handle BCE dates
+  if (dateStr.includes('BCE')) {
+    const year = parseInt(dateStr.replace(/[^0-9]/g, ''));
+    return -year; // Negative values for BCE
+  }
+  
+  // Handle century formats like "100s", "1600s"
+  if (dateStr.match(/^\d+s$/)) {
+    return parseInt(dateStr);
+  }
+  
+  // Handle date ranges like "1760–1840" or "1865-1904"
+  if (dateStr.includes('–') || dateStr.includes('-')) {
+    const parts = dateStr.split(/[–-]/);
+    const startYear = parseInt(parts[0]);
+    return startYear; // Just use the start year for positioning
+  }
+  
+  // Handle century descriptions like "17th–19th Centuries"
+  if (dateStr.includes('Centuries') || dateStr.includes('Century')) {
+    // Extract the first century mentioned
+    const match = dateStr.match(/(\d+)(?:st|nd|rd|th)/);
+    if (match) {
+      return (parseInt(match[1]) - 1) * 100; // 17th century starts at 1600
+    }
+  }
+  
+  // Handle simple years
+  if (dateStr.match(/^\d+$/)) {
+    return parseInt(dateStr);
+  }
+  
+  // Default fallback
+  return 0;
+}
+
+// Define timeline periods specific to each category
+function assignTimePeriod(year, category) {
+  // Category 1: Key Literary & Cultural Works
+  if (category === "1. Key Literary & Cultural Works") {
+    if (year <= -100 || (year >= 0 && year < 1400)) {
+      return "1a. 500s BCE to 1399s CE";
+    } else if (year >= 1400 && year < 1800) {
+      return "1b. 1400 CE to 1799s CE";
+    } else {
+      return "1c. 1800s CE to 1945 CE";
+    }
+  }
+  // Category 2: Socioeconomic Factors
+  else if (category === "2. Socioeconomic Factors") {
+    if (year <= -100 || (year >= 0 && year < 1400)) {
+      return "2a. 500s BCE to 1399s CE";
+    } else if (year >= 1400 && year < 1700) {
+      return "2b. 1400 CE to 1699s CE";
+    } else if (year >= 1700 && year < 1890) {
+      return "2c. 1760s CE to 1890s CE";
+    } else {
+      return "2d. 1890s CE to 1980s CE";
+    }
+  }
+  // Category 3: Scientific Theories Breakthroughs
+  else if (category === "3. Scientific Theories Breakthroughs") {
+    if (year <= -100 || (year >= 0 && year < 1600)) {
+      return "3a. 500s BCE to 1599s CE";
+    } else if (year >= 1600 && year < 1760) {
+      return "3b. 1600s CE to 1760s CE";
+    } else if (year >= 1760 && year < 1900) {
+      return "3c. 1770s CE to 1899s CE";
+    } else {
+      return "3d. 1900s CE to 1945 CE";
+    }
+  }
+  // Category 4: Practical Implementations - has the most subcategories
+  else if (category === "4. Practical Implementations") {
+    if (year <= -100 || (year >= 0 && year < 800)) {
+      return "4a. Non-Human Flight";
+    } else if (year >= 800 && year < 1700) {
+      return "4b. Early Attempts at Human Flight";
+    } else if (year >= 1700 && year < 1800) {
+      return "4c. The Age of the Balloon";
+    } else if (year >= 1800 && year < 1890) {
+      return "4d. Early Glider Experiments";
+    } else if (year >= 1890 && year < 1930) {
+      return "4e. Race Toward Modern Aviation";
+    } else if (year >= 1900 && year < 1940) {
+      return "4f. Parallel Alternative: The Zeppelin";
+    } else {
+      return "4g. Post-War Advancements";
+    }
+  }
+  // Default fallback
+  else {
+    return "Unknown Period";
+  }
+}
+
+// Create grouped timeline events for popup display
+function createTimelineGroups() {
+  // Create an object to hold timeline events by group
+  window.timelineGroups = {};
+  
+  // Find all items with timelineGroup attribute and organize them
+  window.timelineItems.forEach(item => {
+    if (item.timelineGroup || (item.TimeLineCategory && item.nodeType === "TIMELINE")) {
+      const groupName = item.timelineGroup || item.TimeLineCategory;
+      
+      if (!window.timelineGroups[groupName]) {
+        window.timelineGroups[groupName] = [];
+      }
+      
+      window.timelineGroups[groupName].push(item);
     }
   });
-  }
-
-// Call this function after the timeline data is loaded
-// standardizeTimelineData();
+  
+  // Sort events in each group by year
+  Object.keys(window.timelineGroups).forEach(groupName => {
+    window.timelineGroups[groupName].sort((a, b) => {
+      return parseTimelineDate(a.date) - parseTimelineDate(b.date);
+    });
+  });
+}
 
 
 
