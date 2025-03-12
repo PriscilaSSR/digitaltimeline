@@ -473,57 +473,78 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   
   // 2. MAJOR nodes - text that follows the circular arch
-  nodeGroup.filter(d => d.nodeType === "MAJOR")
-    .each(function(d) {
-      const angle = d.origAngle;
-      const radius = d.origRadius;
+ nodeGroup.filter(d => d.nodeType === "MAJOR")
+  .each(function(d) {
+    const angle = d.origAngle;
+    const radius = d.origRadius;
+    
+    // Create curved path for the text to follow
+    // The ID needs to be unique for each path
+    const pathId = `textPath-${d.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
+    
+    // First approach: Use an arc path with a proper center transformation
+    const sweep = Math.min(Math.PI * 0.5, 2.0 * Math.PI / data.filter(item => 
+      item.nodeType === "MAJOR" && 
+      item.timePeriod === d.timePeriod
+    ).length);
+    
+    const startAngle = angle - sweep / 2;
+    const endAngle = angle + sweep / 2;
+    
+    // Create arc path
+    const arcPath = d3.arc()
+      .innerRadius(radius)
+      .outerRadius(radius)
+      .startAngle(startAngle)
+      .endAngle(endAngle)
+      .cornerRadius(0);
+    
+    // Add path for text to follow
+    d3.select(this).append("path")
+      .attr("id", pathId)
+      .attr("d", arcPath())
+      .attr("transform", `translate(0, 0)`) // No translation needed since nodes are already positioned
+      .style("fill", "none")
+      .style("stroke", "none");
       
-      // Create curved path for the text to follow
-      // The ID needs to be unique for each path
-      const pathId = `textPath-${d.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
-      
-      // Add path for text to follow
-      d3.select(this).append("path")
-        .attr("id", pathId)
-        .attr("d", () => {
-          // Calculate path parameters
-          const sweep = Math.min(Math.PI * 0.5, 2.0 * Math.PI / data.filter(item => item.nodeType === "MAJOR" && item.timePeriod === d.timePeriod).length);
-          const startAngle = angle - sweep / 2;
-          const endAngle = angle + sweep / 2;
-          
-          // Use arc generator for the path
-          const arcGenerator = d3.arc()
-            .innerRadius(radius)
-            .outerRadius(radius)
-            .startAngle(startAngle)
-            .endAngle(endAngle);
-            
-          return arcGenerator();
-        })
-        .style("fill", "none")
-        .style("stroke", "none");
-        
-      // Add text that follows the path
-      d3.select(this).append("text")
-        .append("textPath")
-        .attr("href", `#${pathId}`)
-        .attr("startOffset", "50%")
-        .attr("text-anchor", "middle")
-        .text(d.title)
-        .style("fill", colorScale(d.excelCategory))
-        .style("font-size", "14px")
-        .style("font-weight", "bold")
-        .style("text-shadow", "0px 0px 3px black, 0px 0px 2px black")
-        .style("pointer-events", "none");
-      
-      // Add a small indicator dot
-      d3.select(this).append("circle")
-        .attr("r", 8)
-        .attr("fill", colorScale(d.excelCategory))
-        .style("stroke", "#333")
-        .style("stroke-width", 1)
-        .style("cursor", "pointer");
-    });
+    // Add text that follows the path
+    d3.select(this).append("text")
+      .append("textPath")
+      .attr("href", `#${pathId}`)
+      .attr("startOffset", "50%")
+      .attr("text-anchor", "middle")
+      .text(d.title)
+      .style("fill", colorScale(d.excelCategory))
+      .style("font-size", "14px")
+      .style("font-weight", "bold")
+      .style("text-shadow", "0px 0px 3px black, 0px 0px 2px black")
+      .style("pointer-events", "none");
+    
+    // Alternative approach using a custom path
+    // This approach explicitly creates a curved path in the correct position
+    /*
+    const pathLength = radius * sweep;
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    
+    // Create arc path centered at 0,0 (will be positioned by the node transform)
+    let pathData = `M ${radius * Math.cos(startAngle)},${radius * Math.sin(startAngle)} `;
+    pathData += `A ${radius},${radius} 0 0,1 ${radius * Math.cos(endAngle)},${radius * Math.sin(endAngle)}`;
+    
+    d3.select(this).append("path")
+      .attr("id", pathId)
+      .attr("d", pathData)
+      .style("fill", "none")
+      .style("stroke", "none");
+    */
+    
+    // Add a small indicator dot
+    d3.select(this).append("circle")
+      .attr("r", 8)
+      .attr("fill", colorScale(d.excelCategory))
+      .style("stroke", "#333")
+      .style("stroke-width", 1)
+      .style("cursor", "pointer");
+  });
   
   // 3. TIMELINE_TRIGGER nodes - nodes that trigger a timeline popup
   nodeGroup.filter(d => d.nodeType === "TIMELINE_TRIGGER")
