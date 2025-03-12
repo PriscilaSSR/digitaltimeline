@@ -187,6 +187,28 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("stroke-width", 1.5)
         .attr("stroke-opacity", 0.6);
       
+      // Add triangular arrow indicator at the dividing line
+      const arrowSize = 10;
+      const arrowRadius = (innerRadius + outerRadius) / 2;
+      const arrowX = center + Math.cos(angles.startAngle) * arrowRadius;
+      const arrowY = center + Math.sin(angles.startAngle) * arrowRadius;
+      const arrowAngle = angles.startAngle + Math.PI/2; // Perpendicular to the radius
+      
+      // Create triangle points
+      const trianglePoints = [
+        [arrowX, arrowY],
+        [arrowX + Math.cos(arrowAngle) * arrowSize, arrowY + Math.sin(arrowAngle) * arrowSize],
+        [arrowX + Math.cos(angles.startAngle) * arrowSize, arrowY + Math.sin(angles.startAngle) * arrowSize]
+      ].map(point => point.join(',')).join(' ');
+      
+      boundaryGroup.append("polygon")
+        .attr("points", trianglePoints)
+        .attr("fill", colorScale(category))
+        .attr("class", "period-arrow")
+        .attr("data-period", period)
+        .style("stroke", "#fff")
+        .style("stroke-width", 1);
+      
       // Add time period label at the middle of the section
       const labelAngle = (angles.startAngle + angles.endAngle) / 2;
       const labelRadius = (innerRadius + outerRadius) / 2;
@@ -202,12 +224,32 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("transform", `rotate(${rotation}, ${labelX}, ${labelY})`)
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
+        .attr("class", "period-label")
+        .attr("data-period", period)
         .text(period)
         .style("fill", "#fff")
         .style("font-size", "14px")
         .style("font-weight", "bold")
         .style("text-shadow", "1px 1px 2px black")
         .style("pointer-events", "none");
+        
+      // Add highlight arc for the time period
+      const arcGenerator = d3.arc()
+        .innerRadius(innerRadius)
+        .outerRadius(outerRadius)
+        .startAngle(angles.startAngle)
+        .endAngle(angles.endAngle);
+        
+      boundaryGroup.append("path")
+        .attr("d", arcGenerator)
+        .attr("transform", `translate(${center}, ${center})`)
+        .attr("class", "time-slice")
+        .attr("data-period", period)
+        .attr("fill", colorScale(category))
+        .attr("fill-opacity", 0.1)
+        .attr("stroke", colorScale(category))
+        .attr("stroke-width", 1)
+        .attr("stroke-opacity", 0.3);
     });
   });
 
