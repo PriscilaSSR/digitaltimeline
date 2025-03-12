@@ -573,37 +573,65 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => simulation.alphaTarget(0), 300); // Gradually stop
   }
 
-Angle !== undefined && d.endAngle !== undefined) {
-      const currentAngle = Math.atan2(d.y - center, d.x - center);
-      let normAngle = currentAngle;
-      while (normAngle < 0) normAngle += 2 * Math.PI;
-      while (normAngle >= 2 * Math.PI) normAngle -= 2 * Math.PI;
-      
-      let startAngle = d.startAngle;
-      let endAngle = d.endAngle;
-      
-      // Normalize angles
-      while (startAngle < 0) startAngle += 2 * Math.PI;
-      while (startAngle >= 2 * Math.PI) startAngle -= 2 * Math.PI;
-      while (endAngle < 0) endAngle += 2 * Math.PI;
-      while (endAngle >= 2 * Math.PI) endAngle -= 2 * Math.PI;
-      
-      // Check if angle is outside the sector
-      let isOutside = false;
-      if (startAngle < endAngle) {
-        isOutside = normAngle < startAngle || normAngle > endAngle;
-      } else {
-        isOutside = normAngle < startAngle && normAngle > endAngle;
-      }
-      
-      if (isOutside && !d.isDragging) {
-        // If outside, move back to original position gradually
-        const moveToAngle = (startAngle + endAngle) / 2;
-        d.x = center + Math.cos(moveToAngle) * dist;
-        d.y = center + Math.sin(moveToAngle) * dist;
-      }
+// Apply constraints to keep nodes between category boundaries and within their time period
+function applyRingConstraints(d) {
+  // Radial constraint (keep between category boundaries)
+  const [rMin, rMax] = nodePlacementRanges[d.excelCategory] || [0, maxOuterRadius];
+  const dx = d.x - center;
+  const dy = d.y - center;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+
+  if (dist > 0) {
+    // If too close, push outward
+    if (dist < rMin) {
+      const ratio = rMin / dist;
+      d.x = center + dx * ratio;
+      d.y = center + dy * ratio;
+    }
+    // If too far, pull inward
+    else if (dist > rMax) {
+      const ratio = rMax / dist;
+      d.x = center + dx * ratio;
+      d.y = center + dy * ratio;
+    }
+  } else {
+    // If exactly at center, nudge outward
+    d.x = center + rMin + 10;
+    d.y = center;
+  }
+  
+  // Angular constraint (keep in time period)
+  if (d.startAngle !== undefined && d.endAngle !== undefined) {
+    const currentAngle = Math.atan2(d.y - center, d.x - center);
+    let normAngle = currentAngle;
+    while (normAngle < 0) normAngle += 2 * Math.PI;
+    while (normAngle >= 2 * Math.PI) normAngle -= 2 * Math.PI;
+    
+    let startAngle = d.startAngle;
+    let endAngle = d.endAngle;
+    
+    // Normalize angles
+    while (startAngle < 0) startAngle += 2 * Math.PI;
+    while (startAngle >= 2 * Math.PI) startAngle -= 2 * Math.PI;
+    while (endAngle < 0) endAngle += 2 * Math.PI;
+    while (endAngle >= 2 * Math.PI) endAngle -= 2 * Math.PI;
+    
+    // Check if angle is outside the sector
+    let isOutside = false;
+    if (startAngle < endAngle) {
+      isOutside = normAngle < startAngle || normAngle > endAngle;
+    } else {
+      isOutside = normAngle < startAngle && normAngle > endAngle;
+    }
+    
+    if (isOutside && !d.isDragging) {
+      // If outside, move back to original position gradually
+      const moveToAngle = (startAngle + endAngle) / 2;
+      d.x = center + Math.cos(moveToAngle) * dist;
+      d.y = center + Math.sin(moveToAngle) * dist;
     }
   }
+}
   
   // Update link positions based on node positions
   function updateLinks() {
