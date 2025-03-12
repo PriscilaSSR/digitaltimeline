@@ -172,82 +172,91 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Determine the time period or thematic group for an event
   function assignCategoryAndGroup(item) {
-    // First, map the original category to the new structure
-    if (item.category === "Humanity's Dream of Flying") {
-      item.excelCategory = "1. Key Literary & Cultural Works";
-    } else if (item.category === "Sociocultural & Economic Factors") {
-      item.excelCategory = "2. Socioeconomic Factors";
-    } else if (item.category === "Theoretical Breakthroughs") {
-      item.excelCategory = "3. Scientific Theories Breakthroughs";
-    } else if (item.category === "Aviation Technology" || item.category === "Engineering Experiments & Demonstrations" || item.category === "Zeppelins") {
-      item.excelCategory = "4. Practical Implementations";
-    } else {
-      // Default for anything we missed
-      item.excelCategory = item.category;
-    }
+  // First, map the original category to the new structure
+  if (item.category === "Humanity's Dream of Flying") {
+    item.excelCategory = "1. Key Literary & Cultural Works";
+  } else if (item.category === "Sociocultural & Economic Factors") {
+    item.excelCategory = "2. Socioeconomic Factors";
+  } else if (item.category === "Theoretical Breakthroughs") {
+    item.excelCategory = "3. Scientific Theories Breakthroughs";
+  } else if (item.category === "Aviation Technology" || item.category === "Engineering Experiments & Demonstrations" || item.category === "Zeppelins") {
+    item.excelCategory = "4. Practical Implementations";
+  } else {
+    // Default for anything we missed
+    item.excelCategory = item.category;
+  }
 
-    // Process based on the category
-    const year = item.parsedYear;
+  // Process based on the category
+  const year = item.parsedYear;
+  
+  // For categories 1-3, assign a time period based on year
+  if (item.excelCategory === "1. Key Literary & Cultural Works" || 
+      item.excelCategory === "2. Socioeconomic Factors" || 
+      item.excelCategory === "3. Scientific Theories Breakthroughs") {
+      
+    const categoryObj = mainCategories[item.excelCategory];
     
-    // For categories 1-3, assign a time period based on year
-    if (item.excelCategory === "1. Key Literary & Cultural Works" || 
-        item.excelCategory === "2. Socioeconomic Factors" || 
-        item.excelCategory === "3. Scientific Theories Breakthroughs") {
-        
-      const categoryObj = mainCategories[item.excelCategory];
-      
-      // Check each time period in this category
-      for (const [periodName, periodRange] of Object.entries(categoryObj.timePeriods)) {
-        if (year >= periodRange.startYear && year <= periodRange.endYear) {
-          item.timePeriod = periodName;
-          break;
-        }
-      }
-      
-      // If no time period was assigned, use the default
-      if (!item.timePeriod) {
-        const periods = Object.keys(categoryObj.timePeriods);
-        item.timePeriod = periods[periods.length - 1]; // Use the last period as default
-      }
-    }
-    // For category 4, assign a thematic group
-    else if (item.excelCategory === "4. Practical Implementations") {
-      // Assign thematic group based on title or content
-      if (item.title.includes("Kite") || item.title.includes("Pigeon") || item.title.includes("Lantern")) {
-        item.timePeriod = "4a. Non-Human Flight";
-      } else if (item.title.includes("jump") || item.title.includes("Failed Flight")) {
-        item.timePeriod = "4b. Early Attempts at Human Flight";
-      } else if (item.title.includes("Balloon") || item.title.includes("Passarola")) {
-        item.timePeriod = "4c. The Age of the Balloon";
-      } else if (item.title.includes("Glider")) {
-        item.timePeriod = "4d. Early Glider Experiments";
-      } else if (item.title.includes("Dirigible") || item.title.includes("Zeppelin") || item.title.includes("Airship")) {
-        item.timePeriod = "4f. Parallel Alternative: The Zeppelin";
-      } else if (year >= 1945) {
-        item.timePeriod = "4g. Post-War Advancements";
-      } else {
-        item.timePeriod = "4e. Race Toward Modern Aviation"; // Default for Category 4
+    // Check each time period in this category
+    for (const [periodName, periodRange] of Object.entries(categoryObj.timePeriods)) {
+      if (year >= periodRange.startYear && year <= periodRange.endYear) {
+        item.timePeriod = periodName;
+        break;
       }
     }
     
-    // Determine if the item is MAJOR, CIRCLE, or Timeline
-    if (item.excelCategory === "1. Key Literary & Cultural Works") {
+    // If no time period was assigned, use the default
+    if (!item.timePeriod) {
+      const periods = Object.keys(categoryObj.timePeriods);
+      item.timePeriod = periods[periods.length - 1]; // Use the last period as default
+    }
+  }
+  // For category 4, assign a thematic group
+  else if (item.excelCategory === "4. Practical Implementations") {
+    // Assign thematic group based on title or content
+    if (item.title.includes("Kite") || item.title.includes("Pigeon") || item.title.includes("Lantern")) {
+      item.timePeriod = "4a. Non-Human Flight";
+    } else if (item.title.includes("jump") || item.title.includes("Failed Flight")) {
+      item.timePeriod = "4b. Early Attempts at Human Flight";
+    } else if (item.title.includes("Balloon") || item.title.includes("Passarola")) {
+      item.timePeriod = "4c. The Age of the Balloon";
+    } else if (item.title.includes("Glider")) {
+      item.timePeriod = "4d. Early Glider Experiments";
+    } else if (item.title.includes("Dirigible") || item.title.includes("Zeppelin") || item.title.includes("Airship")) {
+      item.timePeriod = "4f. Parallel Alternative: The Zeppelin";
+    } else if (year >= 1945) {
+      item.timePeriod = "4g. Post-War Advancements";
+    } else {
+      item.timePeriod = "4e. Race Toward Modern Aviation"; // Default for Category 4
+    }
+  }
+  
+  // Determine if the item is MAJOR, CIRCLE, or Timeline
+  if (item.excelCategory === "1. Key Literary & Cultural Works") {
+    item.nodeType = "MAJOR";
+  } else if (item.excelCategory === "2. Socioeconomic Factors") {
+    // For category 2, some items are MAJOR and some are CIRCLE
+    if (item.title.includes("Revolution") || item.title.includes("System") || item.title.includes("Tradition") || item.title.includes("Military Demand")) {
       item.nodeType = "MAJOR";
-    } else if (item.excelCategory === "2. Socioeconomic Factors") {
-      // For category 2, some items are MAJOR and some are CIRCLE
-      // This is a simplification - in a real implementation, you would need to determine this based on specific criteria
-      if (item.title.includes("Revolution") || item.title.includes("System") || item.title.includes("Tradition") || item.title.includes("Military Demand")) {
-        item.nodeType = "MAJOR";
-      } else {
-        item.nodeType = "CIRCLE";
-      }
-    } else if (item.excelCategory === "3. Scientific Theories Breakthroughs") {
+    } else {
       item.nodeType = "CIRCLE";
-    } else if (item.excelCategory === "4. Practical Implementations") {
-      // For category 4, the thematic group is CIRCLE and the items are Timeline
+    }
+  } else if (item.excelCategory === "3. Scientific Theories Breakthroughs") {
+    item.nodeType = "CIRCLE";
+  } else if (item.excelCategory === "4. Practical Implementations") {
+    // UPDATED: Check if this is a CIRCLE node in category 4
+    if (item.timePeriod === "4a. Non-Human Flight" && item.title.match(/4aCIRCLE\d+/) ||
+        item.timePeriod === "4b. Early Attempts at Human Flight" && item.title.match(/4bCIRCLE\d+/) ||
+        item.timePeriod === "4c. The Age of the Balloon" && item.title.match(/4cCIRCLE\d+/) ||
+        item.timePeriod === "4d. Early Glider Experiments" && item.title.match(/4dCIRCLE\d+/) ||
+        item.timePeriod === "4e. Race Toward Modern Aviation" && item.title.match(/4eCIRCLE\d+/) ||
+        item.timePeriod === "4f. Parallel Alternative: The Zeppelin" && item.title.match(/4fCIRCLE\d+/) ||
+        item.timePeriod === "4g. Post-War Advancements" && item.title.match(/4gCIRCLE\d+/)) {
+      item.nodeType = "CIRCLE";
+    } else {
       item.nodeType = "Timeline";
     }
   }
+}
 
   // Parse all dates and assign categories and groups
   data.forEach(d => {
@@ -332,44 +341,64 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   
   // Now draw the time period dividing lines for each category
-  Object.entries(categoryTimePeriodAngles).forEach(([category, periodAngles]) => {
-    const [innerRadius, outerRadius] = nodePlacementRanges[category];
+ Object.entries(categoryTimePeriodAngles).forEach(([category, periodAngles]) => {
+  const [innerRadius, outerRadius] = nodePlacementRanges[category];
+  
+  // Draw dividing lines and triangles for each time period in this category
+  Object.entries(periodAngles).forEach(([period, angles]) => {
+    // Draw start angle line
+    boundaryGroup.append("line")
+      .attr("x1", center + Math.cos(angles.startAngle) * innerRadius)
+      .attr("y1", center + Math.sin(angles.startAngle) * innerRadius)
+      .attr("x2", center + Math.cos(angles.startAngle) * outerRadius)
+      .attr("y2", center + Math.sin(angles.startAngle) * outerRadius)
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1.5)
+      .attr("stroke-opacity", 0.6);
     
-    // Draw dividing lines for each time period in this category
-    Object.entries(periodAngles).forEach(([period, angles]) => {
-      // Draw start angle line
-      boundaryGroup.append("line")
-        .attr("x1", center + Math.cos(angles.startAngle) * innerRadius)
-        .attr("y1", center + Math.sin(angles.startAngle) * innerRadius)
-        .attr("x2", center + Math.cos(angles.startAngle) * outerRadius)
-        .attr("y2", center + Math.sin(angles.startAngle) * outerRadius)
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1.5)
-        .attr("stroke-opacity", 0.6);
-      
-      // Add time period label at the middle of the section
-      const labelAngle = (angles.startAngle + angles.endAngle) / 2;
-      const labelRadius = (innerRadius + outerRadius) / 2;
-      const labelX = center + Math.cos(labelAngle) * labelRadius;
-      const labelY = center + Math.sin(labelAngle) * labelRadius;
-      
-      // Calculate rotation for the text so it follows the arc
-      const rotation = (labelAngle * 180 / Math.PI + 90) % 360;
-      
-      boundaryGroup.append("text")
-        .attr("x", labelX)
-        .attr("y", labelY)
-        .attr("transform", `rotate(${rotation}, ${labelX}, ${labelY})`)
-        .attr("text-anchor", "middle")
-        .attr("dominant-baseline", "middle")
-        .text(period)
-        .style("fill", "#fff")
-        .style("font-size", "14px")
-        .style("font-weight", "bold")
-        .style("text-shadow", "1px 1px 2px black")
-        .style("pointer-events", "none");
-    });
+    // Add triangle marker at the dividing line
+    const triangleSize = 12;
+    const trianglePos = innerRadius + (outerRadius - innerRadius) * 0.2; // Position near inner radius
+    const triangleX = center + Math.cos(angles.startAngle) * trianglePos;
+    const triangleY = center + Math.sin(angles.startAngle) * trianglePos;
+    
+    // Create points for triangle pointing along the dividing line
+    const angle = angles.startAngle + Math.PI/2; // Perpendicular to the radius
+    const triangle = [
+      [triangleX - Math.cos(angle) * triangleSize/2, triangleY - Math.sin(angle) * triangleSize/2],
+      [triangleX + Math.cos(angle) * triangleSize/2, triangleY + Math.sin(angle) * triangleSize/2],
+      [triangleX + Math.cos(angles.startAngle) * triangleSize, triangleY + Math.sin(angles.startAngle) * triangleSize]
+    ];
+    
+    boundaryGroup.append("polygon")
+      .attr("points", triangle.map(p => p.join(",")).join(" "))
+      .attr("fill", mainCategories[category].color)
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1);
+    
+    // Add time period label at the middle of the section
+    const labelAngle = (angles.startAngle + angles.endAngle) / 2;
+    const labelRadius = (innerRadius + outerRadius) / 2;
+    const labelX = center + Math.cos(labelAngle) * labelRadius;
+    const labelY = center + Math.sin(labelAngle) * labelRadius;
+    
+    // Calculate rotation for the text so it follows the arc
+    const rotation = (labelAngle * 180 / Math.PI + 90) % 360;
+    
+    boundaryGroup.append("text")
+      .attr("x", labelX)
+      .attr("y", labelY)
+      .attr("transform", `rotate(${rotation}, ${labelX}, ${labelY})`)
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .text(period)
+      .style("fill", "#fff")
+      .style("font-size", "14px")
+      .style("font-weight", "bold")
+      .style("text-shadow", "1px 1px 2px black")
+      .style("pointer-events", "none");
   });
+});
 
   // -------------------------
   // 6) INITIALIZE NODE POSITIONS AND LINKS
@@ -520,92 +549,112 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Draw node groups with drag capability
   const nodeGroup = container.selectAll("g.node-group")
-    .data(data)
-    .enter()
-    .append("g")
-    .attr("class", d => `node-group node-type-${d.nodeType}`)
-    .attr("data-category", d => d.excelCategory)
-    .attr("data-node-type", d => d.nodeType)
-    .attr("transform", d => `translate(${d.x}, ${d.y})`)
-    .on("click", function(event, d) {
-      // Show the modal if we're not dragging
-      if (!d.wasDragged) {
-        showModal(d);
-      }
-      // Reset the flag
-      d.wasDragged = false;
-    })
-    .call(drag); // Add drag behavior
+  .data(data)
+  .enter()
+  .append("g")
+  .attr("class", d => `node-group node-type-${d.nodeType}`)
+  .attr("data-category", d => d.excelCategory)
+  .attr("data-node-type", d => d.nodeType)
+  .attr("transform", d => `translate(${d.x}, ${d.y})`)
+  .on("click", function(event, d) {
+    // Show the modal if we're not dragging
+    if (!d.wasDragged) {
+      showModal(d);
+    }
+    // Reset the flag
+    d.wasDragged = false;
+  })
+  .call(drag); // Add drag behavior
 
-  // Vary node appearance based on node type
-  nodeGroup.append("circle")
-    .attr("r", d => {
-      // Different sizes based on node type
-      if (d.nodeType === "MAJOR") return 60;
-      if (d.nodeType === "CIRCLE") return 50;
-      return 40; // Timeline nodes are smaller
-    })
-    .attr("fill", d => colorScale(d.excelCategory))
-    .style("stroke", "#333")
-    .style("stroke-width", d => d.nodeType === "MAJOR" ? 2 : 1) // Thicker border for MAJOR nodes
-    .style("cursor", "move"); // Change cursor to indicate draggable
+// Different visual representation based on node type
+nodeGroup.each(function(d) {
+  const node = d3.select(this);
+  
+  if (d.nodeType === "MAJOR") {
+    // MAJOR nodes as text labels with background
+    node.append("rect")
+      .attr("x", -100)
+      .attr("y", -20)
+      .attr("width", 200)
+      .attr("height", 40)
+      .attr("rx", 5)
+      .attr("ry", 5)
+      .attr("fill", colorScale(d.excelCategory))
+      .attr("fill-opacity", 0.8)
+      .attr("stroke", colorScale(d.excelCategory))
+      .attr("stroke-width", 2);
+      
+    node.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .attr("fill", "white")
+      .attr("font-weight", "bold")
+      .attr("font-size", "14px")
+      .attr("pointer-events", "none")
+      .text(d.title);
+  } 
+  else if (d.nodeType === "CIRCLE") {
+    // CIRCLE nodes as circles
+    node.append("circle")
+      .attr("r", 50)
+      .attr("fill", colorScale(d.excelCategory))
+      .attr("fill-opacity", 0.9)
+      .attr("stroke", "#333")
+      .attr("stroke-width", 1)
+      .style("cursor", "move");
+      
+    // Add label
+    node.append("foreignObject")
+      .attr("x", -45)
+      .attr("y", -45)
+      .attr("width", 90)
+      .attr("height", 90)
+      .append("xhtml:div")
+      .style("display", "flex")
+      .style("justify-content", "center")
+      .style("align-items", "center")
+      .style("text-align", "center")
+      .style("font-size", "12px")
+      .style("width", "100%")
+      .style("height", "100%")
+      .style("overflow", "hidden")
+      .style("pointer-events", "none")
+      .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
+      .style("color", "white")
+      .html(`<strong>${d.title}</strong>`);
+  } 
+  else { // Timeline nodes
+    // Timeline nodes as smaller circles
+    node.append("circle")
+      .attr("r", 35)
+      .attr("fill", colorScale(d.excelCategory))
+      .attr("fill-opacity", 0.7)
+      .attr("stroke", "#333")
+      .attr("stroke-width", 1)
+      .style("cursor", "move");
+      
+    // Add label with date
+    node.append("foreignObject")
+      .attr("x", -30)
+      .attr("y", -30)
+      .attr("width", 60)
+      .attr("height", 60)
+      .append("xhtml:div")
+      .style("display", "flex")
+      .style("justify-content", "center")
+      .style("align-items", "center")
+      .style("text-align", "center")
+      .style("font-size", "10px")
+      .style("width", "100%")
+      .style("height", "100%")
+      .style("overflow", "hidden")
+      .style("pointer-events", "none")
+      .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
+      .style("color", "white")
+      .html(`<strong>${d.title}</strong><br><small>${d.date}</small>`);
+  }
+});
 
-  // Add a special visual indicator for MAJOR nodes
-  nodeGroup.filter(d => d.nodeType === "MAJOR")
-    .append("circle")
-    .attr("r", 65)
-    .attr("fill", "none")
-    .attr("stroke", d => colorScale(d.excelCategory))
-    .attr("stroke-width", 2)
-    .attr("stroke-dasharray", "5,5")
-    .style("opacity", 0.6);
-
-  // Display node title (and date for Timeline nodes)
-  nodeGroup.append("foreignObject")
-    .attr("x", d => {
-      if (d.nodeType === "MAJOR") return -60;
-      if (d.nodeType === "CIRCLE") return -50;
-      return -40;
-    })
-    .attr("y", d => {
-      if (d.nodeType === "MAJOR") return -60;
-      if (d.nodeType === "CIRCLE") return -50;
-      return -40;
-    })
-    .attr("width", d => {
-      if (d.nodeType === "MAJOR") return 120;
-      if (d.nodeType === "CIRCLE") return 100;
-      return 80;
-    })
-    .attr("height", d => {
-      if (d.nodeType === "MAJOR") return 120;
-      if (d.nodeType === "CIRCLE") return 100;
-      return 80;
-    })
-    .append("xhtml:div")
-    .style("display", "flex")
-    .style("justify-content", "center")
-    .style("align-items", "center")
-    .style("text-align", "center")
-    .style("font-size", d => {
-      if (d.nodeType === "MAJOR") return "14px";
-      if (d.nodeType === "CIRCLE") return "12px";
-      return "10px";
-    })
-    .style("width", "100%")
-    .style("height", "100%")
-    .style("overflow", "hidden")
-    .style("pointer-events", "none") // Make text non-interactable so it doesn't interfere with dragging
-    .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
-    .style("color", "white")
-    .html(d => {
-      let content = `<strong>${d.title}</strong>`;
-      // Add date for Timeline nodes
-      if (d.nodeType === "Timeline") {
-        content += `<br><small>${d.date}</small>`;
-      }
-      return content;
-    });
     
   // -------------------------
   // 7) DRAG FUNCTIONS
