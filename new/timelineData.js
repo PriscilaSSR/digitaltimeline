@@ -1,4 +1,140 @@
+// The following code contains the key parts that need to be modified 
+// in the timelineData.js file to match the new structure
+
+// 1. You'll need to update the entire file, but here are the critical changes:
+
+// MODIFIED MAPPING FUNCTION to ensure consistent structure:
+function standardizeTimelineData() {
+  window.timelineItems.forEach(item => {
+    // Ensure proper category structure
+    if (item.category === "Humanity's Dream of Flying") {
+      item.excelCategory = "1. Key Literary & Cultural Works";
+      // Assign timePeriod based on date
+      const year = parseTimelineDate(item.date); // This function needs to be available
+      if (year < 1400) {
+        item.timePeriod = "1a. 500s BCE to 1399s CE";
+      } else if (year < 1800) {
+        item.timePeriod = "1b. 1400 CE to 1799s CE";
+      } else {
+        item.timePeriod = "1c. 1800s CE to 1945 CE";
+      }
+      item.nodeType = "MAJOR";
+    } 
+    else if (item.category === "Sociocultural & Economic Factors") {
+      item.excelCategory = "2. Socioeconomic Factors";
+      
+      // Assign timePeriod based on date
+      const year = parseTimelineDate(item.date);
+      if (year < 1400) {
+        item.timePeriod = "2a. 500s BCE to 1399s CE";
+      } else if (year < 1700) {
+        item.timePeriod = "2b. 1400 CE to 1699s CE";
+      } else if (year < 1890) {
+        item.timePeriod = "2c. 1760s CE to 1890s CE";
+      } else {
+        item.timePeriod = "2d. 1890s CE to 1980s CE";
+      }
+      
+      // Assign MAJOR or CIRCLE based on title keywords
+      if (item.title.includes("Revolution") || 
+          item.title.includes("System") || 
+          item.title.includes("Tradition") || 
+          item.title.includes("Military Demand") ||
+          item.title.includes("Commercial Aviation") ||
+          item.title.includes("World Fairs")) {
+        item.nodeType = "MAJOR";
+      } else {
+        item.nodeType = "CIRCLE";
+      }
+    } 
+    else if (item.category === "Theoretical Breakthroughs") {
+      item.excelCategory = "3. Scientific Theories Breakthroughs";
+      
+      // Assign timePeriod based on date
+      const year = parseTimelineDate(item.date);
+      if (year < 1600) {
+        item.timePeriod = "3a. 500s BCE to 1599s CE";
+      } else if (year < 1770) {
+        item.timePeriod = "3b. 1600s CE to 1760s CE";
+      } else if (year < 1900) {
+        item.timePeriod = "3c. 1770s CE to 1899s CE";
+      } else {
+        item.timePeriod = "3d. 1900s CE to 1945 CE";
+      }
+      
+      item.nodeType = "CIRCLE";
+    } 
+    else if (item.category === "Aviation Technology" || 
+             item.category === "Engineering Experiments & Demonstrations" || 
+             item.category === "Zeppelins") {
+      item.excelCategory = "4. Practical Implementations";
+      
+      // Assign thematic groups for category 4
+      if (item.title.includes("Kite") || 
+          item.title.includes("Pigeon") || 
+          item.title.includes("Lantern")) {
+        item.timePeriod = "4a. Non-Human Flight";
+      } 
+      else if (item.title.includes("jump") || 
+               item.title.includes("Failed Flight")) {
+        item.timePeriod = "4b. Early Attempts at Human Flight";
+      } 
+      else if (item.title.includes("Balloon") || 
+               item.title.includes("Passarola")) {
+        item.timePeriod = "4c. The Age of the Balloon";
+      } 
+      else if (item.title.includes("Glider")) {
+        item.timePeriod = "4d. Early Glider Experiments";
+      } 
+      else if (item.title.includes("Dirigible") || 
+               item.title.includes("Zeppelin") || 
+               item.title.includes("Airship") ||
+               item.category === "Zeppelins") {
+        item.timePeriod = "4f. Parallel Alternative: The Zeppelin";
+      } 
+      else if (parseTimelineDate(item.date) >= 1945) {
+        item.timePeriod = "4g. Post-War Advancements";
+      } 
+      else {
+        item.timePeriod = "4e. Race Toward Modern Aviation"; // Default for Category 4
+      }
+      
+      item.nodeType = "Timeline";
+    }
+    
+    // Default catch-all (should not happen with proper data)
+    if (!item.excelCategory) {
+      console.warn("Item missing category assignment:", item.title);
+      item.excelCategory = "4. Practical Implementations";
+      item.timePeriod = "4e. Race Toward Modern Aviation";
+      item.nodeType = "Timeline";
+    }
+  });
+  
+  // Add missing Wright Brothers node
+  window.timelineItems.push({
+    date: '1903',
+    location: 'United States',
+    title: "Wright Brothers' Flights",
+    description: "The Wright brothers, Orville and Wilbur, make the first successful sustained, controlled, powered flight in their Wright Flyer at Kitty Hawk, North Carolina.",
+    img: "/api/placeholder/100/100",
+    people: ['Orville Wright', 'Wilbur Wright'],
+    category: "Engineering Experiments & Demonstrations",
+    excelCategory: "4. Practical Implementations",
+    timePeriod: "4e. Race Toward Modern Aviation",
+    nodeType: "Timeline",
+    connections: []
+  });
+}
+
+// Call this function after the timeline data is loaded
+// standardizeTimelineData();
+
+
+
 window.timelineItems = [
+  
+  
   // 1. KEY LITERARY & CULTURAL WORKS
   // ==============================
   // 1a. 500s BCE to 1399s CE
@@ -1148,3 +1284,7 @@ window.timelineItems = [
     connections: []
   }
 ];
+// 2. ADD TO THE BOTTOM OF THE FILE:
+// Make sure to run this function to standardize data structure
+standardizeTimelineData();
+console.log("Timeline data standardized to new structure");
