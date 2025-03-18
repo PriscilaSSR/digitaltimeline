@@ -539,8 +539,7 @@ nodeGroup.filter(d => d.nodeType === "CIRCLE")
       .attr("d", pathData)
       .style("fill", "none")
       .style("stroke", "none");
-    */
-    
+     
     // Add a small indicator dot
     d3.select(this).append("circle")
       .attr("r", 8)
