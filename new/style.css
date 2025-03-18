@@ -251,27 +251,43 @@ body {
 .link {
   pointer-events: none;
 }
+/* In your CSS: */
+.node-group {
+  position: absolute; /* Or transform-origin to center */
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+  /* Initial positioning using CSS transforms */
+  transform:
+    rotate(var(--my-angle))
+    translateY(var(--my-radius));
+}
 
+/* Override transform for MAJOR nodes to account for text arc */
+.node-group.node-major {
+  transform:
+    rotate(var(--my-angle)); /* Only rotate, let textPath handle radius */
+}
 /* Style nodes based on Excel categories */
-.node-group[data-category="1. Key Literary & Cultural Works"] circle {
+.node-group[data-category="Key Literary & Cultural Works"] circle {
   fill: #9c27b0;
   stroke: #fff;
   stroke-width: 2px;
 }
 
-.node-group[data-category="2. Socioeconomic Factors"] circle {
+.node-group[data-category="Socioeconomic Factors"] circle {
   fill: #c62828;
   stroke: #fff;
   stroke-width: 2px;
 }
 
-.node-group[data-category="3. Scientific Theories Breakthroughs"] circle {
+.node-group[data-category="Scientific Theories Breakthroughs"] circle {
   fill: #1565c0;
   stroke: #fff;
   stroke-width: 2px;
 }
 
-.node-group[data-category="4. Practical Implementations"] circle {
+.node-group[data-category="Practical Implementations"] circle {
   fill: #2e7d32;
   stroke: #fff;
   stroke-width: 2px;
