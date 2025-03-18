@@ -864,41 +864,55 @@ window.timelineItems = [
   // 4. PRACTICAL IMPLEMENTATIONS
   // ==============================
   // 4a. Non-Human Flight
-  {
+{
     title: 'Non-Human Flight',
     Category: "Practical Implementations",
     Subcategory: "CIRCLE",
-  },
-  {
+    TimeLineCategory: "Non-Human Flight", // Add this
+    nodeType: "TIMELINE_CATEGORY",        // Change this
+},
+{
     title: 'Early Attempts at Human Flight',
     Category: "Practical Implementations",
     Subcategory: "CIRCLE",
-  },
-  {
+    TimeLineCategory: "Early Attempts at Human Flight", // Add this
+    nodeType: "TIMELINE_CATEGORY",        // Change this
+},
+{
     title: 'The Age of the Balloon',
     Category: "Practical Implementations",
     Subcategory: "CIRCLE",
-  },
-  {
+    TimeLineCategory: "The Age of the Balloon", // Add this
+    nodeType: "TIMELINE_CATEGORY",        // Change this
+},
+{
     title: 'Early Glider Experiments',
     Category: "Practical Implementations",
     Subcategory: "CIRCLE",
-  },
-  {
+    TimeLineCategory: "Early Glider Experiments", // Add this
+    nodeType: "TIMELINE_CATEGORY",        // Change this
+},
+{
     title: 'Race Toward Modern Aviation',
     Category: "Practical Implementations",
     Subcategory: "CIRCLE",
-  },
-  {
+    TimeLineCategory: "Race Toward Modern Aviation", // Add this
+    nodeType: "TIMELINE_CATEGORY",        // Change this
+},
+{
     title: 'Parallel Alternative: The Zeppelin',
     Category: "Practical Implementations",
     Subcategory: "CIRCLE",
-  },
-  {
+    TimeLineCategory: "Parallel Alternative: The Zeppelin", // Add this
+    nodeType: "TIMELINE_CATEGORY",        // Change this
+},
+{
     title: 'Post-War Advancements',
     Category: "Practical Implementations",
     Subcategory: "CIRCLE",
-  },
+    TimeLineCategory: "Post-War Advancements", // Add this
+    nodeType: "TIMELINE_CATEGORY",        // Change this
+},
   {
     date: '500s BCE',
     location: 'China',
