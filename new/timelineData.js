@@ -8,13 +8,13 @@ function standardizeTimelineData() {
     // 1. Handle Category and excelCategory mapping
     if (item.Category) {
       if (item.Category === "Key Literary & Cultural Works") {
-        item.excelCategory = "1. Key Literary & Cultural Works";
+        item.excelCategory = "Key Literary & Cultural Works";
       } else if (item.Category === "Socioeconomic Factors") {
-        item.excelCategory = "2. Socioeconomic Factors";
+        item.excelCategory = "Socioeconomic Factors";
       } else if (item.Category === "Scientific Theories and Breakthroughs") {
-        item.excelCategory = "3. Scientific Theories Breakthroughs";
+        item.excelCategory = "Scientific Theories Breakthroughs";
       } else if (item.Category === "Practical Implementations") {
-        item.excelCategory = "4. Practical Implementations";
+        item.excelCategory = "Practical Implementations";
       } else {
         // Default fallback
         item.excelCategory = item.Category;
