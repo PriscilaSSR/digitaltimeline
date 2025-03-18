@@ -68,23 +68,23 @@ document.addEventListener("DOMContentLoaded", function() {
   
   // Define circular boundaries for the Excel categories - these will be the dividing lines
   const categoryBoundaries = {
-    "1. Key Literary & Cultural Works": maxOuterRadius,
-    "2. Socioeconomic Factors": maxOuterRadius * 0.75,
-    "3. Scientific Theories Breakthroughs": maxOuterRadius * 0.5,
-    "4. Practical Implementations": maxOuterRadius * 0.25
+    "Key Literary & Cultural Works": maxOuterRadius,
+    "Socioeconomic Factors": maxOuterRadius * 0.75,
+    "Scientific Theories Breakthroughs": maxOuterRadius * 0.5,
+    "Practical Implementations": maxOuterRadius * 0.25
   };
   
   // Define the spaces between boundaries where nodes will be positioned
   const nodePlacementRanges = {
-    "1. Key Literary & Cultural Works": [categoryBoundaries["2. Socioeconomic Factors"], categoryBoundaries["1. Key Literary & Cultural Works"]],
-    "2. Socioeconomic Factors": [categoryBoundaries["3. Scientific Theories Breakthroughs"], categoryBoundaries["2. Socioeconomic Factors"]],
-    "3. Scientific Theories Breakthroughs": [categoryBoundaries["4. Practical Implementations"], categoryBoundaries["3. Scientific Theories Breakthroughs"]],
-    "4. Practical Implementations": [0, categoryBoundaries["4. Practical Implementations"]]
+    "Key Literary & Cultural Works": [categoryBoundaries["Socioeconomic Factors"], categoryBoundaries["Key Literary & Cultural Works"]],
+    "Socioeconomic Factors": [categoryBoundaries["Scientific Theories Breakthroughs"], categoryBoundaries["Socioeconomic Factors"]],
+    "Scientific Theories Breakthroughs": [categoryBoundaries["Practical Implementations"], categoryBoundaries["Scientific Theories Breakthroughs"]],
+    "Practical Implementations": [0, categoryBoundaries["Practical Implementations"]]
   };
   
   // Colors for each Excel category
   const colorScale = d3.scaleOrdinal()
-    .domain(["1. Key Literary & Cultural Works", "2. Socioeconomic Factors", "3. Scientific Theories Breakthroughs", "4. Practical Implementations"])
+    .domain(["Key Literary & Cultural Works", "Socioeconomic Factors", "Scientific Theories Breakthroughs", "Practical Implementations"])
     .range(["#9c27b0", "#c62828", "#1565c0", "#2e7d32"]);
 
   // -------------------------
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("stroke-opacity", 0.6);
       
       // Add triangular arrow indicator at the dividing line
-      const arrowSize = 10;
+      const arrowSize = 40;
       const arrowRadius = (innerRadius + outerRadius) / 2;
       const arrowX = center + Math.cos(angles.startAngle) * arrowRadius;
       const arrowY = center + Math.sin(angles.startAngle) * arrowRadius;
