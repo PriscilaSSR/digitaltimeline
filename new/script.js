@@ -357,8 +357,8 @@ document.addEventListener("DOMContentLoaded", function() {
     radius = Math.max(rMin + 20, Math.min(rMax - 20, radius));
     
     // Position at the calculated angle and radius
-    d.x = center + Math.cos(angle) * radius;
-    d.y = center + Math.sin(angle) * radius;
+   // d.x = center + Math.cos(angle) * radius;
+   // d.y = center + Math.sin(angle) * radius;
     
     // Save original position and parameters for constraints
     d.origAngle = angle;
@@ -422,7 +422,11 @@ document.addEventListener("DOMContentLoaded", function() {
     .attr("data-category", d => d.excelCategory)
     .attr("data-type", d => d.nodeType)
     .attr("data-period", d => d.timePeriod)
-    .attr("transform", d => `translate(${d.x}, ${d.y})`)
+    //.attr("transform", d => `translate(${d.x}, ${d.y})`)
+      .each(function(d) {
+    this.style.setProperty('--my-angle', `${d.origAngle * 180 / Math.PI}deg`);
+    this.style.setProperty('--my-radius', `${d.origRadius}px`);
+  })
     .on("click", function(event, d) {
       // If not dragging, show info
       if (!d.wasDragged) {
