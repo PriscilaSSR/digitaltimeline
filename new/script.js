@@ -486,6 +486,7 @@ nodeGroup.filter(d => d.nodeType === "CIRCLE")
     const pathId = `textPath-${d.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
     
     // First approach: Use an arc path with a proper center transformation
+     /*
     const sweep = Math.min(Math.PI * 0.5, 2.0 * Math.PI / data.filter(item => 
       item.nodeType === "MAJOR" && 
       item.timePeriod === d.timePeriod
@@ -525,7 +526,7 @@ nodeGroup.filter(d => d.nodeType === "CIRCLE")
     
     // Alternative approach using a custom path
     // This approach explicitly creates a curved path in the correct position
-    /*
+    */
     const pathLength = radius * sweep;
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     
