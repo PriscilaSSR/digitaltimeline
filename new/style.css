@@ -282,6 +282,17 @@ body {
   animation: pulse 2s infinite ease-in-out;
 }
 
+.node-major text {
+  text-anchor: middle; /* Center the text horizontally */
+  /* Add any other styles you need here */
+}
+
+/* Optional: If needed, add word wrapping */
+.node-major text {
+  word-wrap: break-word;
+  max-width: 80px; /* Adjust as needed */
+}
+
 .node-timeline_trigger circle {
   animation: pulse 3s infinite ease-in-out;
   stroke-dasharray: 4,4;
