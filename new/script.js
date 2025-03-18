@@ -426,22 +426,25 @@ document.addEventListener("DOMContentLoaded", function() {
     .on("click", function(event, d) {
       // If not dragging, show info
       if (!d.wasDragged) {
-        if (d.nodeType === "TIMELINE_TRIGGER" && d.TimeLineCategory) {
-          // For timeline nodes, show timeline popup
-          showTimelinePopup(d);
-        } else {
-          // For other nodes, show the regular modal
-          showModal(d);
-        }
-      }
+    if (d.nodeType === "TIMELINE_TRIGGER" && d.TimeLineCategory) {
+        // For timeline trigger nodes, show timeline popup
+        showTimelinePopup(d);
+    } else if (d.nodeType === "TIMELINE_CATEGORY" && d.TimeLineCategory) {
+        // For timeline category nodes, show timeline popup
+        showTimelinePopup(d);
+    } else {
+        // For other nodes, show the regular modal
+        showModal(d);
+    }
+}
       // Reset the flag
       d.wasDragged = false;
     })
     .call(drag); // Add drag behavior
 
   // HANDLE DIFFERENT NODE TYPES
-  // 1. CIRCLE nodes - regular circles
-  nodeGroup.filter(d => d.nodeType === "CIRCLE")
+ // 1. CIRCLE nodes - regular circles
+nodeGroup.filter(d => d.nodeType === "CIRCLE")
     .each(function(d) {
       // Add circle
       d3.select(this).append("circle")
@@ -545,7 +548,7 @@ document.addEventListener("DOMContentLoaded", function() {
       .style("stroke-width", 1)
       .style("cursor", "pointer");
   });
-  
+
   // 3. TIMELINE_TRIGGER nodes - nodes that trigger a timeline popup
   nodeGroup.filter(d => d.nodeType === "TIMELINE_TRIGGER")
     .each(function(d) {
@@ -591,6 +594,37 @@ document.addEventListener("DOMContentLoaded", function() {
         .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
         .style("color", "white")
         .html(`<strong>${d.TimeLineCategory}</strong>`);
+    });
+// 4. TIMELINE_CATEGORY nodes - new nodes to trigger timeline popups
+nodeGroup.filter(d => d.nodeType === "TIMELINE_CATEGORY")
+    .each(function(d) {
+        // Add circle
+        d3.select(this).append("circle")
+            .attr("r", circleRadius)
+            .attr("fill", colorScale(d.excelCategory))
+            .style("stroke", "#333")
+            .style("stroke-width", 1)
+            .style("cursor", "pointer");
+
+        // Add title text
+        d3.select(this).append("foreignObject")
+            .attr("x", -circleRadius * 0.8)
+            .attr("y", -circleRadius * 0.8)
+            .attr("width", circleRadius * 1.6)
+            .attr("height", circleRadius * 1.6)
+            .append("xhtml:div")
+            .style("display", "flex")
+            .style("justify-content", "center")
+            .style("align-items", "center")
+            .style("text-align", "center")
+            .style("font-size", "12px")
+            .style("width", circleRadius * 1.6 + "px")
+            .style("height", circleRadius * 1.6 + "px")
+            .style("overflow", "hidden")
+            .style("pointer-events", "none")
+            .style("text-shadow", "0px 0px 3px rgba(0,0,0,0.7)")
+            .style("color", "white")
+            .html(`<strong>${d.title}</strong>`);
     });
 
     
