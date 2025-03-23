@@ -176,43 +176,109 @@
         const config = {
             ...getResponsiveDimensions(),
             rotation: 0,
+            // Rings data with content for sidebar
             rings: [
                 {
                     name: "Purple (Outer)",
                     radius: 200,
                     color: "#8A2BE2",
                     segments: 3,
-                    segmentNames: ["500s BCE to 1599s CE", "Purple Section 2", "Purple Section 3"],
+                    segmentNames: ["500s BCE to 1599s CE", "1600 CE to 1799s CE", "1800s CE to 1945 CE"],
                     segmentContent: [
                                 {
-                                    title: "Purple Section 1", // Edit this
-                                    subtitle: "Outer Ring - First Segment", // Edit this
+                                    title: "The Myth of Icarus and Daedalus", // Edit this
+                                    subtitle: "500s BCE", // Edit this
                                     text: "This is the first segment of the purple outer ring...", // Edit this
-                                    imageSrc: "/api/placeholder/400/250" // You can keep this placeholder or change to a different image
+                                    imageSrc: "/img/Icarus.jpg" // You can keep this placeholder or change to a different image
                                 },
-                                // Other segments...
-                            ]
+                        {
+                            title: "Purple Section B",
+                            subtitle: "Outer Ring - Second Segment",
+                            text: "The second segment of the purple outer ring focuses on category B. This section highlights trends, patterns and statistical data related to this category. The data shows significant growth in this area over the last quarter.",
+                            imageSrc: "/api/placeholder/400/250"
+                        },
+                        {
+                            title: "Purple Section C",
+                            subtitle: "Outer Ring - Third Segment",
+                            text: "The third segment of the purple ring covers category C. This segment represents our strategic initiatives and long-term goals. The visual data here demonstrates our progress toward key milestones.",
+                            imageSrc: "/api/placeholder/400/250"
+                        }
+                    ]
                 },
                 {
                     name: "Blue",
                     radius: 150,
                     color: "#4169E1",
                     segments: 4,
-                    segmentNames: ["Blue 1", "Blue 2", "Blue 3", "Blue 4"]
+                    segmentNames: ["Blue 1", "Blue 2", "Blue 3", "Blue 4"],
+                    segmentContent: [
+                        {
+                            title: "Blue Section 1",
+                            subtitle: "Second Ring - First Segment",
+                            text: "The first segment of the blue ring represents subcategory A-1. This section contains detailed metrics about specific projects, teams, and initiatives within this subcategory.",
+                            imageSrc: "/api/placeholder/400/250"
+                        },
+                        {
+                            title: "Blue Section 2",
+                            subtitle: "Second Ring - Second Segment",
+                            text: "The second segment of the blue ring focuses on subcategory A-2. Here we can see performance metrics, resource allocation, and timeline projections for ongoing projects.",
+                            imageSrc: "/api/placeholder/400/250"
+                        },
+                        {
+                            title: "Blue Section 3", 
+                            subtitle: "Second Ring - Third Segment",
+                            text: "Blue section 3 represents subcategory A-3, highlighting our third major focus area. The data shows comparative analysis between current and previous quarters with trend indicators.",
+                            imageSrc: "/api/placeholder/400/250"
+                        },
+                        {
+                            title: "Blue Section 4",
+                            subtitle: "Second Ring - Fourth Segment",
+                            text: "The fourth segment of the blue ring covers subcategory A-4. This section aggregates feedback data and satisfaction scores from multiple sources, providing a comprehensive overview.",
+                            imageSrc: "/api/placeholder/400/250"
+                        }
+                    ]
                 },
                 {
                     name: "Green",
                     radius: 100,
                     color: "#32CD32",
                     segments: 3,
-                    segmentNames: ["Green I", "Green II", "Green III"]
+                    segmentNames: ["Green I", "Green II", "Green III"],
+                    segmentContent: [
+                        {
+                            title: "Green Section I",
+                            subtitle: "Third Ring - First Segment",
+                            text: "The first segment of the green ring focuses on implementation details and technical specifics. This section provides in-depth analysis of operational data and system performance.",
+                            imageSrc: "/api/placeholder/400/250"
+                        },
+                        {
+                            title: "Green Section II",
+                            subtitle: "Third Ring - Second Segment",
+                            text: "Green section 2 represents our financial metrics and resource utilization data. The visualizations here track budget allocation, expenditures, and return on investment across different initiatives.",
+                            imageSrc: "/api/placeholder/400/250"
+                        },
+                        {
+                            title: "Green Section III",
+                            subtitle: "Third Ring - Third Segment",
+                            text: "The third segment of the green ring contains information about market analysis and competitive positioning. This section highlights our strengths, opportunities, and areas for improvement.",
+                            imageSrc: "/api/placeholder/400/250"
+                        }
+                    ]
                 },
                 {
                     name: "Red (Inner)",
                     radius: 50,
                     color: "#FF4500",
                     segments: 1,
-                    segmentNames: ["Core"]
+                    segmentNames: ["Core"],
+                    segmentContent: [
+                        {
+                            title: "Red Center",
+                            subtitle: "Core Element",
+                            text: "The red center circle represents our core values and mission. It sits at the heart of everything we do and connects all the other elements in our organizational structure. This central element emphasizes our commitment to quality, innovation, and customer satisfaction.",
+                            imageSrc: "/api/placeholder/400/250"
+                        }
+                    ]
                 }
             ]
         };
@@ -270,30 +336,32 @@
                             showSidebar(ringIndex, i);
                         });
                         
-                        // For the inner circle, add a centered label
-                        if (ring.segments === 1) {
-                            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                            text.setAttribute("x", config.centerX);
-                            text.setAttribute("y", config.centerY);
-                            text.setAttribute("text-anchor", "middle");
-                            text.setAttribute("dominant-baseline", "middle");
-                            text.setAttribute("fill", "#fff");
-                            text.setAttribute("font-size", ring.radius / 3);
-                            text.setAttribute("font-weight", "bold");
-                            text.setAttribute("pointer-events", "none");
-                            text.textContent = ring.segmentNames[i];
-                            svg.appendChild(text);
-                        }
+                        // Add label for center circle
+                        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                        text.setAttribute("x", config.centerX);
+                        text.setAttribute("y", config.centerY);
+                        text.setAttribute("text-anchor", "middle");
+                        text.setAttribute("dominant-baseline", "middle");
+                        text.setAttribute("fill", "#fff");
+                        text.setAttribute("font-size", ring.radius / 3);
+                        text.setAttribute("font-weight", "bold");
+                        text.setAttribute("pointer-events", "none");
+                        text.textContent = ring.segmentNames[i];
                         
                         svg.appendChild(circle);
+                        svg.appendChild(text);
                     } else {
                         // For multi-segment rings, create arcs
                         const outerRadius = ring.radius;
                         const innerRadius = ringIndex < config.rings.length - 1 ? config.rings[ringIndex + 1].radius : 0;
                         
                         // Convert degrees to radians for SVG arc
-                        const startRad = (startAngle - 90) * Math.PI / 180;
-                        const endRad = (endAngle - 90) * Math.PI / 180;
+                        let startRad = (startAngle - 90) * Math.PI / 180;
+                        let endRad = (endAngle - 90) * Math.PI / 180;
+                        
+                        // Calculate angle span
+                        const angleSpan = endAngle > startAngle ? endAngle - startAngle : endAngle + 360 - startAngle;
+                        const largeArcFlag = angleSpan > 180 ? 1 : 0;
                         
                         // Calculate points
                         const x1 = config.centerX + innerRadius * Math.cos(startRad);
@@ -307,8 +375,6 @@
                         
                         // Create path for arc
                         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        
-                        const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
                         
                         // Define SVG path
                         const d = [
@@ -335,37 +401,54 @@
                             showSidebar(ringIndex, i);
                         });
                         
-                        // Add text label to each segment (except very small ones)
-                        if (outerRadius - innerRadius > 30 && segmentAngle > 30) {
-                            // Calculate position for text (midpoint of the arc)
-                            const midAngleRad = (startRad + endRad) / 2;
+                        svg.appendChild(path);
+                        
+                        // Add segment label
+                        if (outerRadius - innerRadius > 30 && angleSpan > 30) {
+                            // Calculate midpoint for label placement
+                            const midRad = (startRad + endRad) / 2;
                             const textRadius = innerRadius + (outerRadius - innerRadius) / 2;
-                            const textX = config.centerX + textRadius * Math.cos(midAngleRad);
-                            const textY = config.centerY + textRadius * Math.sin(midAngleRad);
+                            const textX = config.centerX + textRadius * Math.cos(midRad);
+                            const textY = config.centerY + textRadius * Math.sin(midRad);
                             
+                            // Create shadow/background text for better visibility
+                            const textShadow = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                            textShadow.setAttribute("x", textX);
+                            textShadow.setAttribute("y", textY);
+                            textShadow.setAttribute("text-anchor", "middle");
+                            textShadow.setAttribute("dominant-baseline", "middle");
+                            textShadow.setAttribute("stroke", "rgba(0,0,0,0.5)");
+                            textShadow.setAttribute("stroke-width", "3");
+                            textShadow.setAttribute("stroke-linejoin", "round");
+                            textShadow.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
+                            textShadow.setAttribute("font-weight", "bold");
+                            textShadow.setAttribute("pointer-events", "none");
+                            textShadow.textContent = ring.segmentNames[i];
+                            
+                            // Calculate rotation angle for text
+                            let rotationDegrees = (midRad * 180 / Math.PI) + 90;
+                            // Make sure text is never upside down
+                            if (rotationDegrees > 90 && rotationDegrees < 270) {
+                                rotationDegrees += 180;
+                            }
+                            textShadow.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
+                            
+                            // Create actual text that will be visible
                             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
                             text.setAttribute("x", textX);
                             text.setAttribute("y", textY);
                             text.setAttribute("text-anchor", "middle");
                             text.setAttribute("dominant-baseline", "middle");
                             text.setAttribute("fill", "#fff");
-                            text.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 5));
+                            text.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
                             text.setAttribute("font-weight", "bold");
-                            text.setAttribute("pointer-events", "none"); // So it doesn't interfere with segment clicks
-                            
-                            // Rotate text to align with the arc
-                            const rotationAngle = (midAngleRad * 180 / Math.PI) + 90;
-                            if (rotationAngle > 90 && rotationAngle < 270) {
-                                text.setAttribute("transform", `rotate(${rotationAngle + 180}, ${textX}, ${textY})`);
-                            } else {
-                                text.setAttribute("transform", `rotate(${rotationAngle}, ${textX}, ${textY})`);
-                            }
-                            
+                            text.setAttribute("pointer-events", "none");
+                            text.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
                             text.textContent = ring.segmentNames[i];
+                            
+                            svg.appendChild(textShadow);
                             svg.appendChild(text);
                         }
-                        
-                        svg.appendChild(path);
                     }
                 }
             });
@@ -394,7 +477,7 @@
                     }
                     
                     const label = document.createElement('span');
-                    label.textContent = name;
+                    label.textContent = `${ring.name}: ${name}`;
                     
                     item.appendChild(colorBox);
                     item.appendChild(label);
