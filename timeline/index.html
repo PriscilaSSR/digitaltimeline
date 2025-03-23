@@ -439,18 +439,21 @@
                         
                         svg.appendChild(path);
                         
-                        // Add segment label - improved positioning
+                        // Add segment label with improved positioning
                         if (outerRadius - innerRadius > 30 && angleSpan > 30) {
-                            // Calculate midpoint for label placement
-                            const midRad = (startRad + endRad) / 2;
-                            const textRadius = innerRadius + (outerRadius - innerRadius) / 2;
+                            // Use the exact center angle of the segment for more accurate placement
+                            const midAngle = startAngle + (angleSpan / 2);
+                            const midRad = (midAngle - 90) * Math.PI / 180; // -90 to align with SVG coordinate system
+                            
+                            // Calculate optimal radius for text - slightly biased toward outer edge for better visibility
+                            const textRadius = innerRadius + (outerRadius - innerRadius) * 0.6;
                             const textX = config.centerX + textRadius * Math.cos(midRad);
                             const textY = config.centerY + textRadius * Math.sin(midRad);
                             
-                            // Calculate rotation angle for text so it always reads properly
-                            let rotationDegrees = (midRad * 180 / Math.PI) + 90;
+                            // Calculate text rotation for natural reading
+                            let rotationDegrees = midAngle;
                             
-                            // Make sure text is never upside down
+                            // Adjust rotation so text is never upside down
                             if (rotationDegrees > 90 && rotationDegrees < 270) {
                                 rotationDegrees += 180;
                             }
