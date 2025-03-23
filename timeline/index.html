@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+.legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -127,10 +131,39 @@
             align-items: center;
             gap: 5px;
         }
-        .legend-color {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
+        .content-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            gap: 5px;
+        }
+        .tab-button {
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            background-color: #4169E1;
+            color: white;
+            border-color: #4169E1;
+        }
+        .tab-button:hover:not(.active) {
+            background-color: #e0e0e0;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
@@ -179,21 +212,37 @@
             // Rings data with content for sidebar
             rings: [
                 {
-                    name: "Purple (Outer)",
+                    name: "Humanity's Dream of Flight",
                     radius: 200,
                     color: "#8A2BE2",
                     segments: 3,
                     segmentNames: ["500s BCE to 1599s CE", "1600 CE to 1799s CE", "1800s CE to 1945 CE"],
                     segmentContent: [
+                        {
+                            title: "Humanity's Dream of Flight",
+                            subtitle: "500s BCE to 1599s CE",
+                            content: [
                                 {
                                     title: "The Myth of Icarus and Daedalus", // Edit this
                                     subtitle: "500s BCE", // Edit this
                                     text: "This is the first segment of the purple outer ring...", // Edit this
                                     imageSrc: "/img/Icarus.jpg" // You can keep this placeholder or change to a different image
                                 },
+                                {
+                                    title: "Secondary Analysis",
+                                    text: "Additional analysis for Purple Section A shows increasing engagement metrics over the past quarter. User retention is up by 15% and customer satisfaction scores have improved significantly.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                },
+                                {
+                                    title: "Future Projections",
+                                    text: "Based on current trends, we project continued growth in this segment. The roadmap includes three major feature releases that should further accelerate adoption and engagement.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        },
                         {
-                            title: "Purple Section B",
-                            subtitle: "Outer Ring - Second Segment",
+                            title: "Humanity's Dream of Flight",
+                            subtitle: "1600 CE to 1799s CE",
                             text: "The second segment of the purple outer ring focuses on category B. This section highlights trends, patterns and statistical data related to this category. The data shows significant growth in this area over the last quarter.",
                             imageSrc: "/api/placeholder/400/250"
                         },
@@ -508,22 +557,74 @@
             
             // Get content for this segment
             const ring = config.rings[ringIndex];
-            const content = ring.segmentContent[segmentIndex];
+            const segmentData = ring.segmentContent[segmentIndex];
             
-            // Create content HTML
-            sidebarContent.innerHTML = `
+            // Check if we have multiple content items
+            const hasMultipleContent = segmentData.content && Array.isArray(segmentData.content);
+            
+            let contentHTML = `
                 <button class="sidebar-close" id="close-sidebar">&times;</button>
-                <h2 class="sidebar-title">${content.title}</h2>
-                <h3 class="sidebar-subtitle">${content.subtitle}</h3>
-                <img class="sidebar-image" src="${content.imageSrc}" alt="${content.title}">
-                <p class="sidebar-text">${content.text}</p>
+                <h2 class="sidebar-title">${segmentData.title}</h2>
+                <h3 class="sidebar-subtitle">${segmentData.subtitle}</h3>
             `;
+            
+            if (hasMultipleContent) {
+                // Create tabs for multiple content items
+                contentHTML += `<div class="content-tabs">`;
+                segmentData.content.forEach((item, idx) => {
+                    contentHTML += `<button class="tab-button ${idx === 0 ? 'active' : ''}" data-tab="${idx}">${item.title}</button>`;
+                });
+                contentHTML += `</div><div class="tab-content">`;
+                
+                // Create content sections
+                segmentData.content.forEach((item, idx) => {
+                    contentHTML += `
+                        <div class="content-section ${idx === 0 ? 'active' : ''}" data-tab="${idx}">
+                            <img class="sidebar-image" src="${item.imageSrc}" alt="${item.title}">
+                            <p class="sidebar-text">${item.text}</p>
+                        </div>
+                    `;
+                });
+                contentHTML += `</div>`;
+            } else {
+                // Single content display
+                contentHTML += `
+                    <img class="sidebar-image" src="${segmentData.imageSrc}" alt="${segmentData.title}">
+                    <p class="sidebar-text">${segmentData.text}</p>
+                `;
+            }
+            
+            // Set the HTML content
+            sidebarContent.innerHTML = contentHTML;
             
             // Show sidebar
             sidebar.classList.add('active');
             
             // Add event listener to close button
             document.getElementById('close-sidebar').addEventListener('click', closeSidebar);
+            
+            // Add tab switching functionality if needed
+            if (hasMultipleContent) {
+                const tabButtons = sidebarContent.querySelectorAll('.tab-button');
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const tabIndex = this.getAttribute('data-tab');
+                        
+                        // Update active tab button
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Update active content section
+                        const contentSections = sidebarContent.querySelectorAll('.content-section');
+                        contentSections.forEach(section => {
+                            section.classList.remove('active');
+                            if (section.getAttribute('data-tab') === tabIndex) {
+                                section.classList.add('active');
+                            }
+                        });
+                    });
+                });
+            }
             
             // Prevent propagation of clicks inside the sidebar
             sidebar.addEventListener('click', function(event) {
