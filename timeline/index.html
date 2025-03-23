@@ -18,29 +18,46 @@
             display: flex;
             width: 100%;
             height: 80vh;
-            gap: 20px;
+            position: relative;
         }
         .sidebar {
-            width: 0;
+            position: absolute;
+            left: -350px;
             height: 100%;
-            overflow: hidden;
-            transition: width 0.3s ease;
+            width: 350px;
+            overflow-y: auto;
             background-color: #f8f8f8;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: left 0.3s ease;
+            z-index: 100;
         }
         .sidebar.active {
-            width: 30%;
-            min-width: 300px;
-            overflow-y: auto;
-            padding: 20px;
+            left: 0;
         }
         .sidebar-content {
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            padding: 20px;
+            position: relative;
         }
-        .sidebar.active .sidebar-content {
-            opacity: 1;
+        .sidebar-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: bold;
+            border: none;
+            font-size: 16px;
+        }
+        .sidebar-close:hover {
+            background-color: #d0d0d0;
         }
         .sidebar-image {
             width: 100%;
@@ -51,6 +68,7 @@
         .sidebar-title {
             font-size: 24px;
             margin-bottom: 15px;
+            padding-right: 40px;
             color: #333;
         }
         .sidebar-subtitle {
@@ -63,7 +81,7 @@
             margin-bottom: 20px;
         }
         #chart-container {
-            flex: 1;
+            width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
@@ -160,20 +178,18 @@
             rotation: 0,
             rings: [
                 {
-                    name: "Purple (Outer)",
+                    name: "Humanity's Dream of Flight",
                     radius: 200,
                     color: "#8A2BE2",
                     segments: 3,
-                    segmentNames: ["Purple Section 1", "Purple Section 2", "Purple Section 3"],
+                    segmentNames: ["500s BCE to 1599s CE", "Purple Section 2", "Purple Section 3"],
                     segmentContent: [
-                        {
-                            title: "Purple Section 1", // Edit this
-                            subtitle: "Outer Ring - First Segment", // Edit this
-                            text: "This is the first segment of the purple outer ring...", // Edit this
-                            imageSrc: "/api/placeholder/400/250" // You can keep this placeholder or change to a different image
-                        },
-                        // Other segments...
-                    ]
+                {
+                    title: "Purple Section 1", // Edit this
+                    subtitle: "Outer Ring - First Segment", // Edit this
+                    text: "This is the first segment of the purple outer ring...", // Edit this
+                    imageSrc: "/api/placeholder/400/250" // You can keep this placeholder or change to a different image
+                },
                 },
                 {
                     name: "Blue",
@@ -366,6 +382,7 @@
             
             // Create content HTML
             sidebarContent.innerHTML = `
+                <button class="sidebar-close" id="close-sidebar">&times;</button>
                 <h2 class="sidebar-title">${content.title}</h2>
                 <h3 class="sidebar-subtitle">${content.subtitle}</h3>
                 <img class="sidebar-image" src="${content.imageSrc}" alt="${content.title}">
@@ -375,10 +392,25 @@
             // Show sidebar
             sidebar.classList.add('active');
             
+            // Add event listener to close button
+            document.getElementById('close-sidebar').addEventListener('click', closeSidebar);
+            
+            // Prevent propagation of clicks inside the sidebar
+            sidebar.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+            
             // Add click event to close sidebar when clicking elsewhere
             setTimeout(() => {
                 document.addEventListener('click', closeSidebarOnClickOutside);
             }, 10);
+        }
+        
+        // Function to close sidebar
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.remove('active');
+            document.removeEventListener('click', closeSidebarOnClickOutside);
         }
         
         // Function to close sidebar when clicking outside
@@ -388,8 +420,7 @@
             const clickedOnSegment = event.target.classList.contains('segment');
             
             if (!clickedInsideSidebar && !clickedOnSegment) {
-                sidebar.classList.remove('active');
-                document.removeEventListener('click', closeSidebarOnClickOutside);
+                closeSidebar();
             }
         }
         
