@@ -108,14 +108,7 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-       .legend {
+        .legend {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
@@ -181,12 +174,6 @@
         <div id="chart-container"></div>
     </div>
     
-    <div class="controls">
-        <button id="rotate-left">Rotate Left</button>
-        <button id="rotate-right">Rotate Right</button>
-        <button id="reset">Reset</button>
-    </div>
-    
     <div class="legend" id="legend"></div>
     
     <div class="tooltip" id="tooltip"></div>
@@ -209,7 +196,6 @@
         // Configuration
         const config = {
             ...getResponsiveDimensions(),
-            rotation: 0,
             // Rings data with content for sidebar
             rings: [
                 {
@@ -366,8 +352,8 @@
                 const segmentAngle = 360 / ring.segments;
                 
                 for (let i = 0; i < ring.segments; i++) {
-                    const startAngle = (i * segmentAngle + config.rotation) % 360;
-                    const endAngle = ((i + 1) * segmentAngle + config.rotation) % 360;
+                    const startAngle = (i * segmentAngle) % 360;
+                    const endAngle = ((i + 1) * segmentAngle) % 360;
                     
                     // For single segment rings (like the red inner circle), create a full circle
                     if (ring.segments === 1) {
@@ -453,13 +439,21 @@
                         
                         svg.appendChild(path);
                         
-                        // Add segment label
+                        // Add segment label - improved positioning
                         if (outerRadius - innerRadius > 30 && angleSpan > 30) {
                             // Calculate midpoint for label placement
                             const midRad = (startRad + endRad) / 2;
                             const textRadius = innerRadius + (outerRadius - innerRadius) / 2;
                             const textX = config.centerX + textRadius * Math.cos(midRad);
                             const textY = config.centerY + textRadius * Math.sin(midRad);
+                            
+                            // Calculate rotation angle for text so it always reads properly
+                            let rotationDegrees = (midRad * 180 / Math.PI) + 90;
+                            
+                            // Make sure text is never upside down
+                            if (rotationDegrees > 90 && rotationDegrees < 270) {
+                                rotationDegrees += 180;
+                            }
                             
                             // Create shadow/background text for better visibility
                             const textShadow = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -474,13 +468,6 @@
                             textShadow.setAttribute("font-weight", "bold");
                             textShadow.setAttribute("pointer-events", "none");
                             textShadow.textContent = ring.segmentNames[i];
-                            
-                            // Calculate rotation angle for text
-                            let rotationDegrees = (midRad * 180 / Math.PI) + 90;
-                            // Make sure text is never upside down
-                            if (rotationDegrees > 90 && rotationDegrees < 270) {
-                                rotationDegrees += 180;
-                            }
                             textShadow.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
                             
                             // Create actual text that will be visible
@@ -659,22 +646,6 @@
         // Initialize chart
         document.addEventListener('DOMContentLoaded', () => {
             createChart();
-            
-            // Add event listeners for controls
-            document.getElementById('rotate-left').addEventListener('click', () => {
-                config.rotation = (config.rotation - 15) % 360;
-                createChart();
-            });
-            
-            document.getElementById('rotate-right').addEventListener('click', () => {
-                config.rotation = (config.rotation + 15) % 360;
-                createChart();
-            });
-            
-            document.getElementById('reset').addEventListener('click', () => {
-                config.rotation = 0;
-                createChart();
-            });
             
             // Make chart responsive to window resizing
             window.addEventListener('resize', () => {
