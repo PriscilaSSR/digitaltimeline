@@ -224,7 +224,7 @@
                                     title: "The Myth of Icarus and Daedalus",
                                     subtitle: "500s BCE", 
                                     text: "This is the first segment of the purple outer ring discussing humanity's early dreams of flight through mythology. The story of Icarus and Daedalus represents one of the earliest human expressions of the desire to fly.",
-                                    imageSrc: "/api/placeholder/400/250"
+                                    imageSrc: "..img/icarus.jpg"
                                 },
                                 {
                                     title: "Secondary Analysis",
@@ -409,272 +409,314 @@
             ]
         };
         
-        // Create SVG element
-        function createChart() {
-            // Update dimensions based on current container size
-            const dimensions = getResponsiveDimensions();
-            config.width = dimensions.width;
-            config.height = dimensions.height;
-            config.centerX = dimensions.centerX;
-            config.centerY = dimensions.centerY;
+       // Create SVG element
+function createChart() {
+    // Update dimensions based on current container size
+    const dimensions = getResponsiveDimensions();
+    config.width = dimensions.width;
+    config.height = dimensions.height;
+    config.centerX = dimensions.centerX;
+    config.centerY = dimensions.centerY;
+    
+    // Adjust ring radiuses to provide more space for labels
+    const maxRadius = Math.min(config.width, config.height) / 2 * 0.85;
+    const originalOuterRadius = 200;
+    const scale = maxRadius / originalOuterRadius;
+    
+    // First, scale all non-connector rings
+    const contentRings = config.rings.filter(ring => !ring.isConnector);
+    contentRings.forEach(ring => {
+        ring.radius = ring.radius * scale;
+    });
+    
+    // Then, calculate the radiuses for connector rings
+    for (let i = 0; i < config.rings.length; i++) {
+        if (config.rings[i].isConnector) {
+            // Find the adjacent content rings (one before and one after this connector)
+            let prevRingIndex = i - 1;
+            let nextRingIndex = i + 1;
             
-            // Adjust ring radiuses to provide more space for labels
-            const maxRadius = Math.min(config.width, config.height) / 2 * 0.85;
-            const originalOuterRadius = 200;
-            const scale = maxRadius / originalOuterRadius;
+            // Ensure we have valid content rings on both sides
+            if (prevRingIndex >= 0 && nextRingIndex < config.rings.length) {
+                const prevRing = config.rings[prevRingIndex];
+                const nextRing = config.rings[nextRingIndex];
+                
+                // Calculate the connector radius to be exactly between the two rings
+                config.rings[i].radius = calculateConnectorRadius(prevRing.radius, nextRing.radius);
+            }
             
-            // First, scale all non-connector rings
-            const contentRings = config.rings.filter(ring => !ring.isConnector);
-            contentRings.forEach(ring => {
-                ring.radius = ring.radius * scale;
-            });
+            // Scale thickness proportionally
+            if (config.rings[i].thickness) {
+                config.rings[i].thickness = config.rings[i].thickness * scale;
+            }
+        }
+    }
+    
+    const container = document.getElementById('chart-container');
+    container.innerHTML = '';
+    
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "100%");
+    container.appendChild(svg);
+    
+    // CHANGED: Create rings in order to ensure proper layering
+    // First, create all content rings (from outer to inner)
+    const contentRingElements = []; // Store created elements to maintain proper layering
+    
+    config.rings.forEach((ring, ringIndex) => {
+        if (!ring.isConnector) {
+            const ringElement = createContentRing(ring, ringIndex, svg);
+            if (ringElement) {
+                contentRingElements.push({
+                    ringIndex,
+                    ringElement
+                });
+            }
+        }
+    });
+    
+    // Then, create all connector rings to appear between content rings
+    config.rings.forEach((ring, ringIndex) => {
+        if (ring.isConnector) {
+            createConnectorRing(ring, ringIndex, svg);
+        }
+    });
+    
+    // Finally, add all content ring elements to the SVG in the proper order (outer to inner)
+    contentRingElements.forEach(item => {
+        // If the element is an array (multiple paths for a segmented ring), add them all
+        if (Array.isArray(item.ringElement)) {
+            item.ringElement.forEach(el => svg.appendChild(el));
+        } else {
+            svg.appendChild(item.ringElement);
+        }
+    });
+    
+    // Create legend
+    createLegend();
+}
+
+// New function to create content rings (returns elements but doesn't append them yet)
+function createContentRing(ring, ringIndex, svg) {
+    const elements = [];
+    const segmentAngle = 360 / ring.segments;
+    
+    // For single segment rings (like the red inner circle), create a full circle
+    if (ring.segments === 1) {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", config.centerX);
+        circle.setAttribute("cy", config.centerY);
+        circle.setAttribute("r", ring.radius);
+        circle.setAttribute("fill", ring.color);
+        circle.classList.add("segment");
+        circle.dataset.name = ring.segmentNames[0];
+        circle.dataset.ring = ring.name;
+        
+        circle.addEventListener("mousemove", showTooltip);
+        circle.addEventListener("mouseleave", hideTooltip);
+        circle.addEventListener("click", function() {
+            showSidebar(ringIndex, 0);
+        });
+        
+        // Add label for center circle
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", config.centerX);
+        text.setAttribute("y", config.centerY);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("dominant-baseline", "middle");
+        text.setAttribute("fill", "#fff");
+        text.setAttribute("font-size", ring.radius / 3);
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("pointer-events", "none");
+        text.textContent = ring.segmentNames[0];
+        
+        // Add these elements to the SVG immediately
+        svg.appendChild(circle);
+        svg.appendChild(text);
+        
+        return null; // Center circle is already added
+    } else {
+        // For multi-segment rings, create arcs
+        const segments = [];
+        
+        for (let i = 0; i < ring.segments; i++) {
+            const startAngle = (i * segmentAngle) % 360;
+            const endAngle = ((i + 1) * segmentAngle) % 360;
             
-            // Then, calculate the radiuses for connector rings
-            for (let i = 0; i < config.rings.length; i++) {
-                if (config.rings[i].isConnector) {
-                    // Find the adjacent content rings (one before and one after this connector)
-                    let prevRingIndex = i - 1;
-                    let nextRingIndex = i + 1;
-                    
-                    // Ensure we have valid content rings on both sides
-                    if (prevRingIndex >= 0 && nextRingIndex < config.rings.length) {
-                        const prevRing = config.rings[prevRingIndex];
-                        const nextRing = config.rings[nextRingIndex];
-                        
-                        // Calculate the connector radius to be exactly between the two rings
-                        config.rings[i].radius = calculateConnectorRadius(prevRing.radius, nextRing.radius);
-                    }
-                    
-                    // Scale thickness proportionally
-                    if (config.rings[i].thickness) {
-                        config.rings[i].thickness = config.rings[i].thickness * scale;
-                    }
+            // Find the next non-connector ring for inner radius
+            let innerRadiusRing = null;
+            for (let j = ringIndex + 1; j < config.rings.length; j++) {
+                if (!config.rings[j].isConnector) {
+                    innerRadiusRing = config.rings[j];
+                    break;
                 }
             }
             
-            const container = document.getElementById('chart-container');
-            container.innerHTML = '';
+            const outerRadius = ring.radius;
+            const innerRadius = innerRadiusRing ? innerRadiusRing.radius : 0;
             
-            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
-            svg.setAttribute("width", "100%");
-            svg.setAttribute("height", "100%");
-            container.appendChild(svg);
+            // Convert degrees to radians for SVG arc
+            let startRad = (startAngle - 90) * Math.PI / 180;
+            let endRad = (endAngle - 90) * Math.PI / 180;
             
-            // Create rings from outer to inner
-            config.rings.forEach((ring, ringIndex) => {
-                // Handle connector rings with arrows
-                if (ring.isConnector) {
-                    const outerRadius = ring.radius + (ring.thickness / 2);
-                    const innerRadius = ring.radius - (ring.thickness / 2);
-                    
-                    // Create connector ring
-                    const connectorRing = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                    connectorRing.setAttribute("cx", config.centerX);
-                    connectorRing.setAttribute("cy", config.centerY);
-                    connectorRing.setAttribute("r", ring.radius);
-                    connectorRing.setAttribute("fill", "none");
-                    connectorRing.setAttribute("stroke", ring.color);
-                    connectorRing.setAttribute("stroke-width", ring.thickness);
-                    connectorRing.classList.add("connector");
-                    
-                    svg.appendChild(connectorRing);
-                    
-                    // Create arrows pointing inward
-                    const arrowCount = ring.arrowCount || 8;
-                    const arrowLength = ring.thickness * 3; // Increased for better visibility
-                    const arrowWidth = ring.thickness * 1.2; // Increased for better visibility
-                    
-                    for (let i = 0; i < arrowCount; i++) {
-                        const angle = (i * 360 / arrowCount) * Math.PI / 180;
-                        
-                        // Calculate arrow position
-                        const baseX = config.centerX + ring.radius * Math.cos(angle);
-                        const baseY = config.centerY + ring.radius * Math.sin(angle);
-                        
-                        // Calculate arrow points
-                        const tipX = config.centerX + (ring.radius - arrowLength/2) * Math.cos(angle);
-                        const tipY = config.centerY + (ring.radius - arrowLength/2) * Math.sin(angle);
-                        
-                        // Calculate arrow wing points (perpendicular to radius)
-                        const perpAngle = angle + Math.PI/2;
-                        const wingWidth = arrowWidth / 2;
-                        
-                        const wing1X = baseX + wingWidth * Math.cos(perpAngle);
-                        const wing1Y = baseY + wingWidth * Math.sin(perpAngle);
-                        const wing2X = baseX - wingWidth * Math.cos(perpAngle);
-                        const wing2Y = baseY - wingWidth * Math.sin(perpAngle);
-                        
-                        // Create arrow path with more pronounced arrow shape
-                        const arrowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        const arrowD = `M ${wing1X} ${wing1Y} L ${baseX} ${baseY} L ${wing2X} ${wing2Y} L ${tipX} ${tipY} Z`;
-                        
-                        arrowPath.setAttribute("d", arrowD);
-                        arrowPath.setAttribute("fill", ring.color);
-                        arrowPath.classList.add("arrow");
-                        // Add a slight shadow to make arrows stand out more
-                        arrowPath.setAttribute("filter", "drop-shadow(1px 1px 1px rgba(0,0,0,0.3))");
-                        
-                        svg.appendChild(arrowPath);
-                    }
-                } else {
-                    const segmentAngle = 360 / ring.segments;
-                    
-                    for (let i = 0; i < ring.segments; i++) {
-                        const startAngle = (i * segmentAngle) % 360;
-                        const endAngle = ((i + 1) * segmentAngle) % 360;
-                        
-                        // For single segment rings (like the red inner circle), create a full circle
-                        if (ring.segments === 1) {
-                            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                            circle.setAttribute("cx", config.centerX);
-                            circle.setAttribute("cy", config.centerY);
-                            circle.setAttribute("r", ring.radius);
-                            circle.setAttribute("fill", ring.color);
-                            circle.classList.add("segment");
-                            circle.dataset.name = ring.segmentNames[i];
-                            circle.dataset.ring = ring.name;
-                            
-                            circle.addEventListener("mousemove", showTooltip);
-                            circle.addEventListener("mouseleave", hideTooltip);
-                            circle.addEventListener("click", function() {
-                                showSidebar(ringIndex, i);
-                            });
-                            
-                            // Add label for center circle
-                            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                            text.setAttribute("x", config.centerX);
-                            text.setAttribute("y", config.centerY);
-                            text.setAttribute("text-anchor", "middle");
-                            text.setAttribute("dominant-baseline", "middle");
-                            text.setAttribute("fill", "#fff");
-                            text.setAttribute("font-size", ring.radius / 3);
-                            text.setAttribute("font-weight", "bold");
-                            text.setAttribute("pointer-events", "none");
-                            text.textContent = ring.segmentNames[i];
-                            
-                            svg.appendChild(circle);
-                            svg.appendChild(text);
-                        } else {
-                            // Find the next non-connector ring for inner radius
-                            let innerRadiusRing = null;
-                            for (let j = ringIndex + 1; j < config.rings.length; j++) {
-                                if (!config.rings[j].isConnector) {
-                                    innerRadiusRing = config.rings[j];
-                                    break;
-                                }
-                            }
-                            
-                            // For multi-segment rings, create arcs
-                            const outerRadius = ring.radius;
-                            const innerRadius = innerRadiusRing ? innerRadiusRing.radius : 0;
-                            
-                            // Convert degrees to radians for SVG arc
-                            let startRad = (startAngle - 90) * Math.PI / 180;
-                            let endRad = (endAngle - 90) * Math.PI / 180;
-                            
-                            // Calculate angle span
-                            const angleSpan = endAngle > startAngle ? endAngle - startAngle : endAngle + 360 - startAngle;
-                            const largeArcFlag = angleSpan > 180 ? 1 : 0;
-                            
-                            // Calculate points
-                            const x1 = config.centerX + innerRadius * Math.cos(startRad);
-                            const y1 = config.centerY + innerRadius * Math.sin(startRad);
-                            const x2 = config.centerX + outerRadius * Math.cos(startRad);
-                            const y2 = config.centerY + outerRadius * Math.sin(startRad);
-                            const x3 = config.centerX + outerRadius * Math.cos(endRad);
-                            const y3 = config.centerY + outerRadius * Math.sin(endRad);
-                            const x4 = config.centerX + innerRadius * Math.cos(endRad);
-                            const y4 = config.centerY + innerRadius * Math.sin(endRad);
-                            
-                            // Create path for arc
-                            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                            
-                            // Define SVG path
-                            const d = [
-                                `M ${x2} ${y2}`,
-                                `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x3} ${y3}`,
-                                `L ${x4} ${y4}`,
-                                `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${x1} ${y1}`,
-                                "Z"
-                            ].join(" ");
-                            
-                            path.setAttribute("d", d);
-                            path.setAttribute("fill", ring.color);
-                            path.classList.add("segment");
-                            path.dataset.name = ring.segmentNames[i];
-                            path.dataset.ring = ring.name;
-                            
-                            // Slightly lighten or darken segments for better visibility
-                            const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
-                            path.style.filter = `brightness(${brightness})`;
-                            
-                            path.addEventListener("mousemove", showTooltip);
-                            path.addEventListener("mouseleave", hideTooltip);
-                            path.addEventListener("click", function() {
-                                showSidebar(ringIndex, i);
-                            });
-                            
-                            svg.appendChild(path);
-                            
-                            // Add segment label with improved positioning
-                            if (outerRadius - innerRadius > 30 && angleSpan > 30) {
-                                // Use the exact center angle of the segment for more accurate placement
-                                const midAngle = startAngle + (angleSpan / 2);
-                                const midRad = (midAngle - 90) * Math.PI / 180; // -90 to align with SVG coordinate system
-                                
-                                // Calculate optimal radius for text - slightly biased toward outer edge for better visibility
-                                const textRadius = innerRadius + (outerRadius - innerRadius) * 0.6;
-                                const textX = config.centerX + textRadius * Math.cos(midRad);
-                                const textY = config.centerY + textRadius * Math.sin(midRad);
-                                
-                                // Calculate text rotation for natural reading
-                                let rotationDegrees = midAngle;
-                                
-                                // Adjust rotation so text is never upside down
-                                if (rotationDegrees > 90 && rotationDegrees < 270) {
-                                    rotationDegrees += 180;
-                                }
-                                
-                                // Create shadow/background text for better visibility
-                                const textShadow = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                                textShadow.setAttribute("x", textX);
-                                textShadow.setAttribute("y", textY);
-                                textShadow.setAttribute("text-anchor", "middle");
-                                textShadow.setAttribute("dominant-baseline", "middle");
-                                textShadow.setAttribute("stroke", "rgba(0,0,0,0.5)");
-                                textShadow.setAttribute("stroke-width", "3");
-                                textShadow.setAttribute("stroke-linejoin", "round");
-                                textShadow.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
-                                textShadow.setAttribute("font-weight", "bold");
-                                textShadow.setAttribute("pointer-events", "none");
-                                textShadow.textContent = ring.segmentNames[i];
-                                textShadow.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
-                                
-                                // Create actual text that will be visible
-                                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                                text.setAttribute("x", textX);
-                                text.setAttribute("y", textY);
-                                text.setAttribute("text-anchor", "middle");
-                                text.setAttribute("dominant-baseline", "middle");
-                                text.setAttribute("fill", "#fff");
-                                text.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
-                                text.setAttribute("font-weight", "bold");
-                                text.setAttribute("pointer-events", "none");
-                                text.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
-                                text.textContent = ring.segmentNames[i];
-                                
-                                svg.appendChild(textShadow);
-                                svg.appendChild(text);
-                            }
-                        }
-                    }
-                }
+            // Calculate angle span
+            const angleSpan = endAngle > startAngle ? endAngle - startAngle : endAngle + 360 - startAngle;
+            const largeArcFlag = angleSpan > 180 ? 1 : 0;
+            
+            // Calculate points
+            const x1 = config.centerX + innerRadius * Math.cos(startRad);
+            const y1 = config.centerY + innerRadius * Math.sin(startRad);
+            const x2 = config.centerX + outerRadius * Math.cos(startRad);
+            const y2 = config.centerY + outerRadius * Math.sin(startRad);
+            const x3 = config.centerX + outerRadius * Math.cos(endRad);
+            const y3 = config.centerY + outerRadius * Math.sin(endRad);
+            const x4 = config.centerX + innerRadius * Math.cos(endRad);
+            const y4 = config.centerY + innerRadius * Math.sin(endRad);
+            
+            // Create path for arc
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            
+            // Define SVG path
+            const d = [
+                `M ${x2} ${y2}`,
+                `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x3} ${y3}`,
+                `L ${x4} ${y4}`,
+                `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${x1} ${y1}`,
+                "Z"
+            ].join(" ");
+            
+            path.setAttribute("d", d);
+            path.setAttribute("fill", ring.color);
+            path.classList.add("segment");
+            path.dataset.name = ring.segmentNames[i];
+            path.dataset.ring = ring.name;
+            
+            // Slightly lighten or darken segments for better visibility
+            const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+            path.style.filter = `brightness(${brightness})`;
+            
+            path.addEventListener("mousemove", showTooltip);
+            path.addEventListener("mouseleave", hideTooltip);
+            path.addEventListener("click", function() {
+                showSidebar(ringIndex, i);
             });
             
-            // Create legend
-            createLegend();
+            segments.push(path);
+            
+            // Add segment label with improved positioning
+            if (outerRadius - innerRadius > 30 && angleSpan > 30) {
+                // Use the exact center angle of the segment for more accurate placement
+                const midAngle = startAngle + (angleSpan / 2);
+                const midRad = (midAngle - 90) * Math.PI / 180; // -90 to align with SVG coordinate system
+                
+                // Calculate optimal radius for text - slightly biased toward outer edge for better visibility
+                const textRadius = innerRadius + (outerRadius - innerRadius) * 0.6;
+                const textX = config.centerX + textRadius * Math.cos(midRad);
+                const textY = config.centerY + textRadius * Math.sin(midRad);
+                
+                // Calculate text rotation for natural reading
+                let rotationDegrees = midAngle;
+                
+                // Adjust rotation so text is never upside down
+                if (rotationDegrees > 90 && rotationDegrees < 270) {
+                    rotationDegrees += 180;
+                }
+                
+                // Create shadow/background text for better visibility
+                const textShadow = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                textShadow.setAttribute("x", textX);
+                textShadow.setAttribute("y", textY);
+                textShadow.setAttribute("text-anchor", "middle");
+                textShadow.setAttribute("dominant-baseline", "middle");
+                textShadow.setAttribute("stroke", "rgba(0,0,0,0.5)");
+                textShadow.setAttribute("stroke-width", "3");
+                textShadow.setAttribute("stroke-linejoin", "round");
+                textShadow.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
+                textShadow.setAttribute("font-weight", "bold");
+                textShadow.setAttribute("pointer-events", "none");
+                textShadow.textContent = ring.segmentNames[i];
+                textShadow.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
+                
+                // Create actual text that will be visible
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", textX);
+                text.setAttribute("y", textY);
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("dominant-baseline", "middle");
+                text.setAttribute("fill", "#fff");
+                text.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
+                text.setAttribute("font-weight", "bold");
+                text.setAttribute("pointer-events", "none");
+                text.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
+                text.textContent = ring.segmentNames[i];
+                
+                // Add label text elements directly to SVG
+                svg.appendChild(textShadow);
+                svg.appendChild(text);
+            }
         }
+        
+        return segments;
+    }
+}
+
+// New function to create connector rings (appends them directly to SVG)
+function createConnectorRing(ring, ringIndex, svg) {
+    const outerRadius = ring.radius + (ring.thickness / 2);
+    const innerRadius = ring.radius - (ring.thickness / 2);
+    
+    // Create connector ring
+    const connectorRing = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    connectorRing.setAttribute("cx", config.centerX);
+    connectorRing.setAttribute("cy", config.centerY);
+    connectorRing.setAttribute("r", ring.radius);
+    connectorRing.setAttribute("fill", "none");
+    connectorRing.setAttribute("stroke", ring.color);
+    connectorRing.setAttribute("stroke-width", ring.thickness);
+    connectorRing.classList.add("connector");
+    
+    svg.appendChild(connectorRing);
+    
+    // Create arrows pointing inward
+    const arrowCount = ring.arrowCount || 8;
+    const arrowLength = ring.thickness * 3; // Increased for better visibility
+    const arrowWidth = ring.thickness * 1.2; // Increased for better visibility
+    
+    for (let i = 0; i < arrowCount; i++) {
+        const angle = (i * 360 / arrowCount) * Math.PI / 180;
+        
+        // Calculate arrow position
+        const baseX = config.centerX + ring.radius * Math.cos(angle);
+        const baseY = config.centerY + ring.radius * Math.sin(angle);
+        
+        // Calculate arrow points
+        const tipX = config.centerX + (ring.radius - arrowLength/2) * Math.cos(angle);
+        const tipY = config.centerY + (ring.radius - arrowLength/2) * Math.sin(angle);
+        
+        // Calculate arrow wing points (perpendicular to radius)
+        const perpAngle = angle + Math.PI/2;
+        const wingWidth = arrowWidth / 2;
+        
+        const wing1X = baseX + wingWidth * Math.cos(perpAngle);
+        const wing1Y = baseY + wingWidth * Math.sin(perpAngle);
+        const wing2X = baseX - wingWidth * Math.cos(perpAngle);
+        const wing2Y = baseY - wingWidth * Math.sin(perpAngle);
+        
+        // Create arrow path with more pronounced arrow shape
+        const arrowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const arrowD = `M ${wing1X} ${wing1Y} L ${baseX} ${baseY} L ${wing2X} ${wing2Y} L ${tipX} ${tipY} Z`;
+        
+        arrowPath.setAttribute("d", arrowD);
+        arrowPath.setAttribute("fill", ring.color);
+        arrowPath.classList.add("arrow");
+        // Add a slight shadow to make arrows stand out more
+        arrowPath.setAttribute("filter", "drop-shadow(1px 1px 1px rgba(0,0,0,0.3))");
+        
+        svg.appendChild(arrowPath);
+    }
+}
         
         function createLegend() {
             const legend = document.getElementById('legend');
