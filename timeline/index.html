@@ -433,19 +433,16 @@
                         
                         svg.appendChild(arrowPath);
                     }
+                } else {
+                    const segmentAngle = 360 / ring.segments;
                     
-                    continue; // Skip the rest of the loop for connector rings
-                }
-                
-                const segmentAngle = 360 / ring.segments;
-                
-                for (let i = 0; i < ring.segments; i++) {
-                    const startAngle = (i * segmentAngle) % 360;
-                    const endAngle = ((i + 1) * segmentAngle) % 360;
-                    
-                    // For single segment rings (like the red inner circle), create a full circle
-                    if (ring.segments === 1) {
-                        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    for (let i = 0; i < ring.segments; i++) {
+                        const startAngle = (i * segmentAngle) % 360;
+                        const endAngle = ((i + 1) * segmentAngle) % 360;
+                        
+                        // For single segment rings (like the red inner circle), create a full circle
+                        if (ring.segments === 1) {
+                            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                         circle.setAttribute("cx", config.centerX);
                         circle.setAttribute("cy", config.centerY);
                         circle.setAttribute("r", ring.radius);
