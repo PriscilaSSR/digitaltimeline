@@ -14,9 +14,57 @@
             margin: 0;
             min-height: 100vh;
         }
-        #chart-container {
-            width: 90vw;
+        .main-container {
+            display: flex;
+            width: 100%;
             height: 80vh;
+            gap: 20px;
+        }
+        .sidebar {
+            width: 0;
+            height: 100%;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .sidebar.active {
+            width: 30%;
+            min-width: 300px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .sidebar-content {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar.active .sidebar-content {
+            opacity: 1;
+        }
+        .sidebar-image {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .sidebar-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .sidebar-subtitle {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .sidebar-text {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        #chart-container {
+            flex: 1;
+            height: 100%;
             display: flex;
             justify-content: center;
         }
@@ -71,7 +119,15 @@
 <body>
     <h1>Interactive Nested Pie Chart</h1>
     
-    <div id="chart-container"></div>
+    <div class="main-container">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-content" id="sidebar-content">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <div id="chart-container"></div>
+    </div>
     
     <div class="controls">
         <button id="rotate-left">Rotate Left</button>
@@ -108,7 +164,16 @@
                     radius: 200,
                     color: "#8A2BE2",
                     segments: 3,
-                    segmentNames: ["Purple Section 1", "Purple Section 2", "Purple Section 3"]
+                    segmentNames: ["Purple Section 1", "Purple Section 2", "Purple Section 3"],
+                    segmentContent: [
+                        {
+                            title: "Purple Section 1", // Edit this
+                            subtitle: "Outer Ring - First Segment", // Edit this
+                            text: "This is the first segment of the purple outer ring...", // Edit this
+                            imageSrc: "/api/placeholder/400/250" // You can keep this placeholder or change to a different image
+                        },
+                        // Other segments...
+                    ]
                 },
                 {
                     name: "Blue",
@@ -183,6 +248,9 @@
                         
                         circle.addEventListener("mousemove", showTooltip);
                         circle.addEventListener("mouseleave", hideTooltip);
+                        circle.addEventListener("click", function() {
+                            showSidebar(ringIndex, i);
+                        });
                         
                         svg.appendChild(circle);
                     } else {
@@ -230,6 +298,9 @@
                         
                         path.addEventListener("mousemove", showTooltip);
                         path.addEventListener("mouseleave", hideTooltip);
+                        path.addEventListener("click", function() {
+                            showSidebar(ringIndex, i);
+                        });
                         
                         svg.appendChild(path);
                     }
@@ -282,6 +353,44 @@
         function hideTooltip() {
             const tooltip = document.getElementById('tooltip');
             tooltip.style.opacity = 0;
+        }
+        
+        // Function to show sidebar with content
+        function showSidebar(ringIndex, segmentIndex) {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarContent = document.getElementById('sidebar-content');
+            
+            // Get content for this segment
+            const ring = config.rings[ringIndex];
+            const content = ring.segmentContent[segmentIndex];
+            
+            // Create content HTML
+            sidebarContent.innerHTML = `
+                <h2 class="sidebar-title">${content.title}</h2>
+                <h3 class="sidebar-subtitle">${content.subtitle}</h3>
+                <img class="sidebar-image" src="${content.imageSrc}" alt="${content.title}">
+                <p class="sidebar-text">${content.text}</p>
+            `;
+            
+            // Show sidebar
+            sidebar.classList.add('active');
+            
+            // Add click event to close sidebar when clicking elsewhere
+            setTimeout(() => {
+                document.addEventListener('click', closeSidebarOnClickOutside);
+            }, 10);
+        }
+        
+        // Function to close sidebar when clicking outside
+        function closeSidebarOnClickOutside(event) {
+            const sidebar = document.getElementById('sidebar');
+            const clickedInsideSidebar = sidebar.contains(event.target);
+            const clickedOnSegment = event.target.classList.contains('segment');
+            
+            if (!clickedInsideSidebar && !clickedOnSegment) {
+                sidebar.classList.remove('active');
+                document.removeEventListener('click', closeSidebarOnClickOutside);
+            }
         }
         
         // Initialize chart
