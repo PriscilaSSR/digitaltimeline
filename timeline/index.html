@@ -592,36 +592,36 @@
         }
         
         function createLegend() {
-            const legend = document.getElementById('legend');
-            legend.innerHTML = '';
+    const legend = document.getElementById('legend');
+    legend.innerHTML = '';
+    
+    config.rings.forEach(ring => {
+        // Skip connector rings in the legend
+        if (ring.isConnector) return;
+        
+        ring.segmentNames.forEach((name, i) => {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
             
-            config.rings.forEach(ring => {
-                // Skip connector rings in the legend
-                if (ring.isConnector) return;
-                
-                ring.segmentNames.forEach((name, i) => {
-                    const item = document.createElement('div');
-                    item.className = 'legend-item';
-                    
-                    const colorBox = document.createElement('div');
-                    colorBox.className = 'legend-color';
-                    colorBox.style.backgroundColor = ring.color;
-                    
-                    // Apply the same brightness filter as in the chart
-                    if (ring.segments > 1) {
-                        const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
-                        colorBox.style.filter = `brightness(${brightness})`;
-                    }
-                    
-                    const label = document.createElement('span');
-                    label.textContent = `${ring.name}: ${name}`;
-                    
-                    item.appendChild(colorBox);
-                    item.appendChild(label);
-                    legend.appendChild(item);
-                });
-            });
-        }
+            const colorBox = document.createElement('div');
+            colorBox.className = 'legend-color';
+            colorBox.style.backgroundColor = ring.color;
+            
+            // Apply the same brightness filter as in the chart
+            if (ring.segments > 1) {
+                const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+                colorBox.style.filter = `brightness(${brightness})`;
+            }
+            
+            const label = document.createElement('span');
+            label.textContent = `${ring.name}: ${name}`;
+            
+            item.appendChild(colorBox);
+            item.appendChild(label);
+            legend.appendChild(item);
+        });
+    });
+} // <-- This closing brace was missing
         
         function showTooltip(event) {
             const tooltip = document.getElementById('tooltip');
