@@ -498,10 +498,112 @@ function createChart() {
     createLegend();
 }
 
+// Create SVG element
+function createChart() {
+    // Update dimensions based on current container size
+    const dimensions = getResponsiveDimensions();
+    config.width = dimensions.width;
+    config.height = dimensions.height;
+    config.centerX = dimensions.centerX;
+    config.centerY = dimensions.centerY;
+    
+    // Adjust ring radiuses to provide more space for labels
+    const maxRadius = Math.min(config.width, config.height) / 2 * 0.85;
+    const originalOuterRadius = 200;
+    const scale = maxRadius / originalOuterRadius;
+    
+    // First, scale all non-connector rings
+    const contentRings = config.rings.filter(ring => !ring.isConnector);
+    contentRings.forEach(ring => {
+        ring.radius = ring.radius * scale;
+    });
+    
+    // Then, calculate the radiuses for connector rings
+    for (let i = 0; i < config.rings.length; i++) {
+        if (config.rings[i].isConnector) {
+            // Find the adjacent content rings (one before and one after this connector)
+            let prevRingIndex = i - 1;
+            let nextRingIndex = i + 1;
+            
+            // Ensure we have valid content rings on both sides
+            if (prevRingIndex >= 0 && nextRingIndex < config.rings.length) {
+                const prevRing = config.rings[prevRingIndex];
+                const nextRing = config.rings[nextRingIndex];
+                
+                // Calculate the connector radius to be exactly between the two rings
+                config.rings[i].radius = calculateConnectorRadius(prevRing.radius, nextRing.radius);
+            }
+            
+            // Scale thickness proportionally
+            if (config.rings[i].thickness) {
+                config.rings[i].thickness = config.rings[i].thickness * scale;
+            }
+        }
+    }
+    
+    const container = document.getElementById('chart-container');
+    container.innerHTML = '';
+    
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "100%");
+    container.appendChild(svg);
+    
+    // CHANGED: Create rings in order to ensure proper layering
+    // We need to render from outside in, so first create an array to hold all elements
+    // with their z-index (lower = farther back, higher = more in front)
+    const allElements = [];
+    
+    // Process rings from outer to inner (reverse the array to start with outer rings)
+    const orderedRings = [...config.rings].reverse();
+    
+    // First pass: create all rings and collect their elements with proper z-index
+    orderedRings.forEach((ring, reversedIndex) => {
+        const originalIndex = config.rings.length - 1 - reversedIndex;
+        const zIndex = originalIndex * 10; // Base z-index for this ring
+        
+        if (ring.isConnector) {
+            // Connector rings go behind content rings
+            const connectorElements = createConnectorRing(ring, originalIndex);
+            connectorElements.forEach(el => {
+                allElements.push({ element: el, zIndex: zIndex });
+            });
+        } else {
+            // Regular content rings
+            const contentElements = createContentRing(ring, originalIndex);
+            if (contentElements) {
+                if (Array.isArray(contentElements.segments)) {
+                    // Add segments with higher z-index
+                    contentElements.segments.forEach(el => {
+                        allElements.push({ element: el, zIndex: zIndex + 2 });
+                    });
+                }
+                if (contentElements.labels) {
+                    // Add labels with highest z-index
+                    contentElements.labels.forEach(el => {
+                        allElements.push({ element: el, zIndex: zIndex + 5 });
+                    });
+                }
+            }
+        }
+    });
+    
+    // Sort all elements by z-index and add them to the SVG
+    allElements.sort((a, b) => a.zIndex - b.zIndex)
+        .forEach(item => svg.appendChild(item.element));
+    
+    // Create legend
+    createLegend();
+}
+
 // New function to create content rings (returns elements but doesn't append them yet)
-function createContentRing(ring, ringIndex, svg) {
-    const elements = [];
+function createContentRing(ring, ringIndex) {
     const segmentAngle = 360 / ring.segments;
+    const result = {
+        segments: [],
+        labels: []
+    };
     
     // For single segment rings (like the red inner circle), create a full circle
     if (ring.segments === 1) {
@@ -532,15 +634,12 @@ function createContentRing(ring, ringIndex, svg) {
         text.setAttribute("pointer-events", "none");
         text.textContent = ring.segmentNames[0];
         
-        // Add these elements to the SVG immediately
-        svg.appendChild(circle);
-        svg.appendChild(text);
+        result.segments.push(circle);
+        result.labels.push(text);
         
-        return null; // Center circle is already added
+        return result;
     } else {
         // For multi-segment rings, create arcs
-        const segments = [];
-        
         for (let i = 0; i < ring.segments; i++) {
             const startAngle = (i * segmentAngle) % 360;
             const endAngle = ((i + 1) * segmentAngle) % 360;
@@ -603,7 +702,7 @@ function createContentRing(ring, ringIndex, svg) {
                 showSidebar(ringIndex, i);
             });
             
-            segments.push(path);
+            result.segments.push(path);
             
             // Add segment label with improved positioning
             if (outerRadius - innerRadius > 30 && angleSpan > 30) {
@@ -652,18 +751,18 @@ function createContentRing(ring, ringIndex, svg) {
                 text.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
                 text.textContent = ring.segmentNames[i];
                 
-                // Add label text elements directly to SVG
-                svg.appendChild(textShadow);
-                svg.appendChild(text);
+                result.labels.push(textShadow);
+                result.labels.push(text);
             }
         }
         
-        return segments;
+        return result;
     }
 }
 
-// New function to create connector rings (appends them directly to SVG)
-function createConnectorRing(ring, ringIndex, svg) {
+// New function to create connector rings (returns elements but doesn't append them)
+function createConnectorRing(ring, ringIndex) {
+    const elements = [];
     const outerRadius = ring.radius + (ring.thickness / 2);
     const innerRadius = ring.radius - (ring.thickness / 2);
     
@@ -677,7 +776,7 @@ function createConnectorRing(ring, ringIndex, svg) {
     connectorRing.setAttribute("stroke-width", ring.thickness);
     connectorRing.classList.add("connector");
     
-    svg.appendChild(connectorRing);
+    elements.push(connectorRing);
     
     // Create arrows pointing inward
     const arrowCount = ring.arrowCount || 8;
@@ -714,8 +813,10 @@ function createConnectorRing(ring, ringIndex, svg) {
         // Add a slight shadow to make arrows stand out more
         arrowPath.setAttribute("filter", "drop-shadow(1px 1px 1px rgba(0,0,0,0.3))");
         
-        svg.appendChild(arrowPath);
+        elements.push(arrowPath);
     }
+    
+    return elements;
 }
         
         function createLegend() {
