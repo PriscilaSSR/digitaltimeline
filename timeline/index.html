@@ -178,41 +178,41 @@
             rotation: 0,
             rings: [
                 {
-                    name: "Humanity's Dream of Flight",
+                    name: "Purple (Outer)",
                     radius: 200,
                     color: "#8A2BE2",
                     segments: 3,
                     segmentNames: ["500s BCE to 1599s CE", "Purple Section 2", "Purple Section 3"],
-segmentContent: [
-            {
-                title: "Purple Section 1", // Edit this
-                subtitle: "Outer Ring - First Segment", // Edit this
-                text: "This is the first segment of the purple outer ring...", // Edit this
-                imageSrc: "/api/placeholder/400/250" // You can keep this placeholder or change to a different image
-            },
-            // Other segments...
-        ]
-    },
+                    segmentContent: [
+                                {
+                                    title: "Purple Section 1", // Edit this
+                                    subtitle: "Outer Ring - First Segment", // Edit this
+                                    text: "This is the first segment of the purple outer ring...", // Edit this
+                                    imageSrc: "/api/placeholder/400/250" // You can keep this placeholder or change to a different image
+                                },
+                                // Other segments...
+                            ]
+                }
                 {
                     name: "Blue",
                     radius: 150,
                     color: "#4169E1",
                     segments: 4,
-                    segmentNames: ["Blue Section 1", "Blue Section 2", "Blue Section 3", "Blue Section 4"]
+                    segmentNames: ["Blue 1", "Blue 2", "Blue 3", "Blue 4"]
                 },
                 {
                     name: "Green",
                     radius: 100,
                     color: "#32CD32",
                     segments: 3,
-                    segmentNames: ["Green Section 1", "Green Section 2", "Green Section 3"]
+                    segmentNames: ["Green I", "Green II", "Green III"]
                 },
                 {
                     name: "Red (Inner)",
                     radius: 50,
                     color: "#FF4500",
                     segments: 1,
-                    segmentNames: ["Red Center"]
+                    segmentNames: ["Core"]
                 }
             ]
         };
@@ -226,8 +226,8 @@ segmentContent: [
             config.centerX = dimensions.centerX;
             config.centerY = dimensions.centerY;
             
-            // Adjust ring radiuses proportionally to the new size
-            const maxRadius = Math.min(config.width, config.height) / 2 * 0.9;
+            // Adjust ring radiuses to provide more space for labels
+            const maxRadius = Math.min(config.width, config.height) / 2 * 0.85;
             const originalOuterRadius = 200;
             const scale = maxRadius / originalOuterRadius;
             
@@ -269,6 +269,21 @@ segmentContent: [
                         circle.addEventListener("click", function() {
                             showSidebar(ringIndex, i);
                         });
+                        
+                        // For the inner circle, add a centered label
+                        if (ring.segments === 1) {
+                            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                            text.setAttribute("x", config.centerX);
+                            text.setAttribute("y", config.centerY);
+                            text.setAttribute("text-anchor", "middle");
+                            text.setAttribute("dominant-baseline", "middle");
+                            text.setAttribute("fill", "#fff");
+                            text.setAttribute("font-size", ring.radius / 3);
+                            text.setAttribute("font-weight", "bold");
+                            text.setAttribute("pointer-events", "none");
+                            text.textContent = ring.segmentNames[i];
+                            svg.appendChild(text);
+                        }
                         
                         svg.appendChild(circle);
                     } else {
@@ -319,6 +334,36 @@ segmentContent: [
                         path.addEventListener("click", function() {
                             showSidebar(ringIndex, i);
                         });
+                        
+                        // Add text label to each segment (except very small ones)
+                        if (outerRadius - innerRadius > 30 && segmentAngle > 30) {
+                            // Calculate position for text (midpoint of the arc)
+                            const midAngleRad = (startRad + endRad) / 2;
+                            const textRadius = innerRadius + (outerRadius - innerRadius) / 2;
+                            const textX = config.centerX + textRadius * Math.cos(midAngleRad);
+                            const textY = config.centerY + textRadius * Math.sin(midAngleRad);
+                            
+                            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                            text.setAttribute("x", textX);
+                            text.setAttribute("y", textY);
+                            text.setAttribute("text-anchor", "middle");
+                            text.setAttribute("dominant-baseline", "middle");
+                            text.setAttribute("fill", "#fff");
+                            text.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 5));
+                            text.setAttribute("font-weight", "bold");
+                            text.setAttribute("pointer-events", "none"); // So it doesn't interfere with segment clicks
+                            
+                            // Rotate text to align with the arc
+                            const rotationAngle = (midAngleRad * 180 / Math.PI) + 90;
+                            if (rotationAngle > 90 && rotationAngle < 270) {
+                                text.setAttribute("transform", `rotate(${rotationAngle + 180}, ${textX}, ${textY})`);
+                            } else {
+                                text.setAttribute("transform", `rotate(${rotationAngle}, ${textX}, ${textY})`);
+                            }
+                            
+                            text.textContent = ring.segmentNames[i];
+                            svg.appendChild(text);
+                        }
                         
                         svg.appendChild(path);
                     }
