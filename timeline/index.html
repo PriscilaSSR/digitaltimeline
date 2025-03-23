@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Nested Pie Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        svg {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .segment {
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .segment:hover {
+            opacity: 0.8;
+        }
+        .tooltip {
+            position: absolute;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 4px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Nested Pie Chart</h1>
+    
+    <div id="chart-container"></div>
+    
+    <div class="controls">
+        <button id="rotate-left">Rotate Left</button>
+        <button id="rotate-right">Rotate Right</button>
+        <button id="reset">Reset</button>
+    </div>
+    
+    <div class="legend" id="legend"></div>
+    
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+        // Configuration
+        const config = {
+            width: 500,
+            height: 500,
+            centerX: 250,
+            centerY: 250,
+            rotation: 0,
+            rings: [
+                {
+                    name: "Purple (Outer)",
+                    radius: 200,
+                    color: "#8A2BE2",
+                    segments: 3,
+                    segmentNames: ["Purple Section 1", "Purple Section 2", "Purple Section 3"]
+                },
+                {
+                    name: "Blue",
+                    radius: 150,
+                    color: "#4169E1",
+                    segments: 4,
+                    segmentNames: ["Blue Section 1", "Blue Section 2", "Blue Section 3", "Blue Section 4"]
+                },
+                {
+                    name: "Green",
+                    radius: 100,
+                    color: "#32CD32",
+                    segments: 3,
+                    segmentNames: ["Green Section 1", "Green Section 2", "Green Section 3"]
+                },
+                {
+                    name: "Red (Inner)",
+                    radius: 50,
+                    color: "#FF4500",
+                    segments: 1,
+                    segmentNames: ["Red Center"]
+                }
+            ]
+        };
+        
+        // Create SVG element
+        function createChart() {
+            const container = document.getElementById('chart-container');
+            container.innerHTML = '';
+            
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
+            svg.setAttribute("width", "100%");
+            container.appendChild(svg);
+            
+            // Create rings from outer to inner
+            config.rings.forEach((ring, ringIndex) => {
+                const segmentAngle = 360 / ring.segments;
+                
+                for (let i = 0; i < ring.segments; i++) {
+                    const startAngle = (i * segmentAngle + config.rotation) % 360;
+                    const endAngle = ((i + 1) * segmentAngle + config.rotation) % 360;
+                    
+                    // For single segment rings (like the red inner circle), create a full circle
+                    if (ring.segments === 1) {
+                        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        circle.setAttribute("cx", config.centerX);
+                        circle.setAttribute("cy", config.centerY);
+                        circle.setAttribute("r", ring.radius);
+                        circle.setAttribute("fill", ring.color);
+                        circle.classList.add("segment");
+                        circle.dataset.name = ring.segmentNames[i];
+                        circle.dataset.ring = ring.name;
+                        
+                        circle.addEventListener("mousemove", showTooltip);
+                        circle.addEventListener("mouseleave", hideTooltip);
+                        
+                        svg.appendChild(circle);
+                    } else {
+                        // For multi-segment rings, create arcs
+                        const outerRadius = ring.radius;
+                        const innerRadius = ringIndex < config.rings.length - 1 ? config.rings[ringIndex + 1].radius : 0;
+                        
+                        // Convert degrees to radians for SVG arc
+                        const startRad = (startAngle - 90) * Math.PI / 180;
+                        const endRad = (endAngle - 90) * Math.PI / 180;
+                        
+                        // Calculate points
+                        const x1 = config.centerX + innerRadius * Math.cos(startRad);
+                        const y1 = config.centerY + innerRadius * Math.sin(startRad);
+                        const x2 = config.centerX + outerRadius * Math.cos(startRad);
+                        const y2 = config.centerY + outerRadius * Math.sin(startRad);
+                        const x3 = config.centerX + outerRadius * Math.cos(endRad);
+                        const y3 = config.centerY + outerRadius * Math.sin(endRad);
+                        const x4 = config.centerX + innerRadius * Math.cos(endRad);
+                        const y4 = config.centerY + innerRadius * Math.sin(endRad);
+                        
+                        // Create path for arc
+                        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        
+                        const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
+                        
+                        // Define SVG path
+                        const d = [
+                            `M ${x2} ${y2}`,
+                            `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x3} ${y3}`,
+                            `L ${x4} ${y4}`,
+                            `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${x1} ${y1}`,
+                            "Z"
+                        ].join(" ");
+                        
+                        path.setAttribute("d", d);
+                        path.setAttribute("fill", ring.color);
+                        path.classList.add("segment");
+                        path.dataset.name = ring.segmentNames[i];
+                        path.dataset.ring = ring.name;
+                        
+                        // Slightly lighten or darken segments for better visibility
+                        const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+                        path.style.filter = `brightness(${brightness})`;
+                        
+                        path.addEventListener("mousemove", showTooltip);
+                        path.addEventListener("mouseleave", hideTooltip);
+                        
+                        svg.appendChild(path);
+                    }
+                }
+            });
+            
+            // Create legend
+            createLegend();
+        }
+        
+        function createLegend() {
+            const legend = document.getElementById('legend');
+            legend.innerHTML = '';
+            
+            config.rings.forEach(ring => {
+                ring.segmentNames.forEach((name, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'legend-item';
+                    
+                    const colorBox = document.createElement('div');
+                    colorBox.className = 'legend-color';
+                    colorBox.style.backgroundColor = ring.color;
+                    
+                    // Apply the same brightness filter as in the chart
+                    if (ring.segments > 1) {
+                        const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+                        colorBox.style.filter = `brightness(${brightness})`;
+                    }
+                    
+                    const label = document.createElement('span');
+                    label.textContent = name;
+                    
+                    item.appendChild(colorBox);
+                    item.appendChild(label);
+                    legend.appendChild(item);
+                });
+            });
+        }
+        
+        function showTooltip(event) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.style.opacity = 1;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY + 10 + 'px';
+            
+            const segment = event.target;
+            tooltip.textContent = `${segment.dataset.ring}: ${segment.dataset.name}`;
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.style.opacity = 0;
+        }
+        
+        // Initialize chart
+        document.addEventListener('DOMContentLoaded', () => {
+            createChart();
+            
+            // Add event listeners for controls
+            document.getElementById('rotate-left').addEventListener('click', () => {
+                config.rotation = (config.rotation - 15) % 360;
+                createChart();
+            });
+            
+            document.getElementById('rotate-right').addEventListener('click', () => {
+                config.rotation = (config.rotation + 15) % 360;
+                createChart();
+            });
+            
+            document.getElementById('reset').addEventListener('click', () => {
+                config.rotation = 0;
+                createChart();
+            });
+        });
+    </script>
+</body>
+</html>
