@@ -186,6 +186,356 @@
     
     <script>
         // Function to calculate responsive dimensions
+        // Add these variables to store zoom and pan state
+let currentZoom = 1;
+let panOffsetX = 0;
+let panOffsetY = 0;
+let isPanning = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+
+// Initialize the chart with zoom and pan functionality
+document.addEventListener('DOMContentLoaded', () => {
+    createChart();
+    
+    // Make chart responsive to window resizing
+    window.addEventListener('resize', () => {
+        createChart();
+    });
+    
+    // Add zoom controls to the page
+    addZoomControls();
+    
+    // Add event listeners for zoom and pan
+    setupZoomPanEvents();
+});
+
+// Function to add zoom controls to the UI
+function addZoomControls() {
+    const container = document.querySelector('.main-container');
+    
+    // Create zoom controls container
+    const controlsContainer = document.createElement('div');
+    controlsContainer.className = 'zoom-controls';
+    controlsContainer.style.position = 'absolute';
+    controlsContainer.style.right = '20px';
+    controlsContainer.style.top = '20px';
+    controlsContainer.style.zIndex = '50';
+    controlsContainer.style.display = 'flex';
+    controlsContainer.style.flexDirection = 'column';
+    controlsContainer.style.gap = '5px';
+    
+    // Create zoom in button
+    const zoomInBtn = document.createElement('button');
+    zoomInBtn.textContent = '+';
+    zoomInBtn.className = 'zoom-button';
+    zoomInBtn.style.width = '40px';
+    zoomInBtn.style.height = '40px';
+    zoomInBtn.style.fontSize = '24px';
+    zoomInBtn.style.borderRadius = '50%';
+    zoomInBtn.style.border = '1px solid #ccc';
+    zoomInBtn.style.backgroundColor = 'white';
+    zoomInBtn.style.cursor = 'pointer';
+    zoomInBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    
+    // Create zoom out button
+    const zoomOutBtn = document.createElement('button');
+    zoomOutBtn.textContent = '-';
+    zoomOutBtn.className = 'zoom-button';
+    zoomOutBtn.style.width = '40px';
+    zoomOutBtn.style.height = '40px';
+    zoomOutBtn.style.fontSize = '24px';
+    zoomOutBtn.style.borderRadius = '50%';
+    zoomOutBtn.style.border = '1px solid #ccc';
+    zoomOutBtn.style.backgroundColor = 'white';
+    zoomOutBtn.style.cursor = 'pointer';
+    zoomOutBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    
+    // Create reset button
+    const resetBtn = document.createElement('button');
+    resetBtn.textContent = '⟲';
+    resetBtn.className = 'zoom-button';
+    resetBtn.style.width = '40px';
+    resetBtn.style.height = '40px';
+    resetBtn.style.fontSize = '18px';
+    resetBtn.style.borderRadius = '50%';
+    resetBtn.style.border = '1px solid #ccc';
+    resetBtn.style.backgroundColor = 'white';
+    resetBtn.style.cursor = 'pointer';
+    resetBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    
+    // Add event listeners
+    zoomInBtn.addEventListener('click', () => {
+        zoomChart(0.2); // Zoom in by 20%
+    });
+    
+    zoomOutBtn.addEventListener('click', () => {
+        zoomChart(-0.2); // Zoom out by 20%
+    });
+    
+    resetBtn.addEventListener('click', resetZoomPan);
+    
+    // Add buttons to controls container
+    controlsContainer.appendChild(zoomInBtn);
+    controlsContainer.appendChild(zoomOutBtn);
+    controlsContainer.appendChild(resetBtn);
+    
+    // Add controls to container
+    container.appendChild(controlsContainer);
+    
+    // Add zoom indicator
+    const zoomIndicator = document.createElement('div');
+    zoomIndicator.id = 'zoom-indicator';
+    zoomIndicator.style.position = 'absolute';
+    zoomIndicator.style.left = '20px';
+    zoomIndicator.style.bottom = '20px';
+    zoomIndicator.style.padding = '5px 10px';
+    zoomIndicator.style.backgroundColor = 'rgba(0,0,0,0.6)';
+    zoomIndicator.style.color = 'white';
+    zoomIndicator.style.borderRadius = '4px';
+    zoomIndicator.style.fontSize = '14px';
+    zoomIndicator.style.transition = 'opacity 0.3s';
+    zoomIndicator.style.opacity = '0';
+    zoomIndicator.style.zIndex = '50';
+    zoomIndicator.textContent = 'Zoom: 100%';
+    
+    container.appendChild(zoomIndicator);
+}
+
+// Setup zoom and pan event listeners
+function setupZoomPanEvents() {
+    const chartContainer = document.getElementById('chart-container');
+    const svg = chartContainer.querySelector('svg');
+    
+    // Wheel event for zooming
+    chartContainer.addEventListener('wheel', function(event) {
+        event.preventDefault();
+        
+        // Determine zoom direction based on wheel delta
+        const zoomDelta = event.deltaY < 0 ? 0.1 : -0.1;
+        
+        // Get mouse position relative to SVG
+        const rect = svg.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        
+        // Zoom at mouse position
+        zoomChartAtPoint(zoomDelta, mouseX, mouseY);
+    });
+    
+    // Mouse events for panning
+    chartContainer.addEventListener('mousedown', function(event) {
+        // Only enable panning if we're zoomed in
+        if (currentZoom > 1) {
+            isPanning = true;
+            lastMouseX = event.clientX;
+            lastMouseY = event.clientY;
+            chartContainer.style.cursor = 'grabbing';
+        }
+    });
+    
+    document.addEventListener('mousemove', function(event) {
+        if (isPanning) {
+            // Calculate how much the mouse has moved
+            const deltaX = event.clientX - lastMouseX;
+            const deltaY = event.clientY - lastMouseY;
+            
+            // Update last mouse position
+            lastMouseX = event.clientX;
+            lastMouseY = event.clientY;
+            
+            // Update pan offset
+            panOffsetX += deltaX;
+            panOffsetY += deltaY;
+            
+            // Apply transform to chart
+            applyTransform();
+        }
+    });
+    
+    document.addEventListener('mouseup', function() {
+        if (isPanning) {
+            isPanning = false;
+            chartContainer.style.cursor = 'default';
+        }
+    });
+    
+    // Double-click to reset zoom and pan
+    chartContainer.addEventListener('dblclick', resetZoomPan);
+    
+    // Add touch support for mobile devices
+    chartContainer.addEventListener('touchstart', function(event) {
+        if (event.touches.length === 1) {
+            isPanning = true;
+            lastMouseX = event.touches[0].clientX;
+            lastMouseY = event.touches[0].clientY;
+        }
+    });
+    
+    chartContainer.addEventListener('touchmove', function(event) {
+        if (isPanning && event.touches.length === 1) {
+            const deltaX = event.touches[0].clientX - lastMouseX;
+            const deltaY = event.touches[0].clientY - lastMouseY;
+            
+            lastMouseX = event.touches[0].clientX;
+            lastMouseY = event.touches[0].clientY;
+            
+            panOffsetX += deltaX;
+            panOffsetY += deltaY;
+            
+            applyTransform();
+            event.preventDefault();
+        }
+    });
+    
+    chartContainer.addEventListener('touchend', function() {
+        isPanning = false;
+    });
+    
+    // Add pinch zoom for mobile
+    let initialPinchDistance = 0;
+    
+    chartContainer.addEventListener('touchstart', function(event) {
+        if (event.touches.length === 2) {
+            initialPinchDistance = getPinchDistance(event);
+        }
+    });
+    
+    chartContainer.addEventListener('touchmove', function(event) {
+        if (event.touches.length === 2) {
+            const currentDistance = getPinchDistance(event);
+            const delta = currentDistance - initialPinchDistance;
+            
+            if (Math.abs(delta) > 5) {
+                const zoomDelta = delta > 0 ? 0.05 : -0.05;
+                
+                // Calculate center point between fingers as zoom center
+                const centerX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
+                const centerY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
+                
+                // Convert to SVG coordinates
+                const rect = svg.getBoundingClientRect();
+                const svgX = centerX - rect.left;
+                const svgY = centerY - rect.top;
+                
+                zoomChartAtPoint(zoomDelta, svgX, svgY);
+                
+                initialPinchDistance = currentDistance;
+                event.preventDefault();
+            }
+        }
+    });
+}
+
+// Calculate distance between two touch points
+function getPinchDistance(event) {
+    return Math.hypot(
+        event.touches[0].clientX - event.touches[1].clientX,
+        event.touches[0].clientY - event.touches[1].clientY
+    );
+}
+
+// Zoom chart by a delta amount
+function zoomChart(delta) {
+    // Calculate new zoom level with limits
+    const newZoom = Math.max(1, Math.min(5, currentZoom + delta));
+    
+    // Only update if zoom level changed
+    if (newZoom !== currentZoom) {
+        // Get SVG dimensions
+        const chartContainer = document.getElementById('chart-container');
+        const svg = chartContainer.querySelector('svg');
+        const rect = svg.getBoundingClientRect();
+        
+        // Zoom at center of chart
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        zoomChartAtPoint(newZoom - currentZoom, centerX, centerY);
+    }
+}
+
+// Zoom chart at a specific point
+function zoomChartAtPoint(zoomDelta, pointX, pointY) {
+    // Calculate new zoom level with limits
+    const newZoom = Math.max(1, Math.min(5, currentZoom + zoomDelta));
+    
+    // Only proceed if zoom level changed
+    if (newZoom !== currentZoom) {
+        // Get chart container and SVG
+        const chartContainer = document.getElementById('chart-container');
+        const svg = chartContainer.querySelector('svg');
+        
+        // Calculate how the point will move after zoom
+        const zoomRatio = newZoom / currentZoom;
+        
+        // Adjust pan offset to keep the point under mouse stable
+        panOffsetX = pointX - (pointX - panOffsetX) * zoomRatio;
+        panOffsetY = pointY - (pointY - panOffsetY) * zoomRatio;
+        
+        // Update current zoom
+        currentZoom = newZoom;
+        
+        // Apply the transformation
+        applyTransform();
+        
+        // Update zoom indicator
+        updateZoomIndicator();
+    }
+}
+
+// Apply transformation to chart
+function applyTransform() {
+    const chartGroup = document.querySelector('#chart-container svg > g');
+    
+    if (chartGroup) {
+        // Get chart dimensions
+        const chartContainer = document.getElementById('chart-container');
+        const svg = chartContainer.querySelector('svg');
+        const width = svg.getAttribute('width') || svg.width.baseVal.value;
+        const height = svg.getAttribute('height') || svg.height.baseVal.value;
+        
+        // Calculate center point
+        const centerX = parseFloat(svg.getAttribute('viewBox').split(' ')[2]) / 2;
+        const centerY = parseFloat(svg.getAttribute('viewBox').split(' ')[3]) / 2;
+        
+        // Apply transform to the chart group
+        chartGroup.setAttribute('transform', 
+            `translate(${panOffsetX}, ${panOffsetY}) scale(${currentZoom})`);
+        
+        // Update cursor based on zoom level
+        chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
+    }
+}
+
+// Reset zoom and pan to initial state
+function resetZoomPan() {
+    currentZoom = 1;
+    panOffsetX = 0;
+    panOffsetY = 0;
+    
+    applyTransform();
+    updateZoomIndicator();
+    
+    const chartContainer = document.getElementById('chart-container');
+    chartContainer.style.cursor = 'default';
+}
+
+// Update zoom indicator with current zoom level
+function updateZoomIndicator() {
+    const indicator = document.getElementById('zoom-indicator');
+    
+    // Show zoom level
+    indicator.textContent = `Zoom: ${Math.round(currentZoom * 100)}%`;
+    
+    // Make indicator visible and then fade out
+    indicator.style.opacity = '1';
+    
+    clearTimeout(indicator.fadeTimeout);
+    indicator.fadeTimeout = setTimeout(() => {
+        indicator.style.opacity = '0';
+    }, 1500);
+}
         function getResponsiveDimensions() {
             const container = document.getElementById('chart-container');
             const width = container.clientWidth;
