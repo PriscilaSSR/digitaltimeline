@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Nested Pie Chart</title>
+    <title>Aviation Technology Timeline</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -109,22 +109,105 @@
             transition: opacity 0.3s;
         }
         .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .legend-color {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
-        }
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    max-width: 300px;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 90;
+    right: 20px;
+    bottom: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.legend-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 0;
+}
+
+.legend-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+    padding: 2px 5px;
+    transition: color 0.2s;
+}
+
+.legend-toggle:hover {
+    color: #333;
+}
+
+.legend-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.legend-category {
+    margin-top: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #555;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legend-minimized {
+    max-height: 40px;
+    overflow: hidden;
+}
+
+/* Optional: Add a drag handle */
+.legend-drag-handle {
+    cursor: move;
+    width: 100%;
+    height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.legend-drag-handle:before {
+    content: "";
+    width: 30px;
+    height: 4px;
+    background-color: #ddd;
+    border-radius: 2px;
+}
+
         .content-tabs {
             display: flex;
             flex-wrap: wrap;
@@ -1303,7 +1386,188 @@ function createConnectorRing(ring, ringIndex, parent) {
             sidebar.classList.remove('active');
             document.removeEventListener('click', closeSidebarOnClickOutside);
         }
+        function createFloatingLegend() {
+    const legend = document.getElementById('legend');
+    legend.innerHTML = '';
+    legend.className = 'legend';
+    
+    // Create drag handle
+    const dragHandle = document.createElement('div');
+    dragHandle.className = 'legend-drag-handle';
+    legend.appendChild(dragHandle);
+    
+    // Create header with title and toggle button
+    const header = document.createElement('div');
+    header.className = 'legend-header';
+    
+    const title = document.createElement('h3');
+    title.className = 'legend-title';
+    title.textContent = 'Legend';
+    
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'legend-toggle';
+    toggleBtn.textContent = '−'; // Unicode minus sign
+    toggleBtn.title = 'Minimize/Maximize Legend';
+    
+    header.appendChild(title);
+    header.appendChild(toggleBtn);
+    legend.appendChild(header);
+    
+    // Create content container
+    const content = document.createElement('div');
+    content.className = 'legend-content';
+    legend.appendChild(content);
+    
+    // Group legend items by ring name
+    const ringGroups = {};
+    
+    config.rings.forEach(ring => {
+        // Skip connector rings in the legend
+        if (ring.isConnector) return;
         
+        if (!ringGroups[ring.name]) {
+            ringGroups[ring.name] = [];
+        }
+        
+        ring.segmentNames.forEach((name, i) => {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+            
+            const colorBox = document.createElement('div');
+            colorBox.className = 'legend-color';
+            colorBox.style.backgroundColor = ring.color;
+            
+            // Apply the same brightness filter as in the chart
+            if (ring.segments > 1) {
+                const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+                colorBox.style.filter = `brightness(${brightness})`;
+            }
+            
+            const label = document.createElement('span');
+            label.textContent = name;
+            
+            item.appendChild(colorBox);
+            item.appendChild(label);
+            ringGroups[ring.name].push(item);
+        });
+    });
+    
+    // Add groups to legend
+    for (const ringName in ringGroups) {
+        const categoryTitle = document.createElement('div');
+        categoryTitle.className = 'legend-category';
+        categoryTitle.textContent = ringName;
+        content.appendChild(categoryTitle);
+        
+        ringGroups[ringName].forEach(item => {
+            content.appendChild(item);
+        });
+    }
+    
+    // Add toggle functionality
+    toggleBtn.addEventListener('click', function() {
+        content.classList.toggle('legend-minimized');
+        this.textContent = content.classList.contains('legend-minimized') ? '+' : '−';
+    });
+    
+    // Add drag functionality
+    makeDraggable(legend, dragHandle);
+}
+
+// Make an element draggable
+function makeDraggable(element, handle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    
+    if (handle) {
+        // If a handle is provided, make only the handle trigger dragging
+        handle.onmousedown = dragMouseDown;
+        handle.ontouchstart = dragTouchStart;
+    } else {
+        // Otherwise, make the entire element draggable
+        element.onmousedown = dragMouseDown;
+        element.ontouchstart = dragTouchStart;
+    }
+    
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Get the mouse cursor position at startup
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // Call a function whenever the cursor moves
+        document.onmousemove = elementDrag;
+    }
+    
+    function dragTouchStart(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Get the touch position at startup
+        pos3 = e.touches[0].clientX;
+        pos4 = e.touches[0].clientY;
+        document.ontouchend = closeDragElement;
+        // Call a function whenever the touch moves
+        document.ontouchmove = elementTouchDrag;
+    }
+    
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Calculate the new cursor position
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // Set the element's new position
+        setElementPosition(element, pos1, pos2);
+    }
+    
+    function elementTouchDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Calculate the new touch position
+        pos1 = pos3 - e.touches[0].clientX;
+        pos2 = pos4 - e.touches[0].clientY;
+        pos3 = e.touches[0].clientX;
+        pos4 = e.touches[0].clientY;
+        // Set the element's new position
+        setElementPosition(element, pos1, pos2);
+    }
+    
+    function setElementPosition(element, pos1, pos2) {
+        const rect = element.getBoundingClientRect();
+        const container = document.querySelector('.main-container');
+        const containerRect = container.getBoundingClientRect();
+        
+        // Calculate new position
+        let newTop = element.offsetTop - pos2;
+        let newLeft = element.offsetLeft - pos1;
+        
+        // Ensure the element stays within the container bounds
+        if (newTop < 0) newTop = 0;
+        if (newLeft < 0) newLeft = 0;
+        
+        const maxTop = containerRect.height - rect.height;
+        const maxLeft = containerRect.width - rect.width;
+        
+        if (newTop > maxTop) newTop = maxTop;
+        if (newLeft > maxLeft) newLeft = maxLeft;
+        
+        // Set the element's new position
+        element.style.top = newTop + "px";
+        element.style.left = newLeft + "px";
+        element.style.right = "auto";
+        element.style.bottom = "auto";
+    }
+    
+    function closeDragElement() {
+        // Stop moving when mouse button is released
+        document.onmouseup = null;
+        document.onmousemove = null;
+        document.ontouchend = null;
+        document.ontouchmove = null;
+    }
+}
         // Initialize chart
         document.addEventListener('DOMContentLoaded', () => {
             createChart();
