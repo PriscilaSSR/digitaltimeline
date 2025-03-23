@@ -11,9 +11,18 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        #chart-container {
+            width: 90vw;
+            height: 80vh;
+            display: flex;
+            justify-content: center;
         }
         svg {
-            max-width: 600px;
+            width: 100%;
+            height: 100%;
             margin: 0 auto;
         }
         .segment {
@@ -75,12 +84,23 @@
     <div class="tooltip" id="tooltip"></div>
     
     <script>
+        // Function to calculate responsive dimensions
+        function getResponsiveDimensions() {
+            const container = document.getElementById('chart-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const size = Math.min(width, height);
+            return {
+                width: size,
+                height: size,
+                centerX: size / 2,
+                centerY: size / 2
+            };
+        }
+        
         // Configuration
         const config = {
-            width: 500,
-            height: 500,
-            centerX: 250,
-            centerY: 250,
+            ...getResponsiveDimensions(),
             rotation: 0,
             rings: [
                 {
@@ -116,12 +136,30 @@
         
         // Create SVG element
         function createChart() {
+            // Update dimensions based on current container size
+            const dimensions = getResponsiveDimensions();
+            config.width = dimensions.width;
+            config.height = dimensions.height;
+            config.centerX = dimensions.centerX;
+            config.centerY = dimensions.centerY;
+            
+            // Adjust ring radiuses proportionally to the new size
+            const maxRadius = Math.min(config.width, config.height) / 2 * 0.9;
+            const originalOuterRadius = 200;
+            const scale = maxRadius / originalOuterRadius;
+            
+            config.rings.forEach((ring, i) => {
+                const originalRadius = [200, 150, 100, 50][i];
+                ring.radius = originalRadius * scale;
+            });
+            
             const container = document.getElementById('chart-container');
             container.innerHTML = '';
             
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
             svg.setAttribute("width", "100%");
+            svg.setAttribute("height", "100%");
             container.appendChild(svg);
             
             // Create rings from outer to inner
@@ -263,6 +301,11 @@
             
             document.getElementById('reset').addEventListener('click', () => {
                 config.rotation = 0;
+                createChart();
+            });
+            
+            // Make chart responsive to window resizing
+            window.addEventListener('resize', () => {
                 createChart();
             });
         });
