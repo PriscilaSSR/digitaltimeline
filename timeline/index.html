@@ -241,6 +241,15 @@
                         }
                     ]
                 },
+                // Connector ring between Purple and Blue
+                {
+                    name: "Purple-Blue Connector",
+                    radius: 175,
+                    color: "#7D59D9", // Mix of purple and blue
+                    isConnector: true,
+                    arrowCount: 12, // Number of arrows around the circle
+                    thickness: 5 // Thickness of the connector ring
+                },
                 {
                     name: "Blue",
                     radius: 150,
@@ -274,6 +283,15 @@
                         }
                     ]
                 },
+                // Connector ring between Blue and Green
+                {
+                    name: "Blue-Green Connector",
+                    radius: 125,
+                    color: "#3A98B9", // Mix of blue and green
+                    isConnector: true,
+                    arrowCount: 8, // Number of arrows around the circle
+                    thickness: 5 // Thickness of the connector ring
+                },
                 {
                     name: "Green",
                     radius: 100,
@@ -300,6 +318,15 @@
                             imageSrc: "/api/placeholder/400/250"
                         }
                     ]
+                },
+                // Connector ring between Green and Red
+                {
+                    name: "Green-Red Connector",
+                    radius: 75,
+                    color: "#91B93A", // Mix of green and red
+                    isConnector: true,
+                    arrowCount: 6, // Number of arrows around the circle
+                    thickness: 4 // Thickness of the connector ring
                 },
                 {
                     name: "Red (Inner)",
@@ -334,8 +361,13 @@
             const scale = maxRadius / originalOuterRadius;
             
             config.rings.forEach((ring, i) => {
-                const originalRadius = [200, 150, 100, 50][i];
-                ring.radius = originalRadius * scale;
+                // Scale all radiuses proportionally
+                ring.radius = ring.radius * scale;
+                
+                // For connector rings, also scale the thickness
+                if (ring.isConnector && ring.thickness) {
+                    ring.thickness = ring.thickness * scale;
+                }
             });
             
             const container = document.getElementById('chart-container');
@@ -349,6 +381,62 @@
             
             // Create rings from outer to inner
             config.rings.forEach((ring, ringIndex) => {
+                // Handle connector rings with arrows
+                if (ring.isConnector) {
+                    const outerRadius = ring.radius + (ring.thickness / 2);
+                    const innerRadius = ring.radius - (ring.thickness / 2);
+                    
+                    // Create connector ring
+                    const connectorRing = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    connectorRing.setAttribute("cx", config.centerX);
+                    connectorRing.setAttribute("cy", config.centerY);
+                    connectorRing.setAttribute("r", ring.radius);
+                    connectorRing.setAttribute("fill", "none");
+                    connectorRing.setAttribute("stroke", ring.color);
+                    connectorRing.setAttribute("stroke-width", ring.thickness);
+                    connectorRing.classList.add("connector");
+                    
+                    svg.appendChild(connectorRing);
+                    
+                    // Create arrows pointing inward
+                    const arrowCount = ring.arrowCount || 8;
+                    const arrowLength = ring.thickness * 2.5;
+                    const arrowWidth = ring.thickness * 0.8;
+                    
+                    for (let i = 0; i < arrowCount; i++) {
+                        const angle = (i * 360 / arrowCount) * Math.PI / 180;
+                        
+                        // Calculate arrow position
+                        const baseX = config.centerX + ring.radius * Math.cos(angle);
+                        const baseY = config.centerY + ring.radius * Math.sin(angle);
+                        
+                        // Calculate arrow points
+                        const tipX = config.centerX + (ring.radius - arrowLength/2) * Math.cos(angle);
+                        const tipY = config.centerY + (ring.radius - arrowLength/2) * Math.sin(angle);
+                        
+                        // Calculate arrow wing points (perpendicular to radius)
+                        const perpAngle = angle + Math.PI/2;
+                        const wingWidth = arrowWidth / 2;
+                        
+                        const wing1X = baseX + wingWidth * Math.cos(perpAngle);
+                        const wing1Y = baseY + wingWidth * Math.sin(perpAngle);
+                        const wing2X = baseX - wingWidth * Math.cos(perpAngle);
+                        const wing2Y = baseY - wingWidth * Math.sin(perpAngle);
+                        
+                        // Create arrow path
+                        const arrowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        const arrowD = `M ${wing1X} ${wing1Y} L ${baseX} ${baseY} L ${wing2X} ${wing2Y} L ${tipX} ${tipY} Z`;
+                        
+                        arrowPath.setAttribute("d", arrowD);
+                        arrowPath.setAttribute("fill", ring.color);
+                        arrowPath.classList.add("arrow");
+                        
+                        svg.appendChild(arrowPath);
+                    }
+                    
+                    continue; // Skip the rest of the loop for connector rings
+                }
+                
                 const segmentAngle = 360 / ring.segments;
                 
                 for (let i = 0; i < ring.segments; i++) {
@@ -387,9 +475,18 @@
                         svg.appendChild(circle);
                         svg.appendChild(text);
                     } else {
+                        // Find the next non-connector ring for inner radius
+                        let innerRadiusRing = null;
+                        for (let j = ringIndex + 1; j < config.rings.length; j++) {
+                            if (!config.rings[j].isConnector) {
+                                innerRadiusRing = config.rings[j];
+                                break;
+                            }
+                        }
+                        
                         // For multi-segment rings, create arcs
                         const outerRadius = ring.radius;
-                        const innerRadius = ringIndex < config.rings.length - 1 ? config.rings[ringIndex + 1].radius : 0;
+                        const innerRadius = innerRadiusRing ? innerRadiusRing.radius : 0;
                         
                         // Convert degrees to radians for SVG arc
                         let startRad = (startAngle - 90) * Math.PI / 180;
@@ -489,9 +586,6 @@
                             svg.appendChild(textShadow);
                             svg.appendChild(text);
                         }
-                    }
-                }
-            });
             
             // Create legend
             createLegend();
@@ -502,6 +596,9 @@
             legend.innerHTML = '';
             
             config.rings.forEach(ring => {
+                // Skip connector rings in the legend
+                if (ring.isConnector) return;
+                
                 ring.segmentNames.forEach((name, i) => {
                     const item = document.createElement('div');
                     item.className = 'legend-item';
