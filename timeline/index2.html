@@ -870,73 +870,7 @@ function updateZoomIndicator() {
             ]
         };
         
-       // Create SVG element
-function createChart() {
-    // Update dimensions based on current container size
-    const dimensions = getResponsiveDimensions();
-    config.width = dimensions.width;
-    config.height = dimensions.height;
-    config.centerX = dimensions.centerX;
-    config.centerY = dimensions.centerY;
-    
-    // Adjust ring radiuses to provide more space for labels
-    const maxRadius = Math.min(config.width, config.height) / 2 * 0.85;
-    const originalOuterRadius = 200;
-    const scale = maxRadius / originalOuterRadius;
-    
-    // First, scale all non-connector rings
-    const contentRings = config.rings.filter(ring => !ring.isConnector);
-    contentRings.forEach(ring => {
-        ring.radius = ring.radius * scale;
-    });
-    
-    // Then, calculate the radiuses for connector rings
-    for (let i = 0; i < config.rings.length; i++) {
-        if (config.rings[i].isConnector) {
-            // Find the adjacent content rings (one before and one after this connector)
-            let prevRingIndex = i - 1;
-            let nextRingIndex = i + 1;
-            
-            // Ensure we have valid content rings on both sides
-            if (prevRingIndex >= 0 && nextRingIndex < config.rings.length) {
-                const prevRing = config.rings[prevRingIndex];
-                const nextRing = config.rings[nextRingIndex];
-                
-                // Calculate the connector radius to be exactly between the two rings
-                config.rings[i].radius = calculateConnectorRadius(prevRing.radius, nextRing.radius);
-            }
-            
-            // Scale thickness proportionally
-            if (config.rings[i].thickness) {
-                config.rings[i].thickness = config.rings[i].thickness * scale;
-            }
-        }
-    }
-    
-    const container = document.getElementById('chart-container');
-    container.innerHTML = '';
-    
-            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            const viewBoxX = config.centerX - config.width / 2;
-            const viewBoxY = config.centerY - config.height / 2;
-            svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${config.width} ${config.height}`);
-            svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-            svg.setAttribute("width", "100%");
-            svg.setAttribute("height", "100%");
-    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-
-   
-            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", config.centerX);
-            circle.setAttribute("cy", config.centerY);
-            circle.setAttribute("r", Math.min(config.width, config.height) * 0.4);
-            circle.setAttribute("fill", "orange");
-            g.appendChild(circle);
-    svg.appendChild(g);
-
-            document.getElementById("chart-container").innerHTML = "";
-            document.getElementById("chart-container").appendChild(svg);
-        }
+       
 
         window.addEventListener("DOMContentLoaded", createChart);
         window.addEventListener("resize", () => {
