@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviation Technology Timeline</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        html, body {
+            touch-action: none;
+        }
+
+        .main-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #chart-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #chart-container svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+        .sidebar {
+            position: absolute;
+            left: -350px;
+            height: 100%;
+            width: 350px;
+            overflow-y: auto;
+            background-color: #f8f8f8;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: left 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar-content {
+            padding: 20px;
+            position: relative;
+        }
+        .sidebar-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: bold;
+            border: none;
+            font-size: 16px;
+        }
+        .sidebar-close:hover {
+            background-color: #d0d0d0;
+        }
+        .sidebar-image {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .sidebar-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            padding-right: 40px;
+            color: #333;
+        }
+        .sidebar-subtitle {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .sidebar-text {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        #chart-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+        }
+        .segment {
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .segment:hover {
+            opacity: 0.8;
+        }
+        .tooltip {
+            position: absolute;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 4px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .legend {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    max-width: 300px;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 90;
+    right: 20px;
+    bottom: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.legend-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 0;
+}
+
+.legend-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+    padding: 2px 5px;
+    transition: color 0.2s;
+}
+
+.legend-toggle:hover {
+    color: #333;
+}
+
+.legend-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.legend-category {
+    margin-top: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #555;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legend-minimized {
+    max-height: 40px;
+    overflow: hidden;
+}
+
+/* Optional: Add a drag handle */
+.legend-drag-handle {
+    cursor: move;
+    width: 100%;
+    height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.legend-drag-handle:before {
+    content: "";
+    width: 30px;
+    height: 4px;
+    background-color: #ddd;
+    border-radius: 2px;
+}
+
+        .content-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            gap: 5px;
+        }
+        .tab-button {
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            background-color: #4169E1;
+            color: white;
+            border-color: #4169E1;
+        }
+        .tab-button:hover:not(.active) {
+            background-color: #e0e0e0;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .arrow {
+            filter: drop-shadow(0px 0px 2px rgba(0,0,0,0.5));
+        }
+        .connector {
+            filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.3));
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Nested Pie Chart</h1>
+    
+    <div class="main-container">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-content" id="sidebar-content">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <div id="chart-container"></div>
+    </div>
+    
+    <div class="legend" id="legend"></div>
+    
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+
+const config = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            centerX: window.innerWidth / 2,
+            centerY: window.innerHeight / 2,
+        };
+
+        // Function to calculate responsive dimensions
+        // Add these variables to store zoom and pan state
+let currentZoom = 1;
+let panOffsetX = 0;
+let panOffsetY = 0;
+let isPanning = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+
+// Initialize the chart with zoom and pan functionality
+document.addEventListener('DOMContentLoaded', () => {
+    createChart();
+    applyTransform();
+    // Make chart responsive to window resizing
+    window.addEventListener('resize', () => {
+        createChart();
+    });
+    
+    // Add zoom controls to the page
+    addZoomControls();
+    
+    // Add event listeners for zoom and pan
+    setupZoomPanEvents();
+    
+});
+
+// Function to add zoom controls to the UI
+function addZoomControls() {
+    const container = document.querySelector('.main-container');
+    
+    // Create zoom controls container
+    const controlsContainer = document.createElement('div');
+    controlsContainer.className = 'zoom-controls';
+    controlsContainer.style.position = 'absolute';
+    controlsContainer.style.right = '20px';
+    controlsContainer.style.top = '20px';
+    controlsContainer.style.zIndex = '50';
+    controlsContainer.style.display = 'flex';
+    controlsContainer.style.flexDirection = 'column';
+    controlsContainer.style.gap = '5px';
+    
+    // Create zoom in button
+    const zoomInBtn = document.createElement('button');
+    zoomInBtn.textContent = '+';
+    zoomInBtn.className = 'zoom-button';
+    zoomInBtn.style.width = '40px';
+    zoomInBtn.style.height = '40px';
+    zoomInBtn.style.fontSize = '24px';
+    zoomInBtn.style.borderRadius = '50%';
+    zoomInBtn.style.border = '1px solid #ccc';
+    zoomInBtn.style.backgroundColor = 'white';
+    zoomInBtn.style.cursor = 'pointer';
+    zoomInBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    
+    // Create zoom out button
+    const zoomOutBtn = document.createElement('button');
+    zoomOutBtn.textContent = '-';
+    zoomOutBtn.className = 'zoom-button';
+    zoomOutBtn.style.width = '40px';
+    zoomOutBtn.style.height = '40px';
+    zoomOutBtn.style.fontSize = '24px';
+    zoomOutBtn.style.borderRadius = '50%';
+    zoomOutBtn.style.border = '1px solid #ccc';
+    zoomOutBtn.style.backgroundColor = 'white';
+    zoomOutBtn.style.cursor = 'pointer';
+    zoomOutBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    
+    // Create reset button
+    const resetBtn = document.createElement('button');
+    resetBtn.textContent = '⟲';
+    resetBtn.className = 'zoom-button';
+    resetBtn.style.width = '40px';
+    resetBtn.style.height = '40px';
+    resetBtn.style.fontSize = '18px';
+    resetBtn.style.borderRadius = '50%';
+    resetBtn.style.border = '1px solid #ccc';
+    resetBtn.style.backgroundColor = 'white';
+    resetBtn.style.cursor = 'pointer';
+    resetBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    
+    // Add event listeners
+    zoomInBtn.addEventListener('click', () => {
+        zoomChart(0.2); // Zoom in by 20%
+    });
+    
+    zoomOutBtn.addEventListener('click', () => {
+        zoomChart(-0.2); // Zoom out by 20%
+    });
+    
+    resetBtn.addEventListener('click', resetZoomPan);
+    
+    // Add buttons to controls container
+    controlsContainer.appendChild(zoomInBtn);
+    controlsContainer.appendChild(zoomOutBtn);
+    controlsContainer.appendChild(resetBtn);
+    
+    // Add controls to container
+    container.appendChild(controlsContainer);
+    
+    // Add zoom indicator
+    const zoomIndicator = document.createElement('div');
+    zoomIndicator.id = 'zoom-indicator';
+    zoomIndicator.style.position = 'absolute';
+    zoomIndicator.style.left = '20px';
+    zoomIndicator.style.bottom = '20px';
+    zoomIndicator.style.padding = '5px 10px';
+    zoomIndicator.style.backgroundColor = 'rgba(0,0,0,0.6)';
+    zoomIndicator.style.color = 'white';
+    zoomIndicator.style.borderRadius = '4px';
+    zoomIndicator.style.fontSize = '14px';
+    zoomIndicator.style.transition = 'opacity 0.3s';
+    zoomIndicator.style.opacity = '0';
+    zoomIndicator.style.zIndex = '50';
+    zoomIndicator.textContent = 'Zoom: 100%';
+    
+    container.appendChild(zoomIndicator);
+}
+
+// Setup zoom and pan event listeners
+function setupZoomPanEvents() {
+    const chartContainer = document.getElementById('chart-container');
+    const svg = chartContainer.querySelector('svg');
+    
+    // Wheel event for zooming
+    chartContainer.addEventListener('wheel', function(event) {
+        event.preventDefault();
+        
+        // Determine zoom direction based on wheel delta
+        const zoomDelta = event.deltaY < 0 ? 0.1 : -0.1;
+        
+        // Get mouse position relative to SVG
+        const rect = svg.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        
+        // Zoom at mouse position
+        zoomChartAtPoint(zoomDelta, mouseX, mouseY);
+    });
+    
+    // Mouse events for panning
+    chartContainer.addEventListener('mousedown', function(event) {
+        // Only enable panning if we're zoomed in
+        if (currentZoom > 1) {
+            isPanning = true;
+            lastMouseX = event.clientX;
+            lastMouseY = event.clientY;
+            chartContainer.style.cursor = 'grabbing';
+        }
+    });
+    
+    document.addEventListener('mousemove', function(event) {
+        if (isPanning) {
+            // Calculate how much the mouse has moved
+            const deltaX = event.clientX - lastMouseX;
+            const deltaY = event.clientY - lastMouseY;
+            
+            // Update last mouse position
+            lastMouseX = event.clientX;
+            lastMouseY = event.clientY;
+            
+            // Update pan offset
+            panOffsetX += deltaX;
+            panOffsetY += deltaY;
+            
+            // Apply transform to chart
+            applyTransform();
+        }
+    });
+    
+    document.addEventListener('mouseup', function() {
+        if (isPanning) {
+            isPanning = false;
+            chartContainer.style.cursor = 'default';
+        }
+    });
+    
+    // Double-click to reset zoom and pan
+    chartContainer.addEventListener('dblclick', resetZoomPan);
+    
+    // Add touch support for mobile devices
+    chartContainer.addEventListener('touchstart', function(event) {
+        if (event.touches.length === 1) {
+            isPanning = true;
+            lastMouseX = event.touches[0].clientX;
+            lastMouseY = event.touches[0].clientY;
+        }
+    });
+    
+    chartContainer.addEventListener('touchmove', function(event) {
+        if (isPanning && event.touches.length === 1) {
+            const deltaX = event.touches[0].clientX - lastMouseX;
+            const deltaY = event.touches[0].clientY - lastMouseY;
+            
+            lastMouseX = event.touches[0].clientX;
+            lastMouseY = event.touches[0].clientY;
+            
+            panOffsetX += deltaX;
+            panOffsetY += deltaY;
+            
+            applyTransform();
+            event.preventDefault();
+        }
+    });
+    
+    chartContainer.addEventListener('touchend', function() {
+        isPanning = false;
+    });
+    
+    // Add pinch zoom for mobile
+    let initialPinchDistance = 0;
+    
+    chartContainer.addEventListener('touchstart', function(event) {
+        if (event.touches.length === 2) {
+            initialPinchDistance = getPinchDistance(event);
+        }
+    });
+    
+    chartContainer.addEventListener('touchmove', function(event) {
+        if (event.touches.length === 2) {
+            const currentDistance = getPinchDistance(event);
+            const delta = currentDistance - initialPinchDistance;
+            
+            if (Math.abs(delta) > 5) {
+                const zoomDelta = delta > 0 ? 0.05 : -0.05;
+                
+                // Calculate center point between fingers as zoom center
+                const centerX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
+                const centerY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
+                
+                // Convert to SVG coordinates
+                const rect = svg.getBoundingClientRect();
+                const svgX = centerX - rect.left;
+                const svgY = centerY - rect.top;
+                
+                zoomChartAtPoint(zoomDelta, svgX, svgY);
+                
+                initialPinchDistance = currentDistance;
+                event.preventDefault();
+            }
+        }
+    });
+}
+
+// Calculate distance between two touch points
+function getPinchDistance(event) {
+    return Math.hypot(
+        event.touches[0].clientX - event.touches[1].clientX,
+        event.touches[0].clientY - event.touches[1].clientY
+    );
+}
+
+// Zoom chart by a delta amount
+function zoomChart(delta) {
+    // Calculate new zoom level with limits
+const newZoom = Math.max(0.2, Math.min(10, currentZoom + delta));
+    
+    // Only update if zoom level changed
+    if (newZoom !== currentZoom) {
+        // Get SVG dimensions
+        const chartContainer = document.getElementById('chart-container');
+        const svg = chartContainer.querySelector('svg');
+        const rect = svg.getBoundingClientRect();
+        
+        // Zoom at center of chart
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        zoomChartAtPoint(newZoom - currentZoom, centerX, centerY);
+    }
+}
+
+// Zoom chart at a specific point
+function zoomChartAtPoint(zoomDelta, pointX, pointY) {
+    // Calculate new zoom level with limits
+    const newZoom = Math.max(1, Math.min(5, currentZoom + zoomDelta));
+    
+    // Only proceed if zoom level changed
+    if (newZoom !== currentZoom) {
+        // Get chart container and SVG
+        const chartContainer = document.getElementById('chart-container');
+        const svg = chartContainer.querySelector('svg');
+        
+        // Calculate how the point will move after zoom
+        const zoomRatio = newZoom / currentZoom;
+        
+        // Adjust pan offset to keep the point under mouse stable
+        panOffsetX = pointX - (pointX - panOffsetX) * zoomRatio;
+        panOffsetY = pointY - (pointY - panOffsetY) * zoomRatio;
+        
+        // Update current zoom
+        currentZoom = newZoom;
+        
+        // Apply the transformation
+        applyTransform();
+        
+        // Update zoom indicator
+        updateZoomIndicator();
+    }
+}
+
+// Apply transformation to chart
+function applyTransform() {
+    const chartGroup = document.querySelector('#chart-container svg > g');
+    
+    if (chartGroup) {
+        // Get chart dimensions
+        const chartContainer = document.getElementById('chart-container');
+        const svg = chartContainer.querySelector('svg');
+        const width = svg.getAttribute('width') || svg.width.baseVal.value;
+        const height = svg.getAttribute('height') || svg.height.baseVal.value;
+        
+        // Calculate center point
+        const centerX = parseFloat(svg.getAttribute('viewBox').split(' ')[2]) / 2;
+        const centerY = parseFloat(svg.getAttribute('viewBox').split(' ')[3]) / 2;
+        
+        // Apply transform to the chart group
+        chartGroup.setAttribute('transform', 
+            `translate(${panOffsetX}, ${panOffsetY}) scale(${currentZoom})`);
+        
+        // Update cursor based on zoom level
+        chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
+    }
+}
+
+// Reset zoom and pan to initial state
+function resetZoomPan() {
+    currentZoom = 1;
+    panOffsetX = 0;
+    panOffsetY = 0;
+    
+    applyTransform();
+    updateZoomIndicator();
+    
+    const chartContainer = document.getElementById('chart-container');
+    chartContainer.style.cursor = 'default';
+}
+
+// Update zoom indicator with current zoom level
+function updateZoomIndicator() {
+    const indicator = document.getElementById('zoom-indicator');
+    
+    // Show zoom level
+    indicator.textContent = `Zoom: ${Math.round(currentZoom * 100)}%`;
+    
+    // Make indicator visible and then fade out
+    indicator.style.opacity = '1';
+    
+    clearTimeout(indicator.fadeTimeout);
+    indicator.fadeTimeout = setTimeout(() => {
+        indicator.style.opacity = '0';
+    }, 1500);
+}
+        function getResponsiveDimensions() {
+            const container = document.getElementById('chart-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const size = Math.min(width, height);
+            return {
+                width: size,
+                height: size,
+                centerX: size / 2,
+                centerY: size / 2
+            };
+        }
+        
+        // Calculate the radius for connector rings (halfway between two main rings)
+        function calculateConnectorRadius(outerRingRadius, innerRingRadius) {
+            return (outerRingRadius + innerRingRadius) / 2;
+        }
+        
+        // Configuration
+        const config = {
+            ...getResponsiveDimensions(),
+            // Rings data with content for sidebar
+            rings: [
+                {
+                    name: "Humanity's Dream of Flight",
+                    radius: 200,
+                    color: "#8A2BE2",
+                    segments: 3,
+                    segmentNames: ["500s BCE to 1599s CE", "1600 CE to 1799s CE", "1800s CE to 1945 CE"],
+                    segmentContent: [
+                        {
+                            title: "Humanity's Dream of Flight",
+                            subtitle: "500s BCE to 1599s CE",
+                            content: [
+                                {
+                                    title: "The Myth of Icarus and Daedalus",
+                                    subtitle: "500s BCE", 
+                                    text: "This is the first segment of the purple outer ring discussing humanity's early dreams of flight through mythology. The story of Icarus and Daedalus represents one of the earliest human expressions of the desire to fly.",
+                                    imageSrc: "..img/icarus.jpg"
+                                },
+                                {
+                                    title: "Secondary Analysis",
+                                    text: "Additional analysis for Purple Section A shows increasing engagement metrics over the past quarter. User retention is up by 15% and customer satisfaction scores have improved significantly.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                },
+                                {
+                                    title: "Future Projections",
+                                    text: "Based on current trends, we project continued growth in this segment. The roadmap includes three major feature releases that should further accelerate adoption and engagement.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        },
+                        {
+                            title: "Humanity's Dream of Flight",
+                            subtitle: "1600 CE to 1799s CE",
+                            content: [
+                                {
+                                    title: "Early Flight Experiments",
+                                    subtitle: "1600s-1700s",
+                                    text: "The second segment of the purple outer ring focuses on early scientific approaches to flight. This period saw the first serious attempts to understand the principles of aviation and aerodynamics.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        },
+                        {
+                            title: "Humanity's Dream of Flight",
+                            subtitle: "1800s CE to 1945 CE",
+                            content: [
+                                {
+                                    title: "The Age of Aviation",
+                                    subtitle: "1800s-1945",
+                                    text: "The third segment of the purple ring covers the birth of modern aviation. This segment represents the breakthrough period when human flight became reality, from early gliders to powered aircraft and eventually jet engines.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                // Connector ring between Purple and Blue - we'll calculate the radius dynamically
+                {
+                    name: "Purple-Blue Connector",
+                    // Radius will be calculated dynamically based on adjacent rings
+                    color: "#7D59D9", // Mix of purple and blue
+                    isConnector: true,
+                    arrowCount: 12, // Number of arrows around the circle
+                    thickness: 7 // Increased thickness for better visibility
+                },
+                {
+                    name: "Blue",
+                    radius: 150,
+                    color: "#4169E1",
+                    segments: 4,
+                    segmentNames: ["Blue 1", "Blue 2", "Blue 3", "Blue 4"],
+                    segmentContent: [
+                        {
+                            title: "Blue Section 1",
+                            subtitle: "Second Ring - First Segment",
+                            content: [
+                                {
+                                    title: "Blue Section 1 Detail",
+                                    text: "The first segment of the blue ring represents subcategory A-1. This section contains detailed metrics about specific projects, teams, and initiatives within this subcategory.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        },
+                        {
+                            title: "Blue Section 2",
+                            subtitle: "Second Ring - Second Segment",
+                            content: [
+                                {
+                                    title: "Blue Section 2 Detail",
+                                    text: "The second segment of the blue ring focuses on subcategory A-2. Here we can see performance metrics, resource allocation, and timeline projections for ongoing projects.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        },
+                        {
+                            title: "Blue Section 3", 
+                            subtitle: "Second Ring - Third Segment",
+                            content: [
+                                {
+                                    title: "Blue Section 3 Detail",
+                                    text: "Blue section 3 represents subcategory A-3, highlighting our third major focus area. The data shows comparative analysis between current and previous quarters with trend indicators.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        },
+                        {
+                            title: "Blue Section 4",
+                            subtitle: "Second Ring - Fourth Segment",
+                            content: [
+                                {
+                                    title: "Blue Section 4 Detail",
+                                    text: "The fourth segment of the blue ring covers subcategory A-4. This section aggregates feedback data and satisfaction scores from multiple sources, providing a comprehensive overview.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                // Connector ring between Blue and Green - we'll calculate the radius dynamically
+                {
+                    name: "Blue-Green Connector",
+                    // Radius will be calculated dynamically based on adjacent rings
+                    color: "#3A98B9", // Mix of blue and green
+                    isConnector: true,
+                    arrowCount: 8, // Number of arrows around the circle
+                    thickness: 7 // Increased thickness for better visibility
+                },
+                {
+                    name: "Green",
+                    radius: 100,
+                    color: "#32CD32",
+                    segments: 3,
+                    segmentNames: ["Green I", "Green II", "Green III"],
+                    segmentContent: [
+                        {
+                            title: "Green Section I",
+                            subtitle: "Third Ring - First Segment",
+                            content: [
+                                {
+                                    title: "Green Section I Detail",
+                                    text: "The first segment of the green ring focuses on implementation details and technical specifics. This section provides in-depth analysis of operational data and system performance.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        },
+                        {
+                            title: "Green Section II",
+                            subtitle: "Third Ring - Second Segment",
+                            content: [
+                                {
+                                    title: "Green Section II Detail",
+                                    text: "Green section 2 represents our financial metrics and resource utilization data. The visualizations here track budget allocation, expenditures, and return on investment across different initiatives.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        },
+                        {
+                            title: "Green Section III",
+                            subtitle: "Third Ring - Third Segment",
+                            content: [
+                                {
+                                    title: "Green Section III Detail",
+                                    text: "The third segment of the green ring contains information about market analysis and competitive positioning. This section highlights our strengths, opportunities, and areas for improvement.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                // Connector ring between Green and Red - we'll calculate the radius dynamically
+                {
+                    name: "Green-Red Connector",
+                    // Radius will be calculated dynamically based on adjacent rings
+                    color: "#91B93A", // Mix of green and red
+                    isConnector: true,
+                    arrowCount: 6, // Number of arrows around the circle
+                    thickness: 6 // Increased thickness for better visibility
+                },
+                {
+                    name: "Red (Inner)",
+                    radius: 50,
+                    color: "#FF4500",
+                    segments: 1,
+                    segmentNames: ["Core"],
+                    segmentContent: [
+                        {
+                            title: "Red Center",
+                            subtitle: "Core Element",
+                            content: [
+                                {
+                                    title: "Core Values",
+                                    text: "The red center circle represents our core values and mission. It sits at the heart of everything we do and connects all the other elements in our organizational structure. This central element emphasizes our commitment to quality, innovation, and customer satisfaction.",
+                                    imageSrc: "/api/placeholder/400/250"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+        
+       // Create SVG element
+function createChart() {
+    // Update dimensions based on current container size
+    const dimensions = getResponsiveDimensions();
+    config.width = dimensions.width;
+    config.height = dimensions.height;
+    config.centerX = dimensions.centerX;
+    config.centerY = dimensions.centerY;
+    
+    // Adjust ring radiuses to provide more space for labels
+    const maxRadius = Math.min(config.width, config.height) / 2 * 0.85;
+    const originalOuterRadius = 200;
+    const scale = maxRadius / originalOuterRadius;
+    
+    // First, scale all non-connector rings
+    const contentRings = config.rings.filter(ring => !ring.isConnector);
+    contentRings.forEach(ring => {
+        ring.radius = ring.radius * scale;
+    });
+    
+    // Then, calculate the radiuses for connector rings
+    for (let i = 0; i < config.rings.length; i++) {
+        if (config.rings[i].isConnector) {
+            // Find the adjacent content rings (one before and one after this connector)
+            let prevRingIndex = i - 1;
+            let nextRingIndex = i + 1;
+            
+            // Ensure we have valid content rings on both sides
+            if (prevRingIndex >= 0 && nextRingIndex < config.rings.length) {
+                const prevRing = config.rings[prevRingIndex];
+                const nextRing = config.rings[nextRingIndex];
+                
+                // Calculate the connector radius to be exactly between the two rings
+                config.rings[i].radius = calculateConnectorRadius(prevRing.radius, nextRing.radius);
+            }
+            
+            // Scale thickness proportionally
+            if (config.rings[i].thickness) {
+                config.rings[i].thickness = config.rings[i].thickness * scale;
+            }
+        }
+    }
+    
+    const container = document.getElementById('chart-container');
+    container.innerHTML = '';
+    
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            const viewBoxX = config.centerX - config.width / 2;
+            const viewBoxY = config.centerY - config.height / 2;
+            svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${config.width} ${config.height}`);
+            svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+            svg.setAttribute("width", "100%");
+            svg.setAttribute("height", "100%");
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+   
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", config.centerX);
+            circle.setAttribute("cy", config.centerY);
+            circle.setAttribute("r", Math.min(config.width, config.height) * 0.4);
+            circle.setAttribute("fill", "orange");
+            g.appendChild(circle);
+    svg.appendChild(g);
+
+            document.getElementById("chart-container").innerHTML = "";
+            document.getElementById("chart-container").appendChild(svg);
+        }
+
+        window.addEventListener("DOMContentLoaded", createChart);
+        window.addEventListener("resize", () => {
+            config.width = window.innerWidth;
+            config.height = window.innerHeight;
+            config.centerX = config.width / 2;
+            config.centerY = config.height / 2;
+            createChart();
+        }
+    
+    // CHANGED: Create rings in order to ensure proper layering
+    // First, create all content rings (from outer to inner)
+    const contentRingElements = []; // Store created elements to maintain proper layering
+    
+    config.rings.forEach((ring, ringIndex) => {
+        if (!ring.isConnector) {
+            const ringElement = createContentRing(ring, ringIndex, svg);
+            if (ringElement) {
+                contentRingElements.push({
+                    ringIndex,
+                    ringElement
+                });
+            }
+        }
+    });
+    
+    // Then, create all connector rings to appear between content rings
+    config.rings.forEach((ring, ringIndex) => {
+        if (ring.isConnector) {
+            createConnectorRing(ring, ringIndex, svg);
+        }
+    });
+    
+    // Finally, add all content ring elements to the SVG in the proper order (outer to inner)
+    contentRingElements.forEach(item => {
+        // If the element is an array (multiple paths for a segmented ring), add them all
+        if (Array.isArray(item.ringElement)) {
+            item.ringElement.forEach(el => svg.appendChild(el));
+        } else {
+            svg.appendChild(item.ringElement);
+        }
+    });
+    
+    // Create legend
+    createLegend();
+}
+
+// Create SVG element
+function createChart() {
+    // Update dimensions based on current container size
+    const dimensions = getResponsiveDimensions();
+    config.width = dimensions.width;
+    config.height = dimensions.height;
+    config.centerX = dimensions.centerX;
+    config.centerY = dimensions.centerY;
+    
+    // Adjust ring radiuses to provide more space for labels
+    const maxRadius = Math.min(config.width, config.height) / 2 * 0.85;
+    const originalOuterRadius = 200;
+    const scale = maxRadius / originalOuterRadius;
+    
+    // Process all rings to set their scaled radius
+    config.rings.forEach(ring => {
+        // Skip connector rings as we'll calculate their radius based on adjacent rings
+        if (!ring.isConnector) {
+            ring.radius = ring.radius * scale;
+        }
+    });
+    
+    // Calculate the radiuses for connector rings based on adjacent content rings
+    for (let i = 0; i < config.rings.length; i++) {
+        if (config.rings[i].isConnector) {
+            // Find the adjacent content rings (one before and one after this connector)
+            let prevRingIndex = i - 1;
+            let nextRingIndex = i + 1;
+            
+            // Ensure we have valid content rings on both sides
+            if (prevRingIndex >= 0 && nextRingIndex < config.rings.length) {
+                const prevRing = config.rings[prevRingIndex];
+                const nextRing = config.rings[nextRingIndex];
+                
+                // Calculate the connector radius to be exactly between the two rings
+                config.rings[i].radius = calculateConnectorRadius(prevRing.radius, nextRing.radius);
+            }
+            
+            // Scale thickness proportionally
+            if (config.rings[i].thickness) {
+                config.rings[i].thickness = config.rings[i].thickness * scale;
+            }
+        }
+    }
+    
+    const container = document.getElementById('chart-container');
+    container.innerHTML = '';
+    
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "100%");
+    container.appendChild(svg);
+    
+    // Create a group element for the entire chart
+    const chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    svg.appendChild(chartGroup);
+    
+    // Create rings from outer to inner (reversed so outer rings are drawn first)
+    const ringsCopy = [...config.rings].reverse();
+    
+    // First pass: create the base circles/arcs
+    ringsCopy.forEach((ring, reversedIndex) => {
+        const originalIndex = config.rings.length - 1 - reversedIndex;
+        
+        if (ring.isConnector) {
+            // Create connector ring
+            createConnectorRing(ring, originalIndex, chartGroup);
+        } else {
+            // Create content ring
+            createContentRing(ring, originalIndex, chartGroup);
+        }
+    });
+    
+    // Create legend
+    createLegend();
+}
+
+// Function to create content rings (both segments and labels)
+function createContentRing(ring, ringIndex, parent) {
+    const segmentAngle = 360 / ring.segments;
+    
+    // For single segment rings (like the red inner circle), create a full circle
+    if (ring.segments === 1) {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", config.centerX);
+        circle.setAttribute("cy", config.centerY);
+        circle.setAttribute("r", ring.radius);
+        circle.setAttribute("fill", ring.color);
+        circle.classList.add("segment");
+        circle.dataset.name = ring.segmentNames[0];
+        circle.dataset.ring = ring.name;
+        
+        circle.addEventListener("mousemove", showTooltip);
+        circle.addEventListener("mouseleave", hideTooltip);
+        circle.addEventListener("click", function() {
+            showSidebar(ringIndex, 0);
+        });
+        
+        parent.appendChild(circle);
+        
+        // Add label for center circle
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", config.centerX);
+        text.setAttribute("y", config.centerY);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("dominant-baseline", "middle");
+        text.setAttribute("fill", "#fff");
+        text.setAttribute("font-size", ring.radius / 3);
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("pointer-events", "none");
+        text.textContent = ring.segmentNames[0];
+        
+        parent.appendChild(text);
+    } else {
+        // For multi-segment rings, create arcs
+        const segmentGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        segmentGroup.classList.add("segment-group");
+        parent.appendChild(segmentGroup);
+        
+        for (let i = 0; i < ring.segments; i++) {
+            const startAngle = (i * segmentAngle) % 360;
+            const endAngle = ((i + 1) * segmentAngle) % 360;
+            
+            // Find the next non-connector ring for inner radius
+            let innerRadiusRing = null;
+            for (let j = ringIndex + 1; j < config.rings.length; j++) {
+                if (!config.rings[j].isConnector) {
+                    innerRadiusRing = config.rings[j];
+                    break;
+                }
+            }
+            
+            const outerRadius = ring.radius;
+            const innerRadius = innerRadiusRing ? innerRadiusRing.radius : 0;
+            
+            // Convert degrees to radians for SVG arc
+            let startRad = (startAngle - 90) * Math.PI / 180;
+            let endRad = (endAngle - 90) * Math.PI / 180;
+            
+            // Calculate angle span
+            const angleSpan = endAngle > startAngle ? endAngle - startAngle : endAngle + 360 - startAngle;
+            const largeArcFlag = angleSpan > 180 ? 1 : 0;
+            
+            // Calculate points
+            const x1 = config.centerX + innerRadius * Math.cos(startRad);
+            const y1 = config.centerY + innerRadius * Math.sin(startRad);
+            const x2 = config.centerX + outerRadius * Math.cos(startRad);
+            const y2 = config.centerY + outerRadius * Math.sin(startRad);
+            const x3 = config.centerX + outerRadius * Math.cos(endRad);
+            const y3 = config.centerY + outerRadius * Math.sin(endRad);
+            const x4 = config.centerX + innerRadius * Math.cos(endRad);
+            const y4 = config.centerY + innerRadius * Math.sin(endRad);
+            
+            // Create path for arc
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            
+            // Define SVG path
+            const d = [
+                `M ${x2} ${y2}`,
+                `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x3} ${y3}`,
+                `L ${x4} ${y4}`,
+                `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${x1} ${y1}`,
+                "Z"
+            ].join(" ");
+            
+            path.setAttribute("d", d);
+            path.setAttribute("fill", ring.color);
+            path.classList.add("segment");
+            path.dataset.name = ring.segmentNames[i];
+            path.dataset.ring = ring.name;
+            
+            // Slightly lighten or darken segments for better visibility
+            const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+            path.style.filter = `brightness(${brightness})`;
+            
+            path.addEventListener("mousemove", showTooltip);
+            path.addEventListener("mouseleave", hideTooltip);
+            path.addEventListener("click", function() {
+                showSidebar(ringIndex, i);
+            });
+            
+            segmentGroup.appendChild(path);
+            
+            // Add segment label with improved positioning
+            if (outerRadius - innerRadius > 30 && angleSpan > 30) {
+                // Use the exact center angle of the segment for more accurate placement
+                const midAngle = startAngle + (angleSpan / 2);
+                const midRad = (midAngle - 90) * Math.PI / 180; // -90 to align with SVG coordinate system
+                
+                // Calculate optimal radius for text - slightly biased toward outer edge for better visibility
+                const textRadius = innerRadius + (outerRadius - innerRadius) * 0.6;
+                const textX = config.centerX + textRadius * Math.cos(midRad);
+                const textY = config.centerY + textRadius * Math.sin(midRad);
+                
+                // Calculate text rotation for natural reading
+                let rotationDegrees = midAngle;
+                
+                // Adjust rotation so text is never upside down
+                if (rotationDegrees > 90 && rotationDegrees < 270) {
+                    rotationDegrees += 180;
+                }
+                
+                // Group for text elements (shadow and actual text)
+                const textGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                textGroup.classList.add("label-group");
+                
+                // Create shadow/background text for better visibility
+                const textShadow = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                textShadow.setAttribute("x", textX);
+                textShadow.setAttribute("y", textY);
+                textShadow.setAttribute("text-anchor", "middle");
+                textShadow.setAttribute("dominant-baseline", "middle");
+                textShadow.setAttribute("stroke", "rgba(0,0,0,0.5)");
+                textShadow.setAttribute("stroke-width", "3");
+                textShadow.setAttribute("stroke-linejoin", "round");
+                textShadow.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
+                textShadow.setAttribute("font-weight", "bold");
+                textShadow.setAttribute("pointer-events", "none");
+                textShadow.textContent = ring.segmentNames[i];
+                textShadow.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
+                
+                // Create actual text that will be visible
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", textX);
+                text.setAttribute("y", textY);
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("dominant-baseline", "middle");
+                text.setAttribute("fill", "#fff");
+                text.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
+                text.setAttribute("font-weight", "bold");
+                text.setAttribute("pointer-events", "none");
+                text.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
+                text.textContent = ring.segmentNames[i];
+                
+                textGroup.appendChild(textShadow);
+                textGroup.appendChild(text);
+                
+                // Add the text group to the SVG instead of individual texts
+                parent.appendChild(textGroup);
+            }
+        }
+    }
+}
+
+// Function to create connector rings with arrows
+function createConnectorRing(ring, ringIndex, parent) {
+    // Create a group for the connector ring and its arrows
+    const connectorGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    connectorGroup.classList.add("connector-group");
+    
+    // Create connector ring circle
+    const connectorRing = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    connectorRing.setAttribute("cx", config.centerX);
+    connectorRing.setAttribute("cy", config.centerY);
+    connectorRing.setAttribute("r", ring.radius);
+    connectorRing.setAttribute("fill", "none");
+    connectorRing.setAttribute("stroke", ring.color);
+    connectorRing.setAttribute("stroke-width", ring.thickness);
+    connectorRing.classList.add("connector");
+    
+    connectorGroup.appendChild(connectorRing);
+    
+    // Create arrows pointing inward
+    const arrowCount = ring.arrowCount || 8;
+    const arrowLength = ring.thickness * 3; // Increased for better visibility
+    const arrowWidth = ring.thickness * 1.2; // Increased for better visibility
+    
+    for (let i = 0; i < arrowCount; i++) {
+        const angle = (i * 360 / arrowCount) * Math.PI / 180;
+        
+        // Calculate arrow position
+        const baseX = config.centerX + ring.radius * Math.cos(angle);
+        const baseY = config.centerY + ring.radius * Math.sin(angle);
+        
+        // Calculate arrow points
+        const tipX = config.centerX + (ring.radius - arrowLength/2) * Math.cos(angle);
+        const tipY = config.centerY + (ring.radius - arrowLength/2) * Math.sin(angle);
+        
+        // Calculate arrow wing points (perpendicular to radius)
+        const perpAngle = angle + Math.PI/2;
+        const wingWidth = arrowWidth / 2;
+        
+        const wing1X = baseX + wingWidth * Math.cos(perpAngle);
+        const wing1Y = baseY + wingWidth * Math.sin(perpAngle);
+        const wing2X = baseX - wingWidth * Math.cos(perpAngle);
+        const wing2Y = baseY - wingWidth * Math.sin(perpAngle);
+        
+        // Create arrow path with more pronounced arrow shape
+        const arrowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const arrowD = `M ${wing1X} ${wing1Y} L ${baseX} ${baseY} L ${wing2X} ${wing2Y} L ${tipX} ${tipY} Z`;
+        
+        arrowPath.setAttribute("d", arrowD);
+        arrowPath.setAttribute("fill", ring.color);
+        arrowPath.classList.add("arrow");
+        // Add a slight shadow to make arrows stand out more
+        arrowPath.setAttribute("filter", "drop-shadow(1px 1px 1px rgba(0,0,0,0.3))");
+        
+        connectorGroup.appendChild(arrowPath);
+    }
+    
+    // Add the connector group to the parent
+    parent.appendChild(connectorGroup);
+}
+        
+        function createLegend() {
+            const legend = document.getElementById('legend');
+            legend.innerHTML = '';
+            
+            config.rings.forEach(ring => {
+                // Skip connector rings in the legend
+                if (ring.isConnector) return;
+                
+                ring.segmentNames.forEach((name, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'legend-item';
+                    
+                    const colorBox = document.createElement('div');
+                    colorBox.className = 'legend-color';
+                    colorBox.style.backgroundColor = ring.color;
+                    
+                    // Apply the same brightness filter as in the chart
+                    if (ring.segments > 1) {
+                        const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+                        colorBox.style.filter = `brightness(${brightness})`;
+                    }
+                    
+                    const label = document.createElement('span');
+                    label.textContent = `${ring.name}: ${name}`;
+                    
+                    item.appendChild(colorBox);
+                    item.appendChild(label);
+                    legend.appendChild(item);
+                });
+            });
+        }
+        
+        function showTooltip(event) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.style.opacity = 1;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY + 10 + 'px';
+            
+            const segment = event.target;
+            tooltip.textContent = `${segment.dataset.ring}: ${segment.dataset.name}`;
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.style.opacity = 0;
+        }
+        
+        // Function to show sidebar with content
+        function showSidebar(ringIndex, segmentIndex) {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarContent = document.getElementById('sidebar-content');
+            
+            // Get content for this segment
+            const ring = config.rings[ringIndex];
+            const segmentData = ring.segmentContent[segmentIndex];
+            
+            // Check if we have multiple content items
+            const hasMultipleContent = segmentData.content && Array.isArray(segmentData.content);
+            
+            let contentHTML = `
+                <button class="sidebar-close" id="close-sidebar">&times;</button>
+                <h2 class="sidebar-title">${segmentData.title}</h2>
+                <h3 class="sidebar-subtitle">${segmentData.subtitle}</h3>
+            `;
+            
+            if (hasMultipleContent) {
+                // Create tabs for multiple content items
+                contentHTML += `<div class="content-tabs">`;
+                segmentData.content.forEach((item, idx) => {
+                    contentHTML += `<button class="tab-button ${idx === 0 ? 'active' : ''}" data-tab="${idx}">${item.title}</button>`;
+                });
+                contentHTML += `</div><div class="tab-content">`;
+                
+                // Create content sections
+                segmentData.content.forEach((item, idx) => {
+                    contentHTML += `
+                        <div class="content-section ${idx === 0 ? 'active' : ''}" data-tab="${idx}">
+                            <img class="sidebar-image" src="${item.imageSrc}" alt="${item.title}">
+                            ${item.subtitle ? `<h4 class="sidebar-subtitle">${item.subtitle}</h4>` : ''}
+                            <p class="sidebar-text">${item.text}</p>
+                        </div>
+                    `;
+                });
+                contentHTML += `</div>`;
+            } else {
+                // This case shouldn't happen anymore since we've standardized all segments to use content array
+                console.warn("Segment without content array found. This format is deprecated.");
+                return;
+            }
+            
+            // Set the HTML content
+            sidebarContent.innerHTML = contentHTML;
+            
+            // Show sidebar
+            sidebar.classList.add('active');
+            
+            // Add event listener to close button
+            document.getElementById('close-sidebar').addEventListener('click', closeSidebar);
+            
+            // Add tab switching functionality if needed
+            if (hasMultipleContent) {
+                const tabButtons = sidebarContent.querySelectorAll('.tab-button');
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const tabIndex = this.getAttribute('data-tab');
+                        
+                        // Update active tab button
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Update active content section
+                        const contentSections = sidebarContent.querySelectorAll('.content-section');
+                        contentSections.forEach(section => {
+                            section.classList.remove('active');
+                            if (section.getAttribute('data-tab') === tabIndex) {
+                                section.classList.add('active');
+                            }
+                        });
+                    });
+                });
+            }
+            
+            // Prevent propagation of clicks inside the sidebar
+            sidebar.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+            
+            // Add click event to close sidebar when clicking elsewhere
+            setTimeout(() => {
+                document.addEventListener('click', closeSidebarOnClickOutside);
+            }, 10);
+        }
+        
+        // Function to close sidebar when clicking outside
+        function closeSidebarOnClickOutside(event) {
+            const sidebar = document.getElementById('sidebar');
+            const clickedInsideSidebar = sidebar.contains(event.target);
+            const clickedOnSegment = event.target.classList.contains('segment');
+            
+            if (!clickedInsideSidebar && !clickedOnSegment) {
+                closeSidebar();
+            }
+        }
+        
+        // Function to close sidebar
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.remove('active');
+            document.removeEventListener('click', closeSidebarOnClickOutside);
+        }
+        function createFloatingLegend() {
+    const legend = document.getElementById('legend');
+    legend.innerHTML = '';
+    legend.className = 'legend';
+    
+    // Create drag handle
+    const dragHandle = document.createElement('div');
+    dragHandle.className = 'legend-drag-handle';
+    legend.appendChild(dragHandle);
+    
+    // Create header with title and toggle button
+    const header = document.createElement('div');
+    header.className = 'legend-header';
+    
+    const title = document.createElement('h3');
+    title.className = 'legend-title';
+    title.textContent = 'Legend';
+    
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'legend-toggle';
+    toggleBtn.textContent = '−'; // Unicode minus sign
+    toggleBtn.title = 'Minimize/Maximize Legend';
+    
+    header.appendChild(title);
+    header.appendChild(toggleBtn);
+    legend.appendChild(header);
+    
+    // Create content container
+    const content = document.createElement('div');
+    content.className = 'legend-content';
+    legend.appendChild(content);
+    
+    // Group legend items by ring name
+    const ringGroups = {};
+    
+    config.rings.forEach(ring => {
+        // Skip connector rings in the legend
+        if (ring.isConnector) return;
+        
+        if (!ringGroups[ring.name]) {
+            ringGroups[ring.name] = [];
+        }
+        
+        ring.segmentNames.forEach((name, i) => {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+            
+            const colorBox = document.createElement('div');
+            colorBox.className = 'legend-color';
+            colorBox.style.backgroundColor = ring.color;
+            
+            // Apply the same brightness filter as in the chart
+            if (ring.segments > 1) {
+                const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+                colorBox.style.filter = `brightness(${brightness})`;
+            }
+            
+            const label = document.createElement('span');
+            label.textContent = name;
+            
+            item.appendChild(colorBox);
+            item.appendChild(label);
+            ringGroups[ring.name].push(item);
+        });
+    });
+    
+    // Add groups to legend
+    for (const ringName in ringGroups) {
+        const categoryTitle = document.createElement('div');
+        categoryTitle.className = 'legend-category';
+        categoryTitle.textContent = ringName;
+        content.appendChild(categoryTitle);
+        
+        ringGroups[ringName].forEach(item => {
+            content.appendChild(item);
+        });
+    }
+    
+    // Add toggle functionality
+    toggleBtn.addEventListener('click', function() {
+        content.classList.toggle('legend-minimized');
+        this.textContent = content.classList.contains('legend-minimized') ? '+' : '−';
+    });
+    
+    // Add drag functionality
+    makeDraggable(legend, dragHandle);
+}
+
+// Make an element draggable
+function makeDraggable(element, handle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    
+    if (handle) {
+        // If a handle is provided, make only the handle trigger dragging
+        handle.onmousedown = dragMouseDown;
+        handle.ontouchstart = dragTouchStart;
+    } else {
+        // Otherwise, make the entire element draggable
+        element.onmousedown = dragMouseDown;
+        element.ontouchstart = dragTouchStart;
+    }
+    
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Get the mouse cursor position at startup
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // Call a function whenever the cursor moves
+        document.onmousemove = elementDrag;
+    }
+    
+    function dragTouchStart(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Get the touch position at startup
+        pos3 = e.touches[0].clientX;
+        pos4 = e.touches[0].clientY;
+        document.ontouchend = closeDragElement;
+        // Call a function whenever the touch moves
+        document.ontouchmove = elementTouchDrag;
+    }
+    
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Calculate the new cursor position
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // Set the element's new position
+        setElementPosition(element, pos1, pos2);
+    }
+    
+    function elementTouchDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Calculate the new touch position
+        pos1 = pos3 - e.touches[0].clientX;
+        pos2 = pos4 - e.touches[0].clientY;
+        pos3 = e.touches[0].clientX;
+        pos4 = e.touches[0].clientY;
+        // Set the element's new position
+        setElementPosition(element, pos1, pos2);
+    }
+    
+    function setElementPosition(element, pos1, pos2) {
+        const rect = element.getBoundingClientRect();
+        const container = document.querySelector('.main-container');
+        const containerRect = container.getBoundingClientRect();
+        
+        // Calculate new position
+        let newTop = element.offsetTop - pos2;
+        let newLeft = element.offsetLeft - pos1;
+        
+        // Ensure the element stays within the container bounds
+        if (newTop < 0) newTop = 0;
+        if (newLeft < 0) newLeft = 0;
+        
+        const maxTop = containerRect.height - rect.height;
+        const maxLeft = containerRect.width - rect.width;
+        
+        if (newTop > maxTop) newTop = maxTop;
+        if (newLeft > maxLeft) newLeft = maxLeft;
+        
+        // Set the element's new position
+        element.style.top = newTop + "px";
+        element.style.left = newLeft + "px";
+        element.style.right = "auto";
+        element.style.bottom = "auto";
+    }
+    
+    function closeDragElement() {
+        // Stop moving when mouse button is released
+        document.onmouseup = null;
+        document.onmousemove = null;
+        document.ontouchend = null;
+        document.ontouchmove = null;
+    }
+}
+        // Initialize chart
+        document.addEventListener('DOMContentLoaded', () => {
+            createChart();
+            
+            // Make chart responsive to window resizing
+            window.addEventListener('resize', () => {
+                createChart();
+            });
+        });
+    </script>
+</body>
+</html>
