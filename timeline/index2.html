@@ -288,13 +288,6 @@
     
     <script>
 
-const config = {
-            width: window.innerWidth,
-            height: window.innerHeight,
-            centerX: window.innerWidth / 2,
-            centerY: window.innerHeight / 2,
-        };
-
         // Function to calculate responsive dimensions
         // Add these variables to store zoom and pan state
 let currentZoom = 1;
@@ -1534,11 +1527,6 @@ function makeDraggable(element, handle) {
         document.ontouchmove = null;
     }
 }
-            
-            // Make chart responsive to window resizing
-            window.addEventListener('resize', () => {
-                createChart();
-            });
         });
     </script>
 </body>
