@@ -5,21 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aviation Technology Timeline</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin: 0;
-            min-height: 100vh;
-        }
-        .main-container {
-            display: flex;
-            width: 100%;
-            height: 80vh;
-            position: relative;
-        }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+html, body {
+    touch-action: none; /* Prevent page scroll while interacting with chart */
+}
+.main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+        #chart-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+        #chart-container svg {
+    overflow: visible;
+}
         .sidebar {
             position: absolute;
             left: -350px;
@@ -280,7 +293,7 @@ let lastMouseY = 0;
 // Initialize the chart with zoom and pan functionality
 document.addEventListener('DOMContentLoaded', () => {
     createChart();
-    
+    applyTransform();
     // Make chart responsive to window resizing
     window.addEventListener('resize', () => {
         createChart();
@@ -291,6 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add event listeners for zoom and pan
     setupZoomPanEvents();
+    
 });
 
 // Function to add zoom controls to the UI
@@ -521,7 +535,7 @@ function getPinchDistance(event) {
 // Zoom chart by a delta amount
 function zoomChart(delta) {
     // Calculate new zoom level with limits
-    const newZoom = Math.max(1, Math.min(5, currentZoom + delta));
+const newZoom = Math.max(0.2, Math.min(10, currentZoom + delta));
     
     // Only update if zoom level changed
     if (newZoom !== currentZoom) {
