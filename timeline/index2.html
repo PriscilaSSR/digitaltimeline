@@ -870,9 +870,7 @@ function updateZoomIndicator() {
             ]
         };
         
-       
-
-        window.addEventListener("DOMContentLoaded", createChart);
+    
         window.addEventListener("resize", () => {
             config.width = window.innerWidth;
             config.height = window.innerHeight;
@@ -881,42 +879,6 @@ function updateZoomIndicator() {
             createChart();
         }
     
-    // CHANGED: Create rings in order to ensure proper layering
-    // First, create all content rings (from outer to inner)
-    const contentRingElements = []; // Store created elements to maintain proper layering
-    
-    config.rings.forEach((ring, ringIndex) => {
-        if (!ring.isConnector) {
-            const ringElement = createContentRing(ring, ringIndex, svg);
-            if (ringElement) {
-                contentRingElements.push({
-                    ringIndex,
-                    ringElement
-                });
-            }
-        }
-    });
-    
-    // Then, create all connector rings to appear between content rings
-    config.rings.forEach((ring, ringIndex) => {
-        if (ring.isConnector) {
-            createConnectorRing(ring, ringIndex, svg);
-        }
-    });
-    
-    // Finally, add all content ring elements to the SVG in the proper order (outer to inner)
-    contentRingElements.forEach(item => {
-        // If the element is an array (multiple paths for a segmented ring), add them all
-        if (Array.isArray(item.ringElement)) {
-            item.ringElement.forEach(el => svg.appendChild(el));
-        } else {
-            svg.appendChild(item.ringElement);
-        }
-    });
-    
-    // Create legend
-    createLegend();
-}
 
 // Create SVG element
 function createChart() {
@@ -975,20 +937,37 @@ function createChart() {
     // Create a group element for the entire chart
     const chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
     svg.appendChild(chartGroup);
+
+ // CHANGED: Create rings in order to ensure proper layering
+    // First, create all content rings (from outer to inner)
+    const contentRingElements = []; // Store created elements to maintain proper layering
     
-    // Create rings from outer to inner (reversed so outer rings are drawn first)
-    const ringsCopy = [...config.rings].reverse();
+    config.rings.forEach((ring, ringIndex) => {
+        if (!ring.isConnector) {
+            const ringElement = createContentRing(ring, ringIndex, svg);
+            if (ringElement) {
+                contentRingElements.push({
+                    ringIndex,
+                    ringElement
+                });
+            }
+        }
+    });
     
-    // First pass: create the base circles/arcs
-    ringsCopy.forEach((ring, reversedIndex) => {
-        const originalIndex = config.rings.length - 1 - reversedIndex;
-        
+    // Then, create all connector rings to appear between content rings
+    config.rings.forEach((ring, ringIndex) => {
         if (ring.isConnector) {
-            // Create connector ring
-            createConnectorRing(ring, originalIndex, chartGroup);
+            createConnectorRing(ring, ringIndex, svg);
+        }
+    });
+    
+    // Finally, add all content ring elements to the SVG in the proper order (outer to inner)
+    contentRingElements.forEach(item => {
+        // If the element is an array (multiple paths for a segmented ring), add them all
+        if (Array.isArray(item.ringElement)) {
+            item.ringElement.forEach(el => svg.appendChild(el));
         } else {
-            // Create content ring
-            createContentRing(ring, originalIndex, chartGroup);
+            svg.appendChild(item.ringElement);
         }
     });
     
@@ -1555,9 +1534,6 @@ function makeDraggable(element, handle) {
         document.ontouchmove = null;
     }
 }
-        // Initialize chart
-        document.addEventListener('DOMContentLoaded', () => {
-            createChart();
             
             // Make chart responsive to window resizing
             window.addEventListener('resize', () => {
