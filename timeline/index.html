@@ -5,34 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aviation Technology Timeline</title>
     <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow: hidden;
-}
-html, body {
-    touch-action: none; /* Prevent page scroll while interacting with chart */
-}
-.main-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-}
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        html, body {
+            touch-action: none;
+        }
+
+        .main-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
         #chart-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         #chart-container svg {
-    overflow: visible;
-}
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
         .sidebar {
             position: absolute;
             left: -350px;
@@ -281,6 +287,14 @@ html, body {
     <div class="tooltip" id="tooltip"></div>
     
     <script>
+
+const config = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            centerX: window.innerWidth / 2,
+            centerY: window.innerHeight / 2,
+        };
+
         // Function to calculate responsive dimensions
         // Add these variables to store zoom and pan state
 let currentZoom = 1;
@@ -902,14 +916,36 @@ function createChart() {
     const container = document.getElementById('chart-container');
     container.innerHTML = '';
     
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    const viewBoxX = config.centerX - config.width / 2;
-    const viewBoxY = config.centerY - config.height / 2;
-    svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${config.width} ${config.height}`);
-    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    svg.setAttribute("width", "100%");
-    svg.setAttribute("height", "100%");
-    container.appendChild(svg);
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            const viewBoxX = config.centerX - config.width / 2;
+            const viewBoxY = config.centerY - config.height / 2;
+            svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${config.width} ${config.height}`);
+            svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+            svg.setAttribute("width", "100%");
+            svg.setAttribute("height", "100%");
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+   
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", config.centerX);
+            circle.setAttribute("cy", config.centerY);
+            circle.setAttribute("r", Math.min(config.width, config.height) * 0.4);
+            circle.setAttribute("fill", "orange");
+            g.appendChild(circle);
+    svg.appendChild(g);
+
+            document.getElementById("chart-container").innerHTML = "";
+            document.getElementById("chart-container").appendChild(svg);
+        }
+
+        window.addEventListener("DOMContentLoaded", createChart);
+        window.addEventListener("resize", () => {
+            config.width = window.innerWidth;
+            config.height = window.innerHeight;
+            config.centerX = config.width / 2;
+            config.centerY = config.height / 2;
+            createChart();
+        }
     
     // CHANGED: Create rings in order to ensure proper layering
     // First, create all content rings (from outer to inner)
