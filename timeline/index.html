@@ -903,7 +903,10 @@ function createChart() {
     container.innerHTML = '';
     
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
+    const viewBoxX = config.centerX - config.width / 2;
+    const viewBoxY = config.centerY - config.height / 2;
+    svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${config.width} ${config.height}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     svg.setAttribute("width", "100%");
     svg.setAttribute("height", "100%");
     container.appendChild(svg);
