@@ -6,42 +6,46 @@
     <title>Aviation Technology Timeline</title>
     <style>
         /* Basic Reset & Font */
-        body {
-            font-family: 'Inter', Arial, sans-serif; /* Using Inter font */
+        html, body {
+            font-family: 'Inter', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            height: 100%; /* Ensure html and body take full height */
+            width: 100%;
             overflow: hidden; /* Prevent body scroll */
-            background-color: #f0f4f8; /* Light background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column; /* Center title and chart */
+            background-color: #f0f4f8; /* Background color for any small gaps */
+            touch-action: none; /* Prevent default touch actions */
         }
 
-        /* Prevent default touch actions like pinch-zoom on the page itself */
-        html, body {
-            touch-action: none;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-            text-align: center;
+        /* Main Title Styling (Floating) */
+        #main-title {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            z-index: 90; /* Same level as legend */
+            margin: 0; /* Reset default h1 margin */
+            font-size: 1.1rem; /* Smaller font size for floating title */
+            font-weight: 600;
+            color: #343a40;
+            cursor: grab; /* Indicate draggability */
+            border: 1px solid #dee2e6;
         }
 
         /* Main container for chart and sidebar */
         .main-container {
-            position: relative; /* Changed from absolute for better centering */
-            width: 95vw; /* Use viewport units */
-            height: 85vh;
-            max-width: 1200px; /* Max width for larger screens */
-            max-height: 800px; /* Max height */
+            position: relative; /* Keep relative for absolute children */
+            width: 100vw; /* Full viewport width */
+            height: 100vh; /* Full viewport height */
             overflow: hidden; /* Crucial for containing SVG and preventing overflow */
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             background-color: #ffffff; /* White background for the container */
+            /* Remove max-width, max-height, border-radius, box-shadow if desired for true full screen */
+            /* Keeping them for a slightly contained look */
+             border-radius: 0px; /* No rounded corners for full screen */
+             box-shadow: none; /* No shadow for full screen */
         }
 
         /* Chart container */
@@ -61,27 +65,26 @@
             display: block; /* Remove extra space below SVG */
             width: 100%;
             height: 100%;
-            /* overflow: visible; */ /* Let the container handle clipping */
         }
 
-        /* Sidebar Styling */
+        /* Sidebar Styling - Remains the same */
         .sidebar {
             position: absolute;
             top: 0;
             left: -350px; /* Start hidden */
             height: 100%;
             width: 350px;
-            max-width: 90%; /* Ensure it doesn't take full width on small screens */
-            overflow-y: auto; /* Scroll content if needed */
-            background-color: #f8f9fa; /* Lighter gray */
+            max-width: 90%;
+            overflow-y: auto;
+            background-color: #f8f9fa;
             border-radius: 0 8px 8px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: left 0.3s ease-in-out;
-            z-index: 100; /* Above chart */
+            z-index: 100;
             border-left: 1px solid #dee2e6;
         }
         .sidebar.active {
-            left: 0; /* Slide in */
+            left: 0;
         }
         .sidebar-content {
             padding: 25px;
@@ -93,7 +96,7 @@
             right: 15px;
             width: 32px;
             height: 32px;
-            background-color: #e9ecef; /* Slightly darker gray */
+            background-color: #e9ecef;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -112,198 +115,185 @@
         .sidebar-image {
             width: 100%;
             height: auto;
-            max-height: 200px; /* Limit image height */
-            object-fit: cover; /* Cover the area */
+            max-height: 200px;
+            object-fit: cover;
             margin-bottom: 15px;
             border-radius: 6px;
             border: 1px solid #dee2e6;
         }
         .sidebar-title {
-            font-size: 1.6rem; /* Larger title */
-            margin-bottom: 10px; /* Reduced margin */
-            padding-right: 40px; /* Space for close button */
-            color: #212529; /* Darker text */
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            padding-right: 40px;
+            color: #212529;
             font-weight: 600;
         }
         .sidebar-subtitle {
             font-size: 1.1rem;
             margin-bottom: 15px;
-            color: #495057; /* Medium gray */
+            color: #495057;
             font-weight: 500;
         }
         .sidebar-text {
-            line-height: 1.7; /* More spacing */
+            line-height: 1.7;
             margin-bottom: 20px;
             color: #343a40;
             font-size: 0.95rem;
         }
 
-        /* Chart Segment Styling */
+        /* Chart Segment Styling - Remains the same */
         .segment {
             cursor: pointer;
             transition: opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
-            stroke: rgba(0,0,0,0.1); /* Subtle stroke for separation */
+            stroke: rgba(0,0,0,0.1);
             stroke-width: 0.5px;
         }
         .segment:hover {
             opacity: 0.85;
-            filter: brightness(1.1); /* Slightly brighten on hover */
+            filter: brightness(1.1);
         }
 
-        /* Tooltip Styling */
+        /* Tooltip Styling - Remains the same */
         .tooltip {
             position: absolute;
             padding: 8px 12px;
             background: rgba(0, 0, 0, 0.8);
             color: white;
             border-radius: 4px;
-            pointer-events: none; /* Don't interfere with mouse events */
+            pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s ease-in-out;
             font-size: 0.85rem;
-            z-index: 110; /* Above sidebar */
-            white-space: nowrap; /* Prevent wrapping */
+            z-index: 110;
+            white-space: nowrap;
         }
 
-        /* Legend Styling */
+        /* Legend Styling - Remains the same */
         .legend {
             position: absolute;
             display: flex;
-            flex-direction: column; /* Stack header and content */
-            gap: 0px; /* No gap between header/content initially */
-            background-color: rgba(255, 255, 255, 0.95); /* Slightly more opaque */
+            flex-direction: column;
+            gap: 0px;
+            background-color: rgba(255, 255, 255, 0.95);
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            padding: 0; /* Padding handled by inner elements */
-            max-width: 280px; /* Slightly narrower */
-            max-height: 70vh; /* Limit height */
-            /* overflow: hidden; */ /* Let content manage overflow */
-            z-index: 90; /* Below sidebar */
-            right: 20px; /* Default position */
+            padding: 0;
+            max-width: 280px;
+            max-height: 70vh;
+            z-index: 90;
+            right: 20px;
             bottom: 20px;
             transition: opacity 0.3s ease, box-shadow 0.3s ease;
             border: 1px solid #dee2e6;
         }
-
         .legend-drag-handle {
             cursor: move;
             width: 100%;
-            height: 18px; /* Taller handle */
+            height: 18px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f1f3f5; /* Light gray handle background */
+            background-color: #f1f3f5;
             border-bottom: 1px solid #dee2e6;
-            border-radius: 8px 8px 0 0; /* Rounded top corners */
+            border-radius: 8px 8px 0 0;
             box-sizing: border-box;
         }
-
         .legend-drag-handle:before {
             content: "";
-            width: 40px; /* Wider drag indicator */
+            width: 40px;
             height: 5px;
-            background-color: #adb5bd; /* Darker indicator */
+            background-color: #adb5bd;
             border-radius: 3px;
         }
-
         .legend-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 8px 12px; /* Padding for header */
+            padding: 8px 12px;
             box-sizing: border-box;
-            border-bottom: 1px solid #e9ecef; /* Separator line */
+            border-bottom: 1px solid #e9ecef;
         }
-
         .legend-title {
-            font-weight: 600; /* Bolder */
-            font-size: 1rem; /* Larger */
+            font-weight: 600;
+            font-size: 1rem;
             margin: 0;
             color: #343a40;
         }
-
         .legend-toggle {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.5rem; /* Larger icon */
+            font-size: 1.5rem;
             color: #495057;
             padding: 0 5px;
             line-height: 1;
             transition: color 0.2s, transform 0.2s;
         }
-
         .legend-toggle:hover {
             color: #212529;
             transform: scale(1.1);
         }
-
         .legend-content {
             display: flex;
             flex-direction: column;
             gap: 8px;
             width: 100%;
-            padding: 12px; /* Padding for content */
+            padding: 12px;
             box-sizing: border-box;
-            max-height: calc(70vh - 80px); /* Adjust based on header/handle height */
-            overflow-y: auto; /* Scroll if content exceeds max height */
-            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out; /* Smooth transition */
+            max-height: calc(70vh - 80px);
+            overflow-y: auto;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
         }
-
         .legend-category {
             margin-top: 5px;
-            margin-bottom: 3px; /* Space before items */
-            font-weight: 600; /* Bolder category */
+            margin-bottom: 3px;
+            font-weight: 600;
             font-size: 0.9rem;
-            color: #0056b3; /* Use a distinct color */
+            color: #0056b3;
             border-bottom: 1px solid #e9ecef;
             padding-bottom: 3px;
         }
         .legend-category:first-child {
             margin-top: 0;
         }
-
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px; /* More space */
+            gap: 8px;
             font-size: 0.85rem;
             color: #495057;
         }
-
         .legend-color {
-            width: 14px; /* Larger color box */
+            width: 14px;
             height: 14px;
             border-radius: 3px;
             flex-shrink: 0;
-            border: 1px solid rgba(0,0,0,0.1); /* Subtle border */
+            border: 1px solid rgba(0,0,0,0.1);
         }
-
-        /* Minimized state for legend content */
         .legend-content.legend-minimized {
             max-height: 0;
             opacity: 0;
             padding-top: 0;
             padding-bottom: 0;
             overflow: hidden;
-            border-top: none; /* Hide border when minimized */
+            border-top: none;
         }
 
-        /* Sidebar Tab Styling */
+        /* Sidebar Tab Styling - Remains the same */
         .content-tabs {
             display: flex;
             flex-wrap: wrap;
-            margin-bottom: 20px; /* More space below tabs */
+            margin-bottom: 20px;
             gap: 8px;
-            border-bottom: 1px solid #dee2e6; /* Separator line */
+            border-bottom: 1px solid #dee2e6;
             padding-bottom: 10px;
         }
         .tab-button {
-            padding: 8px 15px; /* More padding */
+            padding: 8px 15px;
             background-color: #e9ecef;
             border: 1px solid #dee2e6;
-            border-radius: 20px; /* Pill shape */
+            border-radius: 20px;
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 500;
@@ -312,7 +302,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .tab-button.active {
-            background-color: #007bff; /* Use a standard primary blue */
+            background-color: #007bff;
             color: white;
             border-color: #007bff;
             box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
@@ -322,31 +312,36 @@
             border-color: #adb5bd;
         }
         .content-section {
-            display: none; /* Hide inactive tabs */
+            display: none;
         }
         .content-section.active {
             display: block;
-            animation: fadeIn 0.4s ease; /* Slightly longer fade */
+            animation: fadeIn 0.4s ease;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Arrow and Connector Styling */
+        /* Arrow and Connector Styling - Remains the same */
         .arrow {
-            filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.3)); /* Subtle shadow */
+            filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.25));
+            transition: transform 0.2s ease-in-out;
+        }
+        .connector-group:hover .arrow {
+             transform: scale(1.1);
         }
         .connector {
-            filter: drop-shadow(0px 0px 2px rgba(0,0,0,0.2));
+            filter: drop-shadow(0px 0px 2px rgba(0,0,0,0.15));
+            stroke-opacity: 0.8;
         }
 
-        /* Zoom Controls Styling */
+        /* Zoom Controls Styling - Remains the same */
         .zoom-controls {
             position: absolute;
             right: 20px;
             top: 20px;
-            z-index: 50; /* Below legend/sidebar */
+            z-index: 50;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -354,7 +349,7 @@
         .zoom-button {
             width: 40px;
             height: 40px;
-            font-size: 20px; /* Adjusted size */
+            font-size: 20px;
             font-weight: bold;
             border-radius: 50%;
             border: 1px solid #ced4da;
@@ -376,7 +371,7 @@
             transform: scale(0.95);
         }
 
-        /* Zoom Indicator Styling */
+        /* Zoom Indicator Styling - Remains the same */
         #zoom-indicator {
             position: absolute;
             left: 20px;
@@ -387,23 +382,23 @@
             border-radius: 4px;
             font-size: 0.9rem;
             transition: opacity 0.3s ease-in-out;
-            opacity: 0; /* Start hidden */
+            opacity: 0;
             z-index: 50;
             pointer-events: none;
         }
 
-        /* Label Styling */
+        /* Label Styling - Remains the same */
         .label-group text {
-           pointer-events: none; /* Labels shouldn't block clicks on segments */
+           pointer-events: none;
            font-weight: bold;
-           font-size: 12px; /* Base size, might be overridden */
-           fill: #fff; /* Default fill */
+           font-size: 12px;
+           fill: #fff;
         }
         .label-group .label-shadow {
-           stroke: rgba(0,0,0,0.6); /* Shadow color */
-           stroke-width: 3px; /* Shadow thickness */
+           stroke: rgba(0,0,0,0.6);
+           stroke-width: 3px;
            stroke-linejoin: round;
-           fill: none; /* Shadow is just the stroke */
+           fill: none;
         }
 
     </style>
@@ -412,7 +407,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Interactive Aviation Timeline</h1>
+    <h1 id="main-title">Interactive Aviation Timeline</h1>
 
     <div class="main-container">
         <div class="sidebar" id="sidebar">
@@ -448,7 +443,7 @@
         let initialPinchDistance = 0; // For pinch zoom
 
         // --- DOM Elements (cache them) ---
-        let chartContainer, svgElement, chartGroup, sidebar, sidebarContent, tooltip, legendContainer, zoomIndicator;
+        let chartContainer, svgElement, chartGroup, sidebar, sidebarContent, tooltip, legendContainer, zoomIndicator, mainTitleElement; // Added mainTitleElement
 
         // --- Placeholder Image Handling ---
         const placeholderBase = "https://placehold.co";
@@ -471,6 +466,7 @@
             tooltip = document.getElementById('tooltip');
             legendContainer = document.getElementById('legend');
             zoomIndicator = document.getElementById('zoom-indicator');
+            mainTitleElement = document.getElementById('main-title'); // Cache title
 
             // Initial setup
             initializeConfig(); // Setup initial config data
@@ -480,6 +476,11 @@
 
             // Apply initial transform state (usually 1, 0, 0)
             applyTransform();
+
+            // *** NEW: Make the main title draggable ***
+            if (mainTitleElement) {
+                makeDraggable(mainTitleElement); // Make title draggable (no specific handle)
+            }
         });
 
         // --- Configuration Setup ---
@@ -526,7 +527,7 @@
                         name: "Transition to Powered Flight",
                         color: "#7D59D9", // Mix of purple and blue
                         isConnector: true,
-                        arrowCount: 12,
+                        arrowCount: 8, // Reduced default arrow count for clarity with larger arrows
                         thickness: 7
                     },
                     { // Ring 2: Powered Flight Era
@@ -575,7 +576,7 @@
                         name: "Transition to Jet Age",
                         color: "#3A98B9", // Mix of blue and green
                         isConnector: true,
-                        arrowCount: 8,
+                        arrowCount: 6, // Reduced count
                         thickness: 7
                     },
                     { // Ring 3: Jet Age & Space Race
@@ -618,7 +619,7 @@
                         name: "Future Directions",
                         color: "#91B93A", // Mix of green and orange/red
                         isConnector: true,
-                        arrowCount: 6,
+                        arrowCount: 5, // Reduced count
                         thickness: 6
                     },
                     { // Ring 4: Core/Future (Innermost)
@@ -646,10 +647,11 @@
 
         // --- Responsive Dimensions ---
         function getResponsiveDimensions() {
+            // Use the dimensions of the chart container, which is now full screen
             const containerWidth = chartContainer.clientWidth;
             const containerHeight = chartContainer.clientHeight;
-            // Use padding inside the container for the chart
-            const padding = Math.min(containerWidth, containerHeight) * 0.05; // 5% padding
+            // Adjust padding calculation if needed for full screen
+            const padding = Math.min(containerWidth, containerHeight) * 0.04; // Slightly less padding
             const size = Math.min(containerWidth - 2 * padding, containerHeight - 2 * padding);
             return {
                 width: containerWidth, // SVG takes full container width
@@ -677,94 +679,76 @@
 
             // Create SVG element
             svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            // Set viewBox based on container size for proper scaling behavior
             svgElement.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
             svgElement.setAttribute("width", "100%");
             svgElement.setAttribute("height", "100%");
-            svgElement.style.backgroundColor = "#ffffff"; // Ensure SVG background is white
+            svgElement.style.backgroundColor = "#ffffff";
             chartContainer.appendChild(svgElement);
 
-            // *** FIX: Create a single group element for ALL chart visuals ***
-            // This group will receive the zoom/pan transform.
+            // Create a single group element for ALL chart visuals
             chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            svgElement.appendChild(chartGroup); // Add the group to the SVG
+            svgElement.appendChild(chartGroup);
 
             // Process rings: Scale radius and calculate connector radius
             let lastContentRingRadius = 0;
             config.rings.forEach((ring, index) => {
                 if (!ring.isConnector) {
                     ring.scaledRadius = ring.radius * scaleFactor;
-                    lastContentRingRadius = ring.scaledRadius; // Keep track for next connector/inner ring
+                    lastContentRingRadius = ring.scaledRadius;
                 } else {
-                    // Find the *next* content ring to determine the inner boundary for the connector
                     let nextContentRingRadius = 0;
                     for (let j = index + 1; j < config.rings.length; j++) {
                         if (!config.rings[j].isConnector) {
-                            // Scale the next ring's radius first if not already done (should be)
                             config.rings[j].scaledRadius = config.rings[j].radius * scaleFactor;
                             nextContentRingRadius = config.rings[j].scaledRadius;
                             break;
                         }
                     }
-                    // Calculate connector radius halfway between adjacent content rings
                     ring.scaledRadius = (lastContentRingRadius + nextContentRingRadius) / 2;
-                    // Scale thickness proportionally
-                    ring.scaledThickness = (ring.thickness || 5) * scaleFactor; // Default thickness if needed
+                    ring.scaledThickness = (ring.thickness || 5) * scaleFactor;
                 }
             });
 
-            // Create rings and add them TO THE chartGroup
-            // Draw from inner to outer or manage z-index carefully if needed.
-            // Drawing connectors first, then content rings on top seems logical here.
-
-            // Create connector rings first (added to chartGroup)
+            // Create connector rings first
             config.rings.forEach((ring, ringIndex) => {
                 if (ring.isConnector) {
-                    createConnectorRing(ring, ringIndex, chartGroup); // Pass chartGroup
+                    createConnectorRing(ring, ringIndex, chartGroup);
                 }
             });
 
-             // Create content rings second (added to chartGroup, will draw over connectors)
+             // Create content rings second
             config.rings.forEach((ring, ringIndex) => {
                 if (!ring.isConnector) {
-                    createContentRing(ring, ringIndex, chartGroup); // Pass chartGroup
+                    createContentRing(ring, ringIndex, chartGroup);
                 }
             });
 
-
-            // Create legend (this is outside the SVG)
+            // Create legend
             createFloatingLegend();
 
-            // *** FIX: Apply initial transform AFTER elements are in chartGroup ***
+            // Apply initial transform
             applyTransform();
         }
 
         // --- Create Content Ring Segments ---
-        function createContentRing(ring, ringIndex, parent) { // Parent is now chartGroup
+        function createContentRing(ring, ringIndex, parent) {
             const segmentAngle = 360 / ring.segments;
             const outerRadius = ring.scaledRadius;
-
-            // Find the next *content* ring's radius to define the inner boundary
             let innerRadius = 0;
             for (let j = ringIndex + 1; j < config.rings.length; j++) {
                 if (!config.rings[j].isConnector) {
-                    innerRadius = config.rings[j].scaledRadius || 0; // Use scaledRadius
+                    innerRadius = config.rings[j].scaledRadius || 0;
                     break;
                 }
             }
-             // If it's the innermost ring, innerRadius remains 0 (or a small value for a hole)
              if (ringIndex === config.rings.length -1 || innerRadius === 0) {
-                 innerRadius = outerRadius * 0.1; // Make innermost a ring, not a full circle unless specified
-                 if (ring.segments === 1) innerRadius = 0; // Allow full circle for single segment innermost
+                 innerRadius = outerRadius * 0.1;
+                 if (ring.segments === 1) innerRadius = 0;
              }
 
-
-            // Create segments
             for (let i = 0; i < ring.segments; i++) {
                 const startAngle = i * segmentAngle;
                 const endAngle = (i + 1) * segmentAngle;
-
-                // Create arc path
                 const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 path.setAttribute("d", describeArc(config.centerX, config.centerY, innerRadius, outerRadius, startAngle, endAngle));
                 path.setAttribute("fill", ring.color);
@@ -773,22 +757,14 @@
                 path.dataset.ring = ring.name;
                 path.dataset.ringIndex = ringIndex;
                 path.dataset.segmentIndex = i;
-
-                // Apply slight brightness variation for visual separation
                 if (ring.segments > 1) {
-                     const brightness = 1 + (i % 2 === 0 ? 0.05 : -0.05); // More subtle variation
+                     const brightness = 1 + (i % 2 === 0 ? 0.05 : -0.05);
                      path.style.filter = `brightness(${brightness})`;
                 }
-
-
-                // Add event listeners directly to the path
-                path.addEventListener("pointermove", handlePointerMove); // Use pointer events
+                path.addEventListener("pointermove", handlePointerMove);
                 path.addEventListener("pointerleave", handlePointerLeave);
                 path.addEventListener("click", handleSegmentClick);
-
-                parent.appendChild(path); // Add segment path to the chartGroup
-
-                // Add segment label (if space allows)
+                parent.appendChild(path);
                 addSegmentLabel(ring, i, innerRadius, outerRadius, startAngle, endAngle, parent);
             }
         }
@@ -799,48 +775,23 @@
             const endOuter = polarToCartesian(x, y, outerRadius, startAngle);
             const startInner = polarToCartesian(x, y, innerRadius, endAngle);
             const endInner = polarToCartesian(x, y, innerRadius, startAngle);
-
             const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-            // Handle full circle case (or near full circle)
             if (Math.abs(endAngle - startAngle) >= 359.99) {
-                 // Draw two half circles to make a full ring segment
                  const midAngle = startAngle + 180;
                  const midOuter1 = polarToCartesian(x, y, outerRadius, midAngle);
                  const midInner1 = polarToCartesian(x, y, innerRadius, midAngle);
-                 const midOuter2 = polarToCartesian(x, y, outerRadius, startAngle); // same as endOuter
-                 const midInner2 = polarToCartesian(x, y, innerRadius, startAngle); // same as endInner
-
-                 const d = [
-                     "M", startOuter.x, startOuter.y,
-                     "A", outerRadius, outerRadius, 0, 0, 0, midOuter1.x, midOuter1.y, // First outer half
-                     "L", midInner1.x, midInner1.y,
-                     "A", innerRadius, innerRadius, 0, 0, 1, startInner.x, startInner.y, // First inner half (reverse)
-                     "Z", // Close first half
-                     "M", midOuter1.x, midOuter1.y, // Start second half
-                     "A", outerRadius, outerRadius, 0, 0, 0, midOuter2.x, midOuter2.y, // Second outer half
-                     "L", midInner2.x, midInner2.y,
-                     "A", innerRadius, innerRadius, 0, 0, 1, midInner1.x, midInner1.y, // Second inner half (reverse)
-                     "Z" // Close second half
-                 ].join(" ");
+                 const midOuter2 = polarToCartesian(x, y, outerRadius, startAngle);
+                 const midInner2 = polarToCartesian(x, y, innerRadius, startAngle);
+                 const d = [ "M", startOuter.x, startOuter.y, "A", outerRadius, outerRadius, 0, 0, 0, midOuter1.x, midOuter1.y, "L", midInner1.x, midInner1.y, "A", innerRadius, innerRadius, 0, 0, 1, startInner.x, startInner.y, "Z", "M", midOuter1.x, midOuter1.y, "A", outerRadius, outerRadius, 0, 0, 0, midOuter2.x, midOuter2.y, "L", midInner2.x, midInner2.y, "A", innerRadius, innerRadius, 0, 0, 1, midInner1.x, midInner1.y, "Z" ].join(" ");
                  return d;
             }
-
-
-            const d = [
-                "M", startOuter.x, startOuter.y, // Move to start point on outer radius
-                "A", outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y, // Outer arc
-                "L", endInner.x, endInner.y, // Line to inner radius end point
-                "A", innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y, // Inner arc (reverse)
-                "Z" // Close path (line back to outer radius start)
-            ].join(" ");
-
+            const d = [ "M", startOuter.x, startOuter.y, "A", outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y, "L", endInner.x, endInner.y, "A", innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y, "Z" ].join(" ");
             return d;
         }
 
         // --- Helper: Polar to Cartesian Coordinates ---
         function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-            const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0; // Adjust by -90 degrees
+            const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
             return {
                 x: centerX + (radius * Math.cos(angleInRadians)),
                 y: centerY + (radius * Math.sin(angleInRadians))
@@ -851,115 +802,79 @@
         function addSegmentLabel(ring, segmentIndex, innerR, outerR, startAng, endAng, parent) {
             const angleSpan = endAng - startAng;
             const radiusSpan = outerR - innerR;
-
-            // Only add label if segment is large enough
-            if (radiusSpan < 20 || angleSpan < 15) return; // Adjust thresholds as needed
-
+            if (radiusSpan < 20 || angleSpan < 15) return;
             const midAngle = startAng + angleSpan / 2;
-            const textRadius = innerR + radiusSpan * 0.6; // Position label within the segment
-
+            const textRadius = innerR + radiusSpan * 0.6;
             const pos = polarToCartesian(config.centerX, config.centerY, textRadius, midAngle);
-
-            // Create text element
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.setAttribute("x", pos.x);
             text.setAttribute("y", pos.y);
             text.setAttribute("text-anchor", "middle");
             text.setAttribute("dominant-baseline", "middle");
-            text.style.fontSize = `${Math.min(14, Math.max(8, radiusSpan / 3.5))}px`; // Dynamic font size
+            text.style.fontSize = `${Math.min(14, Math.max(8, radiusSpan / 3.5))}px`;
             text.textContent = ring.segmentNames[segmentIndex];
-
-            // Calculate rotation, keep text upright
             let rotation = midAngle;
-            if (rotation > 90 && rotation < 270) {
-                rotation += 180; // Flip text if it's upside down
-            }
+            if (rotation > 90 && rotation < 270) { rotation += 180; }
             text.setAttribute("transform", `rotate(${rotation}, ${pos.x}, ${pos.y})`);
-
-            // Create a group for label + shadow for better styling control
             const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
             labelGroup.classList.add("label-group");
-
-            // Create shadow element (clone of text, styled with stroke)
             const textShadow = text.cloneNode(true);
             textShadow.classList.add("label-shadow");
-            textShadow.style.fill = 'none'; // Shadow uses stroke
+            textShadow.style.fill = 'none';
             textShadow.style.stroke = 'rgba(0,0,0,0.6)';
             textShadow.style.strokeWidth = '3px';
             textShadow.style.strokeLinejoin = 'round';
-
             labelGroup.appendChild(textShadow);
-            labelGroup.appendChild(text); // Actual text on top
-
-            parent.appendChild(labelGroup); // Add the group to the chartGroup
+            labelGroup.appendChild(text);
+            parent.appendChild(labelGroup);
         }
 
-
         // --- Create Connector Ring ---
-        function createConnectorRing(ring, ringIndex, parent) { // Parent is now chartGroup
+        function createConnectorRing(ring, ringIndex, parent) {
             const radius = ring.scaledRadius;
-            const thickness = ring.scaledThickness || 5; // Use scaled thickness
-            const arrowCount = ring.arrowCount || 8;
-            const arrowLength = thickness * 1.5; // Relative arrow size
-            const arrowWidth = thickness * 1.2;
-
-            // Create a group for the connector ring + arrows
+            const thickness = ring.scaledThickness || 5;
+            const arrowCount = ring.arrowCount || 6;
+            const arrowLength = thickness * 2.5;
+            const arrowWidth = thickness * 2.0;
             const connectorGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
             connectorGroup.classList.add("connector-group");
-
-            // Create the connector ring circle (stroke only)
             const connectorCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             connectorCircle.setAttribute("cx", config.centerX);
             connectorCircle.setAttribute("cy", config.centerY);
             connectorCircle.setAttribute("r", radius);
             connectorCircle.setAttribute("fill", "none");
             connectorCircle.setAttribute("stroke", ring.color);
-            connectorCircle.setAttribute("stroke-width", thickness);
-            connectorCircle.setAttribute("stroke-dasharray", `${thickness * 1.5}, ${thickness * 1}`); // Dashed effect
+            connectorCircle.setAttribute("stroke-width", thickness * 0.8);
+            connectorCircle.setAttribute("stroke-dasharray", `${thickness * 1.5}, ${thickness * 1}`);
             connectorCircle.classList.add("connector");
             connectorGroup.appendChild(connectorCircle);
-
-            // Create arrows pointing inward
             for (let i = 0; i < arrowCount; i++) {
                 const angleDeg = (i * 360 / arrowCount);
-                const angleRad = (angleDeg - 90) * Math.PI / 180.0; // -90 for SVG coords
-
-                // Arrow tip position (slightly inside the radius)
-                const tip = polarToCartesian(config.centerX, config.centerY, radius - thickness * 0.7, angleDeg);
-                // Arrow base center position (slightly outside the radius)
-                const baseCenter = polarToCartesian(config.centerX, config.centerY, radius + thickness * 0.7, angleDeg);
-
-                // Calculate wing points perpendicular to the radius line at the baseCenter
+                const angleRad = (angleDeg - 90) * Math.PI / 180.0;
+                const tip = polarToCartesian(config.centerX, config.centerY, radius - arrowLength * 0.6, angleDeg);
+                const baseCenter = polarToCartesian(config.centerX, config.centerY, radius + arrowLength * 0.4, angleDeg);
                 const perpAngleRad = angleRad + Math.PI / 2;
                 const wingOffset = arrowWidth / 2;
                 const wing1X = baseCenter.x + wingOffset * Math.cos(perpAngleRad);
                 const wing1Y = baseCenter.y + wingOffset * Math.sin(perpAngleRad);
                 const wing2X = baseCenter.x - wingOffset * Math.cos(perpAngleRad);
                 const wing2Y = baseCenter.y - wingOffset * Math.sin(perpAngleRad);
-
-                // Create arrow polygon
                 const arrow = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
                 arrow.setAttribute("points", `${wing1X},${wing1Y} ${wing2X},${wing2Y} ${tip.x},${tip.y}`);
                 arrow.setAttribute("fill", ring.color);
                 arrow.classList.add("arrow");
                 connectorGroup.appendChild(arrow);
             }
-
-            parent.appendChild(connectorGroup); // Add the whole group to chartGroup
+            parent.appendChild(connectorGroup);
         }
-
 
         // --- Legend Creation ---
         function createFloatingLegend() {
-            legendContainer.innerHTML = ''; // Clear previous legend
-            legendContainer.className = 'legend'; // Reset class name
-
-            // Create drag handle
+            legendContainer.innerHTML = '';
+            legendContainer.className = 'legend';
             const dragHandle = document.createElement('div');
             dragHandle.className = 'legend-drag-handle';
             legendContainer.appendChild(dragHandle);
-
-            // Create header
             const header = document.createElement('div');
             header.className = 'legend-header';
             const title = document.createElement('h3');
@@ -967,72 +882,49 @@
             title.textContent = 'Legend';
             const toggleBtn = document.createElement('button');
             toggleBtn.className = 'legend-toggle';
-            toggleBtn.innerHTML = '&minus;'; // Use HTML entity for minus
+            toggleBtn.innerHTML = '&minus;';
             toggleBtn.title = 'Minimize/Maximize Legend';
             header.appendChild(title);
             header.appendChild(toggleBtn);
             legendContainer.appendChild(header);
-
-            // Create content container
             const content = document.createElement('div');
             content.className = 'legend-content';
             legendContainer.appendChild(content);
-
-            // Group legend items by ring
             const ringGroups = {};
             config.rings.forEach((ring, ringIndex) => {
-                if (ring.isConnector) return; // Skip connectors
-
-                if (!ringGroups[ring.name]) {
-                    ringGroups[ring.name] = [];
-                }
-
+                if (ring.isConnector) return;
+                if (!ringGroups[ring.name]) { ringGroups[ring.name] = []; }
                 ring.segmentNames.forEach((name, i) => {
                     const item = document.createElement('div');
                     item.className = 'legend-item';
-
                     const colorBox = document.createElement('div');
                     colorBox.className = 'legend-color';
                     colorBox.style.backgroundColor = ring.color;
-
-                    // Apply brightness filter consistent with chart segments
                     if (ring.segments > 1) {
                         const brightness = 1 + (i % 2 === 0 ? 0.05 : -0.05);
                         colorBox.style.filter = `brightness(${brightness})`;
                     }
-
                     const label = document.createElement('span');
-                    label.textContent = name; // Just show segment name
-
+                    label.textContent = name;
                     item.appendChild(colorBox);
                     item.appendChild(label);
                     ringGroups[ring.name].push(item);
                 });
             });
-
-            // Add groups to legend content
             for (const ringName in ringGroups) {
                 const categoryTitle = document.createElement('div');
                 categoryTitle.className = 'legend-category';
-                categoryTitle.textContent = ringName; // Ring name as category
+                categoryTitle.textContent = ringName;
                 content.appendChild(categoryTitle);
-
-                ringGroups[ringName].forEach(item => {
-                    content.appendChild(item);
-                });
+                ringGroups[ringName].forEach(item => { content.appendChild(item); });
             }
-
-            // Add toggle functionality
             toggleBtn.addEventListener('click', function() {
                 content.classList.toggle('legend-minimized');
                 this.innerHTML = content.classList.contains('legend-minimized') ? '&plus;' : '&minus;';
-                // Adjust legend max-height if needed when toggling
                 if (!content.classList.contains('legend-minimized')) {
-                    content.style.maxHeight = 'calc(70vh - 80px)'; // Restore max height
+                    content.style.maxHeight = 'calc(70vh - 80px)';
                 }
             });
-
-            // Make legend draggable
             makeDraggable(legendContainer, dragHandle);
         }
 
@@ -1040,22 +932,20 @@
         function makeDraggable(element, handle) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             const dragTarget = handle || element; // Drag handle or whole element
-
-            dragTarget.onpointerdown = dragPointerDown; // Use pointer events
+            dragTarget.onpointerdown = dragPointerDown;
 
             function dragPointerDown(e) {
                 e = e || window.event;
-                // e.preventDefault(); // Prevent default only if needed (e.g., text selection)
                 pos3 = e.clientX;
                 pos4 = e.clientY;
-                element.style.cursor = 'grabbing'; // Indicate dragging
+                element.style.cursor = 'grabbing';
                 document.onpointerup = closeDragElement;
                 document.onpointermove = elementDrag;
             }
 
             function elementDrag(e) {
                 e = e || window.event;
-                e.preventDefault(); // Prevent page scroll during drag
+                e.preventDefault();
                 pos1 = pos3 - e.clientX;
                 pos2 = pos4 - e.clientY;
                 pos3 = e.clientX;
@@ -1066,28 +956,22 @@
             function setElementPosition(elmnt, p1, p2) {
                 const containerRect = document.body.getBoundingClientRect(); // Use body bounds
                 const elmntRect = elmnt.getBoundingClientRect();
-
                 let newTop = elmnt.offsetTop - p2;
                 let newLeft = elmnt.offsetLeft - p1;
-
-                // Constrain within viewport bounds
                 newTop = Math.max(0, Math.min(newTop, containerRect.height - elmntRect.height));
                 newLeft = Math.max(0, Math.min(newLeft, containerRect.width - elmntRect.width));
-
                 elmnt.style.top = newTop + "px";
                 elmnt.style.left = newLeft + "px";
-                elmnt.style.right = "auto"; // Override fixed right/bottom
+                elmnt.style.right = "auto";
                 elmnt.style.bottom = "auto";
             }
 
             function closeDragElement() {
                 document.onpointerup = null;
                 document.onpointermove = null;
-                element.style.cursor = 'grab'; // Back to grab cursor
+                element.style.cursor = 'grab';
                 if (handle) handle.style.cursor = 'move';
             }
-
-             // Set initial cursor style
              element.style.cursor = 'grab';
              if (handle) handle.style.cursor = 'move';
         }
@@ -1096,208 +980,98 @@
         // --- Tooltip Handling ---
         function showTooltip(event, target) {
             tooltip.style.opacity = 1;
-            // Position tooltip relative to pointer, with offset
             tooltip.style.left = event.pageX + 15 + 'px';
             tooltip.style.top = event.pageY + 15 + 'px';
             tooltip.textContent = `${target.dataset.ring}: ${target.dataset.name}`;
         }
-
         function hideTooltip() {
             tooltip.style.opacity = 0;
         }
 
         // --- Sidebar Handling ---
         function showSidebar(ringIndex, segmentIndex) {
-            // Get content for this segment
             const ring = config.rings[ringIndex];
-            if (!ring || !ring.segmentContent || !ring.segmentContent[segmentIndex]) {
-                console.error("Invalid ring or segment index for sidebar:", ringIndex, segmentIndex);
-                return;
-            }
+            if (!ring || !ring.segmentContent || !ring.segmentContent[segmentIndex]) { console.error("Invalid ring/segment index:", ringIndex, segmentIndex); return; }
             const segmentData = ring.segmentContent[segmentIndex];
             const hasMultipleContent = segmentData.content && Array.isArray(segmentData.content) && segmentData.content.length > 0;
-
-            if (!hasMultipleContent) {
-                 console.error("Segment data has no 'content' array:", segmentData);
-                 return; // Don't show sidebar if no content items
-            }
-
-
-            let contentHTML = `
-                <button class="sidebar-close" id="close-sidebar" aria-label="Close Details">&times;</button>
-                <h2 class="sidebar-title">${segmentData.title}</h2>
-                <h3 class="sidebar-subtitle">${segmentData.subtitle}</h3>
-            `;
-
-            // Create tabs if multiple content items exist
+            if (!hasMultipleContent) { console.error("No content array found:", segmentData); return; }
+            let contentHTML = `<button class="sidebar-close" id="close-sidebar" aria-label="Close Details">&times;</button><h2 class="sidebar-title">${segmentData.title}</h2><h3 class="sidebar-subtitle">${segmentData.subtitle}</h3>`;
             if (segmentData.content.length > 1) {
                 contentHTML += `<div class="content-tabs">`;
-                segmentData.content.forEach((item, idx) => {
-                    contentHTML += `<button class="tab-button ${idx === 0 ? 'active' : ''}" data-tab="${idx}">${item.title}</button>`;
-                });
+                segmentData.content.forEach((item, idx) => { contentHTML += `<button class="tab-button ${idx === 0 ? 'active' : ''}" data-tab="${idx}">${item.title}</button>`; });
                 contentHTML += `</div>`;
             }
-
-            // Create content sections container
             contentHTML += `<div class="tab-content">`;
-            segmentData.content.forEach((item, idx) => {
-                contentHTML += `
-                    <div class="content-section ${idx === 0 ? 'active' : ''}" data-tab="${idx}">
-                        ${item.imageSrc ? `<img class="sidebar-image" src="${item.imageSrc}" alt="${item.title}" onerror="handleImageError(this)">` : ''}
-                        ${item.subtitle ? `<h4 class="sidebar-subtitle">${item.subtitle}</h4>` : ''}
-                        <p class="sidebar-text">${item.text || 'No description available.'}</p>
-                    </div>
-                `;
-            });
-            contentHTML += `</div>`; // Close tab-content
-
-            // Set the HTML content
+            segmentData.content.forEach((item, idx) => { contentHTML += `<div class="content-section ${idx === 0 ? 'active' : ''}" data-tab="${idx}">${item.imageSrc ? `<img class="sidebar-image" src="${item.imageSrc}" alt="${item.title}" onerror="handleImageError(this)">` : ''}${item.subtitle ? `<h4 class="sidebar-subtitle">${item.subtitle}</h4>` : ''}<p class="sidebar-text">${item.text || 'No description available.'}</p></div>`; });
+            contentHTML += `</div>`;
             sidebarContent.innerHTML = contentHTML;
-
-            // Show sidebar
             sidebar.classList.add('active');
-
-            // Add event listeners (delegated or specific)
-            // Use event delegation for tabs if many exist, or direct binding for few.
             const closeButton = sidebarContent.querySelector('#close-sidebar');
-            if (closeButton) {
-                closeButton.addEventListener('click', closeSidebar);
-            }
-
+            if (closeButton) { closeButton.addEventListener('click', closeSidebar); }
             const tabButtons = sidebarContent.querySelectorAll('.tab-button');
-            if (tabButtons.length > 0) {
-                tabButtons.forEach(button => {
-                    button.addEventListener('click', handleTabClick);
-                });
-            }
-
-            // Add listener to close sidebar when clicking outside
-            // Use timeout to prevent immediate closing if the click that opened it bubbles up
-            setTimeout(() => {
-                document.addEventListener('click', closeSidebarOnClickOutside);
-                // Also listen for Escape key
-                document.addEventListener('keydown', handleEscKey);
-            }, 10);
+            if (tabButtons.length > 0) { tabButtons.forEach(button => { button.addEventListener('click', handleTabClick); }); }
+            setTimeout(() => { document.addEventListener('click', closeSidebarOnClickOutside); document.addEventListener('keydown', handleEscKey); }, 10);
         }
-
         function handleTabClick(event) {
             const clickedButton = event.target;
             const tabIndex = clickedButton.getAttribute('data-tab');
-            const tabContainer = clickedButton.closest('.sidebar-content'); // Find parent container
-
-            // Remove active class from all buttons and sections within this sidebar instance
+            const tabContainer = clickedButton.closest('.sidebar-content');
             tabContainer.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             tabContainer.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-
-            // Add active class to the clicked button and corresponding section
             clickedButton.classList.add('active');
             const activeSection = tabContainer.querySelector(`.content-section[data-tab="${tabIndex}"]`);
-            if (activeSection) {
-                activeSection.classList.add('active');
-            }
+            if (activeSection) { activeSection.classList.add('active'); }
         }
-
-
         function closeSidebar() {
             sidebar.classList.remove('active');
-            // Clean up listeners specific to the open sidebar state
             document.removeEventListener('click', closeSidebarOnClickOutside);
             document.removeEventListener('keydown', handleEscKey);
-            // Optional: Clear sidebar content after transition?
-            // setTimeout(() => { sidebarContent.innerHTML = ''; }, 300); // Delay matches transition
         }
-
         function closeSidebarOnClickOutside(event) {
-            // Close if click is outside the sidebar and not on a chart segment
-            if (!sidebar.contains(event.target) && !event.target.closest('.segment')) {
-                closeSidebar();
-            }
+            if (!sidebar.contains(event.target) && !event.target.closest('.segment')) { closeSidebar(); }
         }
-
-        function handleEscKey(event) {
-             if (event.key === "Escape") {
-                 closeSidebar();
-             }
-         }
+        function handleEscKey(event) { if (event.key === "Escape") { closeSidebar(); } }
 
         // --- Event Handlers ---
         function setupEventListeners() {
-            // Resize listener
             window.addEventListener('resize', handleResize);
-
-            // Use pointer events for unified mouse/touch handling on chart container
             chartContainer.addEventListener('pointerdown', handlePointerDown);
-            chartContainer.addEventListener('wheel', handleWheel, { passive: false }); // Need preventDefault
-
-            // Segment click/hover handled by listeners added in createContentRing
+            chartContainer.addEventListener('wheel', handleWheel, { passive: false });
         }
-
-        function handleResize() {
-            // Debounce resize event for performance if needed
-            createChart();
-            // Reapply current transform state after chart rebuild
-            applyTransform();
-        }
+        function handleResize() { createChart(); applyTransform(); }
 
         // --- Pointer Event Handlers (Mouse & Touch) ---
         function handlePointerDown(event) {
-            // Check for primary button (mouse) or single touch
-             if (event.pointerType === 'mouse' && event.button !== 0) return; // Ignore right/middle clicks
-
-             // Check if target is the background or a segment
+             if (event.pointerType === 'mouse' && event.button !== 0) return;
              const target = event.target;
              const isBackground = target === chartContainer || target === svgElement || target === chartGroup;
-
-
-            // Panning logic (only if zoomed and not clicking a segment directly)
             if (currentZoom > 1 && isBackground) {
                  isPanning = true;
                  lastPointerX = event.clientX;
                  lastPointerY = event.clientY;
                  chartContainer.style.cursor = 'grabbing';
-                 // Capture pointer to track events even if cursor leaves the element
                  chartContainer.setPointerCapture(event.pointerId);
-                 // Add move/up listeners to the document/window to handle dragging outside
                  document.addEventListener('pointermove', handlePointerMovePan);
                  document.addEventListener('pointerup', handlePointerUp);
-                 document.addEventListener('pointercancel', handlePointerUp); // Handle cancellations
-            }
-             // Handle segment clicks separately (listener added to segments)
-        }
-
-        function handlePointerMove(event) {
-            // This handler is for segment hover (tooltip)
-            const target = event.target.closest('.segment'); // Find the segment if hovering over label/etc.
-            if (target) {
-                showTooltip(event, target);
-            } else {
-                hideTooltip();
+                 document.addEventListener('pointercancel', handlePointerUp);
             }
         }
-
-        function handlePointerMovePan(event) {
-             // This handler is specifically for panning the chart background
+        function handlePointerMove(event) { // For segment hover
+            const target = event.target.closest('.segment');
+            if (target) { showTooltip(event, target); } else { hideTooltip(); }
+        }
+        function handlePointerMovePan(event) { // For panning
             if (!isPanning) return;
-
             const deltaX = event.clientX - lastPointerX;
             const deltaY = event.clientY - lastPointerY;
-
             lastPointerX = event.clientX;
             lastPointerY = event.clientY;
-
             panOffsetX += deltaX;
             panOffsetY += deltaY;
-
             applyTransform();
         }
-
-
-        function handlePointerLeave(event) {
-             // This handler is for segment hover (tooltip)
-             hideTooltip();
-        }
-
-        function handlePointerUp(event) {
+        function handlePointerLeave(event) { hideTooltip(); } // For segment hover
+        function handlePointerUp(event) { // For panning
             if (isPanning) {
                 isPanning = false;
                 chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
@@ -1307,117 +1081,76 @@
                 document.removeEventListener('pointercancel', handlePointerUp);
             }
         }
-
         function handleSegmentClick(event) {
-            // Don't trigger sidebar if panning was just happening
             if (isPanning) return;
-
             const target = event.target.closest('.segment');
             if (target && target.dataset.ringIndex !== undefined && target.dataset.segmentIndex !== undefined) {
                 const ringIndex = parseInt(target.dataset.ringIndex, 10);
                 const segmentIndex = parseInt(target.dataset.segmentIndex, 10);
-                 if (!isNaN(ringIndex) && !isNaN(segmentIndex)) {
-                    showSidebar(ringIndex, segmentIndex);
-                 }
+                 if (!isNaN(ringIndex) && !isNaN(segmentIndex)) { showSidebar(ringIndex, segmentIndex); }
             }
         }
 
-
         // --- Zoom Handling ---
         function handleWheel(event) {
-            event.preventDefault(); // Prevent page scroll
-
-            const zoomDelta = event.deltaY < 0 ? 0.15 : -0.15; // Slightly larger zoom step
-
-            // Get pointer position relative to the SVG container
+            event.preventDefault();
+            const zoomDelta = event.deltaY < 0 ? 0.15 : -0.15;
             const rect = svgElement.getBoundingClientRect();
             const pointerX = event.clientX - rect.left;
             const pointerY = event.clientY - rect.top;
-
             zoomChartAtPoint(zoomDelta, pointerX, pointerY);
         }
-
         function addZoomControls() {
             const controlsContainer = document.getElementById('zoom-controls');
-            controlsContainer.innerHTML = ''; // Clear existing
-
+            controlsContainer.innerHTML = '';
             const zoomInBtn = document.createElement('button');
-            zoomInBtn.innerHTML = '+'; // Use text or SVG icon
+            zoomInBtn.innerHTML = '+';
             zoomInBtn.className = 'zoom-button';
             zoomInBtn.ariaLabel = 'Zoom In';
-            zoomInBtn.addEventListener('click', () => zoomChart(0.2)); // Zoom in by 20%
-
+            zoomInBtn.addEventListener('click', () => zoomChart(0.2));
             const zoomOutBtn = document.createElement('button');
             zoomOutBtn.innerHTML = '-';
             zoomOutBtn.className = 'zoom-button';
             zoomOutBtn.ariaLabel = 'Zoom Out';
-            zoomOutBtn.addEventListener('click', () => zoomChart(-0.2)); // Zoom out by 20%
-
+            zoomOutBtn.addEventListener('click', () => zoomChart(-0.2));
             const resetBtn = document.createElement('button');
-            resetBtn.innerHTML = '&#x21BB;'; // Reset icon (clockwise arrow)
+            resetBtn.innerHTML = '&#x21BB;';
             resetBtn.className = 'zoom-button';
             resetBtn.ariaLabel = 'Reset Zoom';
             resetBtn.addEventListener('click', resetZoomPan);
-
             controlsContainer.appendChild(zoomInBtn);
             controlsContainer.appendChild(zoomOutBtn);
             controlsContainer.appendChild(resetBtn);
         }
-
-        // Zoom chart (used by buttons - zooms towards center)
-        function zoomChart(delta) {
+        function zoomChart(delta) { // Zooms towards center
             if (!svgElement) return;
-            // Zoom towards the center of the SVG container
             const centerX = config.width / 2;
             const centerY = config.height / 2;
             zoomChartAtPoint(delta, centerX, centerY);
         }
-
-        // Zoom chart at a specific point (used by wheel/pinch)
         function zoomChartAtPoint(zoomDelta, pointX, pointY) {
-            // *** FIX: Use consistent zoom limits ***
-            const minZoom = 0.2;
-            const maxZoom = 5.0; // Consistent max zoom
-            const newZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom + zoomDelta * currentZoom)); // Scale delta by current zoom for smoother feel
-
-            if (newZoom === currentZoom) return; // No change
-
+            const minZoom = 0.2; const maxZoom = 5.0;
+            const newZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom + zoomDelta * currentZoom));
+            if (newZoom === currentZoom) return;
             const oldZoom = currentZoom;
             currentZoom = newZoom;
-
-            // Adjust pan offset to keep the zoom point stable under the pointer
-            // The formula accounts for the fact that the transform applies translate THEN scale
             panOffsetX = pointX - (pointX - panOffsetX) * (currentZoom / oldZoom);
             panOffsetY = pointY - (pointY - panOffsetY) * (currentZoom / oldZoom);
-
             applyTransform();
             updateZoomIndicator();
         }
-
         function resetZoomPan() {
-            currentZoom = 1;
-            panOffsetX = 0;
-            panOffsetY = 0;
-            applyTransform();
-            updateZoomIndicator();
+            currentZoom = 1; panOffsetX = 0; panOffsetY = 0;
+            applyTransform(); updateZoomIndicator();
         }
 
         // --- Apply Transformation ---
         function applyTransform() {
-            // *** FIX: Target the correct chartGroup ***
             if (chartGroup) {
-                 // Apply transform: Translate first, then scale around the translated origin (0,0)
                 chartGroup.setAttribute('transform', `translate(${panOffsetX}, ${panOffsetY}) scale(${currentZoom})`);
-
-                // Update cursor based on zoom level and panning state
-                if (isPanning) {
-                    chartContainer.style.cursor = 'grabbing';
-                } else {
-                    chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
-                }
-            } else {
-                console.error("Chart group not found for applying transform.");
-            }
+                if (isPanning) { chartContainer.style.cursor = 'grabbing'; }
+                else { chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default'; }
+            } else { console.error("Chart group not found for applying transform."); }
         }
 
         // --- Update Zoom Indicator ---
@@ -1425,11 +1158,8 @@
         function updateZoomIndicator() {
             zoomIndicator.textContent = `Zoom: ${Math.round(currentZoom * 100)}%`;
             zoomIndicator.style.opacity = '1';
-
             clearTimeout(indicatorTimeout);
-            indicatorTimeout = setTimeout(() => {
-                zoomIndicator.style.opacity = '0';
-            }, 1500); // Fade out after 1.5 seconds
+            indicatorTimeout = setTimeout(() => { zoomIndicator.style.opacity = '0'; }, 1500);
         }
 
     </script>
