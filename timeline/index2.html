@@ -5,1528 +5,1433 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aviation Technology Timeline</title>
     <style>
+        /* Basic Reset & Font */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', Arial, sans-serif; /* Using Inter font */
             margin: 0;
             padding: 0;
             height: 100vh;
-            overflow: hidden;
+            overflow: hidden; /* Prevent body scroll */
+            background-color: #f0f4f8; /* Light background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Center title and chart */
         }
 
+        /* Prevent default touch actions like pinch-zoom on the page itself */
         html, body {
             touch-action: none;
         }
 
-        .main-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+            text-align: center;
         }
 
+        /* Main container for chart and sidebar */
+        .main-container {
+            position: relative; /* Changed from absolute for better centering */
+            width: 95vw; /* Use viewport units */
+            height: 85vh;
+            max-width: 1200px; /* Max width for larger screens */
+            max-height: 800px; /* Max height */
+            overflow: hidden; /* Crucial for containing SVG and preventing overflow */
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background-color: #ffffff; /* White background for the container */
+        }
+
+        /* Chart container */
         #chart-container {
             width: 100%;
             height: 100%;
-            display: flex;
+            display: flex; /* Use flex to center SVG if needed */
             justify-content: center;
             align-items: center;
+            cursor: default; /* Default cursor */
+            position: relative; /* Needed for absolute positioning of controls */
+            overflow: hidden; /* Clip SVG content if it overflows due to pan */
         }
 
+        /* SVG Styling */
         #chart-container svg {
+            display: block; /* Remove extra space below SVG */
             width: 100%;
             height: 100%;
-            overflow: visible;
+            /* overflow: visible; */ /* Let the container handle clipping */
         }
+
+        /* Sidebar Styling */
         .sidebar {
             position: absolute;
-            left: -350px;
+            top: 0;
+            left: -350px; /* Start hidden */
             height: 100%;
             width: 350px;
-            overflow-y: auto;
-            background-color: #f8f8f8;
+            max-width: 90%; /* Ensure it doesn't take full width on small screens */
+            overflow-y: auto; /* Scroll content if needed */
+            background-color: #f8f9fa; /* Lighter gray */
             border-radius: 0 8px 8px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: left 0.3s ease;
-            z-index: 100;
+            transition: left 0.3s ease-in-out;
+            z-index: 100; /* Above chart */
+            border-left: 1px solid #dee2e6;
         }
         .sidebar.active {
-            left: 0;
+            left: 0; /* Slide in */
         }
         .sidebar-content {
-            padding: 20px;
+            padding: 25px;
             position: relative;
         }
         .sidebar-close {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background-color: #e0e0e0;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            background-color: #e9ecef; /* Slightly darker gray */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.2s;
             font-weight: bold;
             border: none;
-            font-size: 16px;
+            font-size: 18px;
+            color: #495057;
         }
         .sidebar-close:hover {
-            background-color: #d0d0d0;
+            background-color: #ced4da;
+            transform: rotate(90deg);
         }
         .sidebar-image {
             width: 100%;
             height: auto;
+            max-height: 200px; /* Limit image height */
+            object-fit: cover; /* Cover the area */
             margin-bottom: 15px;
-            border-radius: 4px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
         }
         .sidebar-title {
-            font-size: 24px;
-            margin-bottom: 15px;
-            padding-right: 40px;
-            color: #333;
+            font-size: 1.6rem; /* Larger title */
+            margin-bottom: 10px; /* Reduced margin */
+            padding-right: 40px; /* Space for close button */
+            color: #212529; /* Darker text */
+            font-weight: 600;
         }
         .sidebar-subtitle {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #495057; /* Medium gray */
+            font-weight: 500;
         }
         .sidebar-text {
-            line-height: 1.6;
+            line-height: 1.7; /* More spacing */
             margin-bottom: 20px;
+            color: #343a40;
+            font-size: 0.95rem;
         }
-        #chart-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        svg {
-            width: 100%;
-            height: 100%;
-            margin: 0 auto;
-        }
+
+        /* Chart Segment Styling */
         .segment {
             cursor: pointer;
-            transition: opacity 0.3s;
+            transition: opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
+            stroke: rgba(0,0,0,0.1); /* Subtle stroke for separation */
+            stroke-width: 0.5px;
         }
         .segment:hover {
-            opacity: 0.8;
+            opacity: 0.85;
+            filter: brightness(1.1); /* Slightly brighten on hover */
         }
+
+        /* Tooltip Styling */
         .tooltip {
             position: absolute;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             border-radius: 4px;
-            pointer-events: none;
+            pointer-events: none; /* Don't interfere with mouse events */
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.2s ease-in-out;
+            font-size: 0.85rem;
+            z-index: 110; /* Above sidebar */
+            white-space: nowrap; /* Prevent wrapping */
         }
+
+        /* Legend Styling */
         .legend {
-    position: absolute;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    padding: 10px 15px;
-    max-width: 300px;
-    max-height: 70vh;
-    overflow-y: auto;
-    z-index: 90;
-    right: 20px;
-    bottom: 20px;
-    transition: opacity 0.3s ease;
-}
+            position: absolute;
+            display: flex;
+            flex-direction: column; /* Stack header and content */
+            gap: 0px; /* No gap between header/content initially */
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly more opaque */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            padding: 0; /* Padding handled by inner elements */
+            max-width: 280px; /* Slightly narrower */
+            max-height: 70vh; /* Limit height */
+            /* overflow: hidden; */ /* Let content manage overflow */
+            z-index: 90; /* Below sidebar */
+            right: 20px; /* Default position */
+            bottom: 20px;
+            transition: opacity 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #dee2e6;
+        }
 
-.legend-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
-}
+        .legend-drag-handle {
+            cursor: move;
+            width: 100%;
+            height: 18px; /* Taller handle */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f1f3f5; /* Light gray handle background */
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 8px 8px 0 0; /* Rounded top corners */
+            box-sizing: border-box;
+        }
 
-.legend-title {
-    font-weight: bold;
-    font-size: 14px;
-    margin: 0;
-}
+        .legend-drag-handle:before {
+            content: "";
+            width: 40px; /* Wider drag indicator */
+            height: 5px;
+            background-color: #adb5bd; /* Darker indicator */
+            border-radius: 3px;
+        }
 
-.legend-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    color: #555;
-    padding: 2px 5px;
-    transition: color 0.2s;
-}
+        .legend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 8px 12px; /* Padding for header */
+            box-sizing: border-box;
+            border-bottom: 1px solid #e9ecef; /* Separator line */
+        }
 
-.legend-toggle:hover {
-    color: #333;
-}
+        .legend-title {
+            font-weight: 600; /* Bolder */
+            font-size: 1rem; /* Larger */
+            margin: 0;
+            color: #343a40;
+        }
 
-.legend-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-}
+        .legend-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem; /* Larger icon */
+            color: #495057;
+            padding: 0 5px;
+            line-height: 1;
+            transition: color 0.2s, transform 0.2s;
+        }
 
-.legend-category {
-    margin-top: 5px;
-    font-weight: bold;
-    font-size: 13px;
-    color: #555;
-}
+        .legend-toggle:hover {
+            color: #212529;
+            transform: scale(1.1);
+        }
 
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-}
+        .legend-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            padding: 12px; /* Padding for content */
+            box-sizing: border-box;
+            max-height: calc(70vh - 80px); /* Adjust based on header/handle height */
+            overflow-y: auto; /* Scroll if content exceeds max height */
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out; /* Smooth transition */
+        }
 
-.legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    flex-shrink: 0;
-}
+        .legend-category {
+            margin-top: 5px;
+            margin-bottom: 3px; /* Space before items */
+            font-weight: 600; /* Bolder category */
+            font-size: 0.9rem;
+            color: #0056b3; /* Use a distinct color */
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 3px;
+        }
+        .legend-category:first-child {
+            margin-top: 0;
+        }
 
-.legend-minimized {
-    max-height: 40px;
-    overflow: hidden;
-}
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* More space */
+            font-size: 0.85rem;
+            color: #495057;
+        }
 
-/* Optional: Add a drag handle */
-.legend-drag-handle {
-    cursor: move;
-    width: 100%;
-    height: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 5px;
-}
+        .legend-color {
+            width: 14px; /* Larger color box */
+            height: 14px;
+            border-radius: 3px;
+            flex-shrink: 0;
+            border: 1px solid rgba(0,0,0,0.1); /* Subtle border */
+        }
 
-.legend-drag-handle:before {
-    content: "";
-    width: 30px;
-    height: 4px;
-    background-color: #ddd;
-    border-radius: 2px;
-}
+        /* Minimized state for legend content */
+        .legend-content.legend-minimized {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden;
+            border-top: none; /* Hide border when minimized */
+        }
 
+        /* Sidebar Tab Styling */
         .content-tabs {
             display: flex;
             flex-wrap: wrap;
-            margin-bottom: 15px;
-            gap: 5px;
+            margin-bottom: 20px; /* More space below tabs */
+            gap: 8px;
+            border-bottom: 1px solid #dee2e6; /* Separator line */
+            padding-bottom: 10px;
         }
         .tab-button {
-            padding: 8px 12px;
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 8px 15px; /* More padding */
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            border-radius: 20px; /* Pill shape */
             cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #495057;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .tab-button.active {
-            background-color: #4169E1;
+            background-color: #007bff; /* Use a standard primary blue */
             color: white;
-            border-color: #4169E1;
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
         }
         .tab-button:hover:not(.active) {
-            background-color: #e0e0e0;
+            background-color: #ced4da;
+            border-color: #adb5bd;
         }
         .content-section {
-            display: none;
+            display: none; /* Hide inactive tabs */
         }
         .content-section.active {
             display: block;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.4s ease; /* Slightly longer fade */
         }
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Arrow and Connector Styling */
         .arrow {
-            filter: drop-shadow(0px 0px 2px rgba(0,0,0,0.5));
+            filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.3)); /* Subtle shadow */
         }
         .connector {
-            filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.3));
+            filter: drop-shadow(0px 0px 2px rgba(0,0,0,0.2));
         }
+
+        /* Zoom Controls Styling */
+        .zoom-controls {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 50; /* Below legend/sidebar */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .zoom-button {
+            width: 40px;
+            height: 40px;
+            font-size: 20px; /* Adjusted size */
+            font-weight: bold;
+            border-radius: 50%;
+            border: 1px solid #ced4da;
+            background-color: white;
+            color: #495057;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        .zoom-button:hover {
+            background-color: #f1f3f5;
+            border-color: #adb5bd;
+        }
+        .zoom-button:active {
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            transform: scale(0.95);
+        }
+
+        /* Zoom Indicator Styling */
+        #zoom-indicator {
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            padding: 6px 12px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0; /* Start hidden */
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        /* Label Styling */
+        .label-group text {
+           pointer-events: none; /* Labels shouldn't block clicks on segments */
+           font-weight: bold;
+           font-size: 12px; /* Base size, might be overridden */
+           fill: #fff; /* Default fill */
+        }
+        .label-group .label-shadow {
+           stroke: rgba(0,0,0,0.6); /* Shadow color */
+           stroke-width: 3px; /* Shadow thickness */
+           stroke-linejoin: round;
+           fill: none; /* Shadow is just the stroke */
+        }
+
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Interactive Nested Pie Chart</h1>
-    
+    <h1>Interactive Aviation Timeline</h1>
+
     <div class="main-container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-content" id="sidebar-content">
-                <!-- Content will be dynamically inserted here -->
-            </div>
+                </div>
         </div>
-        
-        <div id="chart-container"></div>
+
+        <div id="chart-container">
+             </div>
+
+        <div class="zoom-controls" id="zoom-controls">
+            </div>
+
+        <div id="zoom-indicator">Zoom: 100%</div>
     </div>
-    
-    <div class="legend" id="legend"></div>
-    
+
+    <div class="legend" id="legend">
+         </div>
+
     <div class="tooltip" id="tooltip"></div>
-    
+
     <script>
+        // --- Configuration ---
+        let config = {}; // Initialize config, will be populated later
 
-        // Function to calculate responsive dimensions
-        // Add these variables to store zoom and pan state
-let currentZoom = 1;
-let panOffsetX = 0;
-let panOffsetY = 0;
-let isPanning = false;
-let lastMouseX = 0;
-let lastMouseY = 0;
+        // --- State Variables ---
+        let currentZoom = 1;
+        let panOffsetX = 0;
+        let panOffsetY = 0;
+        let isPanning = false;
+        let lastPointerX = 0; // Use generic pointer coordinates
+        let lastPointerY = 0;
+        let initialPinchDistance = 0; // For pinch zoom
 
-// Initialize the chart with zoom and pan functionality
-document.addEventListener('DOMContentLoaded', () => {
-    createChart();
-    applyTransform();
-    // Make chart responsive to window resizing
-    window.addEventListener('resize', () => {
-        createChart();
-    });
-    
-    // Add zoom controls to the page
-    addZoomControls();
-    
-    // Add event listeners for zoom and pan
-    setupZoomPanEvents();
-    
-});
+        // --- DOM Elements (cache them) ---
+        let chartContainer, svgElement, chartGroup, sidebar, sidebarContent, tooltip, legendContainer, zoomIndicator;
 
-// Function to add zoom controls to the UI
-function addZoomControls() {
-    const container = document.querySelector('.main-container');
-    
-    // Create zoom controls container
-    const controlsContainer = document.createElement('div');
-    controlsContainer.className = 'zoom-controls';
-    controlsContainer.style.position = 'absolute';
-    controlsContainer.style.right = '20px';
-    controlsContainer.style.top = '20px';
-    controlsContainer.style.zIndex = '50';
-    controlsContainer.style.display = 'flex';
-    controlsContainer.style.flexDirection = 'column';
-    controlsContainer.style.gap = '5px';
-    
-    // Create zoom in button
-    const zoomInBtn = document.createElement('button');
-    zoomInBtn.textContent = '+';
-    zoomInBtn.className = 'zoom-button';
-    zoomInBtn.style.width = '40px';
-    zoomInBtn.style.height = '40px';
-    zoomInBtn.style.fontSize = '24px';
-    zoomInBtn.style.borderRadius = '50%';
-    zoomInBtn.style.border = '1px solid #ccc';
-    zoomInBtn.style.backgroundColor = 'white';
-    zoomInBtn.style.cursor = 'pointer';
-    zoomInBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    
-    // Create zoom out button
-    const zoomOutBtn = document.createElement('button');
-    zoomOutBtn.textContent = '-';
-    zoomOutBtn.className = 'zoom-button';
-    zoomOutBtn.style.width = '40px';
-    zoomOutBtn.style.height = '40px';
-    zoomOutBtn.style.fontSize = '24px';
-    zoomOutBtn.style.borderRadius = '50%';
-    zoomOutBtn.style.border = '1px solid #ccc';
-    zoomOutBtn.style.backgroundColor = 'white';
-    zoomOutBtn.style.cursor = 'pointer';
-    zoomOutBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    
-    // Create reset button
-    const resetBtn = document.createElement('button');
-    resetBtn.textContent = '⟲';
-    resetBtn.className = 'zoom-button';
-    resetBtn.style.width = '40px';
-    resetBtn.style.height = '40px';
-    resetBtn.style.fontSize = '18px';
-    resetBtn.style.borderRadius = '50%';
-    resetBtn.style.border = '1px solid #ccc';
-    resetBtn.style.backgroundColor = 'white';
-    resetBtn.style.cursor = 'pointer';
-    resetBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    
-    // Add event listeners
-    zoomInBtn.addEventListener('click', () => {
-        zoomChart(0.2); // Zoom in by 20%
-    });
-    
-    zoomOutBtn.addEventListener('click', () => {
-        zoomChart(-0.2); // Zoom out by 20%
-    });
-    
-    resetBtn.addEventListener('click', resetZoomPan);
-    
-    // Add buttons to controls container
-    controlsContainer.appendChild(zoomInBtn);
-    controlsContainer.appendChild(zoomOutBtn);
-    controlsContainer.appendChild(resetBtn);
-    
-    // Add controls to container
-    container.appendChild(controlsContainer);
-    
-    // Add zoom indicator
-    const zoomIndicator = document.createElement('div');
-    zoomIndicator.id = 'zoom-indicator';
-    zoomIndicator.style.position = 'absolute';
-    zoomIndicator.style.left = '20px';
-    zoomIndicator.style.bottom = '20px';
-    zoomIndicator.style.padding = '5px 10px';
-    zoomIndicator.style.backgroundColor = 'rgba(0,0,0,0.6)';
-    zoomIndicator.style.color = 'white';
-    zoomIndicator.style.borderRadius = '4px';
-    zoomIndicator.style.fontSize = '14px';
-    zoomIndicator.style.transition = 'opacity 0.3s';
-    zoomIndicator.style.opacity = '0';
-    zoomIndicator.style.zIndex = '50';
-    zoomIndicator.textContent = 'Zoom: 100%';
-    
-    container.appendChild(zoomIndicator);
-}
-
-// Setup zoom and pan event listeners
-function setupZoomPanEvents() {
-    const chartContainer = document.getElementById('chart-container');
-    const svg = chartContainer.querySelector('svg');
-    
-    // Wheel event for zooming
-    chartContainer.addEventListener('wheel', function(event) {
-        event.preventDefault();
-        
-        // Determine zoom direction based on wheel delta
-        const zoomDelta = event.deltaY < 0 ? 0.1 : -0.1;
-        
-        // Get mouse position relative to SVG
-        const rect = svg.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-        
-        // Zoom at mouse position
-        zoomChartAtPoint(zoomDelta, mouseX, mouseY);
-    });
-    
-    // Mouse events for panning
-    chartContainer.addEventListener('mousedown', function(event) {
-        // Only enable panning if we're zoomed in
-        if (currentZoom > 1) {
-            isPanning = true;
-            lastMouseX = event.clientX;
-            lastMouseY = event.clientY;
-            chartContainer.style.cursor = 'grabbing';
+        // --- Placeholder Image Handling ---
+        const placeholderBase = "https://placehold.co";
+        function getPlaceholderUrl(width = 400, height = 250, text = "Image") {
+            return `${placeholderBase}/${width}x${height}/EBF0F5/777?text=${encodeURIComponent(text)}`;
         }
-    });
-    
-    document.addEventListener('mousemove', function(event) {
-        if (isPanning) {
-            // Calculate how much the mouse has moved
-            const deltaX = event.clientX - lastMouseX;
-            const deltaY = event.clientY - lastMouseY;
-            
-            // Update last mouse position
-            lastMouseX = event.clientX;
-            lastMouseY = event.clientY;
-            
-            // Update pan offset
-            panOffsetX += deltaX;
-            panOffsetY += deltaY;
-            
-            // Apply transform to chart
+        function handleImageError(imgElement) {
+            console.warn(`Image failed to load: ${imgElement.src}. Using placeholder.`);
+            imgElement.src = getPlaceholderUrl(300, 180, 'Not Found');
+            imgElement.onerror = null; // Prevent infinite loop if placeholder fails
+        }
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cache DOM elements
+            chartContainer = document.getElementById('chart-container');
+            sidebar = document.getElementById('sidebar');
+            sidebarContent = document.getElementById('sidebar-content');
+            tooltip = document.getElementById('tooltip');
+            legendContainer = document.getElementById('legend');
+            zoomIndicator = document.getElementById('zoom-indicator');
+
+            // Initial setup
+            initializeConfig(); // Setup initial config data
+            createChart();      // Create the SVG chart
+            addZoomControls();  // Add UI buttons
+            setupEventListeners(); // Setup zoom, pan, click, resize listeners
+
+            // Apply initial transform state (usually 1, 0, 0)
             applyTransform();
-        }
-    });
-    
-    document.addEventListener('mouseup', function() {
-        if (isPanning) {
-            isPanning = false;
-            chartContainer.style.cursor = 'default';
-        }
-    });
-    
-    // Double-click to reset zoom and pan
-    chartContainer.addEventListener('dblclick', resetZoomPan);
-    
-    // Add touch support for mobile devices
-    chartContainer.addEventListener('touchstart', function(event) {
-        if (event.touches.length === 1) {
-            isPanning = true;
-            lastMouseX = event.touches[0].clientX;
-            lastMouseY = event.touches[0].clientY;
-        }
-    });
-    
-    chartContainer.addEventListener('touchmove', function(event) {
-        if (isPanning && event.touches.length === 1) {
-            const deltaX = event.touches[0].clientX - lastMouseX;
-            const deltaY = event.touches[0].clientY - lastMouseY;
-            
-            lastMouseX = event.touches[0].clientX;
-            lastMouseY = event.touches[0].clientY;
-            
-            panOffsetX += deltaX;
-            panOffsetY += deltaY;
-            
-            applyTransform();
-            event.preventDefault();
-        }
-    });
-    
-    chartContainer.addEventListener('touchend', function() {
-        isPanning = false;
-    });
-    
-    // Add pinch zoom for mobile
-    let initialPinchDistance = 0;
-    
-    chartContainer.addEventListener('touchstart', function(event) {
-        if (event.touches.length === 2) {
-            initialPinchDistance = getPinchDistance(event);
-        }
-    });
-    
-    chartContainer.addEventListener('touchmove', function(event) {
-        if (event.touches.length === 2) {
-            const currentDistance = getPinchDistance(event);
-            const delta = currentDistance - initialPinchDistance;
-            
-            if (Math.abs(delta) > 5) {
-                const zoomDelta = delta > 0 ? 0.05 : -0.05;
-                
-                // Calculate center point between fingers as zoom center
-                const centerX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
-                const centerY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
-                
-                // Convert to SVG coordinates
-                const rect = svg.getBoundingClientRect();
-                const svgX = centerX - rect.left;
-                const svgY = centerY - rect.top;
-                
-                zoomChartAtPoint(zoomDelta, svgX, svgY);
-                
-                initialPinchDistance = currentDistance;
-                event.preventDefault();
-            }
-        }
-    });
-}
+        });
 
-// Calculate distance between two touch points
-function getPinchDistance(event) {
-    return Math.hypot(
-        event.touches[0].clientX - event.touches[1].clientX,
-        event.touches[0].clientY - event.touches[1].clientY
-    );
-}
-
-// Zoom chart by a delta amount
-function zoomChart(delta) {
-    // Calculate new zoom level with limits
-const newZoom = Math.max(0.2, Math.min(10, currentZoom + delta));
-    
-    // Only update if zoom level changed
-    if (newZoom !== currentZoom) {
-        // Get SVG dimensions
-        const chartContainer = document.getElementById('chart-container');
-        const svg = chartContainer.querySelector('svg');
-        const rect = svg.getBoundingClientRect();
-        
-        // Zoom at center of chart
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        zoomChartAtPoint(newZoom - currentZoom, centerX, centerY);
-    }
-}
-
-// Zoom chart at a specific point
-function zoomChartAtPoint(zoomDelta, pointX, pointY) {
-    // Calculate new zoom level with limits
-    const newZoom = Math.max(1, Math.min(5, currentZoom + zoomDelta));
-    
-    // Only proceed if zoom level changed
-    if (newZoom !== currentZoom) {
-        // Get chart container and SVG
-        const chartContainer = document.getElementById('chart-container');
-        const svg = chartContainer.querySelector('svg');
-        
-        // Calculate how the point will move after zoom
-        const zoomRatio = newZoom / currentZoom;
-        
-        // Adjust pan offset to keep the point under mouse stable
-        panOffsetX = pointX - (pointX - panOffsetX) * zoomRatio;
-        panOffsetY = pointY - (pointY - panOffsetY) * zoomRatio;
-        
-        // Update current zoom
-        currentZoom = newZoom;
-        
-        // Apply the transformation
-        applyTransform();
-        
-        // Update zoom indicator
-        updateZoomIndicator();
-    }
-}
-
-// Apply transformation to chart
-function applyTransform() {
-    const chartGroup = document.querySelector('#chart-container svg > g');
-    
-    if (chartGroup) {
-        // Get chart dimensions
-        const chartContainer = document.getElementById('chart-container');
-        const svg = chartContainer.querySelector('svg');
-        const width = svg.getAttribute('width') || svg.width.baseVal.value;
-        const height = svg.getAttribute('height') || svg.height.baseVal.value;
-        
-        // Calculate center point
-        const centerX = parseFloat(svg.getAttribute('viewBox').split(' ')[2]) / 2;
-        const centerY = parseFloat(svg.getAttribute('viewBox').split(' ')[3]) / 2;
-        
-        // Apply transform to the chart group
-        chartGroup.setAttribute('transform', 
-            `translate(${panOffsetX}, ${panOffsetY}) scale(${currentZoom})`);
-        
-        // Update cursor based on zoom level
-        chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
-    }
-}
-
-// Reset zoom and pan to initial state
-function resetZoomPan() {
-    currentZoom = 1;
-    panOffsetX = 0;
-    panOffsetY = 0;
-    
-    applyTransform();
-    updateZoomIndicator();
-    
-    const chartContainer = document.getElementById('chart-container');
-    chartContainer.style.cursor = 'default';
-}
-
-// Update zoom indicator with current zoom level
-function updateZoomIndicator() {
-    const indicator = document.getElementById('zoom-indicator');
-    
-    // Show zoom level
-    indicator.textContent = `Zoom: ${Math.round(currentZoom * 100)}%`;
-    
-    // Make indicator visible and then fade out
-    indicator.style.opacity = '1';
-    
-    clearTimeout(indicator.fadeTimeout);
-    indicator.fadeTimeout = setTimeout(() => {
-        indicator.style.opacity = '0';
-    }, 1500);
-}
-        function getResponsiveDimensions() {
-            const container = document.getElementById('chart-container');
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-            const size = Math.min(width, height);
-            return {
-                width: size,
-                height: size,
-                centerX: size / 2,
-                centerY: size / 2
+        // --- Configuration Setup ---
+        function initializeConfig() {
+            const dimensions = getResponsiveDimensions();
+            config = {
+                ...dimensions, // width, height, centerX, centerY
+                rings: [
+                    // Ring data (outermost first)
+                    {
+                        name: "Dream of Flight", // Changed name for clarity
+                        radius: 200, // Base radius, will be scaled
+                        color: "#8A2BE2", // Purple
+                        segments: 3,
+                        segmentNames: ["Ancient Times (Myth & Early Ideas)", "Renaissance to Enlightenment (Concepts)", "Early Experiments (18th-19th C)"],
+                        segmentContent: [
+                            { // Segment 1: Ancient Times
+                                title: "Dream of Flight",
+                                subtitle: "Ancient Times (Myth & Early Ideas)",
+                                content: [
+                                    { title: "Icarus & Daedalus", subtitle: "c. 500s BCE (Myth)", text: "The Greek myth of Icarus and Daedalus flying with wax and feather wings embodies humanity's earliest recorded aspirations and cautionary tales about flight.", imageSrc: getPlaceholderUrl(400, 250, 'Icarus Myth') },
+                                    { title: "Kites in China", subtitle: "c. 400s BCE", text: "Early kites in China demonstrated an understanding of aerodynamic principles and were used for signaling, measuring distances, and even testing wind.", imageSrc: getPlaceholderUrl(400, 250, 'Ancient Kite') },
+                                ]
+                            },
+                            { // Segment 2: Renaissance to Enlightenment
+                                title: "Dream of Flight",
+                                subtitle: "Renaissance to Enlightenment (Concepts)",
+                                content: [
+                                    { title: "Leonardo da Vinci", subtitle: "c. 1500 CE", text: "Da Vinci's detailed sketches of flying machines (ornithopters, helicopters, gliders) based on bird flight marked a shift towards scientific observation, though none were built.", imageSrc: getPlaceholderUrl(400, 250, 'Da Vinci Sketch') },
+                                    { title: "Newton's Laws", subtitle: "1687 CE", text: "Isaac Newton's laws of motion and universal gravitation provided the fundamental physics principles necessary for understanding lift and flight dynamics.", imageSrc: getPlaceholderUrl(400, 250, 'Newton Laws') },
+                                ]
+                            },
+                            { // Segment 3: Early Experiments
+                                title: "Dream of Flight",
+                                subtitle: "Early Experiments (18th-19th C)",
+                                content: [
+                                    { title: "Montgolfier Brothers", subtitle: "1783 CE", text: "The Montgolfier brothers achieved the first untethered human flight in a hot air balloon, demonstrating lighter-than-air flight.", imageSrc: getPlaceholderUrl(400, 250, 'Montgolfier Balloon') },
+                                    { title: "Sir George Cayley", subtitle: "Early 1800s CE", text: "Often called the 'Father of Aviation', Cayley identified the four forces of flight (lift, drag, thrust, weight) and designed early gliders, separating lift and propulsion.", imageSrc: getPlaceholderUrl(400, 250, 'Cayley Glider') },
+                                ]
+                            }
+                        ]
+                    },
+                    { // Connector Ring 1
+                        name: "Transition to Powered Flight",
+                        color: "#7D59D9", // Mix of purple and blue
+                        isConnector: true,
+                        arrowCount: 12,
+                        thickness: 7
+                    },
+                    { // Ring 2: Powered Flight Era
+                        name: "Powered Flight Era",
+                        radius: 150,
+                        color: "#4169E1", // Blue
+                        segments: 4,
+                        segmentNames: ["Pioneers (1900s-1910s)", "World War I (1914-1918)", "Golden Age (1920s-1930s)", "World War II (1939-1945)"],
+                        segmentContent: [
+                            { // Segment 1: Pioneers
+                                title: "Powered Flight Era",
+                                subtitle: "Pioneers (1900s-1910s)",
+                                content: [
+                                    { title: "Wright Brothers", subtitle: "1903 CE", text: "Orville and Wilbur Wright achieved the first sustained, controlled, powered heavier-than-air flight at Kitty Hawk, North Carolina.", imageSrc: getPlaceholderUrl(400, 250, 'Wright Flyer') },
+                                    { title: "Louis Blériot", subtitle: "1909 CE", text: "Blériot made the first flight across the English Channel, demonstrating the potential of aircraft for transportation and crossing natural barriers.", imageSrc: getPlaceholderUrl(400, 250, 'Bleriot XI') },
+                                ]
+                            },
+                            { // Segment 2: WWI
+                                title: "Powered Flight Era",
+                                subtitle: "World War I (1914-1918)",
+                                content: [
+                                    { title: "Rapid Advancement", subtitle: "Military Needs", text: "WWI dramatically accelerated aircraft development. Planes evolved from reconnaissance tools to fighters and bombers, with improvements in engines, structures, and armament.", imageSrc: getPlaceholderUrl(400, 250, 'WWI Biplane') },
+                                    { title: "Ace Pilots", subtitle: "Air Combat", text: "The era saw the rise of 'ace' pilots like Manfred von Richthofen (Red Baron), popularizing aviation and driving tactical innovation.", imageSrc: getPlaceholderUrl(400, 250, 'Red Baron') },
+                                ]
+                            },
+                            { // Segment 3: Golden Age
+                                title: "Powered Flight Era",
+                                subtitle: "Golden Age (1920s-1930s)",
+                                content: [
+                                    { title: "Air Mail & Airlines", subtitle: "Commercial Growth", text: "Barnstorming, air races, and the establishment of air mail routes fueled public interest and led to the formation of the first passenger airlines.", imageSrc: getPlaceholderUrl(400, 250, 'Ford Trimotor') },
+                                    { title: "Lindbergh's Flight", subtitle: "1927 CE", text: "Charles Lindbergh's solo non-stop flight across the Atlantic Ocean captivated the world and symbolized the potential of long-distance aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Spirit of St Louis') },
+                                    { title: "Amelia Earhart", subtitle: "Record Breaking", text: "Amelia Earhart became a global icon, breaking numerous aviation records and advocating for women in aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Amelia Earhart') },
+                                ]
+                            },
+                            { // Segment 4: WWII
+                                title: "Powered Flight Era",
+                                subtitle: "World War II (1939-1945)",
+                                content: [
+                                    { title: "Mass Production", subtitle: "Industrial Scale", text: "WWII saw unprecedented mass production of aircraft like the B-17 Flying Fortress and P-51 Mustang. Strategic bombing and carrier operations became crucial.", imageSrc: getPlaceholderUrl(400, 250, 'B-17 Bomber') },
+                                    { title: "Jet Engine Emergence", subtitle: "New Propulsion", text: "Germany and Britain developed the first operational jet aircraft (Me 262, Gloster Meteor) near the war's end, heralding a new era of speed.", imageSrc: getPlaceholderUrl(400, 250, 'Me 262 Jet') },
+                                ]
+                            }
+                        ]
+                    },
+                    { // Connector Ring 2
+                        name: "Transition to Jet Age",
+                        color: "#3A98B9", // Mix of blue and green
+                        isConnector: true,
+                        arrowCount: 8,
+                        thickness: 7
+                    },
+                    { // Ring 3: Jet Age & Space Race
+                        name: "Jet Age & Space Race",
+                        radius: 100,
+                        color: "#32CD32", // Green
+                        segments: 3,
+                        segmentNames: ["Early Jet Age (1945-1960s)", "Supersonic & Jumbo Jets (1960s-1970s)", "Modern Aviation (1980s-Present)"],
+                        segmentContent: [
+                            { // Segment 1: Early Jet Age
+                                title: "Jet Age & Space Race",
+                                subtitle: "Early Jet Age (1945-1960s)",
+                                content: [
+                                    { title: "Breaking Sound Barrier", subtitle: "1947 CE", text: "Chuck Yeager, piloting the Bell X-1, became the first human to officially break the sound barrier in level flight.", imageSrc: getPlaceholderUrl(400, 250, 'Bell X-1') },
+                                    { title: "Jet Airliners", subtitle: "De Havilland Comet, Boeing 707", text: "The introduction of jet airliners like the Comet and 707 revolutionized air travel, making it faster and more accessible.", imageSrc: getPlaceholderUrl(400, 250, 'Boeing 707') },
+                                    { title: "Space Race Begins", subtitle: "Sputnik & NASA", text: "The launch of Sputnik (1957) and the formation of NASA (1958) marked the beginning of the space race, heavily influencing aerospace technology.", imageSrc: getPlaceholderUrl(400, 250, 'Sputnik') },
+                                ]
+                            },
+                            { // Segment 2: Supersonic & Jumbos
+                                title: "Jet Age & Space Race",
+                                subtitle: "Supersonic & Jumbo Jets (1960s-1970s)",
+                                content: [
+                                    { title: "Apollo Moon Landing", subtitle: "1969 CE", text: "The Apollo 11 mission successfully landed humans on the Moon, a monumental achievement in aerospace engineering.", imageSrc: getPlaceholderUrl(400, 250, 'Apollo 11') },
+                                    { title: "Boeing 747 'Jumbo Jet'", subtitle: "1969 CE", text: "The arrival of the wide-body Boeing 747 significantly increased passenger capacity and lowered airfare costs, enabling mass air travel.", imageSrc: getPlaceholderUrl(400, 250, 'Boeing 747') },
+                                    { title: "Concorde SST", subtitle: "1976 CE", text: "The Concorde offered supersonic passenger travel, though its high operating costs and environmental concerns limited its success.", imageSrc: getPlaceholderUrl(400, 250, 'Concorde') },
+                                ]
+                            },
+                            { // Segment 3: Modern Aviation
+                                title: "Jet Age & Space Race",
+                                subtitle: "Modern Aviation (1980s-Present)",
+                                content: [
+                                    { title: "Fly-by-Wire & Composites", subtitle: "Airbus A320, Boeing 777/787", text: "Advanced digital flight controls (fly-by-wire) and the use of lightweight composite materials improved efficiency and performance.", imageSrc: getPlaceholderUrl(400, 250, 'Airbus A320 Cockpit') },
+                                    { title: "GPS Navigation", subtitle: "Satellite Tech", text: "Global Positioning System (GPS) revolutionized navigation, making flights safer and more direct.", imageSrc: getPlaceholderUrl(400, 250, 'GPS Satellite') },
+                                    { title: "UAVs / Drones", subtitle: "Unmanned Systems", text: "The development and proliferation of Unmanned Aerial Vehicles (drones) have created new applications in military, commercial, and recreational sectors.", imageSrc: getPlaceholderUrl(400, 250, 'Drone') },
+                                ]
+                            }
+                        ]
+                    },
+                     { // Connector Ring 3
+                        name: "Future Directions",
+                        color: "#91B93A", // Mix of green and orange/red
+                        isConnector: true,
+                        arrowCount: 6,
+                        thickness: 6
+                    },
+                    { // Ring 4: Core/Future (Innermost)
+                        name: "Future of Flight",
+                        radius: 50,
+                        color: "#FF7F50", // Coral/Orange
+                        segments: 1, // Single segment for the center
+                        segmentNames: ["Emerging Technologies"],
+                        segmentContent: [
+                            { // Center Segment
+                                title: "Future of Flight",
+                                subtitle: "Emerging Technologies",
+                                content: [
+                                    { title: "Sustainable Aviation", subtitle: "Electric & Hydrogen", text: "Focus on reducing environmental impact through electric propulsion, hydrogen fuel, and sustainable aviation fuels (SAFs).", imageSrc: getPlaceholderUrl(400, 250, 'Electric Plane Concept') },
+                                    { title: "Urban Air Mobility", subtitle: "eVTOLs", text: "Development of electric Vertical Takeoff and Landing (eVTOL) aircraft aims to provide short-distance urban air transportation.", imageSrc: getPlaceholderUrl(400, 250, 'eVTOL Concept') },
+                                    { title: "Hypersonic Travel", subtitle: "Mach 5+", text: "Research into hypersonic flight promises drastically reduced travel times for long-distance journeys.", imageSrc: getPlaceholderUrl(400, 250, 'Hypersonic Concept') },
+                                    { title: "Space Tourism", subtitle: "Commercial Spaceflight", text: "Companies are developing reusable rockets and spacecraft to make space travel accessible for tourism and commercial purposes.", imageSrc: getPlaceholderUrl(400, 250, 'Space Tourism Rocket') },
+                                ]
+                            }
+                        ]
+                    }
+                ]
             };
         }
-        
-        // Calculate the radius for connector rings (halfway between two main rings)
-        function calculateConnectorRadius(outerRingRadius, innerRingRadius) {
-            return (outerRingRadius + innerRingRadius) / 2;
+
+        // --- Responsive Dimensions ---
+        function getResponsiveDimensions() {
+            const containerWidth = chartContainer.clientWidth;
+            const containerHeight = chartContainer.clientHeight;
+            // Use padding inside the container for the chart
+            const padding = Math.min(containerWidth, containerHeight) * 0.05; // 5% padding
+            const size = Math.min(containerWidth - 2 * padding, containerHeight - 2 * padding);
+            return {
+                width: containerWidth, // SVG takes full container width
+                height: containerHeight, // SVG takes full container height
+                chartSize: size, // Actual chart drawing area size
+                centerX: containerWidth / 2, // Center based on container
+                centerY: containerHeight / 2, // Center based on container
+            };
         }
-        
-        // Configuration
-        const config = {
-            ...getResponsiveDimensions(),
-            // Rings data with content for sidebar
-            rings: [
-                {
-                    name: "Humanity's Dream of Flight",
-                    radius: 200,
-                    color: "#8A2BE2",
-                    segments: 3,
-                    segmentNames: ["500s BCE to 1599s CE", "1600 CE to 1799s CE", "1800s CE to 1945 CE"],
-                    segmentContent: [
-                        {
-                            title: "Humanity's Dream of Flight",
-                            subtitle: "500s BCE to 1599s CE",
-                            content: [
-                                {
-                                    title: "The Myth of Icarus and Daedalus",
-                                    subtitle: "500s BCE", 
-                                    text: "This is the first segment of the purple outer ring discussing humanity's early dreams of flight through mythology. The story of Icarus and Daedalus represents one of the earliest human expressions of the desire to fly.",
-                                    imageSrc: "..img/icarus.jpg"
-                                },
-                                {
-                                    title: "Secondary Analysis",
-                                    text: "Additional analysis for Purple Section A shows increasing engagement metrics over the past quarter. User retention is up by 15% and customer satisfaction scores have improved significantly.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                },
-                                {
-                                    title: "Future Projections",
-                                    text: "Based on current trends, we project continued growth in this segment. The roadmap includes three major feature releases that should further accelerate adoption and engagement.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        },
-                        {
-                            title: "Humanity's Dream of Flight",
-                            subtitle: "1600 CE to 1799s CE",
-                            content: [
-                                {
-                                    title: "Early Flight Experiments",
-                                    subtitle: "1600s-1700s",
-                                    text: "The second segment of the purple outer ring focuses on early scientific approaches to flight. This period saw the first serious attempts to understand the principles of aviation and aerodynamics.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        },
-                        {
-                            title: "Humanity's Dream of Flight",
-                            subtitle: "1800s CE to 1945 CE",
-                            content: [
-                                {
-                                    title: "The Age of Aviation",
-                                    subtitle: "1800s-1945",
-                                    text: "The third segment of the purple ring covers the birth of modern aviation. This segment represents the breakthrough period when human flight became reality, from early gliders to powered aircraft and eventually jet engines.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
+
+        // --- Chart Creation ---
+        function createChart() {
+            // Update dimensions based on current container size
+            const dimensions = getResponsiveDimensions();
+            config = { ...config, ...dimensions }; // Update config with new dimensions
+
+            // Adjust ring radiuses based on the available chart size
+            const baseOuterRadius = 200; // The original base radius of the outermost ring
+            const scaleFactor = config.chartSize / 2 / baseOuterRadius; // Scale based on chartSize
+
+            // Clear previous SVG and references
+            chartContainer.innerHTML = '';
+            svgElement = null;
+            chartGroup = null;
+
+            // Create SVG element
+            svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            // Set viewBox based on container size for proper scaling behavior
+            svgElement.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
+            svgElement.setAttribute("width", "100%");
+            svgElement.setAttribute("height", "100%");
+            svgElement.style.backgroundColor = "#ffffff"; // Ensure SVG background is white
+            chartContainer.appendChild(svgElement);
+
+            // *** FIX: Create a single group element for ALL chart visuals ***
+            // This group will receive the zoom/pan transform.
+            chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            svgElement.appendChild(chartGroup); // Add the group to the SVG
+
+            // Process rings: Scale radius and calculate connector radius
+            let lastContentRingRadius = 0;
+            config.rings.forEach((ring, index) => {
+                if (!ring.isConnector) {
+                    ring.scaledRadius = ring.radius * scaleFactor;
+                    lastContentRingRadius = ring.scaledRadius; // Keep track for next connector/inner ring
+                } else {
+                    // Find the *next* content ring to determine the inner boundary for the connector
+                    let nextContentRingRadius = 0;
+                    for (let j = index + 1; j < config.rings.length; j++) {
+                        if (!config.rings[j].isConnector) {
+                            // Scale the next ring's radius first if not already done (should be)
+                            config.rings[j].scaledRadius = config.rings[j].radius * scaleFactor;
+                            nextContentRingRadius = config.rings[j].scaledRadius;
+                            break;
                         }
-                    ]
-                },
-                // Connector ring between Purple and Blue - we'll calculate the radius dynamically
-                {
-                    name: "Purple-Blue Connector",
-                    // Radius will be calculated dynamically based on adjacent rings
-                    color: "#7D59D9", // Mix of purple and blue
-                    isConnector: true,
-                    arrowCount: 12, // Number of arrows around the circle
-                    thickness: 7 // Increased thickness for better visibility
-                },
-                {
-                    name: "Blue",
-                    radius: 150,
-                    color: "#4169E1",
-                    segments: 4,
-                    segmentNames: ["Blue 1", "Blue 2", "Blue 3", "Blue 4"],
-                    segmentContent: [
-                        {
-                            title: "Blue Section 1",
-                            subtitle: "Second Ring - First Segment",
-                            content: [
-                                {
-                                    title: "Blue Section 1 Detail",
-                                    text: "The first segment of the blue ring represents subcategory A-1. This section contains detailed metrics about specific projects, teams, and initiatives within this subcategory.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        },
-                        {
-                            title: "Blue Section 2",
-                            subtitle: "Second Ring - Second Segment",
-                            content: [
-                                {
-                                    title: "Blue Section 2 Detail",
-                                    text: "The second segment of the blue ring focuses on subcategory A-2. Here we can see performance metrics, resource allocation, and timeline projections for ongoing projects.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        },
-                        {
-                            title: "Blue Section 3", 
-                            subtitle: "Second Ring - Third Segment",
-                            content: [
-                                {
-                                    title: "Blue Section 3 Detail",
-                                    text: "Blue section 3 represents subcategory A-3, highlighting our third major focus area. The data shows comparative analysis between current and previous quarters with trend indicators.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        },
-                        {
-                            title: "Blue Section 4",
-                            subtitle: "Second Ring - Fourth Segment",
-                            content: [
-                                {
-                                    title: "Blue Section 4 Detail",
-                                    text: "The fourth segment of the blue ring covers subcategory A-4. This section aggregates feedback data and satisfaction scores from multiple sources, providing a comprehensive overview.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                // Connector ring between Blue and Green - we'll calculate the radius dynamically
-                {
-                    name: "Blue-Green Connector",
-                    // Radius will be calculated dynamically based on adjacent rings
-                    color: "#3A98B9", // Mix of blue and green
-                    isConnector: true,
-                    arrowCount: 8, // Number of arrows around the circle
-                    thickness: 7 // Increased thickness for better visibility
-                },
-                {
-                    name: "Green",
-                    radius: 100,
-                    color: "#32CD32",
-                    segments: 3,
-                    segmentNames: ["Green I", "Green II", "Green III"],
-                    segmentContent: [
-                        {
-                            title: "Green Section I",
-                            subtitle: "Third Ring - First Segment",
-                            content: [
-                                {
-                                    title: "Green Section I Detail",
-                                    text: "The first segment of the green ring focuses on implementation details and technical specifics. This section provides in-depth analysis of operational data and system performance.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        },
-                        {
-                            title: "Green Section II",
-                            subtitle: "Third Ring - Second Segment",
-                            content: [
-                                {
-                                    title: "Green Section II Detail",
-                                    text: "Green section 2 represents our financial metrics and resource utilization data. The visualizations here track budget allocation, expenditures, and return on investment across different initiatives.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        },
-                        {
-                            title: "Green Section III",
-                            subtitle: "Third Ring - Third Segment",
-                            content: [
-                                {
-                                    title: "Green Section III Detail",
-                                    text: "The third segment of the green ring contains information about market analysis and competitive positioning. This section highlights our strengths, opportunities, and areas for improvement.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                // Connector ring between Green and Red - we'll calculate the radius dynamically
-                {
-                    name: "Green-Red Connector",
-                    // Radius will be calculated dynamically based on adjacent rings
-                    color: "#91B93A", // Mix of green and red
-                    isConnector: true,
-                    arrowCount: 6, // Number of arrows around the circle
-                    thickness: 6 // Increased thickness for better visibility
-                },
-                {
-                    name: "Red (Inner)",
-                    radius: 50,
-                    color: "#FF4500",
-                    segments: 1,
-                    segmentNames: ["Core"],
-                    segmentContent: [
-                        {
-                            title: "Red Center",
-                            subtitle: "Core Element",
-                            content: [
-                                {
-                                    title: "Core Values",
-                                    text: "The red center circle represents our core values and mission. It sits at the heart of everything we do and connects all the other elements in our organizational structure. This central element emphasizes our commitment to quality, innovation, and customer satisfaction.",
-                                    imageSrc: "/api/placeholder/400/250"
-                                }
-                            ]
-                        }
-                    ]
+                    }
+                    // Calculate connector radius halfway between adjacent content rings
+                    ring.scaledRadius = (lastContentRingRadius + nextContentRingRadius) / 2;
+                    // Scale thickness proportionally
+                    ring.scaledThickness = (ring.thickness || 5) * scaleFactor; // Default thickness if needed
                 }
-            ]
-        };
-        
-    
-        window.addEventListener("resize", () => {
-            config.width = window.innerWidth;
-            config.height = window.innerHeight;
-            config.centerX = config.width / 2;
-            config.centerY = config.height / 2;
-            createChart();
-        });
-    
+            });
 
-// Create SVG element
-function createChart() {
-    // Update dimensions based on current container size
-    const dimensions = getResponsiveDimensions();
-    config.width = dimensions.width;
-    config.height = dimensions.height;
-    config.centerX = dimensions.centerX;
-    config.centerY = dimensions.centerY;
-    
-    // Adjust ring radiuses to provide more space for labels
-    const maxRadius = Math.min(config.width, config.height) / 2 * 0.85;
-    const originalOuterRadius = 200;
-    const scale = maxRadius / originalOuterRadius;
-    
-    // Process all rings to set their scaled radius
-    config.rings.forEach(ring => {
-        // Skip connector rings as we'll calculate their radius based on adjacent rings
-        if (!ring.isConnector) {
-            ring.radius = ring.radius * scale;
-        }
-    });
-    
-    // Calculate the radiuses for connector rings based on adjacent content rings
-    for (let i = 0; i < config.rings.length; i++) {
-        if (config.rings[i].isConnector) {
-            // Find the adjacent content rings (one before and one after this connector)
-            let prevRingIndex = i - 1;
-            let nextRingIndex = i + 1;
-            
-            // Ensure we have valid content rings on both sides
-            if (prevRingIndex >= 0 && nextRingIndex < config.rings.length) {
-                const prevRing = config.rings[prevRingIndex];
-                const nextRing = config.rings[nextRingIndex];
-                
-                // Calculate the connector radius to be exactly between the two rings
-                config.rings[i].radius = calculateConnectorRadius(prevRing.radius, nextRing.radius);
-            }
-            
-            // Scale thickness proportionally
-            if (config.rings[i].thickness) {
-                config.rings[i].thickness = config.rings[i].thickness * scale;
-            }
-        }
-    }
-    
-    const container = document.getElementById('chart-container');
-    container.innerHTML = '';
-    
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
-    svg.setAttribute("width", "100%");
-    svg.setAttribute("height", "100%");
-    container.appendChild(svg);
-    
-    // Create a group element for the entire chart
-    const chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    svg.appendChild(chartGroup);
+            // Create rings and add them TO THE chartGroup
+            // Draw from inner to outer or manage z-index carefully if needed.
+            // Drawing connectors first, then content rings on top seems logical here.
 
- // CHANGED: Create rings in order to ensure proper layering
-    // First, create all content rings (from outer to inner)
-    const contentRingElements = []; // Store created elements to maintain proper layering
-    
-    config.rings.forEach((ring, ringIndex) => {
-        if (!ring.isConnector) {
-            const ringElement = createContentRing(ring, ringIndex, svg);
-            if (ringElement) {
-                contentRingElements.push({
-                    ringIndex,
-                    ringElement
-                });
-            }
-        }
-    });
-    
-    // Then, create all connector rings to appear between content rings
-    config.rings.forEach((ring, ringIndex) => {
-        if (ring.isConnector) {
-            createConnectorRing(ring, ringIndex, svg);
-        }
-    });
-    
-    // Finally, add all content ring elements to the SVG in the proper order (outer to inner)
-    contentRingElements.forEach(item => {
-        // If the element is an array (multiple paths for a segmented ring), add them all
-        if (Array.isArray(item.ringElement)) {
-            item.ringElement.forEach(el => svg.appendChild(el));
-        } else {
-            svg.appendChild(item.ringElement);
-        }
-    });
-    
-    // Create legend
-    createLegend();
-}
+            // Create connector rings first (added to chartGroup)
+            config.rings.forEach((ring, ringIndex) => {
+                if (ring.isConnector) {
+                    createConnectorRing(ring, ringIndex, chartGroup); // Pass chartGroup
+                }
+            });
 
-// Function to create content rings (both segments and labels)
-function createContentRing(ring, ringIndex, parent) {
-    const segmentAngle = 360 / ring.segments;
-    
-    // For single segment rings (like the red inner circle), create a full circle
-    if (ring.segments === 1) {
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("cx", config.centerX);
-        circle.setAttribute("cy", config.centerY);
-        circle.setAttribute("r", ring.radius);
-        circle.setAttribute("fill", ring.color);
-        circle.classList.add("segment");
-        circle.dataset.name = ring.segmentNames[0];
-        circle.dataset.ring = ring.name;
-        
-        circle.addEventListener("mousemove", showTooltip);
-        circle.addEventListener("mouseleave", hideTooltip);
-        circle.addEventListener("click", function() {
-            showSidebar(ringIndex, 0);
-        });
-        
-        parent.appendChild(circle);
-        
-        // Add label for center circle
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", config.centerX);
-        text.setAttribute("y", config.centerY);
-        text.setAttribute("text-anchor", "middle");
-        text.setAttribute("dominant-baseline", "middle");
-        text.setAttribute("fill", "#fff");
-        text.setAttribute("font-size", ring.radius / 3);
-        text.setAttribute("font-weight", "bold");
-        text.setAttribute("pointer-events", "none");
-        text.textContent = ring.segmentNames[0];
-        
-        parent.appendChild(text);
-    } else {
-        // For multi-segment rings, create arcs
-        const segmentGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        segmentGroup.classList.add("segment-group");
-        parent.appendChild(segmentGroup);
-        
-        for (let i = 0; i < ring.segments; i++) {
-            const startAngle = (i * segmentAngle) % 360;
-            const endAngle = ((i + 1) * segmentAngle) % 360;
-            
-            // Find the next non-connector ring for inner radius
-            let innerRadiusRing = null;
+             // Create content rings second (added to chartGroup, will draw over connectors)
+            config.rings.forEach((ring, ringIndex) => {
+                if (!ring.isConnector) {
+                    createContentRing(ring, ringIndex, chartGroup); // Pass chartGroup
+                }
+            });
+
+
+            // Create legend (this is outside the SVG)
+            createFloatingLegend();
+
+            // *** FIX: Apply initial transform AFTER elements are in chartGroup ***
+            applyTransform();
+        }
+
+        // --- Create Content Ring Segments ---
+        function createContentRing(ring, ringIndex, parent) { // Parent is now chartGroup
+            const segmentAngle = 360 / ring.segments;
+            const outerRadius = ring.scaledRadius;
+
+            // Find the next *content* ring's radius to define the inner boundary
+            let innerRadius = 0;
             for (let j = ringIndex + 1; j < config.rings.length; j++) {
                 if (!config.rings[j].isConnector) {
-                    innerRadiusRing = config.rings[j];
+                    innerRadius = config.rings[j].scaledRadius || 0; // Use scaledRadius
                     break;
                 }
             }
-            
-            const outerRadius = ring.radius;
-            const innerRadius = innerRadiusRing ? innerRadiusRing.radius : 0;
-            
-            // Convert degrees to radians for SVG arc
-            let startRad = (startAngle - 90) * Math.PI / 180;
-            let endRad = (endAngle - 90) * Math.PI / 180;
-            
-            // Calculate angle span
-            const angleSpan = endAngle > startAngle ? endAngle - startAngle : endAngle + 360 - startAngle;
-            const largeArcFlag = angleSpan > 180 ? 1 : 0;
-            
-            // Calculate points
-            const x1 = config.centerX + innerRadius * Math.cos(startRad);
-            const y1 = config.centerY + innerRadius * Math.sin(startRad);
-            const x2 = config.centerX + outerRadius * Math.cos(startRad);
-            const y2 = config.centerY + outerRadius * Math.sin(startRad);
-            const x3 = config.centerX + outerRadius * Math.cos(endRad);
-            const y3 = config.centerY + outerRadius * Math.sin(endRad);
-            const x4 = config.centerX + innerRadius * Math.cos(endRad);
-            const y4 = config.centerY + innerRadius * Math.sin(endRad);
-            
-            // Create path for arc
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            
-            // Define SVG path
-            const d = [
-                `M ${x2} ${y2}`,
-                `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x3} ${y3}`,
-                `L ${x4} ${y4}`,
-                `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${x1} ${y1}`,
-                "Z"
-            ].join(" ");
-            
-            path.setAttribute("d", d);
-            path.setAttribute("fill", ring.color);
-            path.classList.add("segment");
-            path.dataset.name = ring.segmentNames[i];
-            path.dataset.ring = ring.name;
-            
-            // Slightly lighten or darken segments for better visibility
-            const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
-            path.style.filter = `brightness(${brightness})`;
-            
-            path.addEventListener("mousemove", showTooltip);
-            path.addEventListener("mouseleave", hideTooltip);
-            path.addEventListener("click", function() {
-                showSidebar(ringIndex, i);
-            });
-            
-            segmentGroup.appendChild(path);
-            
-            // Add segment label with improved positioning
-            if (outerRadius - innerRadius > 30 && angleSpan > 30) {
-                // Use the exact center angle of the segment for more accurate placement
-                const midAngle = startAngle + (angleSpan / 2);
-                const midRad = (midAngle - 90) * Math.PI / 180; // -90 to align with SVG coordinate system
-                
-                // Calculate optimal radius for text - slightly biased toward outer edge for better visibility
-                const textRadius = innerRadius + (outerRadius - innerRadius) * 0.6;
-                const textX = config.centerX + textRadius * Math.cos(midRad);
-                const textY = config.centerY + textRadius * Math.sin(midRad);
-                
-                // Calculate text rotation for natural reading
-                let rotationDegrees = midAngle;
-                
-                // Adjust rotation so text is never upside down
-                if (rotationDegrees > 90 && rotationDegrees < 270) {
-                    rotationDegrees += 180;
+             // If it's the innermost ring, innerRadius remains 0 (or a small value for a hole)
+             if (ringIndex === config.rings.length -1 || innerRadius === 0) {
+                 innerRadius = outerRadius * 0.1; // Make innermost a ring, not a full circle unless specified
+                 if (ring.segments === 1) innerRadius = 0; // Allow full circle for single segment innermost
+             }
+
+
+            // Create segments
+            for (let i = 0; i < ring.segments; i++) {
+                const startAngle = i * segmentAngle;
+                const endAngle = (i + 1) * segmentAngle;
+
+                // Create arc path
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", describeArc(config.centerX, config.centerY, innerRadius, outerRadius, startAngle, endAngle));
+                path.setAttribute("fill", ring.color);
+                path.classList.add("segment");
+                path.dataset.name = ring.segmentNames[i];
+                path.dataset.ring = ring.name;
+                path.dataset.ringIndex = ringIndex;
+                path.dataset.segmentIndex = i;
+
+                // Apply slight brightness variation for visual separation
+                if (ring.segments > 1) {
+                     const brightness = 1 + (i % 2 === 0 ? 0.05 : -0.05); // More subtle variation
+                     path.style.filter = `brightness(${brightness})`;
                 }
-                
-                // Group for text elements (shadow and actual text)
-                const textGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                textGroup.classList.add("label-group");
-                
-                // Create shadow/background text for better visibility
-                const textShadow = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                textShadow.setAttribute("x", textX);
-                textShadow.setAttribute("y", textY);
-                textShadow.setAttribute("text-anchor", "middle");
-                textShadow.setAttribute("dominant-baseline", "middle");
-                textShadow.setAttribute("stroke", "rgba(0,0,0,0.5)");
-                textShadow.setAttribute("stroke-width", "3");
-                textShadow.setAttribute("stroke-linejoin", "round");
-                textShadow.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
-                textShadow.setAttribute("font-weight", "bold");
-                textShadow.setAttribute("pointer-events", "none");
-                textShadow.textContent = ring.segmentNames[i];
-                textShadow.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
-                
-                // Create actual text that will be visible
-                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                text.setAttribute("x", textX);
-                text.setAttribute("y", textY);
-                text.setAttribute("text-anchor", "middle");
-                text.setAttribute("dominant-baseline", "middle");
-                text.setAttribute("fill", "#fff");
-                text.setAttribute("font-size", Math.min(14, (outerRadius - innerRadius) / 4));
-                text.setAttribute("font-weight", "bold");
-                text.setAttribute("pointer-events", "none");
-                text.setAttribute("transform", `rotate(${rotationDegrees}, ${textX}, ${textY})`);
-                text.textContent = ring.segmentNames[i];
-                
-                textGroup.appendChild(textShadow);
-                textGroup.appendChild(text);
-                
-                // Add the text group to the SVG instead of individual texts
-                parent.appendChild(textGroup);
+
+
+                // Add event listeners directly to the path
+                path.addEventListener("pointermove", handlePointerMove); // Use pointer events
+                path.addEventListener("pointerleave", handlePointerLeave);
+                path.addEventListener("click", handleSegmentClick);
+
+                parent.appendChild(path); // Add segment path to the chartGroup
+
+                // Add segment label (if space allows)
+                addSegmentLabel(ring, i, innerRadius, outerRadius, startAngle, endAngle, parent);
             }
         }
-    }
-}
 
-// Function to create connector rings with arrows
-function createConnectorRing(ring, ringIndex, parent) {
-    // Create a group for the connector ring and its arrows
-    const connectorGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    connectorGroup.classList.add("connector-group");
-    
-    // Create connector ring circle
-    const connectorRing = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    connectorRing.setAttribute("cx", config.centerX);
-    connectorRing.setAttribute("cy", config.centerY);
-    connectorRing.setAttribute("r", ring.radius);
-    connectorRing.setAttribute("fill", "none");
-    connectorRing.setAttribute("stroke", ring.color);
-    connectorRing.setAttribute("stroke-width", ring.thickness);
-    connectorRing.classList.add("connector");
-    
-    connectorGroup.appendChild(connectorRing);
-    
-    // Create arrows pointing inward
-    const arrowCount = ring.arrowCount || 8;
-    const arrowLength = ring.thickness * 3; // Increased for better visibility
-    const arrowWidth = ring.thickness * 1.2; // Increased for better visibility
-    
-    for (let i = 0; i < arrowCount; i++) {
-        const angle = (i * 360 / arrowCount) * Math.PI / 180;
-        
-        // Calculate arrow position
-        const baseX = config.centerX + ring.radius * Math.cos(angle);
-        const baseY = config.centerY + ring.radius * Math.sin(angle);
-        
-        // Calculate arrow points
-        const tipX = config.centerX + (ring.radius - arrowLength/2) * Math.cos(angle);
-        const tipY = config.centerY + (ring.radius - arrowLength/2) * Math.sin(angle);
-        
-        // Calculate arrow wing points (perpendicular to radius)
-        const perpAngle = angle + Math.PI/2;
-        const wingWidth = arrowWidth / 2;
-        
-        const wing1X = baseX + wingWidth * Math.cos(perpAngle);
-        const wing1Y = baseY + wingWidth * Math.sin(perpAngle);
-        const wing2X = baseX - wingWidth * Math.cos(perpAngle);
-        const wing2Y = baseY - wingWidth * Math.sin(perpAngle);
-        
-        // Create arrow path with more pronounced arrow shape
-        const arrowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        const arrowD = `M ${wing1X} ${wing1Y} L ${baseX} ${baseY} L ${wing2X} ${wing2Y} L ${tipX} ${tipY} Z`;
-        
-        arrowPath.setAttribute("d", arrowD);
-        arrowPath.setAttribute("fill", ring.color);
-        arrowPath.classList.add("arrow");
-        // Add a slight shadow to make arrows stand out more
-        arrowPath.setAttribute("filter", "drop-shadow(1px 1px 1px rgba(0,0,0,0.3))");
-        
-        connectorGroup.appendChild(arrowPath);
-    }
-    
-    // Add the connector group to the parent
-    parent.appendChild(connectorGroup);
-}
-        
-        function createLegend() {
-            const legend = document.getElementById('legend');
-            legend.innerHTML = '';
-            
-            config.rings.forEach(ring => {
-                // Skip connector rings in the legend
-                if (ring.isConnector) return;
-                
+        // --- Helper to Describe SVG Arc Path ---
+        function describeArc(x, y, innerRadius, outerRadius, startAngle, endAngle) {
+            const startOuter = polarToCartesian(x, y, outerRadius, endAngle);
+            const endOuter = polarToCartesian(x, y, outerRadius, startAngle);
+            const startInner = polarToCartesian(x, y, innerRadius, endAngle);
+            const endInner = polarToCartesian(x, y, innerRadius, startAngle);
+
+            const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+            // Handle full circle case (or near full circle)
+            if (Math.abs(endAngle - startAngle) >= 359.99) {
+                 // Draw two half circles to make a full ring segment
+                 const midAngle = startAngle + 180;
+                 const midOuter1 = polarToCartesian(x, y, outerRadius, midAngle);
+                 const midInner1 = polarToCartesian(x, y, innerRadius, midAngle);
+                 const midOuter2 = polarToCartesian(x, y, outerRadius, startAngle); // same as endOuter
+                 const midInner2 = polarToCartesian(x, y, innerRadius, startAngle); // same as endInner
+
+                 const d = [
+                     "M", startOuter.x, startOuter.y,
+                     "A", outerRadius, outerRadius, 0, 0, 0, midOuter1.x, midOuter1.y, // First outer half
+                     "L", midInner1.x, midInner1.y,
+                     "A", innerRadius, innerRadius, 0, 0, 1, startInner.x, startInner.y, // First inner half (reverse)
+                     "Z", // Close first half
+                     "M", midOuter1.x, midOuter1.y, // Start second half
+                     "A", outerRadius, outerRadius, 0, 0, 0, midOuter2.x, midOuter2.y, // Second outer half
+                     "L", midInner2.x, midInner2.y,
+                     "A", innerRadius, innerRadius, 0, 0, 1, midInner1.x, midInner1.y, // Second inner half (reverse)
+                     "Z" // Close second half
+                 ].join(" ");
+                 return d;
+            }
+
+
+            const d = [
+                "M", startOuter.x, startOuter.y, // Move to start point on outer radius
+                "A", outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y, // Outer arc
+                "L", endInner.x, endInner.y, // Line to inner radius end point
+                "A", innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y, // Inner arc (reverse)
+                "Z" // Close path (line back to outer radius start)
+            ].join(" ");
+
+            return d;
+        }
+
+        // --- Helper: Polar to Cartesian Coordinates ---
+        function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+            const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0; // Adjust by -90 degrees
+            return {
+                x: centerX + (radius * Math.cos(angleInRadians)),
+                y: centerY + (radius * Math.sin(angleInRadians))
+            };
+        }
+
+        // --- Add Segment Label ---
+        function addSegmentLabel(ring, segmentIndex, innerR, outerR, startAng, endAng, parent) {
+            const angleSpan = endAng - startAng;
+            const radiusSpan = outerR - innerR;
+
+            // Only add label if segment is large enough
+            if (radiusSpan < 20 || angleSpan < 15) return; // Adjust thresholds as needed
+
+            const midAngle = startAng + angleSpan / 2;
+            const textRadius = innerR + radiusSpan * 0.6; // Position label within the segment
+
+            const pos = polarToCartesian(config.centerX, config.centerY, textRadius, midAngle);
+
+            // Create text element
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", pos.x);
+            text.setAttribute("y", pos.y);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("dominant-baseline", "middle");
+            text.style.fontSize = `${Math.min(14, Math.max(8, radiusSpan / 3.5))}px`; // Dynamic font size
+            text.textContent = ring.segmentNames[segmentIndex];
+
+            // Calculate rotation, keep text upright
+            let rotation = midAngle;
+            if (rotation > 90 && rotation < 270) {
+                rotation += 180; // Flip text if it's upside down
+            }
+            text.setAttribute("transform", `rotate(${rotation}, ${pos.x}, ${pos.y})`);
+
+            // Create a group for label + shadow for better styling control
+            const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            labelGroup.classList.add("label-group");
+
+            // Create shadow element (clone of text, styled with stroke)
+            const textShadow = text.cloneNode(true);
+            textShadow.classList.add("label-shadow");
+            textShadow.style.fill = 'none'; // Shadow uses stroke
+            textShadow.style.stroke = 'rgba(0,0,0,0.6)';
+            textShadow.style.strokeWidth = '3px';
+            textShadow.style.strokeLinejoin = 'round';
+
+            labelGroup.appendChild(textShadow);
+            labelGroup.appendChild(text); // Actual text on top
+
+            parent.appendChild(labelGroup); // Add the group to the chartGroup
+        }
+
+
+        // --- Create Connector Ring ---
+        function createConnectorRing(ring, ringIndex, parent) { // Parent is now chartGroup
+            const radius = ring.scaledRadius;
+            const thickness = ring.scaledThickness || 5; // Use scaled thickness
+            const arrowCount = ring.arrowCount || 8;
+            const arrowLength = thickness * 1.5; // Relative arrow size
+            const arrowWidth = thickness * 1.2;
+
+            // Create a group for the connector ring + arrows
+            const connectorGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            connectorGroup.classList.add("connector-group");
+
+            // Create the connector ring circle (stroke only)
+            const connectorCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            connectorCircle.setAttribute("cx", config.centerX);
+            connectorCircle.setAttribute("cy", config.centerY);
+            connectorCircle.setAttribute("r", radius);
+            connectorCircle.setAttribute("fill", "none");
+            connectorCircle.setAttribute("stroke", ring.color);
+            connectorCircle.setAttribute("stroke-width", thickness);
+            connectorCircle.setAttribute("stroke-dasharray", `${thickness * 1.5}, ${thickness * 1}`); // Dashed effect
+            connectorCircle.classList.add("connector");
+            connectorGroup.appendChild(connectorCircle);
+
+            // Create arrows pointing inward
+            for (let i = 0; i < arrowCount; i++) {
+                const angleDeg = (i * 360 / arrowCount);
+                const angleRad = (angleDeg - 90) * Math.PI / 180.0; // -90 for SVG coords
+
+                // Arrow tip position (slightly inside the radius)
+                const tip = polarToCartesian(config.centerX, config.centerY, radius - thickness * 0.7, angleDeg);
+                // Arrow base center position (slightly outside the radius)
+                const baseCenter = polarToCartesian(config.centerX, config.centerY, radius + thickness * 0.7, angleDeg);
+
+                // Calculate wing points perpendicular to the radius line at the baseCenter
+                const perpAngleRad = angleRad + Math.PI / 2;
+                const wingOffset = arrowWidth / 2;
+                const wing1X = baseCenter.x + wingOffset * Math.cos(perpAngleRad);
+                const wing1Y = baseCenter.y + wingOffset * Math.sin(perpAngleRad);
+                const wing2X = baseCenter.x - wingOffset * Math.cos(perpAngleRad);
+                const wing2Y = baseCenter.y - wingOffset * Math.sin(perpAngleRad);
+
+                // Create arrow polygon
+                const arrow = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                arrow.setAttribute("points", `${wing1X},${wing1Y} ${wing2X},${wing2Y} ${tip.x},${tip.y}`);
+                arrow.setAttribute("fill", ring.color);
+                arrow.classList.add("arrow");
+                connectorGroup.appendChild(arrow);
+            }
+
+            parent.appendChild(connectorGroup); // Add the whole group to chartGroup
+        }
+
+
+        // --- Legend Creation ---
+        function createFloatingLegend() {
+            legendContainer.innerHTML = ''; // Clear previous legend
+            legendContainer.className = 'legend'; // Reset class name
+
+            // Create drag handle
+            const dragHandle = document.createElement('div');
+            dragHandle.className = 'legend-drag-handle';
+            legendContainer.appendChild(dragHandle);
+
+            // Create header
+            const header = document.createElement('div');
+            header.className = 'legend-header';
+            const title = document.createElement('h3');
+            title.className = 'legend-title';
+            title.textContent = 'Legend';
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'legend-toggle';
+            toggleBtn.innerHTML = '&minus;'; // Use HTML entity for minus
+            toggleBtn.title = 'Minimize/Maximize Legend';
+            header.appendChild(title);
+            header.appendChild(toggleBtn);
+            legendContainer.appendChild(header);
+
+            // Create content container
+            const content = document.createElement('div');
+            content.className = 'legend-content';
+            legendContainer.appendChild(content);
+
+            // Group legend items by ring
+            const ringGroups = {};
+            config.rings.forEach((ring, ringIndex) => {
+                if (ring.isConnector) return; // Skip connectors
+
+                if (!ringGroups[ring.name]) {
+                    ringGroups[ring.name] = [];
+                }
+
                 ring.segmentNames.forEach((name, i) => {
                     const item = document.createElement('div');
                     item.className = 'legend-item';
-                    
+
                     const colorBox = document.createElement('div');
                     colorBox.className = 'legend-color';
                     colorBox.style.backgroundColor = ring.color;
-                    
-                    // Apply the same brightness filter as in the chart
+
+                    // Apply brightness filter consistent with chart segments
                     if (ring.segments > 1) {
-                        const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
+                        const brightness = 1 + (i % 2 === 0 ? 0.05 : -0.05);
                         colorBox.style.filter = `brightness(${brightness})`;
                     }
-                    
+
                     const label = document.createElement('span');
-                    label.textContent = `${ring.name}: ${name}`;
-                    
+                    label.textContent = name; // Just show segment name
+
                     item.appendChild(colorBox);
                     item.appendChild(label);
-                    legend.appendChild(item);
+                    ringGroups[ring.name].push(item);
                 });
             });
+
+            // Add groups to legend content
+            for (const ringName in ringGroups) {
+                const categoryTitle = document.createElement('div');
+                categoryTitle.className = 'legend-category';
+                categoryTitle.textContent = ringName; // Ring name as category
+                content.appendChild(categoryTitle);
+
+                ringGroups[ringName].forEach(item => {
+                    content.appendChild(item);
+                });
+            }
+
+            // Add toggle functionality
+            toggleBtn.addEventListener('click', function() {
+                content.classList.toggle('legend-minimized');
+                this.innerHTML = content.classList.contains('legend-minimized') ? '&plus;' : '&minus;';
+                // Adjust legend max-height if needed when toggling
+                if (!content.classList.contains('legend-minimized')) {
+                    content.style.maxHeight = 'calc(70vh - 80px)'; // Restore max height
+                }
+            });
+
+            // Make legend draggable
+            makeDraggable(legendContainer, dragHandle);
         }
-        
-        function showTooltip(event) {
-            const tooltip = document.getElementById('tooltip');
+
+        // --- Draggable Element Functionality ---
+        function makeDraggable(element, handle) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const dragTarget = handle || element; // Drag handle or whole element
+
+            dragTarget.onpointerdown = dragPointerDown; // Use pointer events
+
+            function dragPointerDown(e) {
+                e = e || window.event;
+                // e.preventDefault(); // Prevent default only if needed (e.g., text selection)
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.cursor = 'grabbing'; // Indicate dragging
+                document.onpointerup = closeDragElement;
+                document.onpointermove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault(); // Prevent page scroll during drag
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                setElementPosition(element, pos1, pos2);
+            }
+
+            function setElementPosition(elmnt, p1, p2) {
+                const containerRect = document.body.getBoundingClientRect(); // Use body bounds
+                const elmntRect = elmnt.getBoundingClientRect();
+
+                let newTop = elmnt.offsetTop - p2;
+                let newLeft = elmnt.offsetLeft - p1;
+
+                // Constrain within viewport bounds
+                newTop = Math.max(0, Math.min(newTop, containerRect.height - elmntRect.height));
+                newLeft = Math.max(0, Math.min(newLeft, containerRect.width - elmntRect.width));
+
+                elmnt.style.top = newTop + "px";
+                elmnt.style.left = newLeft + "px";
+                elmnt.style.right = "auto"; // Override fixed right/bottom
+                elmnt.style.bottom = "auto";
+            }
+
+            function closeDragElement() {
+                document.onpointerup = null;
+                document.onpointermove = null;
+                element.style.cursor = 'grab'; // Back to grab cursor
+                if (handle) handle.style.cursor = 'move';
+            }
+
+             // Set initial cursor style
+             element.style.cursor = 'grab';
+             if (handle) handle.style.cursor = 'move';
+        }
+
+
+        // --- Tooltip Handling ---
+        function showTooltip(event, target) {
             tooltip.style.opacity = 1;
-            tooltip.style.left = event.pageX + 10 + 'px';
-            tooltip.style.top = event.pageY + 10 + 'px';
-            
-            const segment = event.target;
-            tooltip.textContent = `${segment.dataset.ring}: ${segment.dataset.name}`;
+            // Position tooltip relative to pointer, with offset
+            tooltip.style.left = event.pageX + 15 + 'px';
+            tooltip.style.top = event.pageY + 15 + 'px';
+            tooltip.textContent = `${target.dataset.ring}: ${target.dataset.name}`;
         }
-        
+
         function hideTooltip() {
-            const tooltip = document.getElementById('tooltip');
             tooltip.style.opacity = 0;
         }
-        
-        // Function to show sidebar with content
+
+        // --- Sidebar Handling ---
         function showSidebar(ringIndex, segmentIndex) {
-            const sidebar = document.getElementById('sidebar');
-            const sidebarContent = document.getElementById('sidebar-content');
-            
             // Get content for this segment
             const ring = config.rings[ringIndex];
+            if (!ring || !ring.segmentContent || !ring.segmentContent[segmentIndex]) {
+                console.error("Invalid ring or segment index for sidebar:", ringIndex, segmentIndex);
+                return;
+            }
             const segmentData = ring.segmentContent[segmentIndex];
-            
-            // Check if we have multiple content items
-            const hasMultipleContent = segmentData.content && Array.isArray(segmentData.content);
-            
+            const hasMultipleContent = segmentData.content && Array.isArray(segmentData.content) && segmentData.content.length > 0;
+
+            if (!hasMultipleContent) {
+                 console.error("Segment data has no 'content' array:", segmentData);
+                 return; // Don't show sidebar if no content items
+            }
+
+
             let contentHTML = `
-                <button class="sidebar-close" id="close-sidebar">&times;</button>
+                <button class="sidebar-close" id="close-sidebar" aria-label="Close Details">&times;</button>
                 <h2 class="sidebar-title">${segmentData.title}</h2>
                 <h3 class="sidebar-subtitle">${segmentData.subtitle}</h3>
             `;
-            
-            if (hasMultipleContent) {
-                // Create tabs for multiple content items
+
+            // Create tabs if multiple content items exist
+            if (segmentData.content.length > 1) {
                 contentHTML += `<div class="content-tabs">`;
                 segmentData.content.forEach((item, idx) => {
                     contentHTML += `<button class="tab-button ${idx === 0 ? 'active' : ''}" data-tab="${idx}">${item.title}</button>`;
                 });
-                contentHTML += `</div><div class="tab-content">`;
-                
-                // Create content sections
-                segmentData.content.forEach((item, idx) => {
-                    contentHTML += `
-                        <div class="content-section ${idx === 0 ? 'active' : ''}" data-tab="${idx}">
-                            <img class="sidebar-image" src="${item.imageSrc}" alt="${item.title}">
-                            ${item.subtitle ? `<h4 class="sidebar-subtitle">${item.subtitle}</h4>` : ''}
-                            <p class="sidebar-text">${item.text}</p>
-                        </div>
-                    `;
-                });
                 contentHTML += `</div>`;
-            } else {
-                // This case shouldn't happen anymore since we've standardized all segments to use content array
-                console.warn("Segment without content array found. This format is deprecated.");
-                return;
             }
-            
+
+            // Create content sections container
+            contentHTML += `<div class="tab-content">`;
+            segmentData.content.forEach((item, idx) => {
+                contentHTML += `
+                    <div class="content-section ${idx === 0 ? 'active' : ''}" data-tab="${idx}">
+                        ${item.imageSrc ? `<img class="sidebar-image" src="${item.imageSrc}" alt="${item.title}" onerror="handleImageError(this)">` : ''}
+                        ${item.subtitle ? `<h4 class="sidebar-subtitle">${item.subtitle}</h4>` : ''}
+                        <p class="sidebar-text">${item.text || 'No description available.'}</p>
+                    </div>
+                `;
+            });
+            contentHTML += `</div>`; // Close tab-content
+
             // Set the HTML content
             sidebarContent.innerHTML = contentHTML;
-            
+
             // Show sidebar
             sidebar.classList.add('active');
-            
-            // Add event listener to close button
-            document.getElementById('close-sidebar').addEventListener('click', closeSidebar);
-            
-            // Add tab switching functionality if needed
-            if (hasMultipleContent) {
-                const tabButtons = sidebarContent.querySelectorAll('.tab-button');
+
+            // Add event listeners (delegated or specific)
+            // Use event delegation for tabs if many exist, or direct binding for few.
+            const closeButton = sidebarContent.querySelector('#close-sidebar');
+            if (closeButton) {
+                closeButton.addEventListener('click', closeSidebar);
+            }
+
+            const tabButtons = sidebarContent.querySelectorAll('.tab-button');
+            if (tabButtons.length > 0) {
                 tabButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const tabIndex = this.getAttribute('data-tab');
-                        
-                        // Update active tab button
-                        tabButtons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        
-                        // Update active content section
-                        const contentSections = sidebarContent.querySelectorAll('.content-section');
-                        contentSections.forEach(section => {
-                            section.classList.remove('active');
-                            if (section.getAttribute('data-tab') === tabIndex) {
-                                section.classList.add('active');
-                            }
-                        });
-                    });
+                    button.addEventListener('click', handleTabClick);
                 });
             }
-            
-            // Prevent propagation of clicks inside the sidebar
-            sidebar.addEventListener('click', function(event) {
-                event.stopPropagation();
-            });
-            
-            // Add click event to close sidebar when clicking elsewhere
+
+            // Add listener to close sidebar when clicking outside
+            // Use timeout to prevent immediate closing if the click that opened it bubbles up
             setTimeout(() => {
                 document.addEventListener('click', closeSidebarOnClickOutside);
+                // Also listen for Escape key
+                document.addEventListener('keydown', handleEscKey);
             }, 10);
         }
-        
-        // Function to close sidebar when clicking outside
+
+        function handleTabClick(event) {
+            const clickedButton = event.target;
+            const tabIndex = clickedButton.getAttribute('data-tab');
+            const tabContainer = clickedButton.closest('.sidebar-content'); // Find parent container
+
+            // Remove active class from all buttons and sections within this sidebar instance
+            tabContainer.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            tabContainer.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+
+            // Add active class to the clicked button and corresponding section
+            clickedButton.classList.add('active');
+            const activeSection = tabContainer.querySelector(`.content-section[data-tab="${tabIndex}"]`);
+            if (activeSection) {
+                activeSection.classList.add('active');
+            }
+        }
+
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            // Clean up listeners specific to the open sidebar state
+            document.removeEventListener('click', closeSidebarOnClickOutside);
+            document.removeEventListener('keydown', handleEscKey);
+            // Optional: Clear sidebar content after transition?
+            // setTimeout(() => { sidebarContent.innerHTML = ''; }, 300); // Delay matches transition
+        }
+
         function closeSidebarOnClickOutside(event) {
-            const sidebar = document.getElementById('sidebar');
-            const clickedInsideSidebar = sidebar.contains(event.target);
-            const clickedOnSegment = event.target.classList.contains('segment');
-            
-            if (!clickedInsideSidebar && !clickedOnSegment) {
+            // Close if click is outside the sidebar and not on a chart segment
+            if (!sidebar.contains(event.target) && !event.target.closest('.segment')) {
                 closeSidebar();
             }
         }
-        
-        // Function to close sidebar
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.remove('active');
-            document.removeEventListener('click', closeSidebarOnClickOutside);
-        }
-        function createFloatingLegend() {
-    const legend = document.getElementById('legend');
-    legend.innerHTML = '';
-    legend.className = 'legend';
-    
-    // Create drag handle
-    const dragHandle = document.createElement('div');
-    dragHandle.className = 'legend-drag-handle';
-    legend.appendChild(dragHandle);
-    
-    // Create header with title and toggle button
-    const header = document.createElement('div');
-    header.className = 'legend-header';
-    
-    const title = document.createElement('h3');
-    title.className = 'legend-title';
-    title.textContent = 'Legend';
-    
-    const toggleBtn = document.createElement('button');
-    toggleBtn.className = 'legend-toggle';
-    toggleBtn.textContent = '−'; // Unicode minus sign
-    toggleBtn.title = 'Minimize/Maximize Legend';
-    
-    header.appendChild(title);
-    header.appendChild(toggleBtn);
-    legend.appendChild(header);
-    
-    // Create content container
-    const content = document.createElement('div');
-    content.className = 'legend-content';
-    legend.appendChild(content);
-    
-    // Group legend items by ring name
-    const ringGroups = {};
-    
-    config.rings.forEach(ring => {
-        // Skip connector rings in the legend
-        if (ring.isConnector) return;
-        
-        if (!ringGroups[ring.name]) {
-            ringGroups[ring.name] = [];
-        }
-        
-        ring.segmentNames.forEach((name, i) => {
-            const item = document.createElement('div');
-            item.className = 'legend-item';
-            
-            const colorBox = document.createElement('div');
-            colorBox.className = 'legend-color';
-            colorBox.style.backgroundColor = ring.color;
-            
-            // Apply the same brightness filter as in the chart
-            if (ring.segments > 1) {
-                const brightness = 1 + (i % 2 === 0 ? 0.15 : -0.15);
-                colorBox.style.filter = `brightness(${brightness})`;
-            }
-            
-            const label = document.createElement('span');
-            label.textContent = name;
-            
-            item.appendChild(colorBox);
-            item.appendChild(label);
-            ringGroups[ring.name].push(item);
-        });
-    });
-    
-    // Add groups to legend
-    for (const ringName in ringGroups) {
-        const categoryTitle = document.createElement('div');
-        categoryTitle.className = 'legend-category';
-        categoryTitle.textContent = ringName;
-        content.appendChild(categoryTitle);
-        
-        ringGroups[ringName].forEach(item => {
-            content.appendChild(item);
-        });
-    }
-    
-    // Add toggle functionality
-    toggleBtn.addEventListener('click', function() {
-        content.classList.toggle('legend-minimized');
-        this.textContent = content.classList.contains('legend-minimized') ? '+' : '−';
-    });
-    
-    // Add drag functionality
-    makeDraggable(legend, dragHandle);
-}
 
-// Make an element draggable
-function makeDraggable(element, handle) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    
-    if (handle) {
-        // If a handle is provided, make only the handle trigger dragging
-        handle.onmousedown = dragMouseDown;
-        handle.ontouchstart = dragTouchStart;
-    } else {
-        // Otherwise, make the entire element draggable
-        element.onmousedown = dragMouseDown;
-        element.ontouchstart = dragTouchStart;
-    }
-    
-    function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // Get the mouse cursor position at startup
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        // Call a function whenever the cursor moves
-        document.onmousemove = elementDrag;
-    }
-    
-    function dragTouchStart(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // Get the touch position at startup
-        pos3 = e.touches[0].clientX;
-        pos4 = e.touches[0].clientY;
-        document.ontouchend = closeDragElement;
-        // Call a function whenever the touch moves
-        document.ontouchmove = elementTouchDrag;
-    }
-    
-    function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // Calculate the new cursor position
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        // Set the element's new position
-        setElementPosition(element, pos1, pos2);
-    }
-    
-    function elementTouchDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // Calculate the new touch position
-        pos1 = pos3 - e.touches[0].clientX;
-        pos2 = pos4 - e.touches[0].clientY;
-        pos3 = e.touches[0].clientX;
-        pos4 = e.touches[0].clientY;
-        // Set the element's new position
-        setElementPosition(element, pos1, pos2);
-    }
-    
-    function setElementPosition(element, pos1, pos2) {
-        const rect = element.getBoundingClientRect();
-        const container = document.querySelector('.main-container');
-        const containerRect = container.getBoundingClientRect();
-        
-        // Calculate new position
-        let newTop = element.offsetTop - pos2;
-        let newLeft = element.offsetLeft - pos1;
-        
-        // Ensure the element stays within the container bounds
-        if (newTop < 0) newTop = 0;
-        if (newLeft < 0) newLeft = 0;
-        
-        const maxTop = containerRect.height - rect.height;
-        const maxLeft = containerRect.width - rect.width;
-        
-        if (newTop > maxTop) newTop = maxTop;
-        if (newLeft > maxLeft) newLeft = maxLeft;
-        
-        // Set the element's new position
-        element.style.top = newTop + "px";
-        element.style.left = newLeft + "px";
-        element.style.right = "auto";
-        element.style.bottom = "auto";
-    }
-    
-    function closeDragElement() {
-        // Stop moving when mouse button is released
-        document.onmouseup = null;
-        document.onmousemove = null;
-        document.ontouchend = null;
-        document.ontouchmove = null;
-    }
-}
+        function handleEscKey(event) {
+             if (event.key === "Escape") {
+                 closeSidebar();
+             }
+         }
+
+        // --- Event Handlers ---
+        function setupEventListeners() {
+            // Resize listener
+            window.addEventListener('resize', handleResize);
+
+            // Use pointer events for unified mouse/touch handling on chart container
+            chartContainer.addEventListener('pointerdown', handlePointerDown);
+            chartContainer.addEventListener('wheel', handleWheel, { passive: false }); // Need preventDefault
+
+            // Segment click/hover handled by listeners added in createContentRing
+        }
+
+        function handleResize() {
+            // Debounce resize event for performance if needed
+            createChart();
+            // Reapply current transform state after chart rebuild
+            applyTransform();
+        }
+
+        // --- Pointer Event Handlers (Mouse & Touch) ---
+        function handlePointerDown(event) {
+            // Check for primary button (mouse) or single touch
+             if (event.pointerType === 'mouse' && event.button !== 0) return; // Ignore right/middle clicks
+
+             // Check if target is the background or a segment
+             const target = event.target;
+             const isBackground = target === chartContainer || target === svgElement || target === chartGroup;
+
+
+            // Panning logic (only if zoomed and not clicking a segment directly)
+            if (currentZoom > 1 && isBackground) {
+                 isPanning = true;
+                 lastPointerX = event.clientX;
+                 lastPointerY = event.clientY;
+                 chartContainer.style.cursor = 'grabbing';
+                 // Capture pointer to track events even if cursor leaves the element
+                 chartContainer.setPointerCapture(event.pointerId);
+                 // Add move/up listeners to the document/window to handle dragging outside
+                 document.addEventListener('pointermove', handlePointerMovePan);
+                 document.addEventListener('pointerup', handlePointerUp);
+                 document.addEventListener('pointercancel', handlePointerUp); // Handle cancellations
+            }
+             // Handle segment clicks separately (listener added to segments)
+        }
+
+        function handlePointerMove(event) {
+            // This handler is for segment hover (tooltip)
+            const target = event.target.closest('.segment'); // Find the segment if hovering over label/etc.
+            if (target) {
+                showTooltip(event, target);
+            } else {
+                hideTooltip();
+            }
+        }
+
+        function handlePointerMovePan(event) {
+             // This handler is specifically for panning the chart background
+            if (!isPanning) return;
+
+            const deltaX = event.clientX - lastPointerX;
+            const deltaY = event.clientY - lastPointerY;
+
+            lastPointerX = event.clientX;
+            lastPointerY = event.clientY;
+
+            panOffsetX += deltaX;
+            panOffsetY += deltaY;
+
+            applyTransform();
+        }
+
+
+        function handlePointerLeave(event) {
+             // This handler is for segment hover (tooltip)
+             hideTooltip();
+        }
+
+        function handlePointerUp(event) {
+            if (isPanning) {
+                isPanning = false;
+                chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
+                chartContainer.releasePointerCapture(event.pointerId);
+                document.removeEventListener('pointermove', handlePointerMovePan);
+                document.removeEventListener('pointerup', handlePointerUp);
+                document.removeEventListener('pointercancel', handlePointerUp);
+            }
+        }
+
+        function handleSegmentClick(event) {
+            // Don't trigger sidebar if panning was just happening
+            if (isPanning) return;
+
+            const target = event.target.closest('.segment');
+            if (target && target.dataset.ringIndex !== undefined && target.dataset.segmentIndex !== undefined) {
+                const ringIndex = parseInt(target.dataset.ringIndex, 10);
+                const segmentIndex = parseInt(target.dataset.segmentIndex, 10);
+                 if (!isNaN(ringIndex) && !isNaN(segmentIndex)) {
+                    showSidebar(ringIndex, segmentIndex);
+                 }
+            }
+        }
+
+
+        // --- Zoom Handling ---
+        function handleWheel(event) {
+            event.preventDefault(); // Prevent page scroll
+
+            const zoomDelta = event.deltaY < 0 ? 0.15 : -0.15; // Slightly larger zoom step
+
+            // Get pointer position relative to the SVG container
+            const rect = svgElement.getBoundingClientRect();
+            const pointerX = event.clientX - rect.left;
+            const pointerY = event.clientY - rect.top;
+
+            zoomChartAtPoint(zoomDelta, pointerX, pointerY);
+        }
+
+        function addZoomControls() {
+            const controlsContainer = document.getElementById('zoom-controls');
+            controlsContainer.innerHTML = ''; // Clear existing
+
+            const zoomInBtn = document.createElement('button');
+            zoomInBtn.innerHTML = '+'; // Use text or SVG icon
+            zoomInBtn.className = 'zoom-button';
+            zoomInBtn.ariaLabel = 'Zoom In';
+            zoomInBtn.addEventListener('click', () => zoomChart(0.2)); // Zoom in by 20%
+
+            const zoomOutBtn = document.createElement('button');
+            zoomOutBtn.innerHTML = '-';
+            zoomOutBtn.className = 'zoom-button';
+            zoomOutBtn.ariaLabel = 'Zoom Out';
+            zoomOutBtn.addEventListener('click', () => zoomChart(-0.2)); // Zoom out by 20%
+
+            const resetBtn = document.createElement('button');
+            resetBtn.innerHTML = '&#x21BB;'; // Reset icon (clockwise arrow)
+            resetBtn.className = 'zoom-button';
+            resetBtn.ariaLabel = 'Reset Zoom';
+            resetBtn.addEventListener('click', resetZoomPan);
+
+            controlsContainer.appendChild(zoomInBtn);
+            controlsContainer.appendChild(zoomOutBtn);
+            controlsContainer.appendChild(resetBtn);
+        }
+
+        // Zoom chart (used by buttons - zooms towards center)
+        function zoomChart(delta) {
+            if (!svgElement) return;
+            // Zoom towards the center of the SVG container
+            const centerX = config.width / 2;
+            const centerY = config.height / 2;
+            zoomChartAtPoint(delta, centerX, centerY);
+        }
+
+        // Zoom chart at a specific point (used by wheel/pinch)
+        function zoomChartAtPoint(zoomDelta, pointX, pointY) {
+            // *** FIX: Use consistent zoom limits ***
+            const minZoom = 0.2;
+            const maxZoom = 5.0; // Consistent max zoom
+            const newZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom + zoomDelta * currentZoom)); // Scale delta by current zoom for smoother feel
+
+            if (newZoom === currentZoom) return; // No change
+
+            const oldZoom = currentZoom;
+            currentZoom = newZoom;
+
+            // Adjust pan offset to keep the zoom point stable under the pointer
+            // The formula accounts for the fact that the transform applies translate THEN scale
+            panOffsetX = pointX - (pointX - panOffsetX) * (currentZoom / oldZoom);
+            panOffsetY = pointY - (pointY - panOffsetY) * (currentZoom / oldZoom);
+
+            applyTransform();
+            updateZoomIndicator();
+        }
+
+        function resetZoomPan() {
+            currentZoom = 1;
+            panOffsetX = 0;
+            panOffsetY = 0;
+            applyTransform();
+            updateZoomIndicator();
+        }
+
+        // --- Apply Transformation ---
+        function applyTransform() {
+            // *** FIX: Target the correct chartGroup ***
+            if (chartGroup) {
+                 // Apply transform: Translate first, then scale around the translated origin (0,0)
+                chartGroup.setAttribute('transform', `translate(${panOffsetX}, ${panOffsetY}) scale(${currentZoom})`);
+
+                // Update cursor based on zoom level and panning state
+                if (isPanning) {
+                    chartContainer.style.cursor = 'grabbing';
+                } else {
+                    chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
+                }
+            } else {
+                console.error("Chart group not found for applying transform.");
+            }
+        }
+
+        // --- Update Zoom Indicator ---
+        let indicatorTimeout;
+        function updateZoomIndicator() {
+            zoomIndicator.textContent = `Zoom: ${Math.round(currentZoom * 100)}%`;
+            zoomIndicator.style.opacity = '1';
+
+            clearTimeout(indicatorTimeout);
+            indicatorTimeout = setTimeout(() => {
+                zoomIndicator.style.opacity = '0';
+            }, 1500); // Fade out after 1.5 seconds
+        }
+
     </script>
 </body>
 </html>
