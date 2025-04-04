@@ -105,26 +105,28 @@
         .segment {
             cursor: pointer; /* Clickable again */
             transition: opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
-            stroke: rgba(0,0,0,0.1); /* Subtle segment border */
-            stroke-width: 0.5px;
+            stroke: rgba(0,0,0,0.15); /* Slightly darker segment border */
+            stroke-width: 1px; /* Increased stroke width */
+            /* Fill color applied dynamically in JS */
         }
         .segment:hover {
-            opacity: 0.85; /* Slightly fade on hover */
-            filter: brightness(1.05); /* Slightly brighten */
+            opacity: 0.95; /* Slightly less fade on hover */
+            filter: brightness(1.1); /* Brighten significantly on hover */
         }
 
         /* Interactive Dot Styling */
         .interactive-dot {
             cursor: pointer;
-            stroke: rgba(0, 0, 0, 0.4); /* Darker border for visibility */
+            stroke: rgba(0, 0, 0, 0.3); /* Slightly lighter border for gray dots */
             stroke-width: 1px;
             transition: r 0.2s ease-in-out, filter 0.2s ease-in-out, opacity 0.2s ease-in-out;
-            fill-opacity: 0.85; /* Slightly transparent */
+            fill-opacity: 0.9; /* Slightly more opaque */
+            /* Fill color set in JS */
         }
         .interactive-dot:hover {
             r: 7; /* Increase size */
             stroke-width: 1.5px; /* Thicker border */
-            filter: brightness(1.2); /* Make brighter */
+            filter: brightness(1.15); /* Adjust brightness for gray */
             fill-opacity: 1; /* Fully opaque */
         }
 
@@ -158,7 +160,7 @@
         .legend-category { margin-top: 5px; margin-bottom: 3px; font-weight: 600; font-size: 0.9rem; color: #0056b3; border-bottom: 1px solid #e9ecef; padding-bottom: 3px; }
         .legend-category:first-child { margin-top: 0; }
         .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #495057; }
-        .legend-color { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); }
+        .legend-color { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); /* Background color set dynamically in JS */ }
         .legend-content.legend-minimized { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border-top: none; /* Hide border when minimized */ }
 
         /* Sidebar Tab Styling (Re-enabled) */
@@ -220,8 +222,13 @@
         #zoom-indicator { position: absolute; left: 20px; bottom: 20px; padding: 6px 12px; background-color: rgba(0,0,0,0.7); color: white; border-radius: 4px; font-size: 0.9rem; transition: opacity 0.3s ease-in-out; opacity: 0; z-index: 50; pointer-events: none; }
 
         /* Label Styling */
-        .label-group text { pointer-events: none; font-weight: bold; font-size: 12px; fill: #fff; } /* White text */
-        .label-group .label-shadow { stroke: rgba(0,0,0,0.6); stroke-width: 3px; stroke-linejoin: round; fill: none; } /* Dark shadow for contrast */
+        .label-group text {
+             pointer-events: none;
+             font-weight: bold;
+             fill: #fff; /* White text */
+             /* Font size is set dynamically in JS */
+        }
+        /* Removed label-shadow class as it's hard to apply reliably to textPath */
 
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -238,6 +245,10 @@
         </div>
 
         <div id="chart-container">
+             <svg width="0" height="0" style="position:absolute;overflow:hidden;">
+                <defs id="text-path-defs">
+                    </defs>
+            </svg>
             </div>
 
         <div class="zoom-controls" id="zoom-controls">
@@ -267,7 +278,7 @@
         let initialPinchDistance = 0; // For potential future pinch-zoom
 
         // --- DOM Elements ---
-        let chartContainer, svgElement, chartGroup, sidebar, sidebarContent, tooltip, legendContainer, zoomIndicator, mainTitleElement;
+        let chartContainer, svgElement, chartGroup, sidebar, sidebarContent, tooltip, legendContainer, zoomIndicator, mainTitleElement, textPathDefs;
 
         // --- Placeholder Image Handling ---
         const placeholderBase = "https://placehold.co";
@@ -292,6 +303,7 @@
             legendContainer = document.getElementById('legend');
             zoomIndicator = document.getElementById('zoom-indicator');
             mainTitleElement = document.getElementById('main-title');
+            textPathDefs = document.getElementById('text-path-defs'); // Get defs container
 
             // Initialize and build the chart
             initializeConfig(); // Load data and dimensions
@@ -312,9 +324,11 @@
             config = {
                 ...dimensions, // Spread initial width, height, chartSize, centerX, centerY
                 rings: [
-                    // --- Ring 1: Key Literary & Cultural Works ---
-                    {
-                        name: "Key Literary & Cultural Works", radius: 200, color: "#8A2BE2", segments: 3, // BlueViolet // EVEN Radius
+                     // --- Ring 1: Key Literary & Cultural Works ---
+                     {
+                        name: "Key Literary & Cultural Works", radius: 200, segments: 3,
+                        // Define segment colors for stepped gradient
+                        segmentColors: ["#94A3B8", "#64748B", "#475569"], // slate-400, slate-500, slate-600
                         segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1799 CE", "1800 CE to 1945 CE"],
                         segmentOverviews: [
                             { title: "Key Literary & Cultural Works", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early myths, legends, and tales reflecting humanity's ancient fascination with flight and the heavens.", imageSrc: getPlaceholderUrl(400,250,'Early Lit Overview') },
@@ -341,10 +355,12 @@
                         ]
                     },
                     // --- Connector 1 ---
-                    { name: "Connector 1", color: "#7D59D9", isConnector: true, arrowCount: 8, thickness: 7 },
+                    { name: "Connector 1", color: "#475569", isConnector: true, arrowCount: 8, thickness: 7 }, // slate-600 (Matches darkest segment of Ring 1)
                     // --- Ring 2: Socioeconomic Factors ---
                     {
-                        name: "Socioeconomic Factors", radius: 155, color: "#4169E1", segments: 4, // RoyalBlue // EVEN Radius
+                        name: "Socioeconomic Factors", radius: 155, segments: 4,
+                        // Define segment colors for stepped gradient
+                        segmentColors: ["#BAE6FD", "#7DD3FC", "#38BDF8", "#0EA5E9"], // sky-300, sky-400, sky-500, sky-600
                         segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1699s CE", "1760s CE to 1890s CE", "1890s CE to 1980s CE"],
                         segmentOverviews: [
                             { title: "Socioeconomic Factors", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early trade routes, material innovations (silk, paper), and the spread of technologies like gunpowder laid groundwork, though direct impact on flight was limited.", imageSrc: getPlaceholderUrl(400,250,'Ancient SocioEco') },
@@ -375,10 +391,12 @@
                         ]
                     },
                      // --- Connector 2 ---
-                    { name: "Connector 2", color: "#3A98B9", isConnector: true, arrowCount: 6, thickness: 7 },
+                    { name: "Connector 2", color: "#0EA5E9", isConnector: true, arrowCount: 6, thickness: 7 }, // sky-600 (Matches darkest segment of Ring 2)
                     // --- Ring 3: Scientific Theories and Breakthroughs ---
                     {
-                        name: "Scientific Theories and Breakthroughs", radius: 110, color: "#32CD32", segments: 4, // LimeGreen // EVEN Radius
+                        name: "Scientific Theories and Breakthroughs", radius: 110, segments: 4,
+                        // Define segment colors for stepped gradient
+                        segmentColors: ["#67E8F9", "#22D3EE", "#0DD9FE", "#0891B2"], // cyan-300, cyan-400, cyan-500, cyan-600
                         segmentNames: ["500s BCE to 1599s CE", "1600s CE to 1760s CE", "1770s CE to 1899s CE", "1900s CE to 1945 CE"],
                          segmentOverviews: [
                             { title: "Scientific Theories & Breakthroughs", subtitle: "500s BCE to 1599s CE (Overview)", text: "Early understanding of basic principles like buoyancy (Archimedes), reaction (Hero), alongside observational studies (Da Vinci) and theoretical ideas (Bacon).", imageSrc: getPlaceholderUrl(400,250,'Ancient Science') },
@@ -419,10 +437,12 @@
                         ]
                     },
                     // --- Connector 3 ---
-                    { name: "Connector 3", color: "#91B93A", isConnector: true, arrowCount: 5, thickness: 6 },
+                    { name: "Connector 3", color: "#0891B2", isConnector: true, arrowCount: 5, thickness: 6 }, // cyan-600 (Matches darkest segment of Ring 3)
                     // --- Ring 4: Practical Implementations ---
                     {
-                        name: "Practical Implementations", radius: 65, color: "#FF7F50", segments: 3, // Coral // EVEN Radius
+                        name: "Practical Implementations", radius: 65, segments: 3,
+                        // Define segment colors for stepped gradient
+                        segmentColors: ["#FCD34D", "#F59E0B", "#D97706"], // amber-300, amber-500, amber-600
                         segmentNames: [
                             "Early Concepts & LTA",
                             "Heavier-than-Air Pioneers",
@@ -479,16 +499,25 @@
             config = { ...config, ...dimensions }; // Update config with new dimensions
             calculateScaleAndGap(); // Recalculate scaling
 
-            chartContainer.innerHTML = ''; // Clear previous SVG if resizing
-            svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svgElement.setAttribute("viewBox", `0 0 ${config.width} ${config.height}`);
-            svgElement.setAttribute("width", "100%");
-            svgElement.setAttribute("height", "100%");
-            svgElement.style.backgroundColor = "#ffffff"; // Set background color
-            chartContainer.appendChild(svgElement);
+            // Clear previous chart elements
+            chartContainer.querySelectorAll('svg:not(:first-child)').forEach(el => el.remove()); // Remove old main SVG if exists
+            const existingSvg = chartContainer.querySelector('svg');
+            if (existingSvg) {
+                 const mainChartGroup = existingSvg.querySelector('#main-chart-group');
+                 if(mainChartGroup) mainChartGroup.remove(); // Clear old chart group
+                 const defs = existingSvg.querySelector('#text-path-defs');
+                 if(defs) defs.innerHTML = ''; // Clear old path defs
+                 svgElement = existingSvg; // Reuse the SVG container with defs
+            } else {
+                 console.error("SVG container not found, cannot create chart.");
+                 return;
+            }
+
+            textPathDefs = svgElement.querySelector('#text-path-defs'); // Ensure we have the reference
 
             // Create the main group for zoom/pan transformations
             chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            chartGroup.id = 'main-chart-group'; // Add ID for easier selection
             svgElement.appendChild(chartGroup);
 
             // Pre-calculate scaled radii for efficiency
@@ -538,7 +567,7 @@
             applyTransform(); // Apply initial or current zoom/pan
         }
 
-        // --- Create Content Ring Elements (Segments and Dots) ---
+        // --- Create Content Ring Elements (Segments and Dots) --- UPDATED
         function createContentRingElements(ring, innerRadius, outerRadius, parent) {
             const segmentAngle = 360 / ring.segments;
             const ringIndex = config.rings.indexOf(ring); // Get index for data lookup
@@ -550,7 +579,8 @@
                 // --- Draw Segment Path ---
                 const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 path.setAttribute("d", describeArc(config.centerX, config.centerY, innerRadius, outerRadius, startAngle, endAngle));
-                path.setAttribute("fill", ring.color);
+                // Use the specific color for this segment
+                path.setAttribute("fill", ring.segmentColors?.[i] || ring.color || '#cccccc'); // Fallback color
                 path.classList.add("segment");
                 // Store data on the element for click/hover handlers
                 path.dataset.segmentName = ring.segmentNames[i];
@@ -558,11 +588,9 @@
                 path.dataset.ringIndex = ringIndex;
                 path.dataset.segmentIndex = i;
 
-                // Apply slight brightness variation for visual separation
-                 if (ring.segments > 1) {
-                     const brightness = 1 + (i % 2 === 0 ? 0.05 : -0.05); // Alternate brightness
-                     path.style.filter = `brightness(${brightness})`;
-                 }
+                // Remove the filter style - color variation is handled by segmentColors now
+                path.style.filter = '';
+
                 // Add event listeners
                 path.addEventListener("pointermove", handleSegmentHover);
                 path.addEventListener("pointerleave", hideTooltip);
@@ -585,7 +613,7 @@
                     dot.setAttribute("cx", pos.x);
                     dot.setAttribute("cy", pos.y);
                     dot.setAttribute("r", Math.max(3, 5 * scaleFactor)); // Scale dot radius, min size 3
-                    dot.setAttribute("fill", "#ffffff"); // White dots
+                    dot.setAttribute("fill", "#F1F5F9"); // Light gray dots (slate-100)
                     dot.classList.add("interactive-dot");
                     // Store data on the element
                     dot.dataset.ringIndex = ringIndex;
@@ -599,7 +627,7 @@
                     parent.appendChild(dot);
                 });
 
-                // --- Add Segment Label ---
+                // --- Add Segment Label (Now Curved) ---
                 addSegmentLabel(ring, i, innerRadius, outerRadius, startAngle, endAngle, parent);
             }
         }
@@ -642,7 +670,7 @@
         }
 
 
-        // --- Helper to Describe SVG Arc Path ---
+        // --- Helper to Describe SVG Arc Path (for segments) ---
         function describeArc(x, y, innerRadius, outerRadius, startAngle, endAngle) {
             // Generates the 'd' attribute string for an SVG path representing a ring segment (annular sector)
             innerRadius = Math.max(0, innerRadius); // Ensure radius is not negative
@@ -700,49 +728,69 @@
             };
         }
 
-        // --- Add Segment Label ---
-        function addSegmentLabel(ring, segmentIndex, innerR, outerR, startAng, endAng, parent) {
-            // Adds text labels within segments, if space permits
-            const angleSpan = endAng - startAng;
-            const radiusSpan = outerR - innerR;
-
-            // Don't add label if segment is too small
-            // Adjusted minimums slightly for better chance of showing labels on inner ring
-            if (radiusSpan < 15 || angleSpan < 25) return;
-
-            const midAngle = startAng + angleSpan / 2;
-            // Position label slightly further out radially for better spacing, especially on inner rings
-            const textRadius = innerR + radiusSpan * 0.65;
-            const pos = polarToCartesian(config.centerX, config.centerY, textRadius, midAngle);
-
-            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            text.setAttribute("x", pos.x); text.setAttribute("y", pos.y);
-            text.setAttribute("text-anchor", "middle"); text.setAttribute("dominant-baseline", "middle");
-            // Adjust font size based on available radial space, ensure minimum size
-            text.style.fontSize = `${Math.min(14, Math.max(9, radiusSpan / 4))}px`; // Slightly larger min, adjust divisor
-            text.textContent = ring.segmentNames[segmentIndex];
-
-            // Rotate text to align with segment, flip if upside down
-            let rotation = midAngle;
-            if (rotation > 90 && rotation < 270) { rotation += 180; } // Flip text if it's mostly upside down
-            text.setAttribute("transform", `rotate(${rotation}, ${pos.x}, ${pos.y})`);
-
-            // Add a shadow/outline for better readability using a clone
-            const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            labelGroup.classList.add("label-group");
-            const textShadow = text.cloneNode(true);
-            textShadow.classList.add("label-shadow"); // Style via CSS
-            textShadow.style.fill = 'none'; // CSS handles stroke
-            textShadow.style.stroke = 'rgba(0,0,0,0.6)'; // CSS handles stroke
-            textShadow.style.strokeWidth = '3px'; // CSS handles stroke
-            textShadow.style.strokeLinejoin = 'round'; // CSS handles stroke
-
-            labelGroup.appendChild(textShadow); // Shadow first
-            labelGroup.appendChild(text); // Actual text on top
-            parent.appendChild(labelGroup);
+        // --- Helper: Describe SVG Arc Path (for textPath) ---
+        function describeTextArc(x, y, radius, startAngle, endAngle) {
+            // Generates the 'd' attribute string for a simple arc path, used for textPath
+            const start = polarToCartesian(x, y, radius, endAngle); // Note: start/end angles are reversed for text path direction
+            const end = polarToCartesian(x, y, radius, startAngle);
+            const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+            // Sweep flag 0 means draw the shorter arc in the positive angle direction (counter-clockwise)
+            const d = [
+                "M", start.x, start.y,
+                "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
+            ].join(" ");
+            return d;
         }
 
-        // --- Legend Creation ---
+
+        // --- Add Segment Label (Curved Text) ---
+        function addSegmentLabel(ring, segmentIndex, innerR, outerR, startAng, endAng, parent) {
+            const angleSpan = endAng - startAng;
+            const radiusSpan = outerR - innerR;
+            const ringIndex = config.rings.indexOf(ring);
+
+            // Don't add label if segment is too small
+            if (radiusSpan < 15 || angleSpan < 25) return; // Keep minimum size checks
+
+            // Calculate radius for the text path (centerline of the segment)
+            const textPathRadius = innerR + radiusSpan / 2;
+
+            // Define the path for the text to follow
+            const pathId = `label-path-${ringIndex}-${segmentIndex}`;
+            const textArcPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            textArcPath.setAttribute("id", pathId);
+            textArcPath.setAttribute("d", describeTextArc(config.centerX, config.centerY, textPathRadius, startAng, endAng));
+            textArcPath.setAttribute("fill", "none"); // Make path invisible
+            textArcPath.setAttribute("stroke", "none");
+            // Add the path definition to the <defs> section
+            if (textPathDefs) {
+                 textPathDefs.appendChild(textArcPath);
+            } else {
+                 console.warn("Defs element for text paths not found.");
+                 // As fallback, add directly to parent, though less ideal
+                 parent.appendChild(textArcPath);
+            }
+
+
+            // Create the text element
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.classList.add("label-group"); // Use class for styling fill, font-weight
+            // Adjust font size based on available radial space, ensure minimum size
+            text.style.fontSize = `${Math.min(14, Math.max(9, radiusSpan / 4.5))}px`; // Adjusted divisor slightly for curved text
+
+            // Create the textPath element
+            const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
+            textPath.setAttribute("href", `#${pathId}`); // Link to the path definition
+            textPath.setAttribute("startOffset", "50%"); // Center text along the path
+            textPath.setAttribute("text-anchor", "middle"); // Anchor the text's center
+            textPath.textContent = ring.segmentNames[segmentIndex]; // Set the actual text
+
+            // Append textPath to text, and text to the parent group
+            text.appendChild(textPath);
+            parent.appendChild(text);
+        }
+
+        // --- Legend Creation --- UPDATED
         function createFloatingLegend() {
             // Creates the draggable/collapsible legend box
             legendContainer.innerHTML = ''; // Clear previous legend
@@ -785,12 +833,10 @@
 
                     const colorBox = document.createElement('div');
                     colorBox.className = 'legend-color';
-                    colorBox.style.backgroundColor = ring.color;
-                    // Apply same brightness filter as the segment for consistency
-                    if (ring.segments > 1) {
-                        const brightness = 1 + (segIdx % 2 === 0 ? 0.05 : -0.05);
-                        colorBox.style.filter = `brightness(${brightness})`;
-                    }
+                    // Use the specific color for this segment from the config
+                    colorBox.style.backgroundColor = ring.segmentColors?.[segIdx] || ring.color || '#cccccc';
+                    // Remove filter style from legend box - it now shows the exact segment color
+                    colorBox.style.filter = '';
 
                     const label = document.createElement('span');
                     label.textContent = name;
