@@ -755,11 +755,15 @@
              const adjustedStartAngle = startAngle + 0.001;
              const adjustedEndAngle = endAngle - 0.001;
 
-             const start = polarToCartesian(x, y, radius, adjustedStartAngle); // Text flows from startAngle towards endAngle
-             const end = polarToCartesian(x, y, radius, adjustedEndAngle);
+             // Use the standard SVG angle direction (positive = clockwise)
+             // But our coordinate system has 0 up, positive clockwise
+             // Text path flows along the path from its start M point
+             // We want the text to read left-to-right along the top arc, so path needs to go counter-clockwise
+             // Let's use sweep-flag 0 (counter-clockwise) and calculate points accordingly
+             const start = polarToCartesian(x, y, radius, adjustedStartAngle); // Start point for text path
+             const end = polarToCartesian(x, y, radius, adjustedEndAngle);   // End point for text path
              const largeArcFlag = (adjustedEndAngle - adjustedStartAngle) <= 180 ? "0" : "1";
-             // Sweep flag 1 for positive angle direction (standard SVG)
-             const sweepFlag = 1;
+             const sweepFlag = 1; // Use 1 for standard positive angle direction
 
              const d = [
                  "M", start.x, start.y,
@@ -810,7 +814,9 @@
 
             // Create the textPath element to display the text along the curve
             const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
-            textPath.setAttribute("href", `#${pathId}`); // Link to the path definition
+            // Set BOTH href and xlink:href for compatibility
+            textPath.setAttribute("href", `#${pathId}`);
+            textPath.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", `#${pathId}`);
             textPath.setAttribute("startOffset", "50%"); // Center text along the path
             textPath.setAttribute("text-anchor", "middle"); // Anchor the text's center
             textPath.textContent = ring.segmentNames[segmentIndex]; // Set the actual text
