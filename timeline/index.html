@@ -211,6 +211,16 @@
         /* Arrow Styling */
         .arrow { filter: drop-shadow(0px 1px 1.5px rgba(0,0,0,0.2)); transition: transform 0.2s ease-in-out; }
         .connector {} /* Connector class no longer used */
+        /* Connector Label Styling */
+        .connector-label {
+            font-weight: bold;
+            fill: #4B5563; /* slate-600 */
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none; /* Don't interfere with clicks/zoom */
+            /* Font size set dynamically in JS */
+        }
+
 
         /* Zoom Controls Styling */
         .zoom-controls { position: absolute; right: 20px; top: 20px; z-index: 50; display: flex; flex-direction: column; gap: 8px; }
@@ -327,7 +337,6 @@
                      // --- Ring 1: Key Literary & Cultural Works ---
                      {
                         name: "Key Literary & Cultural Works", radius: 200, segments: 3,
-                        // Define segment colors for stepped gradient
                         segmentColors: ["#94A3B8", "#64748B", "#475569"], // slate-400, slate-500, slate-600
                         segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1799 CE", "1800 CE to 1945 CE"],
                         segmentOverviews: [
@@ -355,11 +364,10 @@
                         ]
                     },
                     // --- Connector 1 ---
-                    { name: "Connector 1", color: "#475569", isConnector: true, arrowCount: 8, thickness: 7 }, // slate-600 (Matches darkest segment of Ring 1)
+                    { name: "Connector 1", color: "#475569", isConnector: true, arrowCount: 8, thickness: 7 }, // slate-600
                     // --- Ring 2: Socioeconomic Factors ---
                     {
                         name: "Socioeconomic Factors", radius: 155, segments: 4,
-                        // Define segment colors for stepped gradient
                         segmentColors: ["#BAE6FD", "#7DD3FC", "#38BDF8", "#0EA5E9"], // sky-300, sky-400, sky-500, sky-600
                         segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1699s CE", "1760s CE to 1890s CE", "1890s CE to 1980s CE"],
                         segmentOverviews: [
@@ -391,11 +399,10 @@
                         ]
                     },
                      // --- Connector 2 ---
-                    { name: "Connector 2", color: "#0EA5E9", isConnector: true, arrowCount: 6, thickness: 7 }, // sky-600 (Matches darkest segment of Ring 2)
+                    { name: "Connector 2", color: "#0EA5E9", isConnector: true, arrowCount: 6, thickness: 7 }, // sky-600
                     // --- Ring 3: Scientific Theories and Breakthroughs ---
                     {
                         name: "Scientific Theories and Breakthroughs", radius: 110, segments: 4,
-                        // Define segment colors for stepped gradient
                         segmentColors: ["#67E8F9", "#22D3EE", "#0DD9FE", "#0891B2"], // cyan-300, cyan-400, cyan-500, cyan-600
                         segmentNames: ["500s BCE to 1599s CE", "1600s CE to 1760s CE", "1770s CE to 1899s CE", "1900s CE to 1945 CE"],
                          segmentOverviews: [
@@ -437,11 +444,10 @@
                         ]
                     },
                     // --- Connector 3 ---
-                    { name: "Connector 3", color: "#0891B2", isConnector: true, arrowCount: 5, thickness: 6 }, // cyan-600 (Matches darkest segment of Ring 3)
+                    { name: "Connector 3", color: "#0891B2", isConnector: true, arrowCount: 5, thickness: 6 }, // cyan-600
                     // --- Ring 4: Practical Implementations ---
                     {
                         name: "Practical Implementations", radius: 65, segments: 3,
-                        // Define segment colors for stepped gradient
                         segmentColors: ["#FCD34D", "#F59E0B", "#D97706"], // amber-300, amber-500, amber-600
                         segmentNames: [
                             "Early Concepts & LTA",
@@ -547,7 +553,7 @@
                     previousOuterRadius = outerR; // Store for connector placement
 
                 } else {
-                    // --- Draw Connector Arrows ---
+                    // --- Draw Connector Elements (Arrows and Text) ---
                     const prevContentRing = config.rings[index - 1]; // Ring before the connector
                      let nextContentRing = null; // Ring after the connector
                      for (let j = index + 1; j < config.rings.length; j++) {
@@ -555,9 +561,10 @@
                      }
 
                     if (prevContentRing && nextContentRing) {
-                        // Place arrows halfway within the gap
-                        const arrowPlacementRadius = nextContentRing.scaledRadius + (gapSize / 2);
-                        createArrowsInGap(ring, arrowPlacementRadius, gapSize, chartGroup);
+                        // Place arrows/text halfway within the gap
+                        const placementRadius = nextContentRing.scaledRadius + (gapSize / 2);
+                        // Pass the name of the ring the connector leads TO
+                        createConnectorElements(ring, placementRadius, gapSize, chartGroup, nextContentRing.name);
                     }
                     // Connectors don't update previousOuterRadius
                 }
@@ -567,7 +574,7 @@
             applyTransform(); // Apply initial or current zoom/pan
         }
 
-        // --- Create Content Ring Elements (Segments and Dots) --- UPDATED
+        // --- Create Content Ring Elements (Segments and Dots) ---
         function createContentRingElements(ring, innerRadius, outerRadius, parent) {
             const segmentAngle = 360 / ring.segments;
             const ringIndex = config.rings.indexOf(ring); // Get index for data lookup
@@ -579,7 +586,7 @@
                 // --- Draw Segment Path ---
                 const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 path.setAttribute("d", describeArc(config.centerX, config.centerY, innerRadius, outerRadius, startAngle, endAngle));
-                // Use the specific color for this segment
+                // Use the specific color for this segment from the config
                 path.setAttribute("fill", ring.segmentColors?.[i] || ring.color || '#cccccc'); // Fallback color
                 path.classList.add("segment");
                 // Store data on the element for click/hover handlers
@@ -628,32 +635,31 @@
                 });
 
                 // --- Add Segment Label (Now Curved) ---
-                addSegmentLabel(ring, i, innerRadius, outerRadius, startAngle, endAngle, parent);
+                // Skip labels for the innermost ring ("Practical Implementations")
+                if (ring.name !== "Practical Implementations") {
+                    addSegmentLabel(ring, i, innerRadius, outerRadius, startAngle, endAngle, parent);
+                }
             }
         }
 
-        // --- Create Arrows In Gap ---
-        function createArrowsInGap(connectorDef, placementRadius, currentGapSize, parent) {
-            // Draws the rotating arrows between content rings
+        // --- Create Connector Elements (Arrows and Text) ---
+        function createConnectorElements(connectorDef, placementRadius, currentGapSize, parent, targetRingName) {
             const arrowCount = connectorDef.arrowCount || 6; // Default 6 arrows
             const arrowColor = connectorDef.color;
             const arrowLength = Math.max(4, currentGapSize * 0.7); // Scale arrow size with gap
             const arrowWidth = Math.max(3, currentGapSize * 0.5);
             const connectorGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            connectorGroup.classList.add("connector-group"); // For potential future styling/animation
+            connectorGroup.classList.add("connector-group");
 
+            // --- Draw Arrows ---
             for (let i = 0; i < arrowCount; i++) {
                 const angleDeg = (i * 360 / arrowCount); // Distribute arrows evenly
                 const angleRad = (angleDeg - 90) * Math.PI / 180.0; // Convert to radians for trig
 
-                // Calculate points for the triangle (arrowhead)
-                // Tip points inwards (towards center)
                 const tip = polarToCartesian(config.centerX, config.centerY, placementRadius - arrowLength / 2, angleDeg);
-                // Base is further out
                 const baseCenter = polarToCartesian(config.centerX, config.centerY, placementRadius + arrowLength / 2, angleDeg);
 
-                // Calculate the two base corners perpendicular to the arrow direction
-                const perpAngleRad = angleRad + Math.PI / 2; // Angle perpendicular to the arrow direction
+                const perpAngleRad = angleRad + Math.PI / 2;
                 const wingOffset = arrowWidth / 2;
                 const wing1X = baseCenter.x + wingOffset * Math.cos(perpAngleRad);
                 const wing1Y = baseCenter.y + wingOffset * Math.sin(perpAngleRad);
@@ -666,6 +672,19 @@
                 arrow.classList.add("arrow");
                 connectorGroup.appendChild(arrow);
             }
+
+             // --- Add Ring Name Text ---
+             if (targetRingName) {
+                 const textPos = polarToCartesian(config.centerX, config.centerY, placementRadius, -90); // Position at the top of the gap
+                 const connectorText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                 connectorText.setAttribute("x", textPos.x);
+                 connectorText.setAttribute("y", textPos.y);
+                 connectorText.classList.add("connector-label"); // Apply CSS class
+                 connectorText.style.fontSize = Math.max(8, 10 * scaleFactor) + 'px'; // Scale font size
+                 connectorText.textContent = targetRingName;
+                 connectorGroup.appendChild(connectorText); // Add text after arrows
+             }
+
             parent.appendChild(connectorGroup);
         }
 
@@ -728,29 +747,42 @@
             };
         }
 
-        // --- Helper: Describe SVG Arc Path (for textPath) ---
+        // --- Helper: Describe SVG Arc Path (for textPath) --- REVISED
         function describeTextArc(x, y, radius, startAngle, endAngle) {
-            // Generates the 'd' attribute string for a simple arc path, used for textPath
-            const start = polarToCartesian(x, y, radius, endAngle); // Note: start/end angles are reversed for text path direction
-            const end = polarToCartesian(x, y, radius, startAngle);
-            const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-            // Sweep flag 0 means draw the shorter arc in the positive angle direction (counter-clockwise)
-            const d = [
-                "M", start.x, start.y,
-                "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
-            ].join(" ");
-            return d;
-        }
+             // Generates the 'd' attribute string for a simple arc path, used for textPath
+             // Ensure startAngle < endAngle for consistent arc direction
+             // Add small epsilon to avoid issues with identical start/end in full circles
+             const adjustedStartAngle = startAngle + 0.001;
+             const adjustedEndAngle = endAngle - 0.001;
+
+             const start = polarToCartesian(x, y, radius, adjustedStartAngle); // Text flows from startAngle towards endAngle
+             const end = polarToCartesian(x, y, radius, adjustedEndAngle);
+             const largeArcFlag = (adjustedEndAngle - adjustedStartAngle) <= 180 ? "0" : "1";
+             // Sweep flag 1 for positive angle direction (standard SVG)
+             const sweepFlag = 1;
+
+             const d = [
+                 "M", start.x, start.y,
+                 "A", radius, radius, 0, largeArcFlag, sweepFlag, end.x, end.y
+             ].join(" ");
+
+             return d;
+         }
 
 
-        // --- Add Segment Label (Curved Text) ---
+        // --- Add Segment Label (Curved Text) --- REVISED
         function addSegmentLabel(ring, segmentIndex, innerR, outerR, startAng, endAng, parent) {
+            // Skip adding labels for the innermost ring
+            if (ring.name === "Practical Implementations") {
+                return;
+            }
+
             const angleSpan = endAng - startAng;
             const radiusSpan = outerR - innerR;
             const ringIndex = config.rings.indexOf(ring);
 
             // Don't add label if segment is too small
-            if (radiusSpan < 15 || angleSpan < 25) return; // Keep minimum size checks
+            if (radiusSpan < 15 || angleSpan < 25) return;
 
             // Calculate radius for the text path (centerline of the segment)
             const textPathRadius = innerR + radiusSpan / 2;
@@ -761,36 +793,35 @@
             textArcPath.setAttribute("id", pathId);
             textArcPath.setAttribute("d", describeTextArc(config.centerX, config.centerY, textPathRadius, startAng, endAng));
             textArcPath.setAttribute("fill", "none"); // Make path invisible
-            textArcPath.setAttribute("stroke", "none");
+            textArcPath.setAttribute("stroke", "none"); // Make path invisible
+
             // Add the path definition to the <defs> section
             if (textPathDefs) {
                  textPathDefs.appendChild(textArcPath);
             } else {
                  console.warn("Defs element for text paths not found.");
-                 // As fallback, add directly to parent, though less ideal
-                 parent.appendChild(textArcPath);
+                 parent.appendChild(textArcPath); // Fallback
             }
 
-
-            // Create the text element
+            // Create the text element that will contain the textPath
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.classList.add("label-group"); // Use class for styling fill, font-weight
-            // Adjust font size based on available radial space, ensure minimum size
-            text.style.fontSize = `${Math.min(14, Math.max(9, radiusSpan / 4.5))}px`; // Adjusted divisor slightly for curved text
+            text.style.fontSize = `${Math.min(14, Math.max(9, radiusSpan / 4.5))}px`;
 
-            // Create the textPath element
+            // Create the textPath element to display the text along the curve
             const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
             textPath.setAttribute("href", `#${pathId}`); // Link to the path definition
             textPath.setAttribute("startOffset", "50%"); // Center text along the path
             textPath.setAttribute("text-anchor", "middle"); // Anchor the text's center
             textPath.textContent = ring.segmentNames[segmentIndex]; // Set the actual text
 
-            // Append textPath to text, and text to the parent group
+            // Append textPath to text, and text to the parent group (chartGroup)
             text.appendChild(textPath);
             parent.appendChild(text);
         }
 
-        // --- Legend Creation --- UPDATED
+
+        // --- Legend Creation ---
         function createFloatingLegend() {
             // Creates the draggable/collapsible legend box
             legendContainer.innerHTML = ''; // Clear previous legend
@@ -828,6 +859,12 @@
 
                 const segmentItems = ring.segmentNames || [];
                 segmentItems.forEach((name, segIdx) => {
+                    // Skip adding legend item if the ring is "Practical Implementations"
+                    // because its labels are hidden on the chart.
+                    if (ring.name === "Practical Implementations") {
+                        return;
+                    }
+
                     const item = document.createElement('div');
                     item.className = 'legend-item';
 
@@ -1106,7 +1143,7 @@
 
              const target = event.target;
              // Check if the click started on the SVG background itself, not an interactive element
-             const isInteractive = target.closest('.segment') || target.closest('.interactive-dot') || target.closest('.label-group') || target.closest('.arrow');
+             const isInteractive = target.closest('.segment') || target.closest('.interactive-dot') || target.closest('.label-group') || target.closest('.arrow') || target.closest('.connector-label');
              const isBackground = target.tagName === 'svg' || target.tagName === 'path' && !isInteractive; // Allow panning on segments if not clicking a dot
 
              // Only allow panning if zoomed in and click is on background/non-interactive part
