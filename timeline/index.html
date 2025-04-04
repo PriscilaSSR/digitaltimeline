@@ -314,7 +314,7 @@
                 rings: [
                     // --- Ring 1: Key Literary & Cultural Works ---
                     {
-                        name: "Key Literary & Cultural Works", radius: 200, color: "#8A2BE2", segments: 3, // BlueViolet
+                        name: "Key Literary & Cultural Works", radius: 200, color: "#8A2BE2", segments: 3, // BlueViolet // EVEN Radius
                         segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1799 CE", "1800 CE to 1945 CE"],
                         segmentOverviews: [
                             { title: "Key Literary & Cultural Works", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early myths, legends, and tales reflecting humanity's ancient fascination with flight and the heavens.", imageSrc: getPlaceholderUrl(400,250,'Early Lit Overview') },
@@ -344,7 +344,7 @@
                     { name: "Connector 1", color: "#7D59D9", isConnector: true, arrowCount: 8, thickness: 7 },
                     // --- Ring 2: Socioeconomic Factors ---
                     {
-                        name: "Socioeconomic Factors", radius: 150, color: "#4169E1", segments: 4, // RoyalBlue
+                        name: "Socioeconomic Factors", radius: 155, color: "#4169E1", segments: 4, // RoyalBlue // EVEN Radius
                         segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1699s CE", "1760s CE to 1890s CE", "1890s CE to 1980s CE"],
                         segmentOverviews: [
                             { title: "Socioeconomic Factors", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early trade routes, material innovations (silk, paper), and the spread of technologies like gunpowder laid groundwork, though direct impact on flight was limited.", imageSrc: getPlaceholderUrl(400,250,'Ancient SocioEco') },
@@ -378,7 +378,7 @@
                     { name: "Connector 2", color: "#3A98B9", isConnector: true, arrowCount: 6, thickness: 7 },
                     // --- Ring 3: Scientific Theories and Breakthroughs ---
                     {
-                        name: "Scientific Theories and Breakthroughs", radius: 100, color: "#32CD32", segments: 4, // LimeGreen
+                        name: "Scientific Theories and Breakthroughs", radius: 110, color: "#32CD32", segments: 4, // LimeGreen // EVEN Radius
                         segmentNames: ["500s BCE to 1599s CE", "1600s CE to 1760s CE", "1770s CE to 1899s CE", "1900s CE to 1945 CE"],
                          segmentOverviews: [
                             { title: "Scientific Theories & Breakthroughs", subtitle: "500s BCE to 1599s CE (Overview)", text: "Early understanding of basic principles like buoyancy (Archimedes), reaction (Hero), alongside observational studies (Da Vinci) and theoretical ideas (Bacon).", imageSrc: getPlaceholderUrl(400,250,'Ancient Science') },
@@ -420,47 +420,31 @@
                     },
                     // --- Connector 3 ---
                     { name: "Connector 3", color: "#91B93A", isConnector: true, arrowCount: 5, thickness: 6 },
-                    // --- Ring 4: Practical Implementations --- (UPDATED)
+                    // --- Ring 4: Practical Implementations ---
                     {
-                        name: "Practical Implementations", radius: 50, color: "#FF7F50", segments: 7, // Coral // UPDATED name and segments
-                        segmentNames: [ // UPDATED segment names
-                            "Non-Human Flight",
-                            "Early Attempts at Human Flight",
-                            "The Age of the Balloon",
-                            "Early Glider Experiments",
-                            "Race Toward Modern Aviation",
-                            "Parallel Alternative: The Zeppelin",
-                            "Post-War Advancements"
+                        name: "Practical Implementations", radius: 65, color: "#FF7F50", segments: 3, // Coral // EVEN Radius
+                        segmentNames: [
+                            "Early Concepts & LTA",
+                            "Heavier-than-Air Pioneers",
+                            "Alternative & Modern"
                         ],
-                         segmentOverviews: [ // UPDATED Overviews (now 7)
-                             { title: "Practical Implementations", subtitle: "Non-Human Flight (Overview)", text: "Early successes with unmanned flight, primarily kites and models, demonstrating basic aerodynamic principles.", imageSrc: getPlaceholderUrl(400,250,'Non-Human Overview') },
-                             { title: "Practical Implementations", subtitle: "Early Attempts at Human Flight (Overview)", text: "Various pre-ballooning attempts, often based on flawed ornithopter concepts or simple jumps.", imageSrc: getPlaceholderUrl(400,250,'Early Attempts Overview') },
-                             { title: "Practical Implementations", subtitle: "The Age of the Balloon (Overview)", text: "The first successful human flights using lighter-than-air technology, starting with the Montgolfiers.", imageSrc: getPlaceholderUrl(400,250,'Balloon Age Overview') },
-                             { title: "Practical Implementations", subtitle: "Early Glider Experiments (Overview)", text: "Systematic development of unpowered, heavier-than-air flight by pioneers like Cayley and Lilienthal.", imageSrc: getPlaceholderUrl(400,250,'Glider Overview') },
-                             { title: "Practical Implementations", subtitle: "Race Toward Modern Aviation (Overview)", text: "Intense period of experimentation leading to the first controlled, sustained, powered flights (Wright Brothers).", imageSrc: getPlaceholderUrl(400,250,'Powered Flight Race Overview') },
-                             { title: "Practical Implementations", subtitle: "Parallel Alternative: The Zeppelin (Overview)", text: "Development of large, rigid airships for long-distance travel and military use.", imageSrc: getPlaceholderUrl(400,250,'Zeppelin Overview') },
-                             { title: "Practical Implementations", subtitle: "Post-War Advancements (Overview)", text: "Rapid development driven by World Wars, leading into the jet age and modern aircraft.", imageSrc: getPlaceholderUrl(400,250,'Post-War Overview') }
+                         segmentOverviews: [
+                             { title: "Practical Implementations", subtitle: "Early Concepts & LTA (Overview)", text: "From unmanned kites and models to the first tentative human attempts and the breakthrough of lighter-than-air balloon flight.", imageSrc: getPlaceholderUrl(400,250,'Early LTA Overview') },
+                             { title: "Practical Implementations", subtitle: "Heavier-than-Air Pioneers (Overview)", text: "The crucial development of gliders and the intense period of experimentation culminating in the first powered, controlled flights.", imageSrc: getPlaceholderUrl(400,250,'HTA Pioneers Overview') },
+                             { title: "Practical Implementations", subtitle: "Alternative & Modern (Overview)", text: "The rise and fall of rigid airships (Zeppelins) alongside the rapid advancements in airplane technology following the World Wars.", imageSrc: getPlaceholderUrl(400,250,'Alt Modern Overview') }
                          ],
-                        segmentDetails: [ // UPDATED Details (now 7 arrays, each with 1 item)
-                            [
-                                { title: "Non-Human Flight", subtitle: "Kites, Models, etc.", text: "Placeholder text about the long history and various uses of kites and early flying models.", imageSrc: getPlaceholderUrl(400, 250, 'Kites Models') }
-                            ],
-                            [
-                                { title: "Early Attempts at Human Flight", subtitle: "Pre-Ballooning", text: "Placeholder text about legendary and documented attempts before successful lighter-than-air flight.", imageSrc: getPlaceholderUrl(400, 250, 'Tower Jumpers') }
-                            ],
-                            [
+                        segmentDetails: [
+                            [ // Segment 1: Early Concepts & LTA
+                                { title: "Non-Human Flight", subtitle: "Kites, Models, etc.", text: "Placeholder text about the long history and various uses of kites and early flying models.", imageSrc: getPlaceholderUrl(400, 250, 'Kites Models') },
+                                { title: "Early Attempts at Human Flight", subtitle: "Pre-Ballooning", text: "Placeholder text about legendary and documented attempts before successful lighter-than-air flight.", imageSrc: getPlaceholderUrl(400, 250, 'Tower Jumpers') },
                                 { title: "The Age of the Balloon", subtitle: "Lighter-than-Air", text: "Placeholder text about the Montgolfier brothers, Charles, and the subsequent development of ballooning.", imageSrc: getPlaceholderUrl(400, 250, 'Montgolfier Flight') }
                             ],
-                            [
-                                { title: "Early Glider Experiments", subtitle: "Cayley, Lilienthal, etc.", text: "Placeholder text about key figures and their contributions to glider design and understanding control.", imageSrc: getPlaceholderUrl(400, 250, 'Lilienthal Glider') }
-                            ],
-                            [
+                            [ // Segment 2: Heavier-than-Air Pioneers
+                                { title: "Early Glider Experiments", subtitle: "Cayley, Lilienthal, etc.", text: "Placeholder text about key figures and their contributions to glider design and understanding control.", imageSrc: getPlaceholderUrl(400, 250, 'Lilienthal Glider') },
                                 { title: "Race Toward Modern Aviation", subtitle: "Wright Brothers, etc.", text: "Placeholder text about the Wrights' systematic approach and competition from others like Langley.", imageSrc: getPlaceholderUrl(400, 250, 'Wright Flyer 1903') }
                             ],
-                            [
-                                { title: "Parallel Alternative: The Zeppelin", subtitle: "Rigid Airships", text: "Placeholder text about Count von Zeppelin's development of large dirigibles.", imageSrc: getPlaceholderUrl(400, 250, 'Zeppelin Airship') }
-                            ],
-                            [
+                            [ // Segment 3: Alternative & Modern
+                                { title: "Parallel Alternative: The Zeppelin", subtitle: "Rigid Airships", text: "Placeholder text about Count von Zeppelin's development of large dirigibles.", imageSrc: getPlaceholderUrl(400, 250, 'Zeppelin Airship') },
                                 { title: "Post-War Advancements", subtitle: "Jet Age & Beyond", text: "Placeholder text summarizing the rapid progress following the first powered flights, driven by conflict and commerce.", imageSrc: getPlaceholderUrl(400, 250, 'Jet Airliner') }
                             ]
                         ]
@@ -485,7 +469,7 @@
              const baseOuterRadius = config.rings[0]?.radius || 1; // Use first ring's radius as base
              scaleFactor = (baseOuterRadius > 0) ? (config.chartSize / 2 / baseOuterRadius) : 1;
              // Scale gap size relative to overall chart size, with a minimum
-             gapSize = Math.max(5, 15 * scaleFactor);
+             gapSize = Math.max(5, 15 * scaleFactor); // Keep gap calculation simple for now
         }
 
         // --- Chart Creation ---
@@ -723,17 +707,19 @@
             const radiusSpan = outerR - innerR;
 
             // Don't add label if segment is too small
-            if (radiusSpan < 20 || angleSpan < 15) return;
+            // Adjusted minimums slightly for better chance of showing labels on inner ring
+            if (radiusSpan < 15 || angleSpan < 25) return;
 
             const midAngle = startAng + angleSpan / 2;
-            const textRadius = innerR + radiusSpan * 0.6; // Position label radially ~60% out
+            // Position label slightly further out radially for better spacing, especially on inner rings
+            const textRadius = innerR + radiusSpan * 0.65;
             const pos = polarToCartesian(config.centerX, config.centerY, textRadius, midAngle);
 
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.setAttribute("x", pos.x); text.setAttribute("y", pos.y);
             text.setAttribute("text-anchor", "middle"); text.setAttribute("dominant-baseline", "middle");
-            // Adjust font size based on available radial space
-            text.style.fontSize = `${Math.min(14, Math.max(8, radiusSpan / 3.5))}px`;
+            // Adjust font size based on available radial space, ensure minimum size
+            text.style.fontSize = `${Math.min(14, Math.max(9, radiusSpan / 4))}px`; // Slightly larger min, adjust divisor
             text.textContent = ring.segmentNames[segmentIndex];
 
             // Rotate text to align with segment, flip if upside down
