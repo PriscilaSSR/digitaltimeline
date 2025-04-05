@@ -246,7 +246,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1 id="main-title">Interactive Aviation Timeline</h1>
+    <h1 id="main-title">Human Flight Timeline</h1>
 
     <div class="main-container">
         <div class="sidebar" id="sidebar">
@@ -452,12 +452,12 @@
                         segmentNames: [
                             "Early Concepts & LTA",
                             "Heavier-than-Air Pioneers",
-                            "Alternative & Modern"
+                            "Zappellin & Modern"
                         ],
                          segmentOverviews: [
                              { title: "Practical Implementations", subtitle: "Early Concepts & LTA (Overview)", text: "From unmanned kites and models to the first tentative human attempts and the breakthrough of lighter-than-air balloon flight.", imageSrc: getPlaceholderUrl(400,250,'Early LTA Overview') },
                              { title: "Practical Implementations", subtitle: "Heavier-than-Air Pioneers (Overview)", text: "The crucial development of gliders and the intense period of experimentation culminating in the first powered, controlled flights.", imageSrc: getPlaceholderUrl(400,250,'HTA Pioneers Overview') },
-                             { title: "Practical Implementations", subtitle: "Alternative & Modern (Overview)", text: "The rise and fall of rigid airships (Zeppelins) alongside the rapid advancements in airplane technology following the World Wars.", imageSrc: getPlaceholderUrl(400,250,'Alt Modern Overview') }
+                             { title: "Practical Implementations", subtitle: "Zappellin & Modern (Overview)", text: "The rise and fall of rigid airships (Zeppelins) alongside the rapid advancements in airplane technology following the World Wars.", imageSrc: getPlaceholderUrl(400,250,'Alt Modern Overview') }
                          ],
                         segmentDetails: [
                             [ // Segment 1: Early Concepts & LTA
@@ -469,7 +469,7 @@
                                 { title: "Early Glider Experiments", subtitle: "Cayley, Lilienthal, etc.", text: "Placeholder text about key figures and their contributions to glider design and understanding control.", imageSrc: getPlaceholderUrl(400, 250, 'Lilienthal Glider') },
                                 { title: "Race Toward Modern Aviation", subtitle: "Wright Brothers, etc.", text: "Placeholder text about the Wrights' systematic approach and competition from others like Langley.", imageSrc: getPlaceholderUrl(400, 250, 'Wright Flyer 1903') }
                             ],
-                            [ // Segment 3: Alternative & Modern
+                            [ // Segment 3: Zappellin & Modern
                                 { title: "Parallel Alternative: The Zeppelin", subtitle: "Rigid Airships", text: "Placeholder text about Count von Zeppelin's development of large dirigibles.", imageSrc: getPlaceholderUrl(400, 250, 'Zeppelin Airship') },
                                 { title: "Post-War Advancements", subtitle: "Jet Age & Beyond", text: "Placeholder text summarizing the rapid progress following the first powered flights, driven by conflict and commerce.", imageSrc: getPlaceholderUrl(400, 250, 'Jet Airliner') }
                             ]
@@ -674,16 +674,16 @@
             }
 
              // --- Add Ring Name Text ---
-             if (targetRingName) {
-                 const textPos = polarToCartesian(config.centerX, config.centerY, placementRadius, -90); // Position at the top of the gap
-                 const connectorText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                 connectorText.setAttribute("x", textPos.x);
-                 connectorText.setAttribute("y", textPos.y);
-                 connectorText.classList.add("connector-label"); // Apply CSS class
-                 connectorText.style.fontSize = Math.max(8, 10 * scaleFactor) + 'px'; // Scale font size
-                 connectorText.textContent = targetRingName;
-                 connectorGroup.appendChild(connectorText); // Add text after arrows
-             }
+            // if (targetRingName) {
+           //      const textPos = polarToCartesian(config.centerX, config.centerY, placementRadius, -90); // Position at the top of the gap
+           //      const connectorText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+           //      connectorText.setAttribute("x", textPos.x);
+           //      connectorText.setAttribute("y", textPos.y);
+           //      connectorText.classList.add("connector-label"); // Apply CSS class
+           //      connectorText.style.fontSize = Math.max(8, 10 * scaleFactor) + 'px'; // Scale font size
+           //      connectorText.textContent = targetRingName;
+           //      connectorGroup.appendChild(connectorText); // Add text after arrows
+          //   }
 
             parent.appendChild(connectorGroup);
         }
