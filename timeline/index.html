@@ -299,7 +299,7 @@
         }
         function getImagePath(width = 400, height = 250, text = "Image") {
             // Generates a placeholder image URL
-            return `${imageUrlBase}/{encodeURIComponent(text)}`;
+            return `${imageUrlBase}/${text}`;
         }
         function handleImageError(imgElement) {
             // Fallback for broken image links
