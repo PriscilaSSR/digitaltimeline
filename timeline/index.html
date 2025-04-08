@@ -159,7 +159,7 @@
         .legend-content { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 12px; box-sizing: border-box; max-height: calc(70vh - 80px); /* Adjust based on header/handle height */ overflow-y: auto; transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out; }
         .legend-category { margin-top: 5px; margin-bottom: 3px; font-weight: 600; font-size: 0.9rem; color: #0056b3; border-bottom: 1px solid #e9ecef; padding-bottom: 3px; }
         .legend-category:first-child { margin-top: 0; }
-        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #495057; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #495057; cursor: pointer; }
         .legend-color { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); /* Background color set dynamically in JS */ }
         .legend-content.legend-minimized { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border-top: none; /* Hide border when minimized */ }
 
@@ -868,14 +868,11 @@
 
                 const segmentItems = ring.segmentNames || [];
                 segmentItems.forEach((name, segIdx) => {
-                    // Skip adding legend item if the ring is "Practical Implementations"
-                    // because its labels are hidden on the chart.
-                    //if (ring.name === "Practical Implementations") {
-                    //    return;
-                    //}
-
                     const item = document.createElement('div');
                     item.className = 'legend-item';
+                    item.addEventListener('click', () => {
+                        showSidebar(ringIdx, segIdx);
+                    });
 
                     const colorBox = document.createElement('div');
                     colorBox.className = 'legend-color';
