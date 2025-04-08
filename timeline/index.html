@@ -292,7 +292,7 @@
 
         // --- Placeholder Image Handling ---
         const placeholderBase = "https://placehold.co";
-        const imageUrlBase = "...img";
+        const imageUrlBase = "../img";
         function getPlaceholderUrl(width = 400, height = 250, text = "Image") {
             // Generates a placeholder image URL
             return `${placeholderBase}/${width}x${height}/EBF0F5/777?text=${encodeURIComponent(text)}`;
@@ -351,7 +351,7 @@
                         ],
                         segmentDetails: [
                             [ // Segment 1: 500s BCE to 1399s CE
-                                { title: "The Myth of Icarus and Daedalus", subtitle: "c. 500s BCE", text: "An ancient Greek myth that captures the human desire to transcend earthly limits. The tragic flight of Icarus has long symbolized both the aspiration for flight and the risks of overreaching, inspiring later generations to explore aerial innovation.", imageSrc: getImagePath(400, 250, 'Icarus Myth') },
+                                { title: "The Myth of Icarus and Daedalus", subtitle: "c. 500s BCE", text: "An ancient Greek myth that captures the human desire to transcend earthly limits. The tragic flight of Icarus has long symbolized both the aspiration for flight and the risks of overreaching, inspiring later generations to explore aerial innovation.", imageSrc: getImagePath(400, 250, 'icarus') },
                                 { title: "The Pushpaka Vimana", subtitle: "c. 500s BCE", text: "A mythological flying chariot from Indian lore, the Pushpaka Vimana represents early conceptualizations of aerial vehicles. Its depiction in cultural narratives reflects a timeless fascination with flight, influencing later creative and technical pursuits in aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Pushpaka Vimana') },
                                 { title: "The Ebony Horse Tale", subtitle: "c. 800s CE", text: "This medieval narrative of a mechanical, flying horse illustrates the imaginative leap from myth to the idea of engineered flight. It is an early example of humanity’s efforts to envision machines that could conquer the skies.", imageSrc: getPlaceholderUrl(400, 250, 'Ebony Horse') }
                             ],
