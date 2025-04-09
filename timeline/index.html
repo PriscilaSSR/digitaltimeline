@@ -238,50 +238,47 @@
     }
     /* Removed label-shadow class as it's hard to apply reliably to textPath */
 
-   /* --- NEW CSS for Category Labels --- */
+   /* --- NEW CSS for Category Labels --- 
     .category-label {
-        position: absolute; /* Positioned relative to #chart-container */
-        background-color: rgba(248, 249, 250, 0.85); /* Light, slightly transparent */
+        position: absolute; 
+        background-color: rgba(248, 249, 250, 0.85); 
         border: 1px solid rgba(0,0,0,0.1);
         padding: 5px 10px;
         border-radius: 4px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        font-size: 0.75rem; /* Small text */
+        font-size: 0.75rem; 
         font-weight: 600;
-        /* Default color removed, will be set per ID */
-        z-index: 80; /* Above SVG but below interactive elements like legend/sidebar */
-        pointer-events: none; /* Important: prevents interfering with chart interactions */
-        white-space: nowrap; /* Keep label on one line */
+        z-index: 80;
+        pointer-events: none;
+        white-space: nowrap; 
         text-align: center;
-        /* Positioning adjusted below */
-    }
 
-    /* Specific positioning and COLOR for each label (approximate placement ABOVE rings) */
-    #label-cultural { /* Outer Ring -> Top Area */
-        top: 8%; /* Adjusted position */
-        left: 50%; /* Centered Horizontally */
-        transform: translate(-50%, -100%); /* Center and move above point */
-        color: #475569; /* Color derived from its ring (dark slate) */
     }
-    #label-socioeconomic { /* Second Ring -> Top Area */
-        top: 16%; /* Adjusted position */
-        left: 50%; /* Centered Horizontally */
-        transform: translate(-50%, -100%); /* Center and move above point */
-        color: #0EA5E9; /* Color derived from its ring (sky blue) */
+    #label-cultural { 
+        top: 8%;
+        left: 50%; 
+        transform: translate(-50%, -100%);
+        color: #475569; 
     }
-    #label-scientific { /* Third Ring -> Top Area */
-        top: 27%; /* Adjusted position */
-        left: 50%; /* Centered Horizontally */
-        transform: translate(-50%, -100%); /* Center and move above point */
-        color: #0891B2; /* Color derived from its ring (cyan) */
+    #label-socioeconomic { 
+        top: 16%; 
+        left: 50%; 
+        transform: translate(-50%, -100%); 
+        color: #0EA5E9; /* Color derived from its ring (sky blue) 
     }
-    #label-practical { /* Inner Ring -> Top Area */
-        top: 38%; /* Adjusted position */
-        left: 50%; /* Centered Horizontally */
-        transform: translate(-50%, -100%); /* Center and move above point */
-        color: #D97706; /* Color derived from its ring (amber) */
+    #label-scientific {
+        top: 27%; 
+        left: 50%; 
+        transform: translate(-50%, -100%); 
+        color: #0891B2; 
     }
-    /* --- END NEW CSS --- */
+    #label-practical { 
+        top: 38%; 
+        left: 50%; 
+        transform: translate(-50%, -100%); 
+        color: #D97706; /* Color derived from its ring (amber)
+    }
+   */
 
 
 </style>
@@ -297,17 +294,13 @@
          <div class="sidebar-content" id="sidebar-content">
          </div>
      </div>
-         <div class="category-label" id="label-cultural">Key Literary &amp; Cultural Works</div>
-         <div class="category-label" id="label-socioeconomic">Socioeconomic Factors</div>
-         <div class="category-label" id="label-scientific">Scientific Theories &amp; Breakthroughs</div>
-         <div class="category-label" id="label-practical">Practical Implementations</div>
-      
     
      <div id="chart-container">
          <svg width="0" height="0" style="position:absolute;overflow:hidden;">
              <defs id="text-path-defs">
              </defs>
          </svg>
+        
    </div>
      <div class="zoom-controls" id="zoom-controls">
      </div>
@@ -596,7 +589,45 @@
                 }
             }
         });
+// --- ADD THIS NEW SECTION FOR SVG LABELS ---
+        const labelOffsetAboveRing = 10 / currentZoom; // Offset above the ring (adjust base value 10 as needed)
+                                                    // Divide by zoom to keep offset visually consistent? Or keep fixed? Let's try fixed first.
+        const fixedLabelOffset = 10; // Pixels above the ring visually
 
+        config.rings.forEach((ring, index) => {
+            if (!ring.isConnector && ring.name) { // Only label content rings with names
+                const outerRadius = ring.scaledRadius;
+                const labelX = config.centerX;
+                // Position the baseline slightly above the ring's top edge
+                const labelY = config.centerY - outerRadius - fixedLabelOffset;
+
+                // Define label colors (using the ones determined previously)
+                let labelColor = '#343a40'; // Default dark gray
+                if (ring.name.includes("Cultural")) { labelColor = '#475569'; }
+                else if (ring.name.includes("Socioeconomic")) { labelColor = '#0EA5E9'; }
+                else if (ring.name.includes("Scientific")) { labelColor = '#0891B2'; }
+                else if (ring.name.includes("Practical")) { labelColor = '#D97706'; }
+
+                const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                textElement.setAttribute("x", labelX);
+                textElement.setAttribute("y", labelY);
+                textElement.setAttribute("fill", labelColor);
+                textElement.setAttribute("text-anchor", "middle");
+                // dominant-baseline helps vertical alignment - 'text-after-edge' puts the bottom of the text at the y coord
+                textElement.setAttribute("dominant-baseline", "text-after-edge");
+                textElement.setAttribute("font-size", "10px"); // Fixed font size for simplicity first. Could be scaled later.
+                textElement.classList.add("svg-category-label");
+                textElement.textContent = ring.name;
+
+                // IMPORTANT: Append to the chartGroup so it transforms with pan/zoom
+                if (chartGroup) {
+                    chartGroup.appendChild(textElement);
+                } else {
+                    console.error("Cannot append SVG label, chartGroup not found.");
+                }
+            }
+        });
+        // --- END OF NEW SECTION --- //
         createFloatingLegend();
         applyTransform();
     }
