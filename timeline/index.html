@@ -245,50 +245,6 @@
          fill: #fff; /* White text */
          /* Font size is set dynamically in JS */
     }
-    /* Removed label-shadow class as it's hard to apply reliably to textPath */
-
-   /* --- NEW CSS for Category Labels --- 
-    .category-label {
-        position: absolute; 
-        background-color: rgba(248, 249, 250, 0.85); 
-        border: 1px solid rgba(0,0,0,0.1);
-        padding: 5px 10px;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        font-size: 0.75rem; 
-        font-weight: 600;
-        z-index: 80;
-        pointer-events: none;
-        white-space: nowrap; 
-        text-align: center;
-
-    }
-    #label-cultural { 
-        top: 8%;
-        left: 50%; 
-        transform: translate(-50%, -100%);
-        color: #475569; 
-    }
-    #label-socioeconomic { 
-        top: 16%; 
-        left: 50%; 
-        transform: translate(-50%, -100%); 
-        color: #0EA5E9; /* Color derived from its ring (sky blue) 
-    }
-    #label-scientific {
-        top: 27%; 
-        left: 50%; 
-        transform: translate(-50%, -100%); 
-        color: #0891B2; 
-    }
-    #label-practical { 
-        top: 38%; 
-        left: 50%; 
-        transform: translate(-50%, -100%); 
-        color: #D97706; /* Color derived from its ring (amber)
-    }
-   */
-
 
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -452,14 +408,14 @@
                 },
                 { name: "Connector 2", color: "#0EA5E9", isConnector: true, arrowCount: 6, thickness: 7 },
                 {
-                    name: "Scientific Theories and Breakthroughs", radius: 110, segments: 4,
+                    name: "Scientific Breakthroughs", radius: 110, segments: 4,
                     segmentColors: ["#67E8F9", "#22D3EE", "#0DD9FE", "#0891B2"],
                     segmentNames: ["500s BCE to 1599s CE", "1600s CE to 1760s CE", "1770s CE to 1899s CE", "1900s CE to 1945 CE"],
                      segmentOverviews: [
-                        { title: "Scientific Theories & Breakthroughs", subtitle: "500s BCE to 1599s CE (Overview)", text: "Early studies of principles like buoyancy and reaction established basic ideas behind flight.", imageSrc: getPlaceholderUrl(400,250,'Ancient Science') },
-                        { title: "Scientific Theories & Breakthroughs", subtitle: "1600s CE to 1760s CE (Overview)", text: "The Scientific Revolution introduced fundamental laws and experimental designs.", imageSrc: getPlaceholderUrl(400,250,'Scientific Rev Science') },
-                        { title: "Scientific Theories & Breakthroughs", subtitle: "1770s CE to 1899s CE (Overview)", text: "Practical applications and aerodynamic research became central to understanding flight.", imageSrc: getPlaceholderUrl(400,250,'19th Century Science') },
-                        { title: "Scientific Theories & Breakthroughs", subtitle: "1900s CE to 1945 CE (Overview)", text: "Modern aerodynamic theories and early jet propulsion concepts took shape.", imageSrc: getPlaceholderUrl(400,250,'Early 20th Science') }
+                        { title: "Scientific Breakthroughs", subtitle: "500s BCE to 1599s CE (Overview)", text: "Early studies of principles like buoyancy and reaction established basic ideas behind flight.", imageSrc: getPlaceholderUrl(400,250,'Ancient Science') },
+                        { title: "Scientific Breakthroughs", subtitle: "1600s CE to 1760s CE (Overview)", text: "The Scientific Revolution introduced fundamental laws and experimental designs.", imageSrc: getPlaceholderUrl(400,250,'Scientific Rev Science') },
+                        { title: "Scientific Breakthroughs", subtitle: "1770s CE to 1899s CE (Overview)", text: "Practical applications and aerodynamic research became central to understanding flight.", imageSrc: getPlaceholderUrl(400,250,'19th Century Science') },
+                        { title: "Scientific Breakthroughs", subtitle: "1900s CE to 1945 CE (Overview)", text: "Modern aerodynamic theories and early jet propulsion concepts took shape.", imageSrc: getPlaceholderUrl(400,250,'Early 20th Science') }
                     ],
                     segmentDetails: [
                         [
