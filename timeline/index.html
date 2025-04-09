@@ -560,7 +560,7 @@
         const fixedBoxWidth = 130; // Adjust as needed for longest label
         const fixedBoxHeight = 16 + (labelPadding * 2); // Font-size (10) + padding top/bottom
         const labelFontSize = 10; // Font size in px
-        const fixedLabelOffset = 2; // Pixels above the ring visually (box top to ring top)
+        const fixedLabelOffset = -5; // Pixels above the ring visually (box top to ring top)
 
         config.rings.forEach((ring, index) => {
             if (!ring.isConnector && ring.name) {
