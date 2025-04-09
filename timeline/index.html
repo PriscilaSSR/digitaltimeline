@@ -137,7 +137,30 @@
             transition: opacity 0.2s ease-in-out; font-size: 0.85rem; z-index: 110; /* Above sidebar */
             white-space: nowrap; /* Prevent wrapping */
         }
+.category-legend {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    max-width: 280px;
+    z-index: 100;
+    border: 1px solid #dee2e6;
+    cursor: grab;
+}
 
+.category-legend-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #343a40;
+}
+
+.category-legend-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
         /* Legend Styling */
         .legend {
             position: absolute; display: flex; flex-direction: column; gap: 0px; /* No gap between internal elements */
