@@ -600,58 +600,7 @@
                     // Connectors don't update previousOuterRadius
                 }
             });
-function createFloatingCategoryLegends() {
-    const chartContainer = document.getElementById('chart-container');
-    const rings = config.rings;
 
-    // Remove any existing category legends
-    chartContainer.querySelectorAll('.category-legend').forEach(el => el.remove());
-
-    const categoryLegendData = [
-      { ringName: "Key Literary & Cultural Works", position: { x: 50, y: 50 } }, // Example positions - adjust as needed
-      { ringName: "Socioeconomic Factors", position: { x: 200, y: 300 } },
-      { ringName: "Scientific Theories and Breakthroughs", position: { x: 100, y: 100 } },
-      { ringName: "Practical Implementations", position: { x: 300, y: 200 } },
-    ];
-
-    categoryLegendData.forEach(categoryData => {
-        const ring = rings.find(r => r.name === categoryData.ringName);
-        if (!ring || ring.isConnector) return;
-
-        const legendDiv = document.createElement('div');
-        legendDiv.className = 'category-legend';
-        legendDiv.style.left = categoryData.position.x + 'px';
-        legendDiv.style.top = categoryData.position.y + 'px';
-
-        const title = document.createElement('h3');
-        title.className = 'category-legend-title';
-        title.textContent = ring.name;
-        legendDiv.appendChild(title);
-
-        const content = document.createElement('div');
-        content.className = 'category-legend-content';
-
-        const segmentItems = ring.segmentNames || [];
-        segmentItems.forEach((name, segIdx) => {
-            const item = document.createElement('div');
-            item.className = 'legend-item';
-
-            const colorBox = document.createElement('div');
-            colorBox.className = 'legend-color';
-            colorBox.style.backgroundColor = ring.segmentColors?.[segIdx] || ring.color || '#cccccc';
-
-            const label = document.createElement('span');
-            label.textContent = name;
-
-            item.appendChild(colorBox);
-            item.appendChild(label);
-            content.appendChild(item);
-        });
-        legendDiv.appendChild(content);
-        chartContainer.appendChild(legendDiv);
-        makeDraggable(legendDiv);
-    });
-}
             createFloatingLegend(); // Create/update the legend
             applyTransform(); // Apply initial or current zoom/pan
         }
@@ -769,7 +718,58 @@ function createFloatingCategoryLegends() {
 
             parent.appendChild(connectorGroup);
         }
+function createFloatingCategoryLegends() {
+    const chartContainer = document.getElementById('chart-container');
+    const rings = config.rings;
 
+    // Remove any existing category legends
+    chartContainer.querySelectorAll('.category-legend').forEach(el => el.remove());
+
+    const categoryLegendData = [
+      { ringName: "Key Literary & Cultural Works", position: { x: 50, y: 50 } }, // Example positions - adjust as needed
+      { ringName: "Socioeconomic Factors", position: { x: 200, y: 300 } },
+      { ringName: "Scientific Theories and Breakthroughs", position: { x: 100, y: 100 } },
+      { ringName: "Practical Implementations", position: { x: 300, y: 200 } },
+    ];
+
+    categoryLegendData.forEach(categoryData => {
+        const ring = rings.find(r => r.name === categoryData.ringName);
+        if (!ring || ring.isConnector) return;
+
+        const legendDiv = document.createElement('div');
+        legendDiv.className = 'category-legend';
+        legendDiv.style.left = categoryData.position.x + 'px';
+        legendDiv.style.top = categoryData.position.y + 'px';
+
+        const title = document.createElement('h3');
+        title.className = 'category-legend-title';
+        title.textContent = ring.name;
+        legendDiv.appendChild(title);
+
+        const content = document.createElement('div');
+        content.className = 'category-legend-content';
+
+        const segmentItems = ring.segmentNames || [];
+        segmentItems.forEach((name, segIdx) => {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+
+            const colorBox = document.createElement('div');
+            colorBox.className = 'legend-color';
+            colorBox.style.backgroundColor = ring.segmentColors?.[segIdx] || ring.color || '#cccccc';
+
+            const label = document.createElement('span');
+            label.textContent = name;
+
+            item.appendChild(colorBox);
+            item.appendChild(label);
+            content.appendChild(item);
+        });
+        legendDiv.appendChild(content);
+        chartContainer.appendChild(legendDiv);
+        makeDraggable(legendDiv);
+    });
+}
 
         // --- Helper to Describe SVG Arc Path (for segments) ---
         function describeArc(x, y, innerRadius, outerRadius, startAngle, endAngle) {
