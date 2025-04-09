@@ -1046,15 +1046,15 @@
         const clickedButton = event.target;
         const sidebarContentEl = clickedButton.closest('.sidebar-content');
         if (!sidebarContentEl) return;
-        const sidebarEl = sidebarContentEl.closest('.sidebar'); // Get the main sidebar element
+        const sidebarEl = sidebarContentEl.closest('.sidebar');
         if (!sidebarEl) return;
 
-        // --- ADD: Get Base Color ---
-        const baseColor = sidebarEl.dataset.baseColor || '#007bff'; // Use stored color or default blue
+        // Get Base Color (Stored on sidebar element)
+        const baseColor = sidebarEl.dataset.baseColor || '#007bff'; // Fallback to blue if needed
         const contrastColor = getTextColorForBackground(baseColor);
-        // --- END ADD ---
 
-        // --- MODIFY: Loop through buttons ---
+        // Loop through buttons: Set active class AND styles for the clicked one,
+        // remove active class AND styles for others.
         sidebarContentEl.querySelectorAll('.tab-button').forEach(btn => {
             if (btn === clickedButton) {
                 btn.classList.add('active');
@@ -1070,16 +1070,17 @@
                 btn.style.borderColor = '';
             }
         });
-        // --- END MODIFY ---
+
+        // --- Activate the corresponding content section ---
         const tabId = clickedButton.dataset.tabId;
-        const sidebarContentEl = clickedButton.closest('.sidebar-content');
-        sidebarContentEl.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        // Deactivate all content sections first
         sidebarContentEl.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-        clickedButton.classList.add('active');
+        // Activate the one matching the clicked tab's data-tab-id
         const activeSection = sidebarContentEl.querySelector(`.content-section[data-tab-id="${tabId}"]`);
         if (activeSection) {
             activeSection.classList.add('active');
         }
+        // --- End activate content section ---
     }
 
     function closeSidebar() {
