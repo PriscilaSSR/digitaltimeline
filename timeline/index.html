@@ -968,72 +968,106 @@
 
     // --- Sidebar Display ---
     function showSidebar(ringIndex, segmentIndex, initialDetailIndex = -1) {
+        // --- ADD THESE LOGS (Keep them for now to be sure) ---
+        console.log('--- Opening Sidebar ---');
+        console.log('Indices:', { ringIndex, segmentIndex, initialDetailIndex });
         const ring = config.rings[ringIndex];
+        console.log('Ring Data:', ring); // Check if ring is found
+        if (!ring) {
+            console.error("STOP: Ring not found!");
+            return; // Stop if no ring
+        }
         const overview = ring?.segmentOverviews?.[segmentIndex];
         const details = ring?.segmentDetails?.[segmentIndex] || [];
+        console.log('Overview Data:', overview); // Check if overview exists
+        console.log('Details Data:', details); // Check if details array exists
+        // --- END LOGS ---
+
         if (!overview && details.length === 0) {
             console.error("No overview or detail data found for sidebar:", ringIndex, segmentIndex);
             return;
         }
+
+        // --- Color calculation ---
         let baseColor = '#cccccc'; // Default fallback color
         let contrastColor = '#000000';
-        // Use the darkest shade from the ring's palette
         if (ring?.segmentColors && ring.segmentColors.length > 0) {
             baseColor = ring.segmentColors[ring.segmentColors.length - 1];
-        } else if (ring?.color) { // Fallback for connectors if they were ever clickable
+        } else if (ring?.color) {
              baseColor = ring.color;
         }
         contrastColor = getTextColorForBackground(baseColor);
-        // Store base color on the sidebar element for the click handler
         sidebar.dataset.baseColor = baseColor;
-        // --- END ADD ---
 
-        const mainTitle = overview?.title || details[0]?.title || ring.name;
-        const mainSubtitle = overview?.subtitle || details[0]?.subtitle || ring.segmentNames[segmentIndex];
+        // --- Title/Subtitle ---
+        const mainTitle = overview?.title || details[0]?.title || ring.name || "Details";
+        const mainSubtitle = overview?.subtitle || details[0]?.subtitle || ring.segmentNames?.[segmentIndex] || "";
+
+        // --- HTML String Building ---
         let contentHTML = `<button class="sidebar-close" id="close-sidebar" aria-label="Close Details">&times;</button>`;
         contentHTML += `<h2 class="sidebar-title">${mainTitle}</h2>`;
         contentHTML += `<h3 class="sidebar-subtitle">${mainSubtitle}</h3>`;
         let tabsHTML = '<div class="content-tabs">';
-        let contentSectionsHTML = '<div class="tab-content">';
+        let contentSectionsHTML = '<div class="tab-content">'; // Opening div tag
 
+        // --- Overview Section ---
         if (overview) {
             const overviewActive = (initialDetailIndex === -1);
-            const activeStyle = overviewActive
-                ? `style="background-color: ${baseColor}; color: ${contrastColor}; border-color: ${baseColor};"`
-                : ''; // Apply inline style if active
+            const activeStyle = overviewActive ? `style="background-color: ${baseColor}; color: ${contrastColor}; border-color: ${baseColor};"` : '';
             tabsHTML += `<button class="tab-button ${overviewActive ? 'active' : ''}" data-tab-id="overview" ${activeStyle}>Overview</button>`;
-            // ... (overview content section unchanged) ...
+
+            // --- >>> ADD THIS BLOCK BACK <<< ---
+            contentSectionsHTML += `
+                <div class="content-section ${overviewActive ? 'active' : ''}" data-tab-id="overview">
+                    ${overview.imageSrc ? `<img class="sidebar-image" src="${overview.imageSrc}" alt="${overview.title || ''}" onerror="handleImageError(this)">` : ''}
+                    <p class="sidebar-text">${overview.text || 'No overview available.'}</p>
+                </div>
+            `;
+            // --- >>> END ADD BACK <<< ---
         }
 
+        // --- Details Sections ---
         details.forEach((detail, index) => {
             const detailActive = (initialDetailIndex === index);
-            const activeStyle = detailActive
-                ? `style="background-color: ${baseColor}; color: ${contrastColor}; border-color: ${baseColor};"`
-                : ''; // Apply inline style if active
-            const tabLabel = detail.title || `Detail ${index + 1}`;
+            const activeStyle = detailActive ? `style="background-color: ${baseColor}; color: ${contrastColor}; border-color: ${baseColor};"` : '';
+            const tabLabel = detail?.title || `Detail ${index + 1}`; // Added optional chaining
             tabsHTML += `<button class="tab-button ${detailActive ? 'active' : ''}" data-tab-id="detail-${index}" ${activeStyle}>${tabLabel}</button>`;
-            // ... (detail content section unchanged) ...
+
+            // --- >>> ADD THIS BLOCK BACK <<< ---
+            contentSectionsHTML += `
+                <div class="content-section ${detailActive ? 'active' : ''}" data-tab-id="detail-${index}">
+                    ${detail?.subtitle ? `<h4 class="sidebar-subtitle">${detail.subtitle}</h4>` : ''}
+                    ${detail?.imageSrc ? `<img class="sidebar-image" src="${detail.imageSrc}" alt="${detail.title || ''}" onerror="handleImageError(this)">` : ''}
+                    <p class="sidebar-text">${detail?.text || 'No description available.'}</p>
+                </div>
+            `;
+            // --- >>> END ADD BACK <<< ---
         });
 
-        tabsHTML += '</div>';
-        contentSectionsHTML += '</div>';
+        // --- Final HTML Assembly ---
+        tabsHTML += '</div>'; // Closing tag for content-tabs
+        contentSectionsHTML += '</div>'; // Closing tag for tab-content
 
         const totalItems = (overview ? 1 : 0) + details.length;
         if (totalItems > 1) {
-            contentHTML += tabsHTML;
+            contentHTML += tabsHTML; // Add tabs if multiple items
         }
-        contentHTML += contentSectionsHTML;
+        contentHTML += contentSectionsHTML; // Add content sections
+
+        // Log the final HTML before inserting
+        console.log('Final contentHTML:', contentHTML);
+
+        // --- DOM Update ---
         sidebarContent.innerHTML = contentHTML;
         sidebar.classList.add('active');
 
+        // --- Event Listeners ---
         const closeButton = sidebarContent.querySelector('#close-sidebar');
         if (closeButton) { closeButton.addEventListener('click', closeSidebar); }
-
         const tabsContainer = sidebarContent.querySelector('.content-tabs');
         if (tabsContainer) {
             tabsContainer.addEventListener('click', handleSidebarTabClick);
         }
-
         setTimeout(() => {
             document.addEventListener('click', closeSidebarOnClickOutside, { capture: true });
             document.addEventListener('keydown', handleEscKey);
