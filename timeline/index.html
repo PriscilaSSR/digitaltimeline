@@ -17,7 +17,7 @@
             touch-action: none; /* Prevent default touch actions like scrolling/zooming on body */
         }
 
-           /* Main Title Styling (Floating) */
+             /* Main Title Styling (Floating) */
     #main-title {
         position: absolute;
         top: 15px;
@@ -54,7 +54,7 @@
         justify-content: center;
         align-items: center;
         cursor: default; /* Default cursor, changes to grab when zoomed */
-        position: relative; /* Needed for absolute positioning of SVG */
+        position: relative; /* Needed for absolute positioning of SVG AND LABELS */
         overflow: hidden; /* Clip SVG content */
     }
 
@@ -238,6 +238,51 @@
     }
     /* Removed label-shadow class as it's hard to apply reliably to textPath */
 
+    /* --- NEW CSS for Category Labels --- */
+    .category-label {
+        position: absolute; /* Positioned relative to #chart-container */
+        background-color: rgba(248, 249, 250, 0.85); /* Light, slightly transparent */
+        border: 1px solid rgba(0,0,0,0.1);
+        padding: 5px 10px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        font-size: 0.75rem; /* Small text */
+        font-weight: 600;
+        color: #343a40; /* Dark gray text */
+        z-index: 80; /* Above SVG but below interactive elements like legend/sidebar */
+        pointer-events: none; /* Important: prevents interfering with chart interactions */
+        white-space: nowrap; /* Keep label on one line */
+        text-align: center;
+    }
+
+    /* Specific positioning for each label (approximate placement near rings) */
+    #label-cultural { /* Outer Ring -> Top Left Area */
+        top: 15%;
+        left: 15%;
+        transform: translate(-10%, -50%); /* Adjust position slightly */
+    }
+    #label-socioeconomic { /* Next Ring -> Top Right Area */
+        top: 20%;
+        right: 15%;
+        left: auto;
+        transform: translate(10%, -50%); /* Adjust position slightly */
+    }
+    #label-scientific { /* Next Ring -> Bottom Left Area */
+        bottom: 20%;
+        left: 20%;
+        top: auto;
+        transform: translate(-10%, 50%); /* Adjust position slightly */
+    }
+    #label-practical { /* Inner Ring -> Bottom Right Area (ish) */
+        bottom: 25%;
+        right: 20%;
+        top: auto;
+        left: auto;
+        transform: translate(10%, 50%); /* Adjust position slightly */
+    }
+    /* --- END NEW CSS --- */
+
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -245,24 +290,29 @@
 
 </head>
 <body>
-    <h1 id="main-title">Human Flight Timeline</h1>
+     <h1 id="main-title">Human Flight Timeline</h1>
    <div class="main-container">
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-content" id="sidebar-content">
-        </div>
-    </div>
+     <div class="sidebar" id="sidebar">
+         <div class="sidebar-content" id="sidebar-content">
+         </div>
+     </div>
 
-    <div id="chart-container">
+     <div id="chart-container">
          <svg width="0" height="0" style="position:absolute;overflow:hidden;">
-            <defs id="text-path-defs">
-            </defs>
-        </svg>
-    </div>
+             <defs id="text-path-defs">
+             </defs>
+         </svg>
 
-    <div class="zoom-controls" id="zoom-controls">
-    </div>
+         <div class="category-label" id="label-cultural">Key Literary &amp; Cultural Works</div>
+         <div class="category-label" id="label-socioeconomic">Socioeconomic Factors</div>
+         <div class="category-label" id="label-scientific">Scientific Theories &amp; Breakthroughs</div>
+         <div class="category-label" id="label-practical">Practical Implementations</div>
+         </div>
 
-    <div id="zoom-indicator">Zoom: 100%</div>
+     <div class="zoom-controls" id="zoom-controls">
+     </div>
+
+     <div id="zoom-indicator">Zoom: 100%</div>
 </div>
 
 <div class="legend" id="legend">
