@@ -207,6 +207,15 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Add this CSS for the label background */
+.svg-category-label-box {
+    /* Light background, slightly transparent */
+    fill: rgba(248, 249, 250, 0.85);
+    /* Optional subtle border */
+    stroke: rgba(0, 0, 0, 0.1);
+    stroke-width: 0.5px;
+}
+
     /* Arrow Styling */
     .arrow { filter: drop-shadow(0px 1px 1.5px rgba(0,0,0,0.2)); transition: transform 0.2s ease-in-out; }
     .connector {} /* Connector class no longer used */
@@ -589,45 +598,73 @@
                 }
             }
         });
-// --- ADD THIS NEW SECTION FOR SVG LABELS ---
-        const labelOffsetAboveRing = 10 / currentZoom; // Offset above the ring (adjust base value 10 as needed)
-                                                    // Divide by zoom to keep offset visually consistent? Or keep fixed? Let's try fixed first.
-        const fixedLabelOffset = 10; // Pixels above the ring visually
+        // --- REPLACE THE PREVIOUS SVG LABEL SECTION WITH THIS ---
+        console.log("Creating SVG labels..."); // Debug log
+        const labelPadding = 5; // Visual padding around text (used for box size calculation)
+        const fixedBoxWidth = 130; // Adjust as needed for longest label
+        const fixedBoxHeight = 16 + (labelPadding * 2); // Font-size (10) + padding top/bottom
+        const labelFontSize = 10; // Font size in px
+        const fixedLabelOffset = 15; // Pixels above the ring visually (box top to ring top)
 
         config.rings.forEach((ring, index) => {
-            if (!ring.isConnector && ring.name) { // Only label content rings with names
+            if (!ring.isConnector && ring.name) {
                 const outerRadius = ring.scaledRadius;
-                const labelX = config.centerX;
-                // Position the baseline slightly above the ring's top edge
-                const labelY = config.centerY - outerRadius - fixedLabelOffset;
 
-                // Define label colors (using the ones determined previously)
+                // --- Calculate positions ---
+                // Horizontal center of the label group
+                const groupX = config.centerX;
+                // Vertical position for the *center* of the label group, offset above the ring
+                const groupY = config.centerY - outerRadius - fixedLabelOffset - (fixedBoxHeight / 2);
+
+                // Determine label text color
                 let labelColor = '#343a40'; // Default dark gray
                 if (ring.name.includes("Cultural")) { labelColor = '#475569'; }
                 else if (ring.name.includes("Socioeconomic")) { labelColor = '#0EA5E9'; }
                 else if (ring.name.includes("Scientific")) { labelColor = '#0891B2'; }
                 else if (ring.name.includes("Practical")) { labelColor = '#D97706'; }
 
+                // --- Create the Group ---
+                const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                // Position the group itself
+                labelGroup.setAttribute("transform", `translate(${groupX}, ${groupY})`);
+
+                // --- Create the Background Box (Rect) ---
+                const rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                // Position the rect relative to the group's origin (groupX, groupY)
+                rectElement.setAttribute("x", -(fixedBoxWidth / 2)); // Center the box horizontally
+                rectElement.setAttribute("y", -(fixedBoxHeight / 2)); // Center the box vertically
+                rectElement.setAttribute("width", fixedBoxWidth);
+                rectElement.setAttribute("height", fixedBoxHeight);
+                rectElement.setAttribute("rx", 4); // Rounded corners
+                rectElement.setAttribute("ry", 4); // Rounded corners
+                rectElement.classList.add("svg-category-label-box");
+
+                // --- Create the Text ---
                 const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                textElement.setAttribute("x", labelX);
-                textElement.setAttribute("y", labelY);
+                // Position text relative to the group's origin (which is already centered)
+                textElement.setAttribute("x", 0); // Centered horizontally in the group
+                textElement.setAttribute("y", 0); // Centered vertically in the group
                 textElement.setAttribute("fill", labelColor);
                 textElement.setAttribute("text-anchor", "middle");
-                // dominant-baseline helps vertical alignment - 'text-after-edge' puts the bottom of the text at the y coord
-                textElement.setAttribute("dominant-baseline", "text-after-edge");
-                textElement.setAttribute("font-size", "10px"); // Fixed font size for simplicity first. Could be scaled later.
-                textElement.classList.add("svg-category-label");
+                // Use 'middle' baseline for easier vertical centering within the group/box
+                textElement.setAttribute("dominant-baseline", "middle");
+                textElement.setAttribute("font-size", `${labelFontSize}px`);
+                textElement.classList.add("svg-category-label"); // Keep existing class
                 textElement.textContent = ring.name;
 
-                // IMPORTANT: Append to the chartGroup so it transforms with pan/zoom
+                // --- Append elements in order (rect first, then text) ---
+                labelGroup.appendChild(rectElement);
+                labelGroup.appendChild(textElement);
+
+                // --- Append the whole group to the main chart group ---
                 if (chartGroup) {
-                    chartGroup.appendChild(textElement);
+                    chartGroup.appendChild(labelGroup);
                 } else {
-                    console.error("Cannot append SVG label, chartGroup not found.");
+                    console.error("Cannot append SVG label group, chartGroup not found.");
                 }
             }
         });
-        // --- END OF NEW SECTION --- //
+        // --- END OF REPLACEMENT SECTION ---
         createFloatingLegend();
         applyTransform();
     }
