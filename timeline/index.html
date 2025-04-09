@@ -17,1517 +17,1204 @@
             touch-action: none; /* Prevent default touch actions like scrolling/zooming on body */
         }
 
-        /* Main Title Styling (Floating) */
-        #main-title {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 8px 15px;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            z-index: 90;
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #343a40;
-            cursor: grab; /* Indicate draggable */
-            border: 1px solid #dee2e6;
-        }
+           /* Main Title Styling (Floating) */
+    #main-title {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 8px 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        z-index: 90;
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #343a40;
+        cursor: grab; /* Indicate draggable */
+        border: 1px solid #dee2e6;
+    }
 
-        /* Main container */
-        .main-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden; /* Crucial for containing the SVG and sidebar */
-            background-color: #ffffff; /* White background for the chart area */
-             border-radius: 0px; /* No rounding for the main container */
-             box-shadow: none; /* No shadow for the main container */
-        }
+    /* Main container */
+    .main-container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden; /* Crucial for containing the SVG and sidebar */
+        background-color: #ffffff; /* White background for the chart area */
+        border-radius: 0px; /* No rounding for the main container */
+        box-shadow: none; /* No shadow for the main container */
+    }
 
-        /* Chart container */
-        #chart-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: default; /* Default cursor, changes to grab when zoomed */
-            position: relative; /* Needed for absolute positioning of SVG */
-            overflow: hidden; /* Clip SVG content */
-        }
+    /* Chart container */
+    #chart-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: default; /* Default cursor, changes to grab when zoomed */
+        position: relative; /* Needed for absolute positioning of SVG */
+        overflow: hidden; /* Clip SVG content */
+    }
 
-        /* SVG Styling */
-        #chart-container svg {
-            display: block; /* Remove extra space below SVG */
-            width: 100%;
-            height: 100%;
-            /* background-color is set in JS now */
-        }
+    /* SVG Styling */
+    #chart-container svg {
+        display: block; /* Remove extra space below SVG */
+        width: 100%;
+        height: 100%;
+        /* background-color is set in JS now */
+    }
 
-        /* Sidebar Styling */
-        .sidebar {
-            position: absolute;
-            top: 0;
-            left: -350px; /* Start hidden off-screen */
-            height: 100%;
-            width: 350px; /* Fixed width */
-            max-width: 90%; /* Max width on smaller screens */
-            overflow-y: auto; /* Scroll if content overflows */
-            background-color: #f8f9fa; /* Light background */
-            border-radius: 0 8px 8px 0; /* Rounded corners on the right */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: left 0.3s ease-in-out; /* Smooth slide animation */
-            z-index: 100; /* Above chart, below tooltip */
-            border-left: 1px solid #dee2e6; /* Subtle border */
-        }
-        .sidebar.active { left: 0; } /* Slide in when active */
-        .sidebar-content { padding: 25px; position: relative; } /* Add padding */
-        .sidebar-close {
-            position: absolute; top: 15px; right: 15px; width: 32px; height: 32px;
-            background-color: #e9ecef; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s; font-weight: bold;
-            border: none; font-size: 18px; color: #495057;
-        }
-        .sidebar-close:hover { background-color: #ced4da; transform: rotate(90deg); }
-        .sidebar-image {
-            width: 100%; height: auto; max-height: 200px; object-fit: cover;
-            margin-bottom: 15px; border-radius: 6px; border: 1px solid #dee2e6;
-        }
-        /* Sidebar Title/Subtitle now often come from Overview */
-        .sidebar-title { font-size: 1.6rem; margin-bottom: 5px; padding-right: 40px; color: #212529; font-weight: 600; } /* Space for close button */
-        .sidebar-subtitle { font-size: 1.1rem; margin-bottom: 15px; color: #495057; font-weight: 500; }
-        .sidebar-text { line-height: 1.7; margin-bottom: 20px; color: #343a40; font-size: 0.95rem; }
+    /* Sidebar Styling */
+    .sidebar {
+        position: absolute;
+        top: 0;
+        left: -350px; /* Start hidden off-screen */
+        height: 100%;
+        width: 350px; /* Fixed width */
+        max-width: 90%; /* Max width on smaller screens */
+        overflow-y: auto; /* Scroll if content overflows */
+        background-color: #f8f9fa; /* Light background */
+        border-radius: 0 8px 8px 0; /* Rounded corners on the right */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: left 0.3s ease-in-out; /* Smooth slide animation */
+        z-index: 100; /* Above chart, below tooltip */
+        border-left: 1px solid #dee2e6; /* Subtle border */
+    }
+    .sidebar.active { left: 0; } /* Slide in when active */
+    .sidebar-content { padding: 25px; position: relative; } /* Add padding */
+    .sidebar-close {
+        position: absolute; top: 15px; right: 15px; width: 32px; height: 32px;
+        background-color: #e9ecef; border-radius: 50%; display: flex;
+        align-items: center; justify-content: center; cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s; font-weight: bold;
+        border: none; font-size: 18px; color: #495057;
+    }
+    .sidebar-close:hover { background-color: #ced4da; transform: rotate(90deg); }
+    .sidebar-image {
+        width: 100%; height: auto; max-height: 200px; object-fit: cover;
+        margin-bottom: 15px; border-radius: 6px; border: 1px solid #dee2e6;
+    }
+    /* Sidebar Title/Subtitle now often come from Overview */
+    .sidebar-title { font-size: 1.6rem; margin-bottom: 5px; padding-right: 40px; color: #212529; font-weight: 600; } /* Space for close button */
+    .sidebar-subtitle { font-size: 1.1rem; margin-bottom: 15px; color: #495057; font-weight: 500; }
+    .sidebar-text { line-height: 1.7; margin-bottom: 20px; color: #343a40; font-size: 0.95rem; }
 
-        /* Chart Segment Styling */
-        .segment {
-            cursor: pointer; /* Clickable again */
-            transition: opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
-            stroke: rgba(0,0,0,0.15); /* Slightly darker segment border */
-            stroke-width: 1px; /* Increased stroke width */
-            /* Fill color applied dynamically in JS */
-        }
-        .segment:hover {
-            opacity: 0.95; /* Slightly less fade on hover */
-            filter: brightness(1.1); /* Brighten significantly on hover */
-        }
+    /* Chart Segment Styling */
+    .segment {
+        cursor: pointer; /* Clickable again */
+        transition: opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
+        stroke: rgba(0,0,0,0.15); /* Slightly darker segment border */
+        stroke-width: 1px; /* Increased stroke width */
+        /* Fill color applied dynamically in JS */
+    }
+    .segment:hover {
+        opacity: 0.95; /* Slightly less fade on hover */
+        filter: brightness(1.1); /* Brighten significantly on hover */
+    }
 
-        /* Interactive Dot Styling */
-        .interactive-dot {
-            cursor: pointer;
-            stroke: rgba(0, 0, 0, 0.3); /* Slightly lighter border for gray dots */
-            stroke-width: 1px;
-            transition: r 0.2s ease-in-out, filter 0.2s ease-in-out, opacity 0.2s ease-in-out;
-            fill-opacity: 0.9; /* Slightly more opaque */
-            /* Fill color set in JS */
-        }
-        .interactive-dot:hover {
-            r: 7; /* Increase size */
-            stroke-width: 1.5px; /* Thicker border */
-            filter: brightness(1.15); /* Adjust brightness for gray */
-            fill-opacity: 1; /* Fully opaque */
-        }
+    /* Interactive Dot Styling */
+    .interactive-dot {
+        cursor: pointer;
+        stroke: rgba(0, 0, 0, 0.3); /* Slightly lighter border for gray dots */
+        stroke-width: 1px;
+        transition: r 0.2s ease-in-out, filter 0.2s ease-in-out, opacity 0.2s ease-in-out;
+        fill-opacity: 0.9; /* Slightly more opaque */
+        /* Fill color set in JS */
+    }
+    .interactive-dot:hover {
+        r: 7; /* Increase size */
+        stroke-width: 1.5px; /* Thicker border */
+        filter: brightness(1.15); /* Adjust brightness for gray */
+        fill-opacity: 1; /* Fully opaque */
+    }
 
-        /* Tooltip Styling */
-        .tooltip {
-            position: absolute; padding: 8px 12px; background: rgba(0, 0, 0, 0.8);
-            color: white; border-radius: 4px; pointer-events: none; opacity: 0;
-            transition: opacity 0.2s ease-in-out; font-size: 0.85rem; z-index: 110; /* Above sidebar */
-            white-space: nowrap; /* Prevent wrapping */
-        }
-.category-legend {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    padding: 12px;
-    max-width: 280px;
-    z-index: 100;
-    border: 1px solid #dee2e6;
-    cursor: grab;
-}
+    /* Tooltip Styling */
+    .tooltip {
+        position: absolute; padding: 8px 12px; background: rgba(0, 0, 0, 0.8);
+        color: white; border-radius: 4px; pointer-events: none; opacity: 0;
+        transition: opacity 0.2s ease-in-out; font-size: 0.85rem; z-index: 110; /* Above sidebar */
+        white-space: nowrap; /* Prevent wrapping */
+    }
 
-.category-legend-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #343a40;
-}
+    /* Legend Styling */
+    .legend {
+        position: absolute; display: flex; flex-direction: column; gap: 0px; /* No gap between internal elements */
+        background-color: rgba(255, 255, 255, 0.95); border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); padding: 0; max-width: 280px;
+        max-height: 70vh; z-index: 90; right: 20px; bottom: 20px; /* Default position */
+        transition: opacity 0.3s ease, box-shadow 0.3s ease; border: 1px solid #dee2e6;
+    }
+    .legend-drag-handle {
+        cursor: move; width: 100%; height: 18px; display: flex; justify-content: center;
+        align-items: center; background-color: #f1f3f5; border-bottom: 1px solid #dee2e6;
+        border-radius: 8px 8px 0 0; box-sizing: border-box;
+    }
+    .legend-drag-handle:before { content: ""; width: 40px; height: 5px; background-color: #adb5bd; border-radius: 3px; } /* Drag indicator */
+    .legend-header { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 8px 12px; box-sizing: border-box; border-bottom: 1px solid #e9ecef; }
+    .legend-title { font-weight: 600; font-size: 1rem; margin: 0; color: #343a40; }
+    .legend-toggle { background: none; border: none; cursor: pointer; font-size: 1.5rem; color: #495057; padding: 0 5px; line-height: 1; transition: color 0.2s, transform 0.2s; }
+    .legend-toggle:hover { color: #212529; transform: scale(1.1); }
+    .legend-content { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 12px; box-sizing: border-box; max-height: calc(70vh - 80px); /* Adjust based on header/handle height */ overflow-y: auto; transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out; }
+    .legend-category { margin-top: 5px; margin-bottom: 3px; font-weight: 600; font-size: 0.9rem; color: #0056b3; border-bottom: 1px solid #e9ecef; padding-bottom: 3px; }
+    .legend-category:first-child { margin-top: 0; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #495057; cursor: pointer; }
+    .legend-color { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); /* Background color set dynamically in JS */ }
+    .legend-content.legend-minimized { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border-top: none; /* Hide border when minimized */ }
 
-.category-legend-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-        /* Legend Styling */
-        .legend {
-            position: absolute; display: flex; flex-direction: column; gap: 0px; /* No gap between internal elements */
-            background-color: rgba(255, 255, 255, 0.95); border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); padding: 0; max-width: 280px;
-            max-height: 70vh; z-index: 90; right: 20px; bottom: 20px; /* Default position */
-            transition: opacity 0.3s ease, box-shadow 0.3s ease; border: 1px solid #dee2e6;
-        }
-        .legend-drag-handle {
-            cursor: move; width: 100%; height: 18px; display: flex; justify-content: center;
-            align-items: center; background-color: #f1f3f5; border-bottom: 1px solid #dee2e6;
-            border-radius: 8px 8px 0 0; box-sizing: border-box;
-        }
-        .legend-drag-handle:before { content: ""; width: 40px; height: 5px; background-color: #adb5bd; border-radius: 3px; } /* Drag indicator */
-        .legend-header { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 8px 12px; box-sizing: border-box; border-bottom: 1px solid #e9ecef; }
-        .legend-title { font-weight: 600; font-size: 1rem; margin: 0; color: #343a40; }
-        .legend-toggle { background: none; border: none; cursor: pointer; font-size: 1.5rem; color: #495057; padding: 0 5px; line-height: 1; transition: color 0.2s, transform 0.2s; }
-        .legend-toggle:hover { color: #212529; transform: scale(1.1); }
-        .legend-content { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 12px; box-sizing: border-box; max-height: calc(70vh - 80px); /* Adjust based on header/handle height */ overflow-y: auto; transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out; }
-        .legend-category { margin-top: 5px; margin-bottom: 3px; font-weight: 600; font-size: 0.9rem; color: #0056b3; border-bottom: 1px solid #e9ecef; padding-bottom: 3px; }
-        .legend-category:first-child { margin-top: 0; }
-        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #495057; cursor: pointer; }
-        .legend-color { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); /* Background color set dynamically in JS */ }
-        .legend-content.legend-minimized { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border-top: none; /* Hide border when minimized */ }
+    /* Sidebar Tab Styling (Re-enabled) */
+    .content-tabs {
+        display: flex;
+        flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+        margin-top: 15px; /* Space above tabs */
+        margin-bottom: 20px;
+        gap: 8px;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+    }
+    .tab-button {
+        padding: 8px 15px;
+        background-color: #e9ecef;
+        border: 1px solid #dee2e6;
+        border-radius: 20px; /* Pill shape */
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #495057;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .tab-button.active {
+        background-color: #007bff; /* Bootstrap primary blue */
+        color: white;
+        border-color: #007bff;
+        box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+    }
+    .tab-button:hover:not(.active) {
+        background-color: #ced4da;
+        border-color: #adb5bd;
+    }
+    .content-section {
+        display: none; /* Hide inactive content */
+    }
+    .content-section.active {
+        display: block;
+        animation: fadeIn 0.4s ease; /* Fade in animation */
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        /* Sidebar Tab Styling (Re-enabled) */
-        .content-tabs {
-            display: flex;
-            flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
-            margin-top: 15px; /* Space above tabs */
-            margin-bottom: 20px;
-            gap: 8px;
-            border-bottom: 1px solid #dee2e6;
-            padding-bottom: 10px;
-        }
-        .tab-button {
-            padding: 8px 15px;
-            background-color: #e9ecef;
-            border: 1px solid #dee2e6;
-            border-radius: 20px; /* Pill shape */
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #495057;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .tab-button.active {
-            background-color: #007bff; /* Bootstrap primary blue */
-            color: white;
-            border-color: #007bff;
-            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
-        }
-        .tab-button:hover:not(.active) {
-            background-color: #ced4da;
-            border-color: #adb5bd;
-        }
-        .content-section {
-            display: none; /* Hide inactive content */
-        }
-        .content-section.active {
-            display: block;
-            animation: fadeIn 0.4s ease; /* Fade in animation */
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    /* Arrow Styling */
+    .arrow { filter: drop-shadow(0px 1px 1.5px rgba(0,0,0,0.2)); transition: transform 0.2s ease-in-out; }
+    .connector {} /* Connector class no longer used */
+    /* Connector Label Styling */
+    .connector-label {
+        font-weight: bold;
+        fill: #4B5563; /* slate-600 */
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none; /* Don't interfere with clicks/zoom */
+        /* Font size set dynamically in JS */
+    }
 
+    /* Zoom Controls Styling */
+    .zoom-controls { position: absolute; right: 20px; top: 20px; z-index: 50; display: flex; flex-direction: column; gap: 8px; }
+    .zoom-button { width: 40px; height: 40px; font-size: 20px; font-weight: bold; border-radius: 50%; border: 1px solid #ced4da; background-color: white; color: #495057; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s; }
+    .zoom-button:hover { background-color: #f1f3f5; border-color: #adb5bd; }
+    .zoom-button:active { box-shadow: 0 1px 2px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* Arrow Styling */
-        .arrow { filter: drop-shadow(0px 1px 1.5px rgba(0,0,0,0.2)); transition: transform 0.2s ease-in-out; }
-        .connector {} /* Connector class no longer used */
-        /* Connector Label Styling */
-        .connector-label {
-            font-weight: bold;
-            fill: #4B5563; /* slate-600 */
-            text-anchor: middle;
-            dominant-baseline: middle;
-            pointer-events: none; /* Don't interfere with clicks/zoom */
-            /* Font size set dynamically in JS */
-        }
+    /* Zoom Indicator Styling */
+    #zoom-indicator { position: absolute; left: 20px; bottom: 20px; padding: 6px 12px; background-color: rgba(0,0,0,0.7); color: white; border-radius: 4px; font-size: 0.9rem; transition: opacity 0.3s ease-in-out; opacity: 0; z-index: 50; pointer-events: none; }
 
+    /* Label Styling */
+    .label-group text {
+         pointer-events: none;
+         font-weight: bold;
+         fill: #fff; /* White text */
+         /* Font size is set dynamically in JS */
+    }
+    /* Removed label-shadow class as it's hard to apply reliably to textPath */
 
-        /* Zoom Controls Styling */
-        .zoom-controls { position: absolute; right: 20px; top: 20px; z-index: 50; display: flex; flex-direction: column; gap: 8px; }
-        .zoom-button { width: 40px; height: 40px; font-size: 20px; font-weight: bold; border-radius: 50%; border: 1px solid #ced4da; background-color: white; color: #495057; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s; }
-        .zoom-button:hover { background-color: #f1f3f5; border-color: #adb5bd; }
-        .zoom-button:active { box-shadow: 0 1px 2px rgba(0,0,0,0.1); transform: scale(0.95); }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        /* Zoom Indicator Styling */
-        #zoom-indicator { position: absolute; left: 20px; bottom: 20px; padding: 6px 12px; background-color: rgba(0,0,0,0.7); color: white; border-radius: 4px; font-size: 0.9rem; transition: opacity 0.3s ease-in-out; opacity: 0; z-index: 50; pointer-events: none; }
-
-        /* Label Styling */
-        .label-group text {
-             pointer-events: none;
-             font-weight: bold;
-             fill: #fff; /* White text */
-             /* Font size is set dynamically in JS */
-        }
-        /* Removed label-shadow class as it's hard to apply reliably to textPath */
-
-    </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1 id="main-title">Human Flight Timeline</h1>
-
-    <div class="main-container">
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-content" id="sidebar-content">
-                </div>
+   <div class="main-container">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-content" id="sidebar-content">
         </div>
-
-        <div id="chart-container">
-             <svg width="0" height="0" style="position:absolute;overflow:hidden;">
-                <defs id="text-path-defs">
-                    </defs>
-            </svg>
-            </div>
-
-        <div class="zoom-controls" id="zoom-controls">
-            </div>
-
-        <div id="zoom-indicator">Zoom: 100%</div>
     </div>
 
-    <div class="legend" id="legend">
-        </div>
+    <div id="chart-container">
+         <svg width="0" height="0" style="position:absolute;overflow:hidden;">
+            <defs id="text-path-defs">
+            </defs>
+        </svg>
+    </div>
 
-    <div class="tooltip" id="tooltip"></div>
+    <div class="zoom-controls" id="zoom-controls">
+    </div>
 
-    <script>
-        // --- Configuration ---
-        let config = {}; // Will be populated by initializeConfig
-        let scaleFactor = 1; // How much to scale base radii
-        let gapSize = 15; // Gap between content rings (scaled)
+    <div id="zoom-indicator">Zoom: 100%</div>
+</div>
 
-        // --- State Variables ---
-        let currentZoom = 1;
-        let panOffsetX = 0;
-        let panOffsetY = 0;
-        let isPanning = false;
-        let lastPointerX = 0;
-        let lastPointerY = 0;
-        let initialPinchDistance = 0; // For potential future pinch-zoom
+<div class="legend" id="legend">
+</div>
 
-        // --- DOM Elements ---
-        let chartContainer, svgElement, chartGroup, sidebar, sidebarContent, tooltip, legendContainer, zoomIndicator, mainTitleElement, textPathDefs;
+<div class="tooltip" id="tooltip"></div>
 
-        // --- Placeholder Image Handling ---
-        const placeholderBase = "https://placehold.co";
-        const imageUrlBase = "../img";
-        function getPlaceholderUrl(width = 400, height = 250, text = "Image") {
-            // Generates a placeholder image URL
-            return `${placeholderBase}/${width}x${height}/EBF0F5/777?text=${encodeURIComponent(text)}`;
+<script>
+    // --- Configuration ---
+    let config = {}; // Will be populated by initializeConfig
+    let scaleFactor = 1; // How much to scale base radii
+    let gapSize = 15; // Gap between content rings (scaled)
+
+    // --- State Variables ---
+    let currentZoom = 1;
+    let panOffsetX = 0;
+    let panOffsetY = 0;
+    let isPanning = false;
+    let lastPointerX = 0;
+    let lastPointerY = 0;
+    // For touch-based panning
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    let initialPinchDistance = 0; // For pinch-zoom
+
+    // --- DOM Elements ---
+    let chartContainer, svgElement, chartGroup, sidebar, sidebarContent, tooltip, legendContainer, zoomIndicator, mainTitleElement, textPathDefs;
+
+    // --- Placeholder Image Handling ---
+    const placeholderBase = "https://placehold.co";
+    const imageUrlBase = "../img";
+    function getPlaceholderUrl(width = 400, height = 250, text = "Image") {
+        return `${placeholderBase}/${width}x${height}/EBF0F5/777?text=${encodeURIComponent(text)}`;
+    }
+    function getImagePath(width = 400, height = 250, text = "Image") {
+        return `${imageUrlBase}/${text}.jpg`;
+    }
+    function handleImageError(imgElement) {
+        console.warn(`Image failed to load: ${imgElement.src}. Using placeholder.`);
+        imgElement.src = getPlaceholderUrl(300, 180, 'Not Found');
+        imgElement.onerror = null;
+    }
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        chartContainer = document.getElementById('chart-container');
+        sidebar = document.getElementById('sidebar');
+        sidebarContent = document.getElementById('sidebar-content');
+        tooltip = document.getElementById('tooltip');
+        legendContainer = document.getElementById('legend');
+        zoomIndicator = document.getElementById('zoom-indicator');
+        mainTitleElement = document.getElementById('main-title');
+        textPathDefs = document.getElementById('text-path-defs');
+
+        initializeConfig();
+        createChart();
+        addZoomControls();
+        setupEventListeners();
+        applyTransform();
+
+        if (mainTitleElement) {
+            makeDraggable(mainTitleElement);
         }
-        function getImagePath(width = 400, height = 250, text = "Image") {
-            // Generates a placeholder image URL
-            return `${imageUrlBase}/${text}.jpg`;
-        }
-        function handleImageError(imgElement) {
-            // Fallback for broken image links
-            console.warn(`Image failed to load: ${imgElement.src}. Using placeholder.`);
-            imgElement.src = getPlaceholderUrl(300, 180, 'Not Found');
-            imgElement.onerror = null; // Prevent infinite loop if placeholder fails
-        }
-
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get references to key DOM elements
-            chartContainer = document.getElementById('chart-container');
-            sidebar = document.getElementById('sidebar');
-            sidebarContent = document.getElementById('sidebar-content');
-            tooltip = document.getElementById('tooltip');
-            legendContainer = document.getElementById('legend');
-            zoomIndicator = document.getElementById('zoom-indicator');
-            mainTitleElement = document.getElementById('main-title');
-            textPathDefs = document.getElementById('text-path-defs'); // Get defs container
-
-            // Initialize and build the chart
-            initializeConfig(); // Load data and dimensions
-            createChart(); // Draw SVG elements
-            addZoomControls(); // Create zoom buttons
-            setupEventListeners(); // Add interactivity (zoom, pan, clicks)
-            applyTransform(); // Set initial zoom/pan
-
-            // Make the main title draggable
-            if (mainTitleElement) {
-                makeDraggable(mainTitleElement);
-            }
-        });
-
-        // --- Configuration Setup (Loads data and calculates initial dimensions) ---
-        function initializeConfig() {
-            const dimensions = getResponsiveDimensions(); // Get initial size based on window
-            config = {
-                ...dimensions, // Spread initial width, height, chartSize, centerX, centerY
-                rings: [
-                     // --- Ring 1: Key Literary & Cultural Works ---
-                     {
-                        name: "Key Literary & Cultural Works", radius: 200, segments: 3,
-                        segmentColors: ["#94A3B8", "#64748B", "#475569"], // slate-400, slate-500, slate-600
-                        segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1799 CE", "1800 CE to 1945 CE"],
-                        segmentOverviews: [
-                            { title: "Key Literary & Cultural Works", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early myths, legends, and tales reflecting humanity's ancient fascination with flight and the heavens.", imageSrc: getPlaceholderUrl(400,250,'Early Lit Overview') },
-                            { title: "Key Literary & Cultural Works", subtitle: "1400 CE to 1799 CE (Overview)", text: "Renaissance and Enlightenment works exploring celestial travel and imaginative flying devices, often blending science and fantasy.", imageSrc: getPlaceholderUrl(400,250,'Renaissance Lit Overview') },
-                            { title: "Key Literary & Cultural Works", subtitle: "1800 CE to 1945 CE (Overview)", text: "The rise of science fiction and early cinema depicting voyages to the moon, aerial warfare, and the growing impact of aviation.", imageSrc: getPlaceholderUrl(400,250,'Modern Lit Overview') }
-                        ],
-                        segmentDetails: [
-                            [ // Segment 1: 500s BCE to 1399s CE
-                                { title: "The Myth of Icarus and Daedalus", subtitle: "c. 500s BCE", text: "An ancient Greek myth that captures the human desire to transcend earthly limits. The tragic flight of Icarus has long symbolized both the aspiration for flight and the risks of overreaching, inspiring later generations to explore aerial innovation.", imageSrc: getImagePath(400, 250, 'icarus') },
-                                { title: "The Pushpaka Vimana", subtitle: "c. 500s BCE", text: "A mythological flying chariot from Indian lore, the Pushpaka Vimana represents early conceptualizations of aerial vehicles. Its depiction in cultural narratives reflects a timeless fascination with flight, influencing later creative and technical pursuits in aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Pushpaka Vimana') },
-                                { title: "The Ebony Horse Tale", subtitle: "c. 800s CE", text: "This medieval narrative of a mechanical, flying horse illustrates the imaginative leap from myth to the idea of engineered flight. It is an early example of humanity’s efforts to envision machines that could conquer the skies.", imageSrc: getPlaceholderUrl(400, 250, 'Ebony Horse') }
-                            ],
-                            [ // Segment 2: 1400 CE to 1799 CE
-                                { title: "Kepler's Somnium", subtitle: "1634", text: "A visionary work that blends astronomy with imaginative flight, Kepler’s Somnium speculated about lunar landscapes and the mechanics of space travel. It helped bridge the gap between myth and emerging scientific thought about flight.", imageSrc: getPlaceholderUrl(400, 250, 'Kepler Somnium') },
-                                { title: "Francis Godwin's The Man in the Moone", subtitle: "1638", text: "One of the earliest narratives to describe human space travel, this work combined scientific speculation with imaginative adventure, setting the stage for later aeronautical theories and inspiring future innovators.", imageSrc: getPlaceholderUrl(400, 250, 'Man in Moone') },
-                                { title: "Cyrano de Bergerac's Comical History", subtitle: "1657", text: "Using satire to explore the possibilities of aerial adventure, this work reflected early modern debates about science and technology, indirectly nurturing the cultural climate in which practical flight experiments would later emerge.", imageSrc: getPlaceholderUrl(400, 250, 'Cyrano History') },
-                                { title: "Jonathan Swift's Flying Island of Laputa", subtitle: "1726", text: "In this satirical tale, Swift uses the concept of a floating island to critique scientific hubris and social institutions. His work contributed to the broader dialogue on the potentials and pitfalls of flight and aerial innovation during the Enlightenment.", imageSrc: getPlaceholderUrl(400, 250, 'Laputa') }
-                            ],
-                            [ // Segment 3: 1800 CE to 1945 CE
-                                { title: "Jules Verne's Novels", subtitle: "1865-1904", text: "Verne’s adventure stories, filled with visionary ideas like space travel and underwater exploration, ignited public interest and inspired engineers to turn speculative ideas into practical designs. His work underscored the connection between literature and technological progress in aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Jules Verne') },
-                                { title: "Georges Méliès's A Trip to the Moon", subtitle: "1902", text: "This groundbreaking film not only entertained audiences but also popularized the idea of venturing into space. Its imaginative portrayal of lunar travel helped cement the notion that human flight could one day extend beyond Earth’s atmosphere.", imageSrc: getPlaceholderUrl(400, 250, 'Trip to Moon Film') },
-                                { title: "H.G. Wells's The War in the Air", subtitle: "1908", text: "Wells’s speculative narrative explored the military and societal implications of aerial warfare. His work both reflected and influenced the era’s rapid advancements in aviation technology, emphasizing how flight could transform modern conflict and society.", imageSrc: getPlaceholderUrl(400, 250, 'War in the Air') }
-                            ]
-                        ]
-                    },
-                    // --- Connector 1 ---
-                    { name: "Connector 1", color: "#475569", isConnector: true, arrowCount: 8, thickness: 7 }, // slate-600
-                    // --- Ring 2: Socioeconomic Factors ---
-                    {
-                        name: "Socioeconomic Factors", radius: 155, segments: 4,
-                        segmentColors: ["#BAE6FD", "#7DD3FC", "#38BDF8", "#0EA5E9"], // sky-300, sky-400, sky-500, sky-600
-                        segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1699s CE", "1760s CE to 1890s CE", "1890s CE to 1980s CE"],
-                        segmentOverviews: [
-                            { title: "Socioeconomic Factors", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early trade routes, material innovations (silk, paper), and the spread of technologies like gunpowder and the compass would later influence aviation technologies.", imageSrc: getPlaceholderUrl(400,250,'Ancient SocioEco') },
-                            { title: "Socioeconomic Factors", subtitle: "1400 CE to 1699s CE (Overview)", text: "The Renaissance spurred innovation through patronage (Da Vinci), information dissemination (printing press), and intellectual curiosity (Gentleman Scientists).", imageSrc: getPlaceholderUrl(400,250,'Renaissance SocioEco') },
-                            { title: "Socioeconomic Factors", subtitle: "1760s CE to 1890s CE (Overview)", text: "The Industrial Revolution provided new materials, power sources, and manufacturing capabilities. World Fairs and prizes incentivized invention.", imageSrc: getPlaceholderUrl(400,250,'Industrial SocioEco') },
-                            { title: "Socioeconomic Factors", subtitle: "1890s CE to 1980s CE (Overview)", text: "World Wars massively accelerated aviation development. Post-war investment built commercial infrastructure, fueled by the Cold War's military-industrial complex.", imageSrc: getPlaceholderUrl(400,250,'Modern SocioEco') }
-                        ],
-                        segmentDetails: [
-                            [ // Segment 1: 500s BCE to 1399s CE
-                                { title: "The Silk Road", subtitle: "c. 130s BCE - 1200s CE", text: "As a vast network of trade routes linking Asia, the Middle East, and Europe, the Silk Road was far more than a conduit for silk. It enabled the exchange of ideas, technologies, and cultural practices that enriched many fields, including early aeronautics. The movement of materials like silk and the transmission of techniques such as kite-making and lightweight textile production played an indirect yet influential role in shaping the experimental designs of gliders and balloons. This cross-cultural interaction helped lay the groundwork for the technological innovations that eventually led to modern aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Silk Trade') },
-                                { title: "Paper Production and Trade", subtitle: "c. 100s BCE - 1200s CE", text: "Paper played a significant role in the early development of lighter-than-air crafts. For example, the Montgolfier brothers’ hot air balloons in the 1780s incorporated paper—often in combination with fabric—to form the balloon envelope. Paper’s light weight and relative availability made it a practical choice for these early experiments. Chinese paper, as opposed to papyrus and similar, was cheaper to produce, making it possible to document and circulate early scientific and engineering ideas. This wider dissemination of knowledge, including theories of air and flight, laid the intellectual groundwork for future aerial experiments.", imageSrc: getPlaceholderUrl(400, 250, 'Paper Making') },
-                                { title: "Gunpowder Production", subtitle: "c. 900s CE onward", text: "The invention of gunpowder marked humanity's first controlled use of explosive force, a principle that resonates in modern propulsion systems. Initially developed for warfare and celebratory displays, gunpowder demonstrated how chemical energy could be harnessed to generate thrust. These early experiments with controlled explosions laid the conceptual groundwork for the later development of rocket engines and jet propulsion, which are central to both military and commercial aviation advancements.", imageSrc: getPlaceholderUrl(400, 250, 'Gunpowder') }
-                            ],
-                            [ // Segment 2: 1400 CE to 1699s CE
-                                { title: "Renaissance Patronage System", subtitle: "c. 1400 CE to 1699 CE", text: "This era’s system of patronage enabled artists and inventors to pursue ambitious projects, including the early designs of flying machines. The financial backing from influential patrons was critical in supporting the inventive spirit that led to early aeronautical explorations.", imageSrc: getPlaceholderUrl(400, 250, 'Patronage') },
-                                { title: "Age of Exploration - Sail Making", subtitle: "c. 1400 CE to 1699 CE", text: "Centuries of sail-making not only drove advances in textile production but also honed techniques for shaping and tensioning lightweight fabrics like linen. The skills developed in creating durable, aerodynamically efficient sails were later adapted by aviation pioneers experimenting with glider and balloon coverings. This transfer of knowledge from maritime technology to flight research underscores how established industries provided both the materials and the engineering insights that paved the way for modern aeronautics.", imageSrc: getPlaceholderUrl(400, 250, 'Sail Making') },
-                                { title: "The Printing Press", subtitle: "c. 1430s", text: "By revolutionizing communication, the printing press allowed for the rapid spread of scientific ideas and technical knowledge. This increased accessibility to new concepts about flight spurred further experimentation and cross-cultural learning.", imageSrc: getPlaceholderUrl(400, 250, 'Printing Press') },
-                                { title: "The Gentleman Scientist Tradition", subtitle: "c. 1400s to 1600s CE", text: "Amateur scientists and intellectuals of the period, driven by curiosity and the spirit of inquiry, began experimenting with flight-related ideas. Their contributions helped transition theoretical musings into more systematic investigations into the principles of aerodynamics.", imageSrc: getPlaceholderUrl(400, 250, 'Gentleman Scientist') }
-                            ],
-                            [ // Segment 3: 1760s CE to 1900 CE
-                                { title: "The Industrial Revolution", subtitle: "Industrial Advancements", text: "This period of rapid technological change provided the necessary mechanical innovations and production techniques that later enabled the construction of experimental flying machines and, eventually, fully functional aircraft.", imageSrc: getPlaceholderUrl(400, 250, 'Industrial Revolution') },
-                                { title: "Vulcanization of Rubber", subtitle: "1839", text: "By creating a stronger, more resilient material, vulcanization improved the construction of various mechanical parts. These advances by Goodyear later contributed to the development of more reliable components in early aircraft designs.", imageSrc: getPlaceholderUrl(400, 250, 'Rubber') },
-                                { title: "Process for Aluminum", subtitle: "1886", text: "Developed by Hall–Héroult, this process revolutionized material science by making lightweight, durable aluminum widely available. The use of aluminum in aircraft construction was critical for reducing weight while maintaining strength, a key factor in flight design.", imageSrc: getPlaceholderUrl(400, 250, 'Aluminum') },
-                                { title: "Great Exhibitions, World Fairs and Prizes", subtitle: "Public Spectacle & Incentives", text: "Events such as the Great Exhibition in the United Kingdom and the Paris World’s Fair, provided venues for inventors to showcase new technologies, including early flight apparatus. Competitions such as the Deutsch de la Meurthe Prize (1901) & Cross-Channel Prize, along with public demonstrations spurred rapid technological advancements and helped validate experimental designs.", imageSrc: getPlaceholderUrl(400, 250, 'Crystal Palace') }
-                            ],
-                            [ // Segment 4: 1900s CE to 1980s CE
-                                { title: "Military Demands in World War I", subtitle: "1914-1918", text: "The urgent need for reconnaissance, communication, and combat capabilities led to accelerated research and development in aircraft technology. Military funding and testing during the war drove rapid advancements in design and performance.", imageSrc: getPlaceholderUrl(400, 250, 'WWI Investment') },
-                                { title: "Post-War Commercial Aviation Infrastructure", subtitle: "Building the Network", text: "The establishment of air routes and airports after the conflicts transformed aviation from a wartime technology to a commercial and civilian mode of transport, setting the stage for global connectivity and economic growth.", imageSrc: getPlaceholderUrl(400, 250, 'Early Airport') },
-                                { title: "Military-Industrial Complex (Post-WWII)", subtitle: "Cold War Developments", text: "The collaboration between government and industry after WWII led to an explosion of technological innovation in aviation. This era saw the development of high-speed jets and advanced aerospace systems that would later benefit both military and commercial sectors.", imageSrc: getPlaceholderUrl(400, 250, 'Cold War Jets') }
-                            ]
-                        ]
-                    },
-                     // --- Connector 2 ---
-                    { name: "Connector 2", color: "#0EA5E9", isConnector: true, arrowCount: 6, thickness: 7 }, // sky-600
-                    // --- Ring 3: Scientific Theories and Breakthroughs ---
-                    {
-                        name: "Scientific Theories and Breakthroughs", radius: 110, segments: 4,
-                        segmentColors: ["#67E8F9", "#22D3EE", "#0DD9FE", "#0891B2"], // cyan-300, cyan-400, cyan-500, cyan-600
-                        segmentNames: ["500s BCE to 1599s CE", "1600s CE to 1760s CE", "1770s CE to 1899s CE", "1900s CE to 1945 CE"],
-                         segmentOverviews: [
-                            { title: "Scientific Theories & Breakthroughs", subtitle: "500s BCE to 1599s CE (Overview)", text: "Early understanding of basic principles like buoyancy (Archimedes), reaction (Hero), alongside observational studies (Da Vinci) and theoretical ideas (Bacon).", imageSrc: getPlaceholderUrl(400,250,'Ancient Science') },
-                            { title: "Scientific Theories & Breakthroughs", subtitle: "1600s CE to 1760s CE (Overview)", text: "The Scientific Revolution brings fundamental laws (Newton), fluid dynamics principles (Bernoulli, Hooke), and early experimental designs (Gusmão).", imageSrc: getPlaceholderUrl(400,250,'Scientific Rev Science') },
-                            { title: "Scientific Theories & Breakthroughs", subtitle: "1770s CE to 1899s CE (Overview)", text: "Focus shifts to practical application: power (Watt, Otto), aerodynamics (Cayley, Wenham, Langley), thermodynamics (Carnot), and structural improvements (Chanute, Pilcher).", imageSrc: getPlaceholderUrl(400,250,'19th Century Science') },
-                            { title: "Scientific Theories & Breakthroughs", subtitle: "1900s CE to 1945 CE (Overview)", text: "Development of key aerodynamic theories (Prandtl, Kutta-Zhukovsky), stability concepts (Dunne), and early exploration of jet propulsion ideas (Coandă).", imageSrc: getPlaceholderUrl(400,250,'Early 20th Science') }
-                        ],
-                        segmentDetails: [
-                            [ // Segment 1: 500s BCE to 1599s CE
-                                { title: "Hero's Aeolipile", subtitle: "c. 100s BCE", text: "Placeholder text about Hero of Alexandria's steam-powered device demonstrating reaction principles.", imageSrc: getPlaceholderUrl(400, 250, 'Aeolipile') },
-                                { title: "Leonardo da Vinci's Bird Anatomy Sketches", subtitle: "Observational Studies", text: "Placeholder text about Da Vinci's detailed studies of bird flight and anatomy.", imageSrc: getPlaceholderUrl(400, 250, 'Da Vinci Birds') },
-                                { title: "Roger Bacon's Air Support Theory", subtitle: "Early Aerodynamic Ideas", text: "Placeholder text about Bacon's writings suggesting air could support a device like water supports a boat.", imageSrc: getPlaceholderUrl(400, 250, 'Roger Bacon') },
-                                { title: "Archimedes' Buoyancy Principle", subtitle: "c. 200s BCE", text: "Placeholder text about the principle explaining why objects float, fundamental to lighter-than-air flight.", imageSrc: getPlaceholderUrl(400, 250, 'Archimedes') }
-                            ],
-                            [ // Segment 2: 1600s CE to 1760s CE
-                                { title: "Robert Hooke's Airflow", subtitle: "1659", text: "Placeholder text about Hooke's observations on air resistance and fluid dynamics.", imageSrc: getPlaceholderUrl(400, 250, 'Hooke Airflow') },
-                                { title: "Newton's Laws of Motion", subtitle: "1687", text: "Placeholder text about the fundamental laws governing force, mass, and acceleration, crucial for understanding flight.", imageSrc: getPlaceholderUrl(400, 250, 'Newton Laws Motion') },
-                                { title: "Bartolomeu de Gusmão's Passarola Design", subtitle: "1709", text: "Placeholder text about Gusmão's demonstration of a lighter-than-air concept.", imageSrc: getPlaceholderUrl(400, 250, 'Passarola') },
-                                { title: "Daniel Bernoulli's Hydrodynamica", subtitle: "1738", text: "Placeholder text about Bernoulli's principle relating fluid speed and pressure, key to understanding lift.", imageSrc: getPlaceholderUrl(400, 250, 'Bernoulli Principle') }
-                            ],
-                            [ // Segment 3: 1770s CE to 1899s CE
-                                { title: "Watt's steam engine work", subtitle: "1760s-1790s", text: "Placeholder text about improvements in steam engine efficiency, hinting at potential power sources.", imageSrc: getPlaceholderUrl(400, 250, 'Watt Engine') },
-                                { title: "Cayley's Glider Design and Fixed-Wing Concept", subtitle: "1799", text: "Placeholder text about Cayley separating lift and thrust, designing the modern fixed-wing configuration.", imageSrc: getPlaceholderUrl(400, 250, 'Cayley Glider Design') },
-                                { title: "Carnot's cycle", subtitle: "1824", text: "Placeholder text about the theoretical basis for heat engine efficiency.", imageSrc: getPlaceholderUrl(400, 250, 'Carnot Cycle') },
-                                { title: "Wenham's Wind Tunnel", subtitle: "1871", text: "Placeholder text about the first wind tunnel for aerodynamic testing.", imageSrc: getPlaceholderUrl(400, 250, 'Wenham Tunnel') },
-                                { title: "Wenham and Browning's systematic testing", subtitle: "Aerodynamic Shape Testing (1871)", text: "Placeholder text about testing airfoil shapes.", imageSrc: getPlaceholderUrl(400, 250, 'Airfoil Testing') },
-                                { title: "Otto's Thermodynamic principles", subtitle: "Engine Efficiency (1876)", text: "Placeholder text about the four-stroke internal combustion engine, enabling lighter power plants.", imageSrc: getPlaceholderUrl(400, 250, 'Otto Engine') },
-                                { title: "Chanute's improved components", subtitle: "Structural Improvements (1890s)", text: "Placeholder text about Chanute's work on glider structures (e.g., truss design).", imageSrc: getPlaceholderUrl(400, 250, 'Chanute Glider') },
-                                { title: "Langley's Aerodrome models", subtitle: "1896", text: "Placeholder text about Langley's successful powered model flights.", imageSrc: getPlaceholderUrl(400, 250, 'Langley Aerodrome') },
-                                { title: "Pilcher's Powered Aircraft Design", subtitle: "1899", text: "Placeholder text about Pilcher's attempts at powered flight before his fatal crash.", imageSrc: getPlaceholderUrl(400, 250, 'Pilcher Aircraft') }
-                            ],
-                            [ // Segment 4: 1900s CE to 1945 CE
-                                { title: "Prandtl's Boundary-Layer Theory", subtitle: "1904", text: "Placeholder text about understanding airflow close to a surface, crucial for drag reduction.", imageSrc: getPlaceholderUrl(400, 250, 'Prandtl Boundary') },
-                                { title: "Kutta & Zhukovsky's Lift Theorem", subtitle: "1906", text: "Placeholder text about the mathematical explanation for lift generated by an airfoil.", imageSrc: getPlaceholderUrl(400, 250, 'Lift Theorem') },
-                                { title: "Dunne's tailless aircraft designs", subtitle: "Stability Concepts (1908)", text: "Placeholder text about Dunne's work on inherently stable aircraft designs.", imageSrc: getPlaceholderUrl(400, 250, 'Dunne Aircraft') },
-                                { title: "Coandă's theoretical work", subtitle: "Early Jet Propulsion Ideas (1910)", text: "Placeholder text about Coandă's early experiments related to jet propulsion effects.", imageSrc: getPlaceholderUrl(400, 250, 'Coanda Effect') }
-                            ]
-                        ]
-                    },
-                    // --- Connector 3 ---
-                    { name: "Connector 3", color: "#0891B2", isConnector: true, arrowCount: 5, thickness: 6 }, // cyan-600
-                    // --- Ring 4: Practical Implementations ---
-                    {
-                        name: "Practical Implementations", radius: 65, segments: 3,
-                        segmentColors: ["#FCD34D", "#F59E0B", "#D97706"], // amber-300, amber-500, amber-600
-                        segmentNames: [
-                            "Early Concepts & LTA",
-                            "Heavier-than-Air Pioneers",
-                            "Zappellin & Modern"
-                        ],
-                         segmentOverviews: [
-                             { title: "Practical Implementations", subtitle: "Early Concepts & LTA (Overview)", text: "From unmanned kites and models to the first tentative human attempts and the breakthrough of lighter-than-air balloon flight.", imageSrc: getPlaceholderUrl(400,250,'Early LTA Overview') },
-                             { title: "Practical Implementations", subtitle: "Heavier-than-Air Pioneers (Overview)", text: "The crucial development of gliders and the intense period of experimentation culminating in the first powered, controlled flights.", imageSrc: getPlaceholderUrl(400,250,'HTA Pioneers Overview') },
-                             { title: "Practical Implementations", subtitle: "Zappellin & Modern (Overview)", text: "The rise and fall of rigid airships (Zeppelins) alongside the rapid advancements in airplane technology following the World Wars.", imageSrc: getPlaceholderUrl(400,250,'Alt Modern Overview') }
-                         ],
-                        segmentDetails: [
-                            [ // Segment 1: Early Concepts & LTA
-                                { title: "Non-Human Flight", subtitle: "Kites, Models, etc.", text: "Placeholder text about the long history and various uses of kites and early flying models.", imageSrc: getPlaceholderUrl(400, 250, 'Kites Models') },
-                                { title: "Early Attempts at Human Flight", subtitle: "Pre-Ballooning", text: "Placeholder text about legendary and documented attempts before successful lighter-than-air flight.", imageSrc: getPlaceholderUrl(400, 250, 'Tower Jumpers') },
-                                { title: "The Age of the Balloon", subtitle: "Lighter-than-Air", text: "Placeholder text about the Montgolfier brothers, Charles, and the subsequent development of ballooning.", imageSrc: getPlaceholderUrl(400, 250, 'Montgolfier Flight') }
-                            ],
-                            [ // Segment 2: Heavier-than-Air Pioneers
-                                { title: "Early Glider Experiments", subtitle: "Cayley, Lilienthal, etc.", text: "Placeholder text about key figures and their contributions to glider design and understanding control.", imageSrc: getPlaceholderUrl(400, 250, 'Lilienthal Glider') },
-                                { title: "Race Toward Modern Aviation", subtitle: "Wright Brothers, etc.", text: "Placeholder text about the Wrights' systematic approach and competition from others like Langley.", imageSrc: getPlaceholderUrl(400, 250, 'Wright Flyer 1903') }
-                            ],
-                            [ // Segment 3: Zappellin & Modern
-                                { title: "Parallel Alternative: The Zeppelin", subtitle: "Rigid Airships", text: "Placeholder text about Count von Zeppelin's development of large dirigibles.", imageSrc: getPlaceholderUrl(400, 250, 'Zeppelin Airship') },
-                                { title: "Post-War Advancements", subtitle: "Jet Age & Beyond", text: "Placeholder text summarizing the rapid progress following the first powered flights, driven by conflict and commerce.", imageSrc: getPlaceholderUrl(400, 250, 'Jet Airliner') }
-                            ]
-                        ]
-                    }
-                ]
-            };
-            calculateScaleAndGap(); // Calculate scaling based on data and dimensions
-        }
-
-        // --- Responsive Dimensions & Scaling ---
-        function getResponsiveDimensions() {
-            // Calculates chart size based on container dimensions
-            const containerWidth = chartContainer.clientWidth;
-            const containerHeight = chartContainer.clientHeight;
-            const padding = Math.min(containerWidth, containerHeight) * 0.04; // 4% padding
-            const size = Math.min(containerWidth - 2 * padding, containerHeight - 2 * padding); // Diameter of chart area
-            return { width: containerWidth, height: containerHeight, chartSize: size, centerX: containerWidth / 2, centerY: containerHeight / 2 };
-        }
-
-        function calculateScaleAndGap() {
-            // Determines how much to scale the base radii from config and the gap size
-             const baseOuterRadius = config.rings[0]?.radius || 1; // Use first ring's radius as base
-             scaleFactor = (baseOuterRadius > 0) ? (config.chartSize / 2 / baseOuterRadius) : 1;
-             // Scale gap size relative to overall chart size, with a minimum
-             gapSize = Math.max(5, 15 * scaleFactor); // Keep gap calculation simple for now
-        }
-
-        // --- Chart Creation ---
-        function createChart() {
-            // Main function to draw the SVG chart
-            const dimensions = getResponsiveDimensions(); // Recalculate on resize
-            config = { ...config, ...dimensions }; // Update config with new dimensions
-            calculateScaleAndGap(); // Recalculate scaling
-
-            // Clear previous chart elements
-            chartContainer.querySelectorAll('svg:not(:first-child)').forEach(el => el.remove()); // Remove old main SVG if exists
-            const existingSvg = chartContainer.querySelector('svg');
-            if (existingSvg) {
-                 const mainChartGroup = existingSvg.querySelector('#main-chart-group');
-                 if(mainChartGroup) mainChartGroup.remove(); // Clear old chart group
-                 const defs = existingSvg.querySelector('#text-path-defs');
-                 if(defs) defs.innerHTML = ''; // Clear old path defs
-                 svgElement = existingSvg; // Reuse the SVG container with defs
-            } else {
-                 console.error("SVG container not found, cannot create chart.");
-                 return;
-            }
-
-            textPathDefs = svgElement.querySelector('#text-path-defs'); // Ensure we have the reference
-
-            // Create the main group for zoom/pan transformations
-            chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            chartGroup.id = 'main-chart-group'; // Add ID for easier selection
-            svgElement.appendChild(chartGroup);
-
-            // Pre-calculate scaled radii for efficiency
-            config.rings.forEach(ring => {
-                if (!ring.isConnector) { ring.scaledRadius = ring.radius * scaleFactor; }
-            });
-
-            // --- Draw Rings, Segments, Dots, and Arrows ---
-            let previousOuterRadius = 0; // Keep track for calculating inner radii
-            config.rings.forEach((ring, index) => {
-                if (!ring.isConnector) {
-                    // --- Draw Content Ring ---
-                    const outerR = ring.scaledRadius;
-                    // Find the next *content* ring to determine the inner radius
-                    let nextContentRing = null;
-                    for (let j = index + 1; j < config.rings.length; j++) {
-                        if (!config.rings[j].isConnector) { nextContentRing = config.rings[j]; break; }
-                    }
-                    // Calculate inner radius: next ring's outer radius + gap, or 0 for the innermost
-                    let innerR = nextContentRing ? (nextContentRing.scaledRadius + gapSize) : 0;
-                    // Ensure innermost ring has some thickness if it's segmented
-                    if (!nextContentRing && ring.segments > 1) { innerR = outerR * 0.1; } // Small inner radius for center ring
-                    // Clamp inner radius
-                    innerR = Math.max(0, Math.min(innerR, outerR - 1)); // Ensure inner < outer
-
-                    createContentRingElements(ring, innerR, outerR, chartGroup); // Draw segments and dots
-                    previousOuterRadius = outerR; // Store for connector placement
-
-                } else {
-                    // --- Draw Connector Elements (Arrows and Text) ---
-                    const prevContentRing = config.rings[index - 1]; // Ring before the connector
-                     let nextContentRing = null; // Ring after the connector
-                     for (let j = index + 1; j < config.rings.length; j++) {
-                         if (!config.rings[j].isConnector) { nextContentRing = config.rings[j]; break; }
-                     }
-
-                    if (prevContentRing && nextContentRing) {
-                        // Place arrows/text halfway within the gap
-                        const placementRadius = nextContentRing.scaledRadius + (gapSize / 2);
-                        // Pass the name of the ring the connector leads TO
-                        createConnectorElements(ring, placementRadius, gapSize, chartGroup, nextContentRing.name);
-                    }
-                    // Connectors don't update previousOuterRadius
-                }
-            });
-
-            createFloatingLegend(); // Create/update the legend
-            applyTransform(); // Apply initial or current zoom/pan
-        }
-
-        // --- Create Content Ring Elements (Segments and Dots) ---
-        function createContentRingElements(ring, innerRadius, outerRadius, parent) {
-            const segmentAngle = 360 / ring.segments;
-            const ringIndex = config.rings.indexOf(ring); // Get index for data lookup
-
-            for (let i = 0; i < ring.segments; i++) {
-                const startAngle = i * segmentAngle;
-                const endAngle = (i + 1) * segmentAngle;
-
-                // --- Draw Segment Path ---
-                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                path.setAttribute("d", describeArc(config.centerX, config.centerY, innerRadius, outerRadius, startAngle, endAngle));
-                // Use the specific color for this segment from the config
-                path.setAttribute("fill", ring.segmentColors?.[i] || ring.color || '#cccccc'); // Fallback color
-                path.classList.add("segment");
-                // Store data on the element for click/hover handlers
-                path.dataset.segmentName = ring.segmentNames[i];
-                path.dataset.ringName = ring.name;
-                path.dataset.ringIndex = ringIndex;
-                path.dataset.segmentIndex = i;
-
-                // Remove the filter style - color variation is handled by segmentColors now
-                path.style.filter = '';
-
-                // Add event listeners
-                path.addEventListener("pointermove", handleSegmentHover);
-                path.addEventListener("pointerleave", hideTooltip);
-                path.addEventListener("click", handleSegmentClick); // Click opens segment overview
-                parent.appendChild(path);
-
-                // --- Draw Interactive Dots ---
-                const details = ring.segmentDetails?.[i] || []; // Get details for this segment
-                const numDots = details.length;
-                const angleSpan = endAngle - startAngle; // Angular width of the segment
-
-                details.forEach((detail, detailIndex) => {
-                    // Calculate dot position: radially centered, evenly spaced angularly
-                    const dotRadialPos = innerRadius + (outerRadius - innerRadius) / 2;
-                    const dotAngularOffset = (angleSpan / (numDots + 1)) * (detailIndex + 1); // Distribute dots evenly
-                    const dotAngle = startAngle + dotAngularOffset;
-                    const pos = polarToCartesian(config.centerX, config.centerY, dotRadialPos, dotAngle);
-
-                    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                    dot.setAttribute("cx", pos.x);
-                    dot.setAttribute("cy", pos.y);
-                    dot.setAttribute("r", Math.max(3, 5 * scaleFactor)); // Scale dot radius, min size 3
-                    dot.setAttribute("fill", "#F1F5F9"); // Light gray dots (slate-100)
-                    dot.classList.add("interactive-dot");
-                    // Store data on the element
-                    dot.dataset.ringIndex = ringIndex;
-                    dot.dataset.segmentIndex = i;
-                    dot.dataset.detailIndex = detailIndex;
-                    dot.dataset.title = detail.title; // For tooltip
-                    // Add event listeners
-                    dot.addEventListener("click", handleDotClick); // Click opens specific detail
-                    dot.addEventListener("pointermove", handleDotHover);
-                    dot.addEventListener("pointerleave", hideTooltip);
-                    parent.appendChild(dot);
-                });
-
-                // --- Add Segment Label (Now Curved) ---
-                // Skip labels for the innermost ring ("Practical Implementations")
-                if (ring.name !== "Practical Implementations") {
-                    addSegmentLabel(ring, i, innerRadius, outerRadius, startAngle, endAngle, parent);
-                }
-            }
-        }
-
-        // --- Create Connector Elements (Arrows and Text) ---
-        function createConnectorElements(connectorDef, placementRadius, currentGapSize, parent, targetRingName) {
-            const arrowCount = connectorDef.arrowCount || 6; // Default 6 arrows
-            const arrowColor = connectorDef.color;
-            const arrowLength = Math.max(4, currentGapSize * 0.7); // Scale arrow size with gap
-            const arrowWidth = Math.max(3, currentGapSize * 0.5);
-            const connectorGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            connectorGroup.classList.add("connector-group");
-
-            // --- Draw Arrows ---
-            for (let i = 0; i < arrowCount; i++) {
-                const angleDeg = (i * 360 / arrowCount); // Distribute arrows evenly
-                const angleRad = (angleDeg - 90) * Math.PI / 180.0; // Convert to radians for trig
-
-                const tip = polarToCartesian(config.centerX, config.centerY, placementRadius - arrowLength / 2, angleDeg);
-                const baseCenter = polarToCartesian(config.centerX, config.centerY, placementRadius + arrowLength / 2, angleDeg);
-
-                const perpAngleRad = angleRad + Math.PI / 2;
-                const wingOffset = arrowWidth / 2;
-                const wing1X = baseCenter.x + wingOffset * Math.cos(perpAngleRad);
-                const wing1Y = baseCenter.y + wingOffset * Math.sin(perpAngleRad);
-                const wing2X = baseCenter.x - wingOffset * Math.cos(perpAngleRad);
-                const wing2Y = baseCenter.y - wingOffset * Math.sin(perpAngleRad);
-
-                const arrow = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-                arrow.setAttribute("points", `${wing1X},${wing1Y} ${wing2X},${wing2Y} ${tip.x},${tip.y}`);
-                arrow.setAttribute("fill", arrowColor);
-                arrow.classList.add("arrow");
-                connectorGroup.appendChild(arrow);
-            }
-
-             // --- Add Ring Name Text ---
-            // if (targetRingName) {
-           //      const textPos = polarToCartesian(config.centerX, config.centerY, placementRadius, -90); // Position at the top of the gap
-           //      const connectorText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-           //      connectorText.setAttribute("x", textPos.x);
-           //      connectorText.setAttribute("y", textPos.y);
-           //      connectorText.classList.add("connector-label"); // Apply CSS class
-           //      connectorText.style.fontSize = Math.max(8, 10 * scaleFactor) + 'px'; // Scale font size
-           //      connectorText.textContent = targetRingName;
-           //      connectorGroup.appendChild(connectorText); // Add text after arrows
-          //   }
-
-            parent.appendChild(connectorGroup);
-        }
-function createFloatingCategoryLegends() {
-    const chartContainer = document.getElementById('chart-container');
-    const rings = config.rings;
-
-    // Remove any existing category legends
-    chartContainer.querySelectorAll('.category-legend').forEach(el => el.remove());
-
-    const categoryLegendData = [
-      { ringName: "Key Literary & Cultural Works", position: { x: 50, y: 50 } }, // Example positions - adjust as needed
-      { ringName: "Socioeconomic Factors", position: { x: 200, y: 300 } },
-      { ringName: "Scientific Theories and Breakthroughs", position: { x: 100, y: 100 } },
-      { ringName: "Practical Implementations", position: { x: 300, y: 200 } },
-    ];
-
-    categoryLegendData.forEach(categoryData => {
-        const ring = rings.find(r => r.name === categoryData.ringName);
-        if (!ring || ring.isConnector) return;
-
-        const legendDiv = document.createElement('div');
-        legendDiv.className = 'category-legend';
-        legendDiv.style.left = categoryData.position.x + 'px';
-        legendDiv.style.top = categoryData.position.y + 'px';
-
-        const title = document.createElement('h3');
-        title.className = 'category-legend-title';
-        title.textContent = ring.name;
-        legendDiv.appendChild(title);
-
-        const content = document.createElement('div');
-        content.className = 'category-legend-content';
-
-        const segmentItems = ring.segmentNames || [];
-        segmentItems.forEach((name, segIdx) => {
-            const item = document.createElement('div');
-            item.className = 'legend-item';
-
-            const colorBox = document.createElement('div');
-            colorBox.className = 'legend-color';
-            colorBox.style.backgroundColor = ring.segmentColors?.[segIdx] || ring.color || '#cccccc';
-
-            const label = document.createElement('span');
-            label.textContent = name;
-
-            item.appendChild(colorBox);
-            item.appendChild(label);
-            content.appendChild(item);
-        });
-        legendDiv.appendChild(content);
-        chartContainer.appendChild(legendDiv);
-        makeDraggable(legendDiv);
     });
-}
 
-        // --- Helper to Describe SVG Arc Path (for segments) ---
-        function describeArc(x, y, innerRadius, outerRadius, startAngle, endAngle) {
-            // Generates the 'd' attribute string for an SVG path representing a ring segment (annular sector)
-            innerRadius = Math.max(0, innerRadius); // Ensure radius is not negative
-            outerRadius = Math.max(innerRadius + 0.1, outerRadius); // Ensure outer > inner
+    // --- Configuration Setup ---
+    function initializeConfig() {
+        const dimensions = getResponsiveDimensions();
+        config = {
+            ...dimensions,
+            rings: [
+                 {
+                    name: "Key Literary & Cultural Works", radius: 200, segments: 3,
+                    segmentColors: ["#94A3B8", "#64748B", "#475569"],
+                    segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1799 CE", "1800 CE to 1945 CE"],
+                    segmentOverviews: [
+                        { title: "Key Literary & Cultural Works", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early myths, legends, and tales reflecting humanity's ancient fascination with flight and the heavens.", imageSrc: getPlaceholderUrl(400,250,'Early Lit Overview') },
+                        { title: "Key Literary & Cultural Works", subtitle: "1400 CE to 1799 CE (Overview)", text: "Renaissance and Enlightenment works exploring celestial travel and imaginative flying devices, often blending science and fantasy.", imageSrc: getPlaceholderUrl(400,250,'Renaissance Lit Overview') },
+                        { title: "Key Literary & Cultural Works", subtitle: "1800 CE to 1945 CE (Overview)", text: "The rise of science fiction and early cinema depicting voyages to the moon, aerial warfare, and the growing impact of aviation.", imageSrc: getPlaceholderUrl(400,250,'Modern Lit Overview') }
+                    ],
+                    segmentDetails: [
+                        [
+                            { title: "The Myth of Icarus and Daedalus", subtitle: "c. 500s BCE", text: "An ancient Greek myth that captures the human desire to transcend earthly limits. The tragic flight of Icarus has long symbolized both the aspiration for flight and the risks of overreaching, inspiring later generations to explore aerial innovation.", imageSrc: getImagePath(400, 250, 'icarus') },
+                            { title: "The Pushpaka Vimana", subtitle: "c. 500s BCE", text: "A mythological flying chariot from Indian lore, the Pushpaka Vimana represents early conceptualizations of aerial vehicles.", imageSrc: getPlaceholderUrl(400, 250, 'Pushpaka Vimana') },
+                            { title: "The Ebony Horse Tale", subtitle: "c. 800s CE", text: "This medieval narrative of a mechanical, flying horse illustrates the imaginative leap from myth to the idea of engineered flight.", imageSrc: getPlaceholderUrl(400, 250, 'Ebony Horse') }
+                        ],
+                        [
+                            { title: "Kepler's Somnium", subtitle: "1634", text: "A visionary work that blends astronomy with imaginative flight.", imageSrc: getPlaceholderUrl(400, 250, 'Kepler Somnium') },
+                            { title: "Francis Godwin's The Man in the Moone", subtitle: "1638", text: "One of the earliest narratives to describe human space travel, this work combined scientific speculation with imaginative adventure.", imageSrc: getPlaceholderUrl(400, 250, 'Man in Moone') },
+                            { title: "Cyrano de Bergerac's Comical History", subtitle: "1657", text: "Using satire to explore the possibilities of aerial adventure, this work reflected early modern debates about science and technology.", imageSrc: getPlaceholderUrl(400, 250, 'Cyrano History') },
+                            { title: "Jonathan Swift's Flying Island of Laputa", subtitle: "1726", text: "In this satirical tale, Swift uses the concept of a floating island to critique scientific hubris.", imageSrc: getPlaceholderUrl(400, 250, 'Laputa') }
+                        ],
+                        [
+                            { title: "Jules Verne's Novels", subtitle: "1865-1904", text: "Verne’s adventure stories, filled with visionary ideas like space travel and underwater exploration, ignited public interest.", imageSrc: getPlaceholderUrl(400, 250, 'Jules Verne') },
+                            { title: "Georges Méliès's A Trip to the Moon", subtitle: "1902", text: "This groundbreaking film popularized the idea of venturing into space.", imageSrc: getPlaceholderUrl(400, 250, 'Trip to Moon Film') },
+                            { title: "H.G. Wells's The War in the Air", subtitle: "1908", text: "Wells’s speculative narrative explored the military and societal implications of aerial warfare.", imageSrc: getPlaceholderUrl(400, 250, 'War in the Air') }
+                        ]
+                    ]
+                },
+                { name: "Connector 1", color: "#475569", isConnector: true, arrowCount: 8, thickness: 7 },
+                {
+                    name: "Socioeconomic Factors", radius: 155, segments: 4,
+                    segmentColors: ["#BAE6FD", "#7DD3FC", "#38BDF8", "#0EA5E9"],
+                    segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1699s CE", "1760s CE to 1890s CE", "1890s CE to 1980s CE"],
+                    segmentOverviews: [
+                        { title: "Socioeconomic Factors", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early trade routes and technological exchanges influenced aviation technologies.", imageSrc: getPlaceholderUrl(400,250,'Ancient SocioEco') },
+                        { title: "Socioeconomic Factors", subtitle: "1400 CE to 1699s CE (Overview)", text: "The Renaissance spurred innovation through patronage and information dissemination.", imageSrc: getPlaceholderUrl(400,250,'Renaissance SocioEco') },
+                        { title: "Socioeconomic Factors", subtitle: "1760s CE to 1890s CE (Overview)", text: "The Industrial Revolution provided new materials and manufacturing capabilities.", imageSrc: getPlaceholderUrl(400,250,'Industrial SocioEco') },
+                        { title: "Socioeconomic Factors", subtitle: "1890s CE to 1980s CE (Overview)", text: "World Wars accelerated aviation development and post-war commercial growth.", imageSrc: getPlaceholderUrl(400,250,'Modern SocioEco') }
+                    ],
+                    segmentDetails: [
+                        [
+                            { title: "The Silk Road", subtitle: "c. 130s BCE - 1200s CE", text: "A vast network linking Asia, the Middle East, and Europe that enabled cultural and technological exchange.", imageSrc: getPlaceholderUrl(400, 250, 'Silk Trade') },
+                            { title: "Paper Production and Trade", subtitle: "c. 100s BCE - 1200s CE", text: "Paper’s lightweight properties were crucial for early documentation and certain flight experiments.", imageSrc: getPlaceholderUrl(400, 250, 'Paper Making') },
+                            { title: "Gunpowder Production", subtitle: "c. 900s CE onward", text: "The invention of gunpowder marked humanity's first controlled use of explosive force.", imageSrc: getPlaceholderUrl(400, 250, 'Gunpowder') }
+                        ],
+                        [
+                            { title: "Renaissance Patronage System", subtitle: "c. 1400 CE to 1699 CE", text: "Patronage supported ambitious projects including early flying machine designs.", imageSrc: getPlaceholderUrl(400, 250, 'Patronage') },
+                            { title: "Age of Exploration - Sail Making", subtitle: "c. 1400 CE to 1699 CE", text: "Techniques honed in sail-making influenced later glider and balloon coverings.", imageSrc: getPlaceholderUrl(400, 250, 'Sail Making') },
+                            { title: "The Printing Press", subtitle: "c. 1430s", text: "Revolutionized communication, aiding the spread of new scientific ideas.", imageSrc: getPlaceholderUrl(400, 250, 'Printing Press') },
+                            { title: "The Gentleman Scientist Tradition", subtitle: "c. 1400s to 1600s CE", text: "Amateur scientists helped transition theoretical ideas into systematic experiments.", imageSrc: getPlaceholderUrl(400, 250, 'Gentleman Scientist') }
+                        ],
+                        [
+                            { title: "The Industrial Revolution", subtitle: "Industrial Advancements", text: "Rapid technological change provided the foundation for experimental flying machines.", imageSrc: getPlaceholderUrl(400, 250, 'Industrial Revolution') },
+                            { title: "Vulcanization of Rubber", subtitle: "1839", text: "Improved material resilience which later aided aircraft component development.", imageSrc: getPlaceholderUrl(400, 250, 'Rubber') },
+                            { title: "Process for Aluminum", subtitle: "1886", text: "Made lightweight, durable aluminum widely available for aircraft construction.", imageSrc: getPlaceholderUrl(400, 250, 'Aluminum') },
+                            { title: "Great Exhibitions, World Fairs and Prizes", subtitle: "Early 1900s", text: "Showcased new technologies and spurred rapid advancements through competitions.", imageSrc: getPlaceholderUrl(400, 250, 'Crystal Palace') }
+                        ],
+                        [
+                            { title: "Military Demands in World War I", subtitle: "1914-1918", text: "Wartime research accelerated innovations in aircraft technology.", imageSrc: getPlaceholderUrl(400, 250, 'WWI Investment') },
+                            { title: "Post-War Commercial Aviation Infrastructure", subtitle: "Building the Network", text: "Air routes and airports transformed aviation into a commercial enterprise.", imageSrc: getPlaceholderUrl(400, 250, 'Early Airport') },
+                            { title: "Military-Industrial Complex (Post-WWII)", subtitle: "Cold War Developments", text: "Collaboration between government and industry fueled rapid aerospace innovations.", imageSrc: getPlaceholderUrl(400, 250, 'Cold War Jets') }
+                        ]
+                    ]
+                },
+                { name: "Connector 2", color: "#0EA5E9", isConnector: true, arrowCount: 6, thickness: 7 },
+                {
+                    name: "Scientific Theories and Breakthroughs", radius: 110, segments: 4,
+                    segmentColors: ["#67E8F9", "#22D3EE", "#0DD9FE", "#0891B2"],
+                    segmentNames: ["500s BCE to 1599s CE", "1600s CE to 1760s CE", "1770s CE to 1899s CE", "1900s CE to 1945 CE"],
+                     segmentOverviews: [
+                        { title: "Scientific Theories & Breakthroughs", subtitle: "500s BCE to 1599s CE (Overview)", text: "Early studies of principles like buoyancy and reaction established basic ideas behind flight.", imageSrc: getPlaceholderUrl(400,250,'Ancient Science') },
+                        { title: "Scientific Theories & Breakthroughs", subtitle: "1600s CE to 1760s CE (Overview)", text: "The Scientific Revolution introduced fundamental laws and experimental designs.", imageSrc: getPlaceholderUrl(400,250,'Scientific Rev Science') },
+                        { title: "Scientific Theories & Breakthroughs", subtitle: "1770s CE to 1899s CE (Overview)", text: "Practical applications and aerodynamic research became central to understanding flight.", imageSrc: getPlaceholderUrl(400,250,'19th Century Science') },
+                        { title: "Scientific Theories & Breakthroughs", subtitle: "1900s CE to 1945 CE (Overview)", text: "Modern aerodynamic theories and early jet propulsion concepts took shape.", imageSrc: getPlaceholderUrl(400,250,'Early 20th Science') }
+                    ],
+                    segmentDetails: [
+                        [
+                            { title: "Hero's Aeolipile", subtitle: "c. 100s BCE", text: "A steam-powered device demonstrating reaction principles.", imageSrc: getPlaceholderUrl(400, 250, 'Aeolipile') },
+                            { title: "Leonardo da Vinci's Bird Anatomy Sketches", subtitle: "Observational Studies", text: "Detailed studies of bird flight and anatomy.", imageSrc: getPlaceholderUrl(400, 250, 'Da Vinci Birds') },
+                            { title: "Roger Bacon's Air Support Theory", subtitle: "Early Aerodynamic Ideas", text: "Writings suggesting that air could support a device similar to water supporting a boat.", imageSrc: getPlaceholderUrl(400, 250, 'Roger Bacon') },
+                            { title: "Archimedes' Buoyancy Principle", subtitle: "c. 200s BCE", text: "Explains why objects float, fundamental to lighter-than-air flight.", imageSrc: getPlaceholderUrl(400, 250, 'Archimedes') }
+                        ],
+                        [
+                            { title: "Robert Hooke's Airflow", subtitle: "1659", text: "Observations on air resistance and fluid dynamics.", imageSrc: getPlaceholderUrl(400, 250, 'Hooke Airflow') },
+                            { title: "Newton's Laws of Motion", subtitle: "1687", text: "Fundamental laws governing force, mass, and acceleration essential for flight.", imageSrc: getPlaceholderUrl(400, 250, 'Newton Laws Motion') },
+                            { title: "Bartolomeu de Gusmão's Passarola Design", subtitle: "1709", text: "An early demonstration of a lighter-than-air concept.", imageSrc: getPlaceholderUrl(400, 250, 'Passarola') },
+                            { title: "Daniel Bernoulli's Hydrodynamica", subtitle: "1738", text: "Relates fluid speed and pressure, key to understanding lift.", imageSrc: getPlaceholderUrl(400, 250, 'Bernoulli Principle') }
+                        ],
+                        [
+                            { title: "Watt's steam engine work", subtitle: "1760s-1790s", text: "Improvements in steam engine efficiency hint at potential power sources.", imageSrc: getPlaceholderUrl(400, 250, 'Watt Engine') },
+                            { title: "Cayley's Glider Design and Fixed-Wing Concept", subtitle: "1799", text: "Separated lift and thrust, designing the modern fixed-wing configuration.", imageSrc: getPlaceholderUrl(400, 250, 'Cayley Glider Design') },
+                            { title: "Carnot's cycle", subtitle: "1824", text: "The theoretical basis for heat engine efficiency.", imageSrc: getPlaceholderUrl(400, 250, 'Carnot Cycle') },
+                            { title: "Wenham's Wind Tunnel", subtitle: "1871", text: "The first wind tunnel for aerodynamic testing.", imageSrc: getPlaceholderUrl(400, 250, 'Wenham Tunnel') },
+                            { title: "Wenham and Browning's systematic testing", subtitle: "Aerodynamic Shape Testing (1871)", text: "Testing different airfoil shapes.", imageSrc: getPlaceholderUrl(400, 250, 'Airfoil Testing') },
+                            { title: "Otto's Thermodynamic principles", subtitle: "Engine Efficiency (1876)", text: "Basis for the four-stroke internal combustion engine.", imageSrc: getPlaceholderUrl(400, 250, 'Otto Engine') },
+                            { title: "Chanute's improved components", subtitle: "Structural Improvements (1890s)", text: "Innovative glider structures.", imageSrc: getPlaceholderUrl(400, 250, 'Chanute Glider') },
+                            { title: "Langley's Aerodrome models", subtitle: "1896", text: "Successful powered model flights.", imageSrc: getPlaceholderUrl(400, 250, 'Langley Aerodrome') },
+                            { title: "Pilcher's Powered Aircraft Design", subtitle: "1899", text: "Early attempts at powered flight.", imageSrc: getPlaceholderUrl(400, 250, 'Pilcher Aircraft') }
+                        ],
+                        [
+                            { title: "Prandtl's Boundary-Layer Theory", subtitle: "1904", text: "Understanding airflow near surfaces is crucial for drag reduction.", imageSrc: getPlaceholderUrl(400, 250, 'Prandtl Boundary') },
+                            { title: "Kutta & Zhukovsky's Lift Theorem", subtitle: "1906", text: "Mathematical explanation for lift generated by an airfoil.", imageSrc: getPlaceholderUrl(400, 250, 'Lift Theorem') },
+                            { title: "Dunne's tailless aircraft designs", subtitle: "Stability Concepts (1908)", text: "Designs focused on inherent aircraft stability.", imageSrc: getPlaceholderUrl(400, 250, 'Dunne Aircraft') },
+                            { title: "Coandă's theoretical work", subtitle: "Early Jet Propulsion Ideas (1910)", text: "Early experiments related to jet propulsion effects.", imageSrc: getPlaceholderUrl(400, 250, 'Coanda Effect') }
+                        ]
+                    ]
+                },
+                { name: "Connector 3", color: "#0891B2", isConnector: true, arrowCount: 5, thickness: 6 },
+                {
+                    name: "Practical Implementations", radius: 65, segments: 3,
+                    segmentColors: ["#FCD34D", "#F59E0B", "#D97706"],
+                    segmentNames: [
+                        "Early Concepts & LTA",
+                        "Heavier-than-Air Pioneers",
+                        "Zappellin & Modern"
+                    ],
+                     segmentOverviews: [
+                         { title: "Practical Implementations", subtitle: "Early Concepts & LTA (Overview)", text: "From unmanned kites and models to early human attempts and breakthrough balloon flight.", imageSrc: getPlaceholderUrl(400,250,'Early LTA Overview') },
+                         { title: "Practical Implementations", subtitle: "Heavier-than-Air Pioneers (Overview)", text: "Development of gliders and the experimental path to powered, controlled flights.", imageSrc: getPlaceholderUrl(400,250,'HTA Pioneers Overview') },
+                         { title: "Practical Implementations", subtitle: "Zappellin & Modern (Overview)", text: "The rise and fall of rigid airships alongside rapid advances post-World Wars.", imageSrc: getPlaceholderUrl(400,250,'Alt Modern Overview') }
+                     ],
+                    segmentDetails: [
+                        [
+                            { title: "Non-Human Flight", subtitle: "Kites, Models, etc.", text: "The history of kites and early models as precursors to flight.", imageSrc: getPlaceholderUrl(400, 250, 'Kites Models') },
+                            { title: "Early Attempts at Human Flight", subtitle: "Pre-Ballooning", text: "Legends and documented attempts before successful ballooning.", imageSrc: getPlaceholderUrl(400, 250, 'Tower Jumpers') },
+                            { title: "The Age of the Balloon", subtitle: "Lighter-than-Air", text: "The breakthrough of balloon flight by the Montgolfier brothers and others.", imageSrc: getPlaceholderUrl(400, 250, 'Montgolfier Flight') }
+                        ],
+                        [
+                            { title: "Early Glider Experiments", subtitle: "Cayley, Lilienthal, etc.", text: "Key figures in glider design and aerodynamics.", imageSrc: getPlaceholderUrl(400, 250, 'Lilienthal Glider') },
+                            { title: "Race Toward Modern Aviation", subtitle: "Wright Brothers, etc.", text: "The systematic approach to achieving powered flight.", imageSrc: getPlaceholderUrl(400, 250, 'Wright Flyer 1903') }
+                        ],
+                        [
+                            { title: "Parallel Alternative: The Zeppelin", subtitle: "Rigid Airships", text: "Count von Zeppelin's development of large dirigibles.", imageSrc: getPlaceholderUrl(400, 250, 'Zeppelin Airship') },
+                            { title: "Post-War Advancements", subtitle: "Jet Age & Beyond", text: "Rapid progress in aviation following the first powered flights.", imageSrc: getPlaceholderUrl(400, 250, 'Jet Airliner') }
+                        ]
+                    ]
+                }
+            ]
+        };
+        calculateScaleAndGap();
+    }
 
-            const startOuter = polarToCartesian(x, y, outerRadius, endAngle);
-            const endOuter = polarToCartesian(x, y, outerRadius, startAngle);
-            const startInner = polarToCartesian(x, y, innerRadius, endAngle);
-            const endInner = polarToCartesian(x, y, innerRadius, startAngle);
+    // --- Responsive Dimensions & Scaling ---
+    function getResponsiveDimensions() {
+        const containerWidth = chartContainer.clientWidth;
+        const containerHeight = chartContainer.clientHeight;
+        const padding = Math.min(containerWidth, containerHeight) * 0.04;
+        const size = Math.min(containerWidth - 2 * padding, containerHeight - 2 * padding);
+        return { width: containerWidth, height: containerHeight, chartSize: size, centerX: containerWidth / 2, centerY: containerHeight / 2 };
+    }
 
-            const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+    function calculateScaleAndGap() {
+         const baseOuterRadius = config.rings[0]?.radius || 1;
+         scaleFactor = (baseOuterRadius > 0) ? (config.chartSize / 2 / baseOuterRadius) : 1;
+         gapSize = Math.max(5, 15 * scaleFactor);
+    }
 
-            // Handle potential full circle drawing issues by splitting into two arcs
-            if (Math.abs(endAngle - startAngle) >= 359.99) {
-                 const midAngle = startAngle + 180;
-                 const midOuter1 = polarToCartesian(x, y, outerRadius, midAngle);
-                 const midInner1 = polarToCartesian(x, y, innerRadius, midAngle);
-                 const midOuter2 = polarToCartesian(x, y, outerRadius, startAngle); // Back to start
-                 const midInner2 = polarToCartesian(x, y, innerRadius, startAngle); // Back to start
+    // --- Chart Creation ---
+    function createChart() {
+        const dimensions = getResponsiveDimensions();
+        config = { ...config, ...dimensions };
+        calculateScaleAndGap();
 
-                 // Draw two half-donut paths
-                 const d = [
-                     "M", startOuter.x, startOuter.y, // Move to start of outer arc (first half)
-                     "A", outerRadius, outerRadius, 0, 0, 0, midOuter1.x, midOuter1.y, // Outer arc (first half)
-                     "L", midInner1.x, midInner1.y, // Line to inner arc start (first half)
-                     "A", innerRadius, innerRadius, 0, 0, 1, startInner.x, startInner.y, // Inner arc (first half - reversed)
-                     "Z", // Close path (first half)
-                     "M", midOuter1.x, midOuter1.y, // Move to start of outer arc (second half)
-                     "A", outerRadius, outerRadius, 0, 0, 0, midOuter2.x, midOuter2.y, // Outer arc (second half)
-                     "L", midInner2.x, midInner2.y, // Line to inner arc start (second half)
-                     "A", innerRadius, innerRadius, 0, 0, 1, midInner1.x, midInner1.y, // Inner arc (second half - reversed)
-                     "Z" // Close path (second half)
-                 ].join(" ");
-                 return d;
-             }
-
-            // Standard path for a segment (less than a full circle)
-            const d = [
-                "M", startOuter.x, startOuter.y, // Move to start on outer radius
-                "A", outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y, // Outer arc
-                "L", endInner.x, endInner.y, // Line to inner radius
-                "A", innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y, // Inner arc (reversed)
-                "Z" // Close path (line back to outer start)
-            ].join(" ");
-            return d;
+        chartContainer.querySelectorAll('svg:not(:first-child)').forEach(el => el.remove());
+        const existingSvg = chartContainer.querySelector('svg');
+        if (existingSvg) {
+            const mainChartGroup = existingSvg.querySelector('#main-chart-group');
+            if(mainChartGroup) mainChartGroup.remove();
+            const defs = existingSvg.querySelector('#text-path-defs');
+            if(defs) defs.innerHTML = '';
+            svgElement = existingSvg;
+        } else {
+             console.error("SVG container not found, cannot create chart.");
+             return;
         }
 
-        // --- Helper: Polar to Cartesian Coordinates ---
-        function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-            // Converts polar coordinates (radius, angle) to Cartesian (x, y) relative to a center point
-            const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0; // Adjust angle (0 degrees is up) and convert to radians
-            return {
-                x: centerX + (radius * Math.cos(angleInRadians)),
-                y: centerY + (radius * Math.sin(angleInRadians))
-            };
+        textPathDefs = svgElement.querySelector('#text-path-defs');
+        chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        chartGroup.id = 'main-chart-group';
+        svgElement.appendChild(chartGroup);
+
+        config.rings.forEach(ring => {
+            if (!ring.isConnector) { ring.scaledRadius = ring.radius * scaleFactor; }
+        });
+
+        let previousOuterRadius = 0;
+        config.rings.forEach((ring, index) => {
+            if (!ring.isConnector) {
+                const outerR = ring.scaledRadius;
+                let nextContentRing = null;
+                for (let j = index + 1; j < config.rings.length; j++) {
+                    if (!config.rings[j].isConnector) { nextContentRing = config.rings[j]; break; }
+                }
+                let innerR = nextContentRing ? (nextContentRing.scaledRadius + gapSize) : 0;
+                if (!nextContentRing && ring.segments > 1) { innerR = outerR * 0.1; }
+                innerR = Math.max(0, Math.min(innerR, outerR - 1));
+
+                createContentRingElements(ring, innerR, outerR, chartGroup);
+                previousOuterRadius = outerR;
+            } else {
+                const prevContentRing = config.rings[index - 1];
+                let nextContentRing = null;
+                for (let j = index + 1; j < config.rings.length; j++) {
+                    if (!config.rings[j].isConnector) { nextContentRing = config.rings[j]; break; }
+                }
+
+                if (prevContentRing && nextContentRing) {
+                    const placementRadius = nextContentRing.scaledRadius + (gapSize / 2);
+                    createConnectorElements(ring, placementRadius, gapSize, chartGroup, nextContentRing.name);
+                }
+            }
+        });
+
+        createFloatingLegend();
+        applyTransform();
+    }
+
+    // --- Create Content Ring Elements ---
+    function createContentRingElements(ring, innerRadius, outerRadius, parent) {
+        const segmentAngle = 360 / ring.segments;
+        const ringIndex = config.rings.indexOf(ring);
+
+        for (let i = 0; i < ring.segments; i++) {
+            const startAngle = i * segmentAngle;
+            const endAngle = (i + 1) * segmentAngle;
+
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", describeArc(config.centerX, config.centerY, innerRadius, outerRadius, startAngle, endAngle));
+            path.setAttribute("fill", ring.segmentColors?.[i] || ring.color || '#cccccc');
+            path.classList.add("segment");
+            path.dataset.segmentName = ring.segmentNames[i];
+            path.dataset.ringName = ring.name;
+            path.dataset.ringIndex = ringIndex;
+            path.dataset.segmentIndex = i;
+            path.style.filter = '';
+
+            path.addEventListener("pointermove", handleSegmentHover);
+            path.addEventListener("pointerleave", hideTooltip);
+            path.addEventListener("click", handleSegmentClick);
+            parent.appendChild(path);
+
+            const details = ring.segmentDetails?.[i] || [];
+            const numDots = details.length;
+            const angleSpan = endAngle - startAngle;
+
+            details.forEach((detail, detailIndex) => {
+                const dotRadialPos = innerRadius + (outerRadius - innerRadius) / 2;
+                const dotAngularOffset = (angleSpan / (numDots + 1)) * (detailIndex + 1);
+                const dotAngle = startAngle + dotAngularOffset;
+                const pos = polarToCartesian(config.centerX, config.centerY, dotRadialPos, dotAngle);
+
+                const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                dot.setAttribute("cx", pos.x);
+                dot.setAttribute("cy", pos.y);
+                dot.setAttribute("r", Math.max(3, 5 * scaleFactor));
+                dot.setAttribute("fill", "#F1F5F9");
+                dot.classList.add("interactive-dot");
+                dot.dataset.ringIndex = ringIndex;
+                dot.dataset.segmentIndex = i;
+                dot.dataset.detailIndex = detailIndex;
+                dot.dataset.title = detail.title;
+                dot.addEventListener("click", handleDotClick);
+                dot.addEventListener("pointermove", handleDotHover);
+                dot.addEventListener("pointerleave", hideTooltip);
+                parent.appendChild(dot);
+            });
+
+            if (ring.name !== "Practical Implementations") {
+                addSegmentLabel(ring, i, innerRadius, outerRadius, startAngle, endAngle, parent);
+            }
+        }
+    }
+
+    // --- Create Connector Elements ---
+    function createConnectorElements(connectorDef, placementRadius, currentGapSize, parent, targetRingName) {
+        const arrowCount = connectorDef.arrowCount || 6;
+        const arrowColor = connectorDef.color;
+        const arrowLength = Math.max(4, currentGapSize * 0.7);
+        const arrowWidth = Math.max(3, currentGapSize * 0.5);
+        const connectorGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        connectorGroup.classList.add("connector-group");
+
+        for (let i = 0; i < arrowCount; i++) {
+            const angleDeg = (i * 360 / arrowCount);
+            const angleRad = (angleDeg - 90) * Math.PI / 180.0;
+
+            const tip = polarToCartesian(config.centerX, config.centerY, placementRadius - arrowLength / 2, angleDeg);
+            const baseCenter = polarToCartesian(config.centerX, config.centerY, placementRadius + arrowLength / 2, angleDeg);
+
+            const perpAngleRad = angleRad + Math.PI / 2;
+            const wingOffset = arrowWidth / 2;
+            const wing1X = baseCenter.x + wingOffset * Math.cos(perpAngleRad);
+            const wing1Y = baseCenter.y + wingOffset * Math.sin(perpAngleRad);
+            const wing2X = baseCenter.x - wingOffset * Math.cos(perpAngleRad);
+            const wing2Y = baseCenter.y - wingOffset * Math.sin(perpAngleRad);
+
+            const arrow = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            arrow.setAttribute("points", `${wing1X},${wing1Y} ${wing2X},${wing2Y} ${tip.x},${tip.y}`);
+            arrow.setAttribute("fill", arrowColor);
+            arrow.classList.add("arrow");
+            connectorGroup.appendChild(arrow);
         }
 
-        // --- Helper: Describe SVG Arc Path (for textPath) --- REVISED
-        function describeTextArc(x, y, radius, startAngle, endAngle) {
-             // Generates the 'd' attribute string for a simple arc path, used for textPath
-             // Ensure startAngle < endAngle for consistent arc direction
-             // Add small epsilon to avoid issues with identical start/end in full circles
-             const adjustedStartAngle = startAngle + 0.001;
-             const adjustedEndAngle = endAngle - 0.001;
+        parent.appendChild(connectorGroup);
+    }
 
-             // Use the standard SVG angle direction (positive = clockwise)
-             // But our coordinate system has 0 up, positive clockwise
-             // Text path flows along the path from its start M point
-             // We want the text to read left-to-right along the top arc, so path needs to go counter-clockwise
-             // Let's use sweep-flag 0 (counter-clockwise) and calculate points accordingly
-             const start = polarToCartesian(x, y, radius, adjustedStartAngle); // Start point for text path
-             const end = polarToCartesian(x, y, radius, adjustedEndAngle);   // End point for text path
-             const largeArcFlag = (adjustedEndAngle - adjustedStartAngle) <= 180 ? "0" : "1";
-             const sweepFlag = 1; // Use 1 for standard positive angle direction
+    // --- Helper to Describe SVG Arc Path ---
+    function describeArc(x, y, innerRadius, outerRadius, startAngle, endAngle) {
+        innerRadius = Math.max(0, innerRadius);
+        outerRadius = Math.max(innerRadius + 0.1, outerRadius);
+
+        const startOuter = polarToCartesian(x, y, outerRadius, endAngle);
+        const endOuter = polarToCartesian(x, y, outerRadius, startAngle);
+        const startInner = polarToCartesian(x, y, innerRadius, endAngle);
+        const endInner = polarToCartesian(x, y, innerRadius, startAngle);
+
+        const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+        if (Math.abs(endAngle - startAngle) >= 359.99) {
+             const midAngle = startAngle + 180;
+             const midOuter1 = polarToCartesian(x, y, outerRadius, midAngle);
+             const midInner1 = polarToCartesian(x, y, innerRadius, midAngle);
+             const midOuter2 = polarToCartesian(x, y, outerRadius, startAngle);
+             const midInner2 = polarToCartesian(x, y, innerRadius, startAngle);
 
              const d = [
-                 "M", start.x, start.y,
-                 "A", radius, radius, 0, largeArcFlag, sweepFlag, end.x, end.y
+                 "M", startOuter.x, startOuter.y,
+                 "A", outerRadius, outerRadius, 0, 0, 0, midOuter1.x, midOuter1.y,
+                 "L", midInner1.x, midInner1.y,
+                 "A", innerRadius, innerRadius, 0, 0, 1, startInner.x, startInner.y,
+                 "Z",
+                 "M", midOuter1.x, midOuter1.y,
+                 "A", outerRadius, outerRadius, 0, 0, 0, midOuter2.x, midOuter2.y,
+                 "L", midInner2.x, midInner2.y,
+                 "A", innerRadius, innerRadius, 0, 0, 1, midInner1.x, midInner1.y,
+                 "Z"
              ].join(" ");
-
              return d;
          }
 
+        const d = [
+            "M", startOuter.x, startOuter.y,
+            "A", outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y,
+            "L", endInner.x, endInner.y,
+            "A", innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y,
+            "Z"
+        ].join(" ");
+        return d;
+    }
 
-        // --- Add Segment Label (Curved Text) --- REVISED
-        function addSegmentLabel(ring, segmentIndex, innerR, outerR, startAng, endAng, parent) {
-            // Skip adding labels for the innermost ring
-            if (ring.name === "Practical Implementations") {
-                return;
-            }
+    // --- Helper: Polar to Cartesian Coordinates ---
+    function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+        const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+        return {
+            x: centerX + (radius * Math.cos(angleInRadians)),
+            y: centerY + (radius * Math.sin(angleInRadians))
+        };
+    }
 
-            const angleSpan = endAng - startAng;
-            const radiusSpan = outerR - innerR;
-            const ringIndex = config.rings.indexOf(ring);
+    // --- Helper: Describe SVG Arc Path for textPath ---
+    function describeTextArc(x, y, radius, startAngle, endAngle) {
+         const adjustedStartAngle = startAngle + 0.001;
+         const adjustedEndAngle = endAngle - 0.001;
+         const start = polarToCartesian(x, y, radius, adjustedStartAngle);
+         const end = polarToCartesian(x, y, radius, adjustedEndAngle);
+         const largeArcFlag = (adjustedEndAngle - adjustedStartAngle) <= 180 ? "0" : "1";
+         const sweepFlag = 1;
+         const d = [
+             "M", start.x, start.y,
+             "A", radius, radius, 0, largeArcFlag, sweepFlag, end.x, end.y
+         ].join(" ");
+         return d;
+     }
 
-            // Don't add label if segment is too small
-            if (radiusSpan < 15 || angleSpan < 25) return;
-
-            // Calculate radius for the text path (centerline of the segment)
-            const textPathRadius = innerR + radiusSpan / 2;
-
-            // Define the path for the text to follow
-            const pathId = `label-path-${ringIndex}-${segmentIndex}`;
-            const textArcPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            textArcPath.setAttribute("id", pathId);
-            textArcPath.setAttribute("d", describeTextArc(config.centerX, config.centerY, textPathRadius, startAng, endAng));
-            textArcPath.setAttribute("fill", "none"); // Make path invisible
-            textArcPath.setAttribute("stroke", "none"); // Make path invisible
-
-            // Add the path definition to the <defs> section
-            if (textPathDefs) {
-                 textPathDefs.appendChild(textArcPath);
-            } else {
-                 console.warn("Defs element for text paths not found.");
-                 parent.appendChild(textArcPath); // Fallback
-            }
-
-            // Create the text element that will contain the textPath
-            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            text.classList.add("label-group"); // Use class for styling fill, font-weight
-            text.style.fontSize = `${Math.min(14, Math.max(9, radiusSpan / 4.5))}px`;
-
-            // Create the textPath element to display the text along the curve
-            const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
-            // Set BOTH href and xlink:href for compatibility
-            textPath.setAttribute("href", `#${pathId}`);
-            textPath.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", `#${pathId}`);
-            textPath.setAttribute("startOffset", "50%"); // Center text along the path
-            textPath.setAttribute("text-anchor", "middle"); // Anchor the text's center
-            textPath.textContent = ring.segmentNames[segmentIndex]; // Set the actual text
-
-            // Append textPath to text, and text to the parent group (chartGroup)
-            text.appendChild(textPath);
-            parent.appendChild(text);
+    // --- Add Segment Label ---
+    function addSegmentLabel(ring, segmentIndex, innerR, outerR, startAng, endAng, parent) {
+        if (ring.name === "Practical Implementations") {
+            return;
         }
 
+        const angleSpan = endAng - startAng;
+        const radiusSpan = outerR - innerR;
+        const ringIndex = config.rings.indexOf(ring);
+        if (radiusSpan < 15 || angleSpan < 25) return;
+        const textPathRadius = innerR + radiusSpan / 2;
+        const pathId = `label-path-${ringIndex}-${segmentIndex}`;
+        const textArcPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        textArcPath.setAttribute("id", pathId);
+        textArcPath.setAttribute("d", describeTextArc(config.centerX, config.centerY, textPathRadius, startAng, endAng));
+        textArcPath.setAttribute("fill", "none");
+        textArcPath.setAttribute("stroke", "none");
 
-        // --- Legend Creation ---
-        function createFloatingLegend() {
-            // Creates the draggable/collapsible legend box
-            legendContainer.innerHTML = ''; // Clear previous legend
-            legendContainer.className = 'legend'; // Reset classes
+        if (textPathDefs) {
+             textPathDefs.appendChild(textArcPath);
+        } else {
+             console.warn("Defs element for text paths not found.");
+             parent.appendChild(textArcPath);
+        }
 
-            // Drag Handle
-            const dragHandle = document.createElement('div');
-            dragHandle.className = 'legend-drag-handle';
-            legendContainer.appendChild(dragHandle);
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.classList.add("label-group");
+        text.style.fontSize = `${Math.min(14, Math.max(9, radiusSpan / 4.5))}px`;
 
-            // Header (Title + Toggle Button)
-            const header = document.createElement('div');
-            header.className = 'legend-header';
-            const title = document.createElement('h3');
-            title.className = 'legend-title';
-            title.textContent = 'Legend';
-            const toggleBtn = document.createElement('button');
-            toggleBtn.className = 'legend-toggle';
-            toggleBtn.innerHTML = '&minus;'; // Minimize symbol initially
-            toggleBtn.title = 'Minimize/Maximize Legend';
-            header.appendChild(title);
-            header.appendChild(toggleBtn);
-            legendContainer.appendChild(header);
+        const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
+        textPath.setAttribute("href", `#${pathId}`);
+        textPath.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", `#${pathId}`);
+        textPath.setAttribute("startOffset", "50%");
+        textPath.setAttribute("text-anchor", "middle");
+        textPath.textContent = ring.segmentNames[segmentIndex];
+        text.appendChild(textPath);
+        parent.appendChild(text);
+    }
 
-            // Content Area (Scrollable)
-            const content = document.createElement('div');
-            content.className = 'legend-content';
-            legendContainer.appendChild(content);
+    // --- Legend Creation ---
+    function createFloatingLegend() {
+        legendContainer.innerHTML = '';
+        legendContainer.className = 'legend';
 
-            // Group items by ring name
-            const ringGroups = {};
-            config.rings.forEach((ring, ringIdx) => {
-                if (ring.isConnector) return; // Skip connectors
-                if (!ringGroups[ring.name]) { ringGroups[ring.name] = []; } // Initialize array for this ring
+        const dragHandle = document.createElement('div');
+        dragHandle.className = 'legend-drag-handle';
+        legendContainer.appendChild(dragHandle);
 
-                const segmentItems = ring.segmentNames || [];
-                segmentItems.forEach((name, segIdx) => {
-                    const item = document.createElement('div');
-                    item.className = 'legend-item';
-                    item.addEventListener('click', () => {
-                        showSidebar(ringIdx, segIdx);
-                    });
+        const header = document.createElement('div');
+        header.className = 'legend-header';
+        const title = document.createElement('h3');
+        title.className = 'legend-title';
+        title.textContent = 'Legend';
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'legend-toggle';
+        toggleBtn.innerHTML = '&minus;';
+        toggleBtn.title = 'Minimize/Maximize Legend';
+        header.appendChild(title);
+        header.appendChild(toggleBtn);
+        legendContainer.appendChild(header);
 
-                    const colorBox = document.createElement('div');
-                    colorBox.className = 'legend-color';
-                    // Use the specific color for this segment from the config
-                    colorBox.style.backgroundColor = ring.segmentColors?.[segIdx] || ring.color || '#cccccc';
-                    // Remove filter style from legend box - it now shows the exact segment color
-                    colorBox.style.filter = '';
+        const content = document.createElement('div');
+        content.className = 'legend-content';
+        legendContainer.appendChild(content);
 
-                    const label = document.createElement('span');
-                    label.textContent = name;
-
-                    item.appendChild(colorBox);
-                    item.appendChild(label);
-                    ringGroups[ring.name].push(item);
+        const ringGroups = {};
+        config.rings.forEach((ring, ringIdx) => {
+            if (ring.isConnector) return;
+            if (!ringGroups[ring.name]) { ringGroups[ring.name] = []; }
+            const segmentItems = ring.segmentNames || [];
+            segmentItems.forEach((name, segIdx) => {
+                const item = document.createElement('div');
+                item.className = 'legend-item';
+                item.addEventListener('click', () => {
+                    showSidebar(ringIdx, segIdx);
                 });
+                const colorBox = document.createElement('div');
+                colorBox.className = 'legend-color';
+                colorBox.style.backgroundColor = ring.segmentColors?.[segIdx] || ring.color || '#cccccc';
+                colorBox.style.filter = '';
+                const label = document.createElement('span');
+                label.textContent = name;
+                item.appendChild(colorBox);
+                item.appendChild(label);
+                ringGroups[ring.name].push(item);
             });
+        });
 
-            // Add grouped items to the legend content
-            for (const ringName in ringGroups) {
-                const categoryTitle = document.createElement('div');
-                categoryTitle.className = 'legend-category';
-                categoryTitle.textContent = ringName;
-                content.appendChild(categoryTitle);
-                ringGroups[ringName].forEach(item => { content.appendChild(item); });
+        for (const ringName in ringGroups) {
+            const categoryTitle = document.createElement('div');
+            categoryTitle.className = 'legend-category';
+            categoryTitle.textContent = ringName;
+            content.appendChild(categoryTitle);
+            ringGroups[ringName].forEach(item => { content.appendChild(item); });
+        }
+
+        toggleBtn.addEventListener('click', function() {
+            content.classList.toggle('legend-minimized');
+            this.innerHTML = content.classList.contains('legend-minimized') ? '&plus;' : '&minus;';
+            if (!content.classList.contains('legend-minimized')) {
+                content.style.maxHeight = 'calc(70vh - 80px)';
             }
+        });
 
-            // Toggle Functionality
-            toggleBtn.addEventListener('click', function() {
-                content.classList.toggle('legend-minimized');
-                this.innerHTML = content.classList.contains('legend-minimized') ? '&plus;' : '&minus;';
-                // Restore max-height when expanding for scroll calculation
-                if (!content.classList.contains('legend-minimized')) {
-                    content.style.maxHeight = 'calc(70vh - 80px)'; // Match CSS
-                }
-            });
+        makeDraggable(legendContainer, dragHandle);
+    }
 
-            // Make the whole legend draggable by its handle
-            makeDraggable(legendContainer, dragHandle);
+    // --- Draggable Element Functionality ---
+    function makeDraggable(element, handle) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        const dragTarget = handle || element;
+
+        dragTarget.addEventListener('pointerdown', dragPointerDown);
+
+        function dragPointerDown(e) {
+            e = e || window.event;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            element.style.cursor = 'grabbing';
+            document.addEventListener('pointerup', closeDragElement);
+            document.addEventListener('pointermove', elementDrag);
         }
 
-        // --- Draggable Element Functionality ---
-        function makeDraggable(element, handle) {
-            // Makes an HTML element draggable within the bounds of the body
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            const dragTarget = handle || element; // Use handle if provided, else the element itself
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            setElementPosition(element, pos1, pos2);
+        }
 
-            dragTarget.onpointerdown = dragPointerDown;
+        function setElementPosition(elmnt, p1, p2) {
+             const containerRect = document.body.getBoundingClientRect();
+             const elmntRect = elmnt.getBoundingClientRect();
+             let newTop = elmnt.offsetTop - p2;
+             let newLeft = elmnt.offsetLeft - p1;
+             newTop = Math.max(0, Math.min(newTop, containerRect.height - elmntRect.height));
+             newLeft = Math.max(0, Math.min(newLeft, containerRect.width - elmntRect.width));
+             elmnt.style.top = newTop + "px";
+             elmnt.style.left = newLeft + "px";
+             elmnt.style.right = "auto";
+             elmnt.style.bottom = "auto";
+        }
 
-            function dragPointerDown(e) {
-                e = e || window.event;
-                // e.preventDefault(); // Prevent text selection, etc. - careful if handle has other interactions
-                pos3 = e.clientX; // Starting X position of cursor
-                pos4 = e.clientY; // Starting Y position of cursor
-                element.style.cursor = 'grabbing'; // Change cursor while dragging
-                document.onpointerup = closeDragElement; // Call when pointer is released
-                document.onpointermove = elementDrag; // Call when pointer moves
+        function closeDragElement() {
+            document.removeEventListener('pointerup', closeDragElement);
+            document.removeEventListener('pointermove', elementDrag);
+            element.style.cursor = 'grab';
+            if (handle) handle.style.cursor = 'move';
+        }
+
+        element.style.cursor = 'grab';
+        if (handle) handle.style.cursor = 'move';
+    }
+
+    // --- Tooltip Handling ---
+    function showTooltip(event, textContent) {
+        tooltip.style.opacity = 1;
+        tooltip.style.left = event.pageX + 15 + 'px';
+        tooltip.style.top = event.pageY + 15 + 'px';
+        tooltip.textContent = textContent;
+    }
+    function hideTooltip() {
+        tooltip.style.opacity = 0;
+    }
+
+    // --- Sidebar Display ---
+    function showSidebar(ringIndex, segmentIndex, initialDetailIndex = -1) {
+        const ring = config.rings[ringIndex];
+        const overview = ring?.segmentOverviews?.[segmentIndex];
+        const details = ring?.segmentDetails?.[segmentIndex] || [];
+        if (!overview && details.length === 0) {
+            console.error("No overview or detail data found for sidebar:", ringIndex, segmentIndex);
+            return;
+        }
+        const mainTitle = overview?.title || details[0]?.title || ring.name;
+        const mainSubtitle = overview?.subtitle || details[0]?.subtitle || ring.segmentNames[segmentIndex];
+        let contentHTML = `<button class="sidebar-close" id="close-sidebar" aria-label="Close Details">&times;</button>`;
+        contentHTML += `<h2 class="sidebar-title">${mainTitle}</h2>`;
+        contentHTML += `<h3 class="sidebar-subtitle">${mainSubtitle}</h3>`;
+        let tabsHTML = '<div class="content-tabs">';
+        let contentSectionsHTML = '<div class="tab-content">';
+
+        if (overview) {
+            const overviewActive = (initialDetailIndex === -1);
+            tabsHTML += `<button class="tab-button ${overviewActive ? 'active' : ''}" data-tab-id="overview">Overview</button>`;
+            contentSectionsHTML += `
+                <div class="content-section ${overviewActive ? 'active' : ''}" data-tab-id="overview">
+                    ${overview.imageSrc ? `<img class="sidebar-image" src="${overview.imageSrc}" alt="${overview.title || ''}" onerror="handleImageError(this)">` : ''}
+                    <p class="sidebar-text">${overview.text || 'No overview available.'}</p>
+                </div>
+            `;
+        }
+
+        details.forEach((detail, index) => {
+            const detailActive = (initialDetailIndex === index);
+            const tabLabel = detail.title || `Detail ${index + 1}`;
+            tabsHTML += `<button class="tab-button ${detailActive ? 'active' : ''}" data-tab-id="detail-${index}">${tabLabel}</button>`;
+            contentSectionsHTML += `
+                <div class="content-section ${detailActive ? 'active' : ''}" data-tab-id="detail-${index}">
+                    ${detail.subtitle ? `<h4 class="sidebar-subtitle">${detail.subtitle}</h4>` : ''}
+                    ${detail.imageSrc ? `<img class="sidebar-image" src="${detail.imageSrc}" alt="${detail.title || ''}" onerror="handleImageError(this)">` : ''}
+                    <p class="sidebar-text">${detail.text || 'No description available.'}</p>
+                </div>
+            `;
+        });
+
+        tabsHTML += '</div>';
+        contentSectionsHTML += '</div>';
+
+        const totalItems = (overview ? 1 : 0) + details.length;
+        if (totalItems > 1) {
+            contentHTML += tabsHTML;
+        }
+        contentHTML += contentSectionsHTML;
+        sidebarContent.innerHTML = contentHTML;
+        sidebar.classList.add('active');
+
+        const closeButton = sidebarContent.querySelector('#close-sidebar');
+        if (closeButton) { closeButton.addEventListener('click', closeSidebar); }
+
+        const tabsContainer = sidebarContent.querySelector('.content-tabs');
+        if (tabsContainer) {
+            tabsContainer.addEventListener('click', handleSidebarTabClick);
+        }
+
+        setTimeout(() => {
+            document.addEventListener('click', closeSidebarOnClickOutside, { capture: true });
+            document.addEventListener('keydown', handleEscKey);
+        }, 10);
+    }
+
+    function handleSidebarTabClick(event) {
+        if (!event.target.matches('.tab-button')) return;
+        const clickedButton = event.target;
+        const tabId = clickedButton.dataset.tabId;
+        const sidebarContentEl = clickedButton.closest('.sidebar-content');
+        sidebarContentEl.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        sidebarContentEl.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+        clickedButton.classList.add('active');
+        const activeSection = sidebarContentEl.querySelector(`.content-section[data-tab-id="${tabId}"]`);
+        if (activeSection) {
+            activeSection.classList.add('active');
+        }
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('active');
+        document.removeEventListener('click', closeSidebarOnClickOutside, { capture: true });
+        document.removeEventListener('keydown', handleEscKey);
+    }
+    function closeSidebarOnClickOutside(event) {
+        if (!sidebar.contains(event.target) && !event.target.closest('.interactive-dot') && !event.target.closest('.segment')) {
+            closeSidebar();
+        }
+    }
+    function handleEscKey(event) {
+        if (event.key === "Escape") {
+            closeSidebar();
+        }
+    }
+
+    // --- Event Handlers Setup ---
+    function setupEventListeners() {
+        window.addEventListener('resize', handleResize);
+        chartContainer.addEventListener('pointerdown', handlePointerDown);
+        chartContainer.addEventListener('wheel', handleWheel, { passive: false });
+        chartContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+        chartContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+        chartContainer.addEventListener('touchend', handleTouchEnd);
+    }
+    function handleResize() {
+        createChart();
+        applyTransform();
+    }
+
+    // --- Pointer Event Handlers for Panning ---
+    function handlePointerDown(event) {
+         if (event.pointerType === 'mouse' && event.button !== 0) return;
+         const target = event.target;
+         // Explicitly grouping conditions with parentheses
+         const isInteractive = target.closest('.segment') || target.closest('.interactive-dot') || target.closest('.label-group') || target.closest('.arrow') || target.closest('.connector-label');
+         const isBackground = (target.tagName === 'svg') || ((target.tagName === 'path') && !isInteractive);
+         if (currentZoom > 1 && isBackground) {
+             isPanning = true;
+             lastPointerX = event.clientX;
+             lastPointerY = event.clientY;
+             chartContainer.style.cursor = 'grabbing';
+             chartContainer.setPointerCapture(event.pointerId);
+             document.addEventListener('pointermove', handlePointerMovePan);
+             document.addEventListener('pointerup', handlePointerUp);
+             document.addEventListener('pointercancel', handlePointerUp);
+         }
+    }
+    function handlePointerMovePan(event) {
+        if (!isPanning) return;
+        const deltaX = event.clientX - lastPointerX;
+        const deltaY = event.clientY - lastPointerY;
+        lastPointerX = event.clientX;
+        lastPointerY = event.clientY;
+        panOffsetX += deltaX;
+        panOffsetY += deltaY;
+        applyTransform();
+    }
+     function handlePointerUp(event) {
+        if (isPanning) {
+            isPanning = false;
+            chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
+            chartContainer.releasePointerCapture(event.pointerId);
+            document.removeEventListener('pointermove', handlePointerMovePan);
+            document.removeEventListener('pointerup', handlePointerUp);
+            document.removeEventListener('pointercancel', handlePointerUp);
+        }
+    }
+
+    // --- Touch Event Handlers for Pinch and Pan ---
+    function handleTouchStart(event) {
+        updateActiveTouches(event);
+        if (activeTouches.length === 2) {
+            initialPinchDistance = getPinchDistance();
+            isPanning = false;
+        } else if (activeTouches.length === 1 && currentZoom > 1) {
+            isPanning = true;
+            lastTouchX = activeTouches[0].clientX;
+            lastTouchY = activeTouches[0].clientY;
+        }
+    }
+
+    function handleTouchMove(event) {
+        if (event.touches.length >= 1) {
+             event.preventDefault();
+        }
+        updateActiveTouches(event);
+        if (activeTouches.length === 2) {
+            const currentPinchDistance = getPinchDistance();
+            if (initialPinchDistance > 0) {
+                const zoomFactor = currentPinchDistance / initialPinchDistance;
+                const rect = svgElement.getBoundingClientRect();
+                const pinchCenterX = (activeTouches[0].clientX + activeTouches[1].clientX) / 2 - rect.left;
+                const pinchCenterY = (activeTouches[0].clientY + activeTouches[1].clientY) / 2 - rect.top;
+                const newZoom = Math.max(0.2, Math.min(5.0, currentZoom * zoomFactor));
+                const zoomDelta = newZoom / currentZoom;
+                panOffsetX = pinchCenterX - (pinchCenterX - panOffsetX) * zoomDelta;
+                panOffsetY = pinchCenterY - (pinchCenterY - panOffsetY) * zoomDelta;
+                currentZoom = newZoom;
+                applyTransform();
+                updateZoomIndicator();
+                initialPinchDistance = currentPinchDistance;
             }
-
-            function elementDrag(e) {
-                e = e || window.event;
-                e.preventDefault(); // Prevent default move actions
-                // Calculate the new cursor position:
-                pos1 = pos3 - e.clientX; // Change in X
-                pos2 = pos4 - e.clientY; // Change in Y
-                pos3 = e.clientX; // Update starting X for next move
-                pos4 = e.clientY; // Update starting Y for next move
-                // Set the element's new position:
-                setElementPosition(element, pos1, pos2);
-            }
-
-             function setElementPosition(elmnt, p1, p2) {
-                 const containerRect = document.body.getBoundingClientRect(); // Use body as boundary
-                 const elmntRect = elmnt.getBoundingClientRect();
-
-                 let newTop = elmnt.offsetTop - p2;
-                 let newLeft = elmnt.offsetLeft - p1;
-
-                 // Constrain within the viewport boundaries
-                 newTop = Math.max(0, Math.min(newTop, containerRect.height - elmntRect.height));
-                 newLeft = Math.max(0, Math.min(newLeft, containerRect.width - elmntRect.width));
-
-                 elmnt.style.top = newTop + "px";
-                 elmnt.style.left = newLeft + "px";
-                 // Ensure right/bottom are auto so left/top take precedence
-                 elmnt.style.right = "auto";
-                 elmnt.style.bottom = "auto";
-             }
-
-            function closeDragElement() {
-                // Stop moving when mouse button is released:
-                document.onpointerup = null;
-                document.onpointermove = null;
-                element.style.cursor = 'grab'; // Reset cursor
-                if (handle) handle.style.cursor = 'move'; // Reset handle cursor
-            }
-
-            // Set initial cursor style
-             element.style.cursor = 'grab';
-             if (handle) handle.style.cursor = 'move';
+        } else if (activeTouches.length === 1 && isPanning) {
+             const touch = activeTouches[0];
+             const deltaX = touch.clientX - lastTouchX;
+             const deltaY = touch.clientY - lastTouchY;
+             lastTouchX = touch.clientX;
+             lastTouchY = touch.clientY;
+             panOffsetX += deltaX;
+             panOffsetY += deltaY;
+             applyTransform();
         }
+    }
 
-        // --- Tooltip Handling ---
-        function showTooltip(event, textContent) {
-            // Displays the tooltip near the mouse pointer
-            tooltip.style.opacity = 1;
-            tooltip.style.left = event.pageX + 15 + 'px'; // Offset from cursor
-            tooltip.style.top = event.pageY + 15 + 'px';
-            tooltip.textContent = textContent;
+    function handleTouchEnd(event) {
+        updateActiveTouches(event);
+        if (activeTouches.length < 2) {
+            initialPinchDistance = 0;
         }
-        function hideTooltip() {
-            // Hides the tooltip
-            tooltip.style.opacity = 0;
+        if (activeTouches.length === 0 && isPanning) {
+            isPanning = false;
+            chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
         }
+    }
 
-        // --- Sidebar Display (Handles Tabs) ---
-        function showSidebar(ringIndex, segmentIndex, initialDetailIndex = -1) {
-            // Populates and displays the sidebar.
-            // initialDetailIndex: -1 shows Overview tab first, >= 0 shows specific detail tab first.
+    let activeTouches = [];
+    function updateActiveTouches(event) {
+         activeTouches = [];
+         for (let i = 0; i < event.touches.length; i++) {
+             activeTouches.push(event.touches[i]);
+         }
+    }
+    function getPinchDistance() {
+        if (activeTouches.length < 2) return 0;
+        const dx = activeTouches[0].clientX - activeTouches[1].clientX;
+        const dy = activeTouches[0].clientY - activeTouches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
 
-            const ring = config.rings[ringIndex];
-            const overview = ring?.segmentOverviews?.[segmentIndex]; // ?. optional chaining
-            const details = ring?.segmentDetails?.[segmentIndex] || [];
-
-            // Ensure there's *some* content to show
-            if (!overview && details.length === 0) {
-                console.error("No overview or detail data found for sidebar:", ringIndex, segmentIndex);
-                return;
-            }
-
-            // Determine the main title/subtitle for the sidebar header
-            // Prioritize overview, then first detail, then ring/segment names as fallback
-            const mainTitle = overview?.title || details[0]?.title || ring.name;
-            const mainSubtitle = overview?.subtitle || details[0]?.subtitle || ring.segmentNames[segmentIndex];
-
-            // --- Build Sidebar HTML ---
-            let contentHTML = `<button class="sidebar-close" id="close-sidebar" aria-label="Close Details">&times;</button>`;
-            contentHTML += `<h2 class="sidebar-title">${mainTitle}</h2>`;
-            contentHTML += `<h3 class="sidebar-subtitle">${mainSubtitle}</h3>`;
-
-            // --- Build Tabs and Content Sections ---
-            let tabsHTML = '<div class="content-tabs">';
-            let contentSectionsHTML = '<div class="tab-content">'; // Container for all sections
-
-            // Add Overview Tab (if overview data exists)
-            if (overview) {
-                const overviewActive = (initialDetailIndex === -1); // Active if no specific detail was clicked
-                tabsHTML += `<button class="tab-button ${overviewActive ? 'active' : ''}" data-tab-id="overview">Overview</button>`;
-                contentSectionsHTML += `
-                    <div class="content-section ${overviewActive ? 'active' : ''}" data-tab-id="overview">
-                        ${overview.imageSrc ? `<img class="sidebar-image" src="${overview.imageSrc}" alt="${overview.title || ''}" onerror="handleImageError(this)">` : ''}
-                        <p class="sidebar-text">${overview.text || 'No overview available.'}</p>
-                    </div>
-                `;
-            }
-
-            // Add Detail Tabs (for each item in segmentDetails)
-            details.forEach((detail, index) => {
-                const detailActive = (initialDetailIndex === index); // Active if this dot was clicked
-                const tabLabel = detail.title || `Detail ${index + 1}`; // Use detail title for tab
-                tabsHTML += `<button class="tab-button ${detailActive ? 'active' : ''}" data-tab-id="detail-${index}">${tabLabel}</button>`;
-                contentSectionsHTML += `
-                    <div class="content-section ${detailActive ? 'active' : ''}" data-tab-id="detail-${index}">
-                        ${detail.subtitle ? `<h4 class="sidebar-subtitle">${detail.subtitle}</h4>` : ''}
-                        ${detail.imageSrc ? `<img class="sidebar-image" src="${detail.imageSrc}" alt="${detail.title || ''}" onerror="handleImageError(this)">` : ''}
-                        <p class="sidebar-text">${detail.text || 'No description available.'}</p>
-                    </div>
-                `;
-            });
-
-            tabsHTML += '</div>'; // Close .content-tabs
-            contentSectionsHTML += '</div>'; // Close .tab-content
-
-            // Add tabs HTML only if there's more than one thing to show (e.g., overview + details, or multiple details)
-            const totalItems = (overview ? 1 : 0) + details.length;
-            if (totalItems > 1) {
-                contentHTML += tabsHTML;
-            }
-            contentHTML += contentSectionsHTML; // Always add content sections
-
-            // --- Update Sidebar DOM ---
-            sidebarContent.innerHTML = contentHTML;
-            sidebar.classList.add('active'); // Slide sidebar in
-
-            // --- Add Event Listeners ---
-            // Close button
-            const closeButton = sidebarContent.querySelector('#close-sidebar');
-            if (closeButton) { closeButton.addEventListener('click', closeSidebar); }
-
-            // Tab switching (using event delegation on the tabs container)
-            const tabsContainer = sidebarContent.querySelector('.content-tabs');
-            if (tabsContainer) {
-                tabsContainer.addEventListener('click', handleSidebarTabClick);
-            }
-
-            // Add listeners to close sidebar via click outside or Esc key (after a tiny delay)
-            setTimeout(() => {
-                document.addEventListener('click', closeSidebarOnClickOutside, { capture: true }); // Use capture to catch clicks on SVG early
-                document.addEventListener('keydown', handleEscKey);
-            }, 10);
+    // --- Handlers for Dots and Segments ---
+    function handleDotClick(event) {
+        event.stopPropagation();
+        if (isPanning) return;
+        const dot = event.target;
+        const ringIndex = parseInt(dot.dataset.ringIndex, 10);
+        const segmentIndex = parseInt(dot.dataset.segmentIndex, 10);
+        const detailIndex = parseInt(dot.dataset.detailIndex, 10);
+        if (!isNaN(ringIndex) && !isNaN(segmentIndex) && !isNaN(detailIndex)) {
+            showSidebar(ringIndex, segmentIndex, detailIndex);
+        } else {
+            console.error("Missing data indices on clicked dot.");
         }
-
-        // --- Sidebar Tab Click Handler ---
-        function handleSidebarTabClick(event) {
-            // Handles switching between tabs within the sidebar
-            if (!event.target.matches('.tab-button')) return; // Ignore clicks not on a tab button
-
-            const clickedButton = event.target;
-            const tabId = clickedButton.dataset.tabId; // Get the ID of the tab to show
-            const sidebarContentEl = clickedButton.closest('.sidebar-content'); // Find the parent container
-
-            // Remove 'active' class from all buttons and content sections
-            sidebarContentEl.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            sidebarContentEl.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-
-            // Add 'active' class to the clicked button and the corresponding content section
-            clickedButton.classList.add('active');
-            const activeSection = sidebarContentEl.querySelector(`.content-section[data-tab-id="${tabId}"]`);
-            if (activeSection) {
-                activeSection.classList.add('active');
-            }
+    }
+    function handleSegmentClick(event) {
+        if (isPanning) return;
+        if (event.target.closest('.interactive-dot')) {
+             return;
         }
-
-
-        // --- Close Sidebar Functions ---
-        function closeSidebar() {
-            // Hides the sidebar and removes associated event listeners
-            sidebar.classList.remove('active');
-            // Clean up global listeners
-            document.removeEventListener('click', closeSidebarOnClickOutside, { capture: true });
-            document.removeEventListener('keydown', handleEscKey);
+        const segment = event.target.closest('.segment');
+        if (!segment) return;
+        const ringIndex = parseInt(segment.dataset.ringIndex, 10);
+        const segmentIndex = parseInt(segment.dataset.segmentIndex, 10);
+        if (!isNaN(ringIndex) && !isNaN(segmentIndex)) {
+            showSidebar(ringIndex, segmentIndex, -1);
+        } else {
+              console.error("Missing data indices on clicked segment.");
         }
-        function closeSidebarOnClickOutside(event) {
-            // Closes the sidebar if a click occurs outside of it
-            // Check if the click target is outside the sidebar AND not on an element that opens the sidebar
-            if (!sidebar.contains(event.target) && !event.target.closest('.interactive-dot') && !event.target.closest('.segment')) {
-                closeSidebar();
-            }
+    }
+    function handleDotHover(event) {
+        const dot = event.target;
+        const title = dot.dataset.title || "Details";
+        showTooltip(event, title);
+    }
+    function handleSegmentHover(event) {
+         if (event.target.closest('.interactive-dot')) {
+             hideTooltip();
+             return;
+         }
+        const segment = event.target.closest('.segment');
+        if (!segment) return;
+        const segmentName = segment.dataset.segmentName || "";
+        const ringName = segment.dataset.ringName || "";
+        if (segmentName) { showTooltip(event, `${ringName}: ${segmentName}`); }
+    }
+
+    // --- Zoom Handling ---
+    function handleWheel(event) {
+        event.preventDefault();
+        const zoomDelta = event.deltaY < 0 ? 0.15 : -0.15;
+        const rect = svgElement.getBoundingClientRect();
+        const pointerX = event.clientX - rect.left;
+        const pointerY = event.clientY - rect.top;
+        zoomChartAtPoint(zoomDelta, pointerX, pointerY);
+    }
+    function addZoomControls() {
+        const controlsContainer = document.getElementById('zoom-controls');
+        controlsContainer.innerHTML = '';
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.innerHTML = '+';
+        zoomInBtn.className = 'zoom-button';
+        zoomInBtn.setAttribute('aria-label', 'Zoom In');
+        zoomInBtn.addEventListener('click', () => zoomChart(0.2));
+        const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.innerHTML = '-';
+        zoomOutBtn.className = 'zoom-button';
+        zoomOutBtn.setAttribute('aria-label', 'Zoom Out');
+        zoomOutBtn.addEventListener('click', () => zoomChart(-0.2));
+        const resetBtn = document.createElement('button');
+        resetBtn.innerHTML = '&#x21BB;';
+        resetBtn.className = 'zoom-button';
+        resetBtn.setAttribute('aria-label', 'Reset Zoom');
+        resetBtn.addEventListener('click', resetZoomPan);
+        controlsContainer.appendChild(zoomInBtn);
+        controlsContainer.appendChild(zoomOutBtn);
+        controlsContainer.appendChild(resetBtn);
+    }
+    function zoomChart(delta) {
+        if (!svgElement) return;
+        const centerX = config.width / 2;
+        const centerY = config.height / 2;
+        zoomChartAtPoint(delta, centerX, centerY);
+    }
+    function zoomChartAtPoint(zoomDelta, pointX, pointY) {
+        const minZoom = 0.2; const maxZoom = 5.0;
+        const newZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom + zoomDelta * currentZoom));
+        if (newZoom === currentZoom) return;
+        const oldZoom = currentZoom;
+        currentZoom = newZoom;
+        panOffsetX = pointX - (pointX - panOffsetX) * (currentZoom / oldZoom);
+        panOffsetY = pointY - (pointY - panOffsetY) * (currentZoom / oldZoom);
+        applyTransform();
+        updateZoomIndicator();
+    }
+    function resetZoomPan() {
+        currentZoom = 1;
+        panOffsetX = 0;
+        panOffsetY = 0;
+        applyTransform();
+        updateZoomIndicator();
+    }
+    function applyTransform() {
+        if (chartGroup) {
+            const maxPanX = (config.width * (currentZoom - 1)) / 2;
+            const maxPanY = (config.height * (currentZoom - 1)) / 2;
+            panOffsetX = Math.max(-maxPanX - config.width/2 * (currentZoom-1) , Math.min(maxPanX + config.width/2 * (currentZoom-1), panOffsetX));
+            panOffsetY = Math.max(-maxPanY - config.height/2 * (currentZoom-1), Math.min(maxPanY + config.height/2 * (currentZoom-1), panOffsetY));
+            chartGroup.setAttribute('transform', `translate(${panOffsetX}, ${panOffsetY}) scale(${currentZoom})`);
+            chartContainer.style.cursor = isPanning ? 'grabbing' : (currentZoom > 1 ? 'grab' : 'default');
+        } else {
+            console.error("Chart group not found for applying transform.");
         }
-        function handleEscKey(event) {
-            // Closes the sidebar if the Escape key is pressed
-            if (event.key === "Escape") {
-                closeSidebar();
-            }
-        }
-
-        // --- Event Handlers Setup ---
-        function setupEventListeners() {
-            // Central place to add global event listeners
-            window.addEventListener('resize', handleResize); // Redraw on resize
-
-            // Panning listeners (added on pointer down if zoomed)
-            chartContainer.addEventListener('pointerdown', handlePointerDown);
-
-            // Zoom listener
-            chartContainer.addEventListener('wheel', handleWheel, { passive: false }); // Need passive:false to prevent default scroll zoom
-
-            // Touch listeners for pinch-zoom (basic implementation)
-            chartContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
-            chartContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
-            chartContainer.addEventListener('touchend', handleTouchEnd);
-
-            // Click/Hover listeners for segments/dots are added dynamically in createChart
-        }
-        function handleResize() {
-            // Debounced resize handler could be added here if needed
-            createChart(); // Recreate chart with new dimensions
-            applyTransform(); // Reapply current zoom/pan state
-        }
-
-        // --- Pointer Event Handlers for Panning ---
-        function handlePointerDown(event) {
-            // Initiates panning if zoomed in and clicking/touching the background
-             if (event.pointerType === 'mouse' && event.button !== 0) return; // Ignore right/middle mouse clicks
-
-             const target = event.target;
-             // Check if the click started on the SVG background itself, not an interactive element
-             const isInteractive = target.closest('.segment') || target.closest('.interactive-dot') || target.closest('.label-group') || target.closest('.arrow') || target.closest('.connector-label');
-             const isBackground = target.tagName === 'svg' || target.tagName === 'path' && !isInteractive; // Allow panning on segments if not clicking a dot
-
-             // Only allow panning if zoomed in and click is on background/non-interactive part
-             if (currentZoom > 1 && isBackground) {
-                 isPanning = true;
-                 lastPointerX = event.clientX;
-                 lastPointerY = event.clientY;
-                 chartContainer.style.cursor = 'grabbing'; // Indicate panning possible
-                 chartContainer.setPointerCapture(event.pointerId); // Capture pointer events for this element
-
-                 // Add move/up listeners to the document to track movement anywhere
-                 document.addEventListener('pointermove', handlePointerMovePan);
-                 document.addEventListener('pointerup', handlePointerUp);
-                 document.addEventListener('pointercancel', handlePointerUp); // Handle cancellation
-             }
-        }
-        function handlePointerMovePan(event) {
-            // Updates pan offset during pointer movement
-            if (!isPanning) return;
-
-            const deltaX = event.clientX - lastPointerX;
-            const deltaY = event.clientY - lastPointerY;
-            lastPointerX = event.clientX;
-            lastPointerY = event.clientY;
-
-            panOffsetX += deltaX;
-            panOffsetY += deltaY;
-            applyTransform(); // Redraw with new offset
-        }
-         function handlePointerUp(event) {
-            // Ends panning state
-            if (isPanning) {
-                isPanning = false;
-                chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default'; // Reset cursor
-                chartContainer.releasePointerCapture(event.pointerId); // Release pointer capture
-
-                // Remove document listeners
-                document.removeEventListener('pointermove', handlePointerMovePan);
-                document.removeEventListener('pointerup', handlePointerUp);
-                document.removeEventListener('pointercancel', handlePointerUp);
-            }
-        }
-
-        // --- Touch Event Handlers for Pinch Zoom ---
-        let activeTouches = []; // Store active touch points
-
-        function handleTouchStart(event) {
-             // Prevent default touch actions like scrolling
-            if (event.touches.length >= 1) {
-                 // event.preventDefault(); // Be careful with this, might prevent clicks/taps
-            }
-            updateActiveTouches(event);
-
-            if (activeTouches.length === 2) {
-                initialPinchDistance = getPinchDistance();
-                isPanning = false; // Stop panning if starting pinch
-                document.removeEventListener('pointermove', handlePointerMovePan); // Ensure panning stops
-            } else if (activeTouches.length === 1 && currentZoom > 1) {
-                 // Allow panning with one finger if zoomed
-                 handlePointerDown(activeTouches[0]); // Treat single touch like pointer down for panning
-            }
-        }
-
-        function handleTouchMove(event) {
-            if (event.touches.length >= 1) {
-                 event.preventDefault(); // Prevent scroll/zoom during move
-            }
-            updateActiveTouches(event);
-
-            if (activeTouches.length === 2) {
-                const currentPinchDistance = getPinchDistance();
-                if (initialPinchDistance > 0) { // Avoid division by zero
-                    const zoomFactor = currentPinchDistance / initialPinchDistance;
-                    const rect = svgElement.getBoundingClientRect();
-                    const pinchCenterX = (activeTouches[0].clientX + activeTouches[1].clientX) / 2 - rect.left;
-                    const pinchCenterY = (activeTouches[0].clientY + activeTouches[1].clientY) / 2 - rect.top;
-
-                    // Calculate zoom delta based on factor, apply zoom at pinch center
-                    const newZoom = Math.max(0.2, Math.min(5.0, currentZoom * zoomFactor));
-                    const zoomDelta = newZoom / currentZoom; // Effective delta factor
-
-                    // Apply zoom centered on the pinch point
-                     panOffsetX = pinchCenterX - (pinchCenterX - panOffsetX) * zoomDelta;
-                     panOffsetY = pinchCenterY - (pinchCenterY - panOffsetY) * zoomDelta;
-                     currentZoom = newZoom;
-
-
-                    applyTransform();
-                    updateZoomIndicator();
-                    initialPinchDistance = currentPinchDistance; // Update initial distance for next move
-                }
-            } else if (isPanning && activeTouches.length === 1) {
-                 // Continue panning if only one finger is moving
-                 handlePointerMovePan(activeTouches[0]);
-            }
-        }
-
-        function handleTouchEnd(event) {
-            updateActiveTouches(event);
-
-            if (activeTouches.length < 2) {
-                initialPinchDistance = 0; // Reset pinch distance
-            }
-            if (activeTouches.length < 1 && isPanning) {
-                handlePointerUp({ pointerId: event.changedTouches[0]?.identifier }); // End panning if last finger lifted
-            }
-        }
-
-        function updateActiveTouches(event) {
-             activeTouches = [];
-             for (let i = 0; i < event.touches.length; i++) {
-                 activeTouches.push(event.touches[i]);
-             }
-        }
-
-        function getPinchDistance() {
-            if (activeTouches.length < 2) return 0;
-            const dx = activeTouches[0].clientX - activeTouches[1].clientX;
-            const dy = activeTouches[0].clientY - activeTouches[1].clientY;
-            return Math.sqrt(dx * dx + dy * dy);
-        }
-
-
-        // --- Handlers for Dots and Segments Clicks/Hovers ---
-        function handleDotClick(event) {
-            // Opens the sidebar to the specific detail associated with the clicked dot
-            event.stopPropagation(); // *** Crucial: Prevent segment click handler from firing ***
-            if (isPanning) return; // Don't trigger click during pan
-
-            const dot = event.target;
-            const ringIndex = parseInt(dot.dataset.ringIndex, 10);
-            const segmentIndex = parseInt(dot.dataset.segmentIndex, 10);
-            const detailIndex = parseInt(dot.dataset.detailIndex, 10);
-
-            if (!isNaN(ringIndex) && !isNaN(segmentIndex) && !isNaN(detailIndex)) {
-                // Call showSidebar, passing the detail index to make that tab active initially
-                showSidebar(ringIndex, segmentIndex, detailIndex);
-            } else {
-                console.error("Missing data indices on clicked dot.");
-            }
-        }
-
-        function handleSegmentClick(event) {
-            // Opens the sidebar to the overview tab for the clicked segment
-             if (isPanning) return; // Don't trigger click during pan
-
-             // Check if the click actually landed on a dot within the segment first
-             if (event.target.closest('.interactive-dot')) {
-                 return; // Let the dot click handler manage it
-             }
-
-             const segment = event.target.closest('.segment'); // Ensure we get the path element
-             if (!segment) return; // Click might be on label/etc.
-
-             const ringIndex = parseInt(segment.dataset.ringIndex, 10);
-             const segmentIndex = parseInt(segment.dataset.segmentIndex, 10);
-
-             if (!isNaN(ringIndex) && !isNaN(segmentIndex)) {
-                 // Call showSidebar without a detail index (-1), defaults to showing the Overview tab
-                 showSidebar(ringIndex, segmentIndex, -1);
-             } else {
-                  console.error("Missing data indices on clicked segment.");
-             }
-        }
-
-
-        function handleDotHover(event) {
-            // Shows tooltip with the detail's title on hover
-            const dot = event.target;
-            const title = dot.dataset.title || "Details"; // Fallback text
-            showTooltip(event, title);
-        }
-
-        function handleSegmentHover(event) {
-            // Shows tooltip with the ring and segment name on hover
-             // Check if hovering over a dot first
-             if (event.target.closest('.interactive-dot')) {
-                 hideTooltip(); // Hide segment tooltip if over a dot
-                 return;
-             }
-            const segment = event.target.closest('.segment');
-            if (!segment) return;
-
-            const segmentName = segment.dataset.segmentName || "";
-            const ringName = segment.dataset.ringName || "";
-            if (segmentName) { showTooltip(event, `${ringName}: ${segmentName}`); }
-        }
-
-
-        // --- Zoom Handling ---
-        function handleWheel(event) {
-            // Handles zooming via mouse wheel or trackpad scroll
-            event.preventDefault(); // Prevent page scroll
-
-            const zoomDelta = event.deltaY < 0 ? 0.15 : -0.15; // Determine zoom direction and amount
-            const rect = svgElement.getBoundingClientRect(); // Get SVG position relative to viewport
-
-            // Calculate pointer position relative to the SVG element
-            const pointerX = event.clientX - rect.left;
-            const pointerY = event.clientY - rect.top;
-
-            zoomChartAtPoint(zoomDelta, pointerX, pointerY); // Zoom centered on the pointer
-        }
-        function addZoomControls() {
-            // Creates the zoom in/out/reset buttons
-            const controlsContainer = document.getElementById('zoom-controls');
-            controlsContainer.innerHTML = ''; // Clear existing buttons
-
-            const zoomInBtn = document.createElement('button');
-            zoomInBtn.innerHTML = '+'; zoomInBtn.className = 'zoom-button'; zoomInBtn.ariaLabel = 'Zoom In';
-            zoomInBtn.addEventListener('click', () => zoomChart(0.2)); // Zoom in by 20%
-
-            const zoomOutBtn = document.createElement('button');
-            zoomOutBtn.innerHTML = '-'; zoomOutBtn.className = 'zoom-button'; zoomOutBtn.ariaLabel = 'Zoom Out';
-            zoomOutBtn.addEventListener('click', () => zoomChart(-0.2)); // Zoom out by 20%
-
-            const resetBtn = document.createElement('button');
-            resetBtn.innerHTML = '&#x21BB;'; // Reset symbol (clockwise open circle arrow)
-            resetBtn.className = 'zoom-button'; resetBtn.ariaLabel = 'Reset Zoom';
-            resetBtn.addEventListener('click', resetZoomPan); // Reset zoom and pan
-
-            controlsContainer.appendChild(zoomInBtn);
-            controlsContainer.appendChild(zoomOutBtn);
-            controlsContainer.appendChild(resetBtn);
-        }
-        function zoomChart(delta) {
-            // Zooms towards the center of the chart (used by buttons)
-            if (!svgElement) return;
-            const centerX = config.width / 2;
-            const centerY = config.height / 2;
-            zoomChartAtPoint(delta, centerX, centerY);
-        }
-        function zoomChartAtPoint(zoomDelta, pointX, pointY) {
-            // Core zoom logic: zooms by delta centered on (pointX, pointY)
-            const minZoom = 0.2; const maxZoom = 5.0; // Zoom limits
-            // Calculate new zoom level, applying delta multiplicatively
-            const newZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom + zoomDelta * currentZoom));
-
-            if (newZoom === currentZoom) return; // No change if at limits
-
-            const oldZoom = currentZoom;
-            currentZoom = newZoom;
-
-            // Adjust pan offset to keep the point under the cursor stationary
-            // Formula: newOffset = point - (point - oldOffset) * (newZoom / oldZoom)
-            panOffsetX = pointX - (pointX - panOffsetX) * (currentZoom / oldZoom);
-            panOffsetY = pointY - (pointY - panOffsetY) * (currentZoom / oldZoom);
-
-            applyTransform(); // Apply new zoom and pan
-            updateZoomIndicator(); // Show zoom level
-        }
-        function resetZoomPan() {
-            // Resets zoom to 1x and centers the chart
-            currentZoom = 1;
-            panOffsetX = 0;
-            panOffsetY = 0;
-            applyTransform();
-            updateZoomIndicator();
-        }
-
-        // --- Apply Transformation ---
-        function applyTransform() {
-            // Applies the current pan and zoom values to the main SVG group
-            if (chartGroup) {
-                // Limit panning based on zoom level to prevent excessive panning
-                const maxPanX = (config.width * (currentZoom - 1)) / 2;
-                const maxPanY = (config.height * (currentZoom - 1)) / 2;
-
-                // Clamp panOffsetX and panOffsetY (adjust as needed for desired feel)
-                // This basic clamping keeps the original center roughly within view
-                // More sophisticated clamping could prevent any white space from showing
-                panOffsetX = Math.max(-maxPanX - config.width/2 * (currentZoom-1) , Math.min(maxPanX + config.width/2 * (currentZoom-1), panOffsetX));
-                panOffsetY = Math.max(-maxPanY - config.height/2 * (currentZoom-1), Math.min(maxPanY + config.height/2 * (currentZoom-1), panOffsetY));
-
-
-                chartGroup.setAttribute('transform', `translate(${panOffsetX}, ${panOffsetY}) scale(${currentZoom})`);
-
-                // Update cursor based on zoom state (grab if zoomed, default otherwise)
-                 if (isPanning) {
-                     chartContainer.style.cursor = 'grabbing';
-                 } else {
-                     chartContainer.style.cursor = currentZoom > 1 ? 'grab' : 'default';
-                 }
-            } else {
-                console.error("Chart group not found for applying transform.");
-            }
-        }
-
-        // --- Update Zoom Indicator ---
-        let indicatorTimeout; // Timeout ID for hiding the indicator
-        function updateZoomIndicator() {
-            // Shows the current zoom level briefly
-            zoomIndicator.textContent = `Zoom: ${Math.round(currentZoom * 100)}%`;
-            zoomIndicator.style.opacity = '1'; // Make visible
-            clearTimeout(indicatorTimeout); // Clear previous timeout if any
-            // Set timeout to hide after 1.5 seconds
-            indicatorTimeout = setTimeout(() => { zoomIndicator.style.opacity = '0'; }, 1500);
-        }
-
-    </script>
+    }
+    let indicatorTimeout;
+    function updateZoomIndicator() {
+        zoomIndicator.textContent = `Zoom: ${Math.round(currentZoom * 100)}%`;
+        zoomIndicator.style.opacity = '1';
+        clearTimeout(indicatorTimeout);
+        indicatorTimeout = setTimeout(() => { zoomIndicator.style.opacity = '0'; }, 1500);
+    }
+</script>
 </body>
 </html>
