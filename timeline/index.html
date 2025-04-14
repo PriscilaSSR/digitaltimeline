@@ -92,7 +92,7 @@
             border: none; font-size: 18px; color: #495057;
         }
         .sidebar-close:hover { background-color: #ced4da; transform: rotate(90deg); }
-        .sidebar-image {
+        .sidebar-image { /* Used for Overview/Detail images */
             width: 100%; height: auto; max-height: 200px; object-fit: cover;
             margin-bottom: 15px; border-radius: 6px; border: 1px solid #dee2e6;
         }
@@ -252,17 +252,17 @@
              /* Font size is set dynamically in JS */
         }
 
-        /* Sub-Event List Styling */
+        /* --- Sub-Event List Styling --- */
         .sub-event-list {
-            margin-top: 0; /* Adjusted as it's now inside dynamic content */
+            margin-top: 0;
             padding: 0;
             list-style: none;
         }
         .sub-event-item {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            /* display: flex; REMOVED */
+            /* gap: 15px; REMOVED */
+            margin-bottom: 25px; /* Increased margin */
+            padding-bottom: 20px; /* Increased padding */
             border-bottom: 1px solid #e0e0e0;
         }
         .sub-event-item:last-child {
@@ -271,18 +271,20 @@
             padding-bottom: 0;
         }
         .sub-event-image {
-            width: 80px;
-            height: 60px;
+            width: 100%; /* Full width */
+            height: auto; /* Maintain aspect ratio */
+            max-height: 180px; /* Limit height */
             object-fit: cover;
-            border-radius: 4px;
-            flex-shrink: 0;
+            border-radius: 6px; /* Match main image radius */
+            /* flex-shrink: 0; REMOVED */
             border: 1px solid #dee2e6;
+            margin-bottom: 12px; /* Space below image */
         }
         .sub-event-content {
-            flex-grow: 1;
+            /* flex-grow: 1; REMOVED */
         }
         .sub-event-title {
-            font-size: 1.1rem;
+            font-size: 1.1rem; /* Keep size */
             font-weight: 600;
             margin: 0 0 5px 0;
             color: #343a40;
@@ -295,21 +297,23 @@
         }
         /* Placeholder for missing sub-event image */
         .sub-event-image-placeholder {
-             width: 80px;
-             height: 60px;
-             background-color: #e9ecef; /* Light gray background */
-             border-radius: 4px;
-             flex-shrink: 0;
+             width: 100%; /* Full width */
+             height: 150px; /* Fixed height for placeholder */
+             background-color: #e9ecef;
+             border-radius: 6px; /* Match radius */
+             /* flex-shrink: 0; REMOVED */
              border: 1px solid #dee2e6;
              display: flex;
              align-items: center;
              justify-content: center;
-             color: #adb5bd; /* Lighter text color */
-             font-size: 0.8rem;
+             color: #adb5bd;
+             font-size: 0.9rem; /* Slightly larger text */
+             margin-bottom: 12px; /* Space below placeholder */
         }
        .sub-event-image-placeholder::before {
-             content: "Img"; /* Simple text placeholder */
+             content: "Image Placeholder"; /* More descriptive text */
         }
+        /* --- End Sub-Event Styling --- */
 
 
     </style>
@@ -533,7 +537,23 @@
                     ],
                     segmentDetails: [
                         [ // Early Concepts & LTA
-                            { title: "Non-Human Flight", subtitle: "Kites, Models, etc.", text: "As some of the earliest controlled aerial objects, kites demonstrated basic aerodynamic principles and control mechanisms. They served as both toys and practical tools, inspiring early experiments in harnessing the forces of the wind.", imageSrc: getPlaceholderUrl(400, 250, 'Kites Models') },
+                            { title: "Non-Human Flight", subtitle: "Kites, Models, etc.", 
+                             text: "As some of the earliest controlled aerial objects, kites demonstrated basic aerodynamic principles and control mechanisms. They served as both toys and practical tools, inspiring early experiments in harnessing the forces of the wind.", 
+                             imageSrc: getPlaceholderUrl(400, 250, 'Kites Models'),
+                             subEvents: [
+                                    {
+                                        title: "Archytas' Flying Pigeon (400s BCE)",
+                                        summary: "Attributed to the ancient Greek philosopher and engineer Archytas, this early mechanical flying model is an example of how simple propulsion mechanisms were used to mimic bird flight—laying conceptual foundations for later inventions.",
+                                        imageSrc: getPlaceholderUrl(80, 60, 'Pigeon')
+                                    },
+                                    {
+                                        title: "Kongming's Sky Lantern (200s BCE)",
+                                        summary: "Used historically for signaling and celebrations, sky lanterns illustrate early applications of buoyant flight. Their design and use reflect humanity’s longstanding interest in light, airborne craft.",
+                                        imageSrc: getPlaceholderUrl(80, 60, 'Kongming')
+                                    }
+                                ]
+                                // --- END: Sub-Events Data ---
+                            },
                             { title: "Early Attempts at Human Flight", subtitle: "Pre-Ballooning", 
                              text: "Legends and documented attempts before successful ballooning, often involving tower jumping or ornithopter designs.", 
                              imageSrc: getPlaceholderUrl(400, 250, 'Tower Jumpers'),
@@ -595,8 +615,7 @@
         };
         calculateScaleAndGap();
     }
-
-    // --- Helper: Calculate Contrast Text Color ---
+ // --- Helper: Calculate Contrast Text Color ---
     function getTextColorForBackground(hexColor) {
         if (!hexColor) return '#000000'; // Default to black if no color provided
         // Convert hex to RGB
@@ -1193,9 +1212,11 @@
         let subEventListHTML = '<ul class="sub-event-list">'; // Start list
 
         specificDetail.subEvents.forEach(subEvent => {
+            // Use the updated placeholder size here
+            const imageSrc = subEvent.imageSrc || getPlaceholderUrl(300, 180, 'Sub-Event Img');
             subEventListHTML += `
                 <li class="sub-event-item">
-                    ${subEvent.imageSrc ? `<img class="sub-event-image" src="${subEvent.imageSrc}" alt="${subEvent.title || ''}" onerror="handleImageError(this)">` : '<div class="sub-event-image-placeholder"></div>'}
+                    <img class="sub-event-image" src="${imageSrc}" alt="${subEvent.title || ''}" onerror="handleImageError(this)">
                     <div class="sub-event-content">
                         <h4 class="sub-event-title">${subEvent.title || 'Sub-Event'}</h4>
                         <p class="sub-event-summary">${subEvent.summary || 'No summary available.'}</p>
@@ -1226,10 +1247,11 @@
         if (!detail) {
              return '<p class="sidebar-text">Details not available.</p>';
         }
+        // Use the main sidebar image style for consistency
         return `
             <div class="content-section active">
-                ${detail.subtitle ? `<h4 class="sidebar-subtitle" style="margin-top:0; margin-bottom:10px;">${detail.subtitle}</h4>` : ''}
                 ${detail.imageSrc ? `<img class="sidebar-image" src="${detail.imageSrc}" alt="${detail.title || ''}" onerror="handleImageError(this)">` : ''}
+                ${detail.subtitle ? `<h4 class="sidebar-subtitle" style="margin-top:0; margin-bottom:10px;">${detail.subtitle}</h4>` : ''}
                 <p class="sidebar-text">${detail.text || 'No description available.'}</p>
             </div>
         `;
@@ -1262,14 +1284,11 @@
         }
 
         // --- Determine Titles ---
-        // Use overview title/subtitle as default, override if a specific detail is initially selected
-        let mainTitle = overview?.title || segmentDetails[0]?.title || ring.name || "Details";
-        let mainSubtitle = overview?.subtitle || segmentDetails[0]?.subtitle || ring.segmentNames?.[segmentIndex] || "";
-        if (initialDetailIndex !== -1 && segmentDetails[initialDetailIndex]) {
-            // If a specific detail is selected initially, use its title/subtitle if available
-            mainTitle = segmentDetails[initialDetailIndex].title || mainTitle;
-            mainSubtitle = segmentDetails[initialDetailIndex].subtitle || mainSubtitle;
-        }
+        // Use overview title/subtitle as default for the segment
+        let mainTitle = overview?.title || ring.name || "Details";
+        let mainSubtitle = overview?.subtitle || ring.segmentNames?.[segmentIndex] || "";
+        // Note: We might want the title/subtitle to *not* change when clicking tabs within the same segment.
+        // Let's keep the segment's main title/subtitle consistent.
 
 
         // --- Base Color for Styling ---
@@ -1432,20 +1451,20 @@
         // Update the dynamic content area
         dynamicContentContainer.innerHTML = newDynamicContentHTML;
 
-        // Optional: Update main title/subtitle if needed (e.g., if switching from overview to a specific detail)
-        // This adds complexity, decide if it's necessary for UX.
-        // Example:
-        // const titleEl = sidebarContentEl.querySelector('.sidebar-title');
-        // const subtitleEl = sidebarContentEl.querySelector('.sidebar-subtitle');
-        // if (titleEl && subtitleEl) {
-        //     if (detailIndex === -1 && overview) {
-        //         titleEl.textContent = overview.title || ring.name;
-        //         subtitleEl.textContent = overview.subtitle || ring.segmentNames?.[segmentIndex] || "";
-        //     } else if (specificDetail) {
-        //          titleEl.textContent = specificDetail.title || ring.name;
-        //          subtitleEl.textContent = specificDetail.subtitle || "";
-        //     }
-        // }
+        // Update main title/subtitle to reflect the *currently selected tab*
+        const titleEl = sidebarContentEl.querySelector('.sidebar-title');
+        const subtitleEl = sidebarContentEl.querySelector('.sidebar-subtitle');
+        if (titleEl && subtitleEl) {
+            if (detailIndex === -1 && overview) { // Overview selected
+                titleEl.textContent = overview.title || ring.name;
+                subtitleEl.textContent = overview.subtitle || ring.segmentNames?.[segmentIndex] || "";
+            } else if (specificDetail) { // A detail tab selected
+                 titleEl.textContent = specificDetail.title || ring.name; // Use detail title
+                 // Keep the segment subtitle for context, or use detail subtitle if needed
+                 subtitleEl.textContent = overview?.subtitle || ring.segmentNames?.[segmentIndex] || "";
+                 // Or Optionally: subtitleEl.textContent = specificDetail.subtitle || overview?.subtitle || ...
+            }
+        }
     }
 
 
