@@ -371,7 +371,7 @@
     // --- Placeholder Image Handling ---
     const placeholderBase = "https://placehold.co";
     const imageUrlBase = "../img"; // Assuming images are in an 'img' folder relative to the HTML
-    function getPlaceholderUrl(width = 400, height = 250, text = "Image") {
+    function getImagePath(width = 400, height = 250, text = "Image") {
         return `${placeholderBase}/${width}x${height}/EBF0F5/777?text=${encodeURIComponent(text)}`;
     }
     function getImagePath(width = 400, height = 250, text = "Image") {
@@ -381,7 +381,7 @@
     }
     function handleImageError(imgElement) {
         console.warn(`Image failed to load: ${imgElement.src}. Using placeholder.`);
-        imgElement.src = getPlaceholderUrl(300, 180, 'Not Found');
+        imgElement.src = getImagePath(300, 180, 'Not Found');
         imgElement.onerror = null; // Prevent infinite loop if placeholder also fails
     }
 
@@ -418,27 +418,27 @@
                     segmentColors: ["#EDE9FE", "#DDD6FE", "#C4B5FD"], // violet-100, violet-200, violet-300
                     segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1799 CE", "1800 CE to 1945 CE"],
                     segmentOverviews: [
-                        { title: "Literary & Cultural Works", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early myths, legends, and tales reflecting humanity's ancient fascination with flight and the heavens.", imageSrc: getPlaceholderUrl(400,250,'Early Lit Overview') },
-                        { title: "Literary & Cultural Works", subtitle: "1400 CE to 1799 CE (Overview)", text: "Renaissance and Enlightenment works exploring celestial travel and imaginative flying devices, often blending science and fantasy.", imageSrc: getPlaceholderUrl(400,250,'Renaissance Lit Overview') },
-                        { title: "Literary & Cultural Works", subtitle: "1800 CE to 1945 CE (Overview)", text: "The rise of science fiction and early cinema depicting voyages to the moon, aerial warfare, and the growing impact of aviation.", imageSrc: getPlaceholderUrl(400,250,'Modern Lit Overview') }
+                        { title: "Literary & Cultural Works", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early myths, legends, and tales reflecting humanity's ancient fascination with flight and the heavens.", imageSrc: getImagePath(400,250,'EarlyLitOverview') },
+                        { title: "Literary & Cultural Works", subtitle: "1400 CE to 1799 CE (Overview)", text: "Renaissance and Enlightenment works exploring celestial travel and imaginative flying devices, often blending science and fantasy.", imageSrc: getImagePath(400,250,'RenaissanceLitOverview') },
+                        { title: "Literary & Cultural Works", subtitle: "1800 CE to 1945 CE (Overview)", text: "The rise of science fiction and early cinema depicting voyages to the moon, aerial warfare, and the growing impact of aviation.", imageSrc: getImagePath(400,250,'ModernLitOverview') }
                     ],
                     segmentDetails: [
                         [ // 500s BCE to 1399s CE
                             { title: "The Myth of Icarus and Daedalus", subtitle: "c. 500s BCE", text: "An ancient Greek myth that captures the human desire to transcend earthly limits. The tragic flight of Icarus has long symbolized both the aspiration for flight and the risks of overreaching, inspiring later generations to explore aerial innovation.", imageSrc: getImagePath(400, 250, 'icarus') },
-                            { title: "The Pushpaka Vimana", subtitle: "c. 500s BCE", text: "A mythological flying chariot from Indian lore, the Pushpaka Vimana represents early conceptualizations of aerial vehicles.", imageSrc: getPlaceholderUrl(400, 250, 'Pushpaka Vimana') },
-                            { title: "The Ebony Horse Tale", subtitle: "c. 800s CE", text: "This medieval narrative of a mechanical, flying horse illustrates the imaginative leap from myth to the idea of engineered flight.", imageSrc: getPlaceholderUrl(400, 250, 'Ebony Horse') }
+                            { title: "The Pushpaka Vimana", subtitle: "c. 500s BCE", text: "A mythological flying chariot from Indian lore, the Pushpaka Vimana represents early conceptualizations of aerial vehicles.", imageSrc: getImagePath(400, 250, 'PushpakaVimana') },
+                            { title: "The Ebony Horse Tale", subtitle: "c. 800s CE", text: "This medieval narrative of a mechanical, flying horse illustrates the imaginative leap from myth to the idea of engineered flight.", imageSrc: getImagePath(400, 250, 'EbonyHorse') }
                         ],
                         [ // 1400 CE to 1799 CE
-                            { title: "Kepler's Somnium", subtitle: "1634", text: "A visionary work that blends astronomy with imaginative flight, Kepler’s Somnium speculated about lunar landscapes and the mechanics of space travel. It helped bridge the gap between myth and emerging scientific thought about flight.", imageSrc: getPlaceholderUrl(400, 250, 'Kepler Somnium') },
-                            { title: "Francis Godwin's The Man in the Moone", subtitle: "1638", text: "One of the earliest narratives to describe human space travel, this work combined scientific speculation with imaginative adventure, setting the stage for later aeronautical theories and inspiring future innovators.", imageSrc: getPlaceholderUrl(400, 250, 'Man in Moone') },
-                            { title: "Cyrano de Bergerac's Comical History", subtitle: "1657", text: "Using satire to explore the possibilities of aerial adventure, this work reflected early modern debates about science and technology, indirectly nurturing the cultural climate in which practical flight experiments would later emerge.", imageSrc: getPlaceholderUrl(400, 250, 'Cyrano History') },
-                            { title: "Jonathan Swift's Flying Island of Laputa", subtitle: "1726", text: "In this satirical tale, Swift uses the concept of a floating island to critique scientific hubris and social institutions. His work contributed to the broader dialogue on the potentials and pitfalls of flight and aerial innovation during the Enlightenment.", imageSrc: getPlaceholderUrl(400, 250, 'Laputa') }
+                            { title: "Kepler's Somnium", subtitle: "1634", text: "A visionary work that blends astronomy with imaginative flight, Kepler’s Somnium speculated about lunar landscapes and the mechanics of space travel. It helped bridge the gap between myth and emerging scientific thought about flight.", imageSrc: getImagePath(400, 250, 'KeplerSomnium') },
+                            { title: "Francis Godwin's The Man in the Moone", subtitle: "1638", text: "One of the earliest narratives to describe human space travel, this work combined scientific speculation with imaginative adventure, setting the stage for later aeronautical theories and inspiring future innovators.", imageSrc: getImagePath(400, 250, 'ManMoone') },
+                            { title: "Cyrano de Bergerac's Comical History", subtitle: "1657", text: "Using satire to explore the possibilities of aerial adventure, this work reflected early modern debates about science and technology, indirectly nurturing the cultural climate in which practical flight experiments would later emerge.", imageSrc: getImagePath(400, 250, 'CyranoHistory') },
+                            { title: "Jonathan Swift's Flying Island of Laputa", subtitle: "1726", text: "In this satirical tale, Swift uses the concept of a floating island to critique scientific hubris and social institutions. His work contributed to the broader dialogue on the potentials and pitfalls of flight and aerial innovation during the Enlightenment.", imageSrc: getImagePath(400, 250, 'Laputa') }
                         ],
                         [ // 1800 CE to 1945 CE
-                            { title: "L'Aérophile Magazine", subtitle: "1898-1947", text: "L'Aérophile, the official journal of the Aéro Club of France, was the leading aeronautical journal of the world at its period.Early aviation developments were documented by it.", imageSrc: getPlaceholderUrl(400, 250, 'Aerophile') },
-                            { title: "Jules Verne's Novels", subtitle: "1865-1904", text: "Verne’s adventure stories, filled with visionary ideas like space travel and underwater exploration, ignited public interest and inspired engineers to turn speculative ideas into practical designs. His work underscored the connection between literature and technological progress in aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Jules Verne') },
-                            { title: "Georges Méliès's A Trip to the Moon", subtitle: "1902", text: "This groundbreaking film not only entertained audiences but also popularized the idea of venturing into space. Its imaginative portrayal of lunar travel helped cement the notion that human flight could one day extend beyond Earth’s atmosphere.", imageSrc: getPlaceholderUrl(400, 250, 'Trip to Moon Film') },
-                            { title: "H.G. Wells's The War in the Air", subtitle: "1908", text: "Wells’s speculative narrative explored the military and societal implications of aerial warfare. His work both reflected and influenced the era’s rapid advancements in aviation technology, emphasizing how flight could transform modern conflict and society.", imageSrc: getPlaceholderUrl(400, 250, 'War in the Air') }
+                            { title: "L'Aérophile Magazine", subtitle: "1898-1947", text: "L'Aérophile, the official journal of the Aéro Club of France, was the leading aeronautical journal of the world at its period.Early aviation developments were documented by it.", imageSrc: getImagePath(400, 250, 'Aerophile') },
+                            { title: "Jules Verne's Novels", subtitle: "1865-1904", text: "Verne’s adventure stories, filled with visionary ideas like space travel and underwater exploration, ignited public interest and inspired engineers to turn speculative ideas into practical designs. His work underscored the connection between literature and technological progress in aviation.", imageSrc: getImagePath(400, 250, 'JulesVerne') },
+                            { title: "Georges Méliès's A Trip to the Moon", subtitle: "1902", text: "This groundbreaking film not only entertained audiences but also popularized the idea of venturing into space. Its imaginative portrayal of lunar travel helped cement the notion that human flight could one day extend beyond Earth’s atmosphere.", imageSrc: getImagePath(400, 250, 'TripMoonFilm') },
+                            { title: "H.G. Wells's The War in the Air", subtitle: "1908", text: "Wells’s speculative narrative explored the military and societal implications of aerial warfare. His work both reflected and influenced the era’s rapid advancements in aviation technology, emphasizing how flight could transform modern conflict and society.", imageSrc: getImagePath(400, 250, 'WarAir') }
                         ]
                     ]
                 },
@@ -448,35 +448,36 @@
                     segmentColors: ["#dffcee", "#bdedd5", "#9ad5bb", "#81c8a6"], // Adjusted green shades
                     segmentNames: ["500s BCE to 1399s CE", "1400 CE to 1699s CE", "1760s CE to 1890s CE", "1890s CE to 1980s CE"],
                     segmentOverviews: [
-                        { title: "Socioeconomic Factors", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early trade routes dissimination of knowledge and resources made early flight explorations possible.", imageSrc: getPlaceholderUrl(400,250,'Ancient SocioEco') },
-                        { title: "Socioeconomic Factors", subtitle: "1400 CE to 1699s CE (Overview)", text: "The Renaissance spurred innovation through patronage and information dissemination.", imageSrc: getPlaceholderUrl(400,250,'Renaissance SocioEco') },
-                        { title: "Socioeconomic Factors", subtitle: "1760s CE to 1910s CE (Overview)", text: "The Industrial Revolution provided new materials and manufacturing capabilities.", imageSrc: getPlaceholderUrl(400,250,'Industrial SocioEco') },
-                        { title: "Socioeconomic Factors", subtitle: "1910s CE to 1980s CE (Overview)", text: "World Wars accelerated aviation development and post-war commercial growth.", imageSrc: getPlaceholderUrl(400,250,'Modern SocioEco') }
+                        { title: "Socioeconomic Factors", subtitle: "500s BCE to 1399s CE (Overview)", text: "Early trade routes dissimination of knowledge and resources made early flight explorations possible.", imageSrc: getImagePath(400,250,'AncientSocioEco') },
+                        { title: "Socioeconomic Factors", subtitle: "1400 CE to 1699s CE (Overview)", text: "The Renaissance spurred innovation through patronage and information dissemination.", imageSrc: getImagePath(400,250,'RenaissanceSocioEco') },
+                        { title: "Socioeconomic Factors", subtitle: "1760s CE to 1910s CE (Overview)", text: "The Industrial Revolution provided new materials and manufacturing capabilities.", imageSrc: getImagePath(400,250,'IndustrialSocioEco') },
+                        { title: "Socioeconomic Factors", subtitle: "1910s CE to 1980s CE (Overview)", text: "World Wars accelerated aviation development and post-war commercial growth.", imageSrc: getImagePath(400,250,'ModernSocioEco') }
                     ],
                     segmentDetails: [
                         [ // 500s BCE to 1399s CE
-                            { title: "The Silk Road", subtitle: "c. 130s BCE - 1200s CE", text: "As a vast network of trade routes linking Asia, the Middle East, and Europe, the Silk Road was far more than a conduit for silk. It enabled the exchange of ideas, technologies, and cultural practices that enriched many fields, including early aeronautics. The movement of materials like silk and the transmission of techniques such as kite-making and lightweight textile production played an indirect yet influential role in shaping the experimental designs of gliders and balloons. This cross-cultural interaction helped lay the groundwork for the technological innovations that eventually led to modern aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Silk Trade') },
-                            { title: "Paper Production and Trade", subtitle: "c. 100s BCE - 1200s CE", text: "The spread of Chinese paper-making techniques, cheaper than papyrus and animal-based similiars, made it possible to document and circulate early scientific and engineering ideas. This wider dissemination of knowledge, including theories of air and flight, laid the intellectual groundwork for future aerial experiments. Paper would play a significant role in the early development of lighter-than-air craft. For example, the Montgolfier brothers’ hot air balloons in the 1780s incorporated paper—often in combination with fabric—to form the balloon envelope. Paper’s light weight and relative availability made it a practical choice for these early experiments.", imageSrc: getPlaceholderUrl(400, 250, 'Paper Making') },
-                            { title: "Gunpowder Production", subtitle: "c. 900s CE onward", text: "The invention of gunpowder marked humanity's first controlled use of explosive force, a principle that resonates in modern propulsion systems. Initially developed for warfare and celebratory displays, gunpowder demonstrated how chemical energy could be harnessed to generate thrust. These early experiments with controlled explosions laid the conceptual groundwork for the later development of rocket engines and jet propulsion, which are central to both military and commercial aviation advancements.", imageSrc: getPlaceholderUrl(400, 250, 'Gunpowder') }
+                            { title: "The Silk Road", subtitle: "c. 130s BCE - 1200s CE", text: "As a vast network of trade routes linking Asia, the Middle East, and Europe, the Silk Road was far more than a conduit for silk. It enabled the exchange of ideas, technologies, and cultural practices that enriched many fields, including early aeronautics. The movement of materials like silk and the transmission of techniques such as kite-making and lightweight textile production played an indirect yet influential role in shaping the experimental designs of gliders and balloons. This cross-cultural interaction helped lay the groundwork for the technological innovations that eventually led to modern aviation.", imageSrc: getImagePath(400, 250, 'SilkTrade') },
+                            { title: "Paper Production and Trade", subtitle: "c. 100s BCE - 1200s CE", text: "The spread of Chinese paper-making techniques, cheaper than papyrus and animal-based similiars, made it possible to document and circulate early scientific and engineering ideas. This wider dissemination of knowledge, including theories of air and flight, laid the intellectual groundwork for future aerial experiments. Paper would play a significant role in the early development of lighter-than-air craft. For example, the Montgolfier brothers’ hot air balloons in the 1780s incorporated paper—often in combination with fabric—to form the balloon envelope. Paper’s light weight and relative availability made it a practical choice for these early experiments.", imageSrc: getImagePath(400, 250, 'PaperMaking') },
+                            { title: "Gunpowder Production", subtitle: "c. 900s CE onward", text: "The invention of gunpowder marked humanity's first controlled use of explosive force, a principle that resonates in modern propulsion systems. Initially developed for warfare and celebratory displays, gunpowder demonstrated how chemical energy could be harnessed to generate thrust. These early experiments with controlled explosions laid the conceptual groundwork for the later development of rocket engines and jet propulsion, which are central to both military and commercial aviation advancements.", imageSrc: getImagePath(400, 250, 'Gunpowder') }
                         ],
                         [ // 1400 CE to 1699s CE
-                            { title: "Renaissance Patronage System", subtitle: "c. 1400 CE to 1699 CE", text: "This era’s system of patronage enabled artists and inventors to pursue ambitious projects, including the early designs of flying machines. The financial backing from influential patrons was critical in supporting the inventive spirit that led to early aeronautical explorations.", imageSrc: getPlaceholderUrl(400, 250, 'Patronage') },
-                            { title: "Age of Exploration - Sail Making", subtitle: "c. 1400 CE to 1699 CE", text: "The Age of Sail-making and Exploration is generally considered to span from the early 15th century to the early 19th century. During this era, rapid advances in navigation, shipbuilding, and sail-making fueled European exploration and global trade. The development of durable, lightweight materials like linen—as well as the techniques for shaping and tensioning sails—provided not only the means for long-distance voyages but also contributed technical insights and materials that later influenced experimental designs in aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Sail Making') },
-                            { title: "The Printing Press", subtitle: "c. 1430s", text: "By revolutionizing communication, the printing press allowed for the rapid spread of scientific ideas and technical knowledge. This increased accessibility to new concepts about flight spurred further experimentation and cross-cultural learning.", imageSrc: getPlaceholderUrl(400, 250, 'Printing Press') },
-                            { title: "The Gentleman Scientist Tradition", subtitle: "c. 1400s to 1600s CE", text: "Amateur scientists and intellectuals of the period, driven by curiosity and the spirit of inquiry, began experimenting with flight-related ideas. Their contributions helped transition theoretical musings into more systematic investigations into the principles of aerodynamics.", imageSrc: getPlaceholderUrl(400, 250, 'Gentleman Scientist') }
+                            { title: "Renaissance Patronage System", subtitle: "c. 1400 CE to 1699 CE", text: "This era’s system of patronage enabled artists and inventors to pursue ambitious projects, including the early designs of flying machines. The financial backing from influential patrons was critical in supporting the inventive spirit that led to early aeronautical explorations.", imageSrc: getImagePath(400, 250, 'Patronage') },
+                            { title: "Age of Exploration - Sail Making", subtitle: "c. 1400 CE to 1699 CE", text: "The Age of Sail-making and Exploration is generally considered to span from the early 15th century to the early 19th century. During this era, rapid advances in navigation, shipbuilding, and sail-making fueled European exploration and global trade. The development of durable, lightweight materials like linen—as well as the techniques for shaping and tensioning sails—provided not only the means for long-distance voyages but also contributed technical insights and materials that later influenced experimental designs in aviation.", imageSrc: getImagePath(400, 250, 'SailMaking') },
+                            { title: "The Printing Press", subtitle: "c. 1430s", text: "By revolutionizing communication, the printing press allowed for the rapid spread of scientific ideas and technical knowledge. This increased accessibility to new concepts about flight spurred further experimentation and cross-cultural learning.", imageSrc: getImagePath(400, 250, 'Printing Press') },
+                            { title: "The Gentleman Scientist Tradition", subtitle: "c. 1400s to 1600s CE", text: "Amateur scientists and intellectuals of the period, driven by curiosity and the spirit of inquiry, began experimenting with flight-related ideas. Their contributions helped transition theoretical musings into more systematic investigations into the principles of aerodynamics.", imageSrc: getImagePath(400, 250, 'GentlemanScientist') }
                         ],
                         [ // 1760s CE to 1910s CE
-                            { title: "The Industrial Revolution", subtitle: "Industrial Advancements", text: "This period of rapid technological change provided the necessary mechanical innovations and production techniques that later enabled the construction of experimental flying machines and, eventually, fully functional aircraft.", imageSrc: getPlaceholderUrl(400, 250, 'Industrial Revolution') },
-                            { title: "Vulcanization of Rubber", subtitle: "1839", text: "By creating a stronger, more resilient material, vulcanization improved the construction of various mechanical parts. These advances by Goodyear later contributed to the development of more reliable components in early aircraft designs.", imageSrc: getPlaceholderUrl(400, 250, 'Rubber') },
-                            { title: "Process for Aluminum", subtitle: "1886", text: "This process, developed by Hall–Héroult, revolutionized material science by making lightweight, durable aluminum widely available. The use of aluminum in aircraft construction was critical for reducing weight while maintaining strength, a key factor in flight design.", imageSrc: getPlaceholderUrl(400, 250, 'Aluminum') },
-                            { title: "Great Exhibitions, World Fairs and Prizes", subtitle: "Early 1900s", text: "Events such the Great Exhibition of the Works of Industry of All Nations in Great Britan and the World Fairs in Paris provided venues for inventors to showcase new technologies, including early flight apparatus. Competitions and public demonstrations spurred rapid technological advancements and helped validate experimental designs. These incentives encouraged daring feats in aviation, pushing inventors to achieve longer and more controlled flights. Prizes such the Deutsch de la Meurthe Prize (1901) and the Cross-Channel Prize helped transform experimental flights into public, verifiable demonstrations that accelerated innovation in aircraft design. ", imageSrc: getPlaceholderUrl(400, 250, 'Crystal Palace') },
-                            { title: "Aero Clubs", subtitle: "1985-1900s", text: "Aeroclubs played a foundational role in the early development of aviation technology, acting as both incubators of innovation and as centralized bodies for organizing, certifying, and publicizing aeronautical advancements. From the inception of aerostation in the late 19th century, pioneering minds recognized that coordinating the emerging field of flight required more than individual experimentation—it needed a community that could consolidate evolving technical standards and foster public interest. Key to this effort was the establishment of institutions like the Aéro-Club de France, founded in 1898 by leaders and enthusiasts drawn from the Automobile Club of France and beyond. These clubs not only provided a forum where inventors, pilots, and engineers could exchange ideas and push technological boundaries.", imageSrc: getPlaceholderUrl(400, 250, 'Aeroclub') }
+                            { title: "The Industrial Revolution", subtitle: "Industrial Advancements", text: "This period of rapid technological change provided the necessary mechanical innovations and production techniques that later enabled the construction of experimental flying machines and, eventually, fully functional aircraft.", imageSrc: getImagePath(400, 250, 'IndustrialRevolution') },
+                            { title: "Vulcanization of Rubber", subtitle: "1839", text: "By creating a stronger, more resilient material, vulcanization improved the construction of various mechanical parts. These advances by Goodyear later contributed to the development of more reliable components in early aircraft designs.", imageSrc: getImagePath(400, 250, 'Rubber') },
+                            { title: "Process for Aluminum", subtitle: "1886", text: "This process, developed by Hall–Héroult, revolutionized material science by making lightweight, durable aluminum widely available. The use of aluminum in aircraft construction was critical for reducing weight while maintaining strength, a key factor in flight design.", imageSrc: getImagePath(400, 250, 'Aluminum') },
+                            { title: "Popularization of Photography", subtitle: "1888", text: "After George Eastman revolutionized the field with his Kodak camera and roll film in 1888, photography became more accessible to the general public. Although still an expensive item for the average household, it began being used to capture proofs of early flight attempts—often fueling debates about which pioneer achieved powered flight first. Limitations of weather, timing, composition meant photos of early flights were hard to produce, yet lack of photos meant being ignored by history.", imageSrc: getImagePath(400, 250, 'Photo') },
+                            { title: "Great Exhibitions, World Fairs and Prizes", subtitle: "Early 1900s", text: "Events such the Great Exhibition of the Works of Industry of All Nations in Great Britan and the World Fairs in Paris provided venues for inventors to showcase new technologies, including early flight apparatus. Competitions and public demonstrations spurred rapid technological advancements and helped validate experimental designs. These incentives encouraged daring feats in aviation, pushing inventors to achieve longer and more controlled flights. Prizes such the Deutsch de la Meurthe Prize (1901) and the Cross-Channel Prize helped transform experimental flights into public, verifiable demonstrations that accelerated innovation in aircraft design. ", imageSrc: getImagePath(400, 250, 'CrystalPalace') },
+                            { title: "Aero Clubs", subtitle: "1985-1900s", text: "Aeroclubs played a foundational role in the early development of aviation technology, acting as both incubators of innovation and as centralized bodies for organizing, certifying, and publicizing aeronautical advancements. From the inception of aerostation in the late 19th century, pioneering minds recognized that coordinating the emerging field of flight required more than individual experimentation—it needed a community that could consolidate evolving technical standards and foster public interest. Key to this effort was the establishment of institutions like the Aéro-Club de France, founded in 1898 by leaders and enthusiasts drawn from the Automobile Club of France and beyond. These clubs not only provided a forum where inventors, pilots, and engineers could exchange ideas and push technological boundaries.", imageSrc: getImagePath(400, 250, 'Aeroclub') }
                         ],
                         [ // 1910s CE to 1980s CE
-                            { title: "Military Demands in World War I", subtitle: "1914-1918", text: "The urgent need for reconnaissance, communication, and combat capabilities led to accelerated research and development in aircraft technology. Military funding and testing during the war drove rapid advancements in design and performance.", imageSrc: getPlaceholderUrl(400, 250, 'WWI Investment') },
-                            { title: "The Treaty of Versaille", subtitle: "1919", text: "The Treaty of Versailles, signed in 1919, imposed strict limitations on Germany’s military capabilities—most notably restricting the production and deployment of rigid airships such as Zeppelins. This turning point contributed to the decline of the Zeppelin era and spurred the subsequent shift toward heavier-than-air technology.", imageSrc: getPlaceholderUrl(400, 250, 'TreatyVersaille') },
-                            { title: "Post-War Commercial Aviation Infrastructure", subtitle: "Building the Network", text: "The establishment of air routes and airports after the conflicts transformed aviation from a wartime technology to a commercial and civilian mode of transport, setting the stage for global connectivity and economic growth. The launch of regular air services marked a critical transition from experimental flight to routine transportation, fundamentally altering societal mobility and business logistics.", imageSrc: getPlaceholderUrl(400, 250, 'Early Airport') },
-                            { title: "Military-Industrial Complex (Post-WWII)", subtitle: "Cold War Developments", text: "The collaboration between government and industry after WWII led to an explosion of technological innovation in aviation. This era saw the development of high-speed jets and advanced aerospace systems that would later benefit both military and commercial sectors.", imageSrc: getPlaceholderUrl(400, 250, 'Cold War Jets') }
+                            { title: "Military Demands in World War I", subtitle: "1914-1918", text: "The urgent need for reconnaissance, communication, and combat capabilities led to accelerated research and development in aircraft technology. Military funding and testing during the war drove rapid advancements in design and performance.", imageSrc: getImagePath(400, 250, 'WWIInvestment') },
+                            { title: "The Treaty of Versaille", subtitle: "1919", text: "The Treaty of Versailles, signed in 1919, imposed strict limitations on Germany’s military capabilities—most notably restricting the production and deployment of rigid airships such as Zeppelins. This turning point contributed to the decline of the Zeppelin era and spurred the subsequent shift toward heavier-than-air technology.", imageSrc: getImagePath(400, 250, 'TreatyVersaille') },
+                            { title: "Post-War Commercial Aviation Infrastructure", subtitle: "Building the Network", text: "The establishment of air routes and airports after the conflicts transformed aviation from a wartime technology to a commercial and civilian mode of transport, setting the stage for global connectivity and economic growth. The launch of regular air services marked a critical transition from experimental flight to routine transportation, fundamentally altering societal mobility and business logistics.", imageSrc: getImagePath(400, 250, 'EarlyAirport') },
+                            { title: "Military-Industrial Complex (Post-WWII)", subtitle: "Cold War Developments", text: "The collaboration between government and industry after WWII led to an explosion of technological innovation in aviation. This era saw the development of high-speed jets and advanced aerospace systems that would later benefit both military and commercial sectors.", imageSrc: getImagePath(400, 250, 'ColdWarJets') }
                         ]
                     ]
                 },
@@ -486,40 +487,40 @@
                     segmentColors: ["#EAF5FF", "#CBE7FF", "#B0D7FF", "#8FBCFF"], // Light blue shades
                     segmentNames: ["500s BCE to 1599s CE", "1600s CE to 1760s CE", "1770s CE to 1899s CE", "1900s CE to 1945 CE"],
                     segmentOverviews: [
-                        { title: "Scientific Breakthroughs", subtitle: "500s BCE to 1599s CE (Overview)", text: "Early studies of principles like buoyancy and reaction established basic ideas behind flight.", imageSrc: getPlaceholderUrl(400,250,'Ancient Science') },
-                        { title: "Scientific Breakthroughs", subtitle: "1600s CE to 1790s CE (Overview)", text: "The Scientific Revolution introduced fundamental laws and experimental designs.", imageSrc: getPlaceholderUrl(400,250,'Scientific Rev Science') },
-                        { title: "Scientific Breakthroughs", subtitle: "1790s CE to 1910s CE (Overview)", text: "Practical applications and aerodynamic research became central to understanding flight.", imageSrc: getPlaceholderUrl(400,250,'19th Century Science') },
-                        { title: "Scientific Breakthroughs", subtitle: "1910s CE to 1945 CE (Overview)", text: "Modern aerodynamic theories and early jet propulsion concepts took shape.", imageSrc: getPlaceholderUrl(400,250,'Early 20th Science') }
+                        { title: "Scientific Breakthroughs", subtitle: "500s BCE to 1599s CE (Overview)", text: "Early studies of principles like buoyancy and reaction established basic ideas behind flight.", imageSrc: getImagePath(400,250,'AncientScience') },
+                        { title: "Scientific Breakthroughs", subtitle: "1600s CE to 1790s CE (Overview)", text: "The Scientific Revolution introduced fundamental laws and experimental designs.", imageSrc: getImagePath(400,250,'ScientificRevScience') },
+                        { title: "Scientific Breakthroughs", subtitle: "1790s CE to 1910s CE (Overview)", text: "Practical applications and aerodynamic research became central to understanding flight.", imageSrc: getImagePath(400,250,'19thCenturyScience') },
+                        { title: "Scientific Breakthroughs", subtitle: "1910s CE to 1945 CE (Overview)", text: "Modern aerodynamic theories and early jet propulsion concepts took shape.", imageSrc: getImagePath(400,250,'Early20thScience') }
                     ],
                     segmentDetails: [
                         [ // 500s BCE to 1599s CE
-                            { title: "Hero's Aeolipile", subtitle: "c. 100s BCE", text: "Often considered the first steam engine, the aeolipile showcased early experiments with reaction propulsion. While its primary purpose was entertainment and demonstration, it hinted at principles that would eventually inform engine-powered flight.", imageSrc: getPlaceholderUrl(400, 250, 'Aeolipile') },
-                            { title: "Leonardo da Vinci's Bird Anatomy Sketches", subtitle: "Observational Studies", text: "Leonardo’s detailed sketches and innovative designs provided some of the earliest technical insights into how flight might be achieved. His work bridged art, science, and engineering, laying an early foundation for future aeronautical innovation.", imageSrc: getPlaceholderUrl(400, 250, 'Da Vinci Birds') },
-                            { title: "Roger Bacon's Air Support Theory", subtitle: "Early Aerodynamic Ideas", text: "Bacon theorized that air could provide the necessary support for sustained flight. His early ideas on the properties of air contributed to the conceptual framework that would later be refined by scientists and engineers in the quest for human flight.", imageSrc: getPlaceholderUrl(400, 250, 'Roger Bacon') },
-                            { title: "Archimedes' Buoyancy Principle", subtitle: "c. 200s BCE", text: "While focused on fluids and displacement, Archimedes’ work provided foundational concepts of buoyancy. These ideas would eventually be applied in understanding the lift generated by aerodynamic forces in both lighter-than-air and heavier-than-air flight.", imageSrc: getPlaceholderUrl(400, 250, 'Archimedes') }
+                            { title: "Hero's Aeolipile", subtitle: "c. 100s BCE", text: "Often considered the first steam engine, the aeolipile showcased early experiments with reaction propulsion. While its primary purpose was entertainment and demonstration, it hinted at principles that would eventually inform engine-powered flight.", imageSrc: getImagePath(400, 250, 'Aeolipile') },
+                            { title: "Leonardo da Vinci's Bird Anatomy Sketches", subtitle: "Observational Studies", text: "Leonardo’s detailed sketches and innovative designs provided some of the earliest technical insights into how flight might be achieved. His work bridged art, science, and engineering, laying an early foundation for future aeronautical innovation.", imageSrc: getImagePath(400, 250, 'DaVinciBirds') },
+                            { title: "Roger Bacon's Air Support Theory", subtitle: "Early Aerodynamic Ideas", text: "Bacon theorized that air could provide the necessary support for sustained flight. His early ideas on the properties of air contributed to the conceptual framework that would later be refined by scientists and engineers in the quest for human flight.", imageSrc: getImagePath(400, 250, 'RogerBacon') },
+                            { title: "Archimedes' Buoyancy Principle", subtitle: "c. 200s BCE", text: "While focused on fluids and displacement, Archimedes’ work provided foundational concepts of buoyancy. These ideas would eventually be applied in understanding the lift generated by aerodynamic forces in both lighter-than-air and heavier-than-air flight.", imageSrc: getImagePath(400, 250, 'Archimedes') }
                         ],
                         [ // 1600s CE to 1790s CE
-                            { title: "Robert Hooke's Airflow", subtitle: "1659", text: "Hooke’s experiments contributed to early understandings of airflow and resistance, crucial for developing theories about how air interacts with moving bodies—a core element of aerodynamics.", imageSrc: getPlaceholderUrl(400, 250, 'Hooke Airflow') },
-                            { title: "Newton's Laws of Motion", subtitle: "1687", text: "Newton’s formulation of motion provided the mathematical and physical framework that underpins all of modern aeronautics. His laws explain the forces acting on moving bodies, a principle that is directly applied in aircraft design and flight dynamics.", imageSrc: getPlaceholderUrl(400, 250, 'Newton Laws Motion') },
-                            { title: "Bartolomeu de Gusmão's Passarola Design", subtitle: "1709", text: "This early flying machine concept was one of the first to attempt a powered design, blending theoretical knowledge with practical experimentation. It represents an early effort to harness natural forces for controlled flight.", imageSrc: getPlaceholderUrl(400, 250, 'Passarola') },
-                            { title: "Daniel Bernoulli's Hydrodynamica", subtitle: "1738", text: "Bernoulli’s work laid down the mathematical principles of fluid dynamics, which are critical to understanding lift and drag. These concepts are fundamental to the design and optimization of aircraft wings and airframes.", imageSrc: getPlaceholderUrl(400, 250, 'Bernoulli Principle') },
-                            { title: "Watt's steam engine work", subtitle: "1760s-1790s", text: "While primarily advancing industrial power, steam engine innovations influenced the development of mechanical propulsion. This laid the technological groundwork for later experiments in engine-powered flight.", imageSrc: getPlaceholderUrl(400, 250, 'Watt Engine') }
+                            { title: "Robert Hooke's Airflow", subtitle: "1659", text: "Hooke’s experiments contributed to early understandings of airflow and resistance, crucial for developing theories about how air interacts with moving bodies—a core element of aerodynamics.", imageSrc: getImagePath(400, 250, 'HookeAirflow') },
+                            { title: "Newton's Laws of Motion", subtitle: "1687", text: "Newton’s formulation of motion provided the mathematical and physical framework that underpins all of modern aeronautics. His laws explain the forces acting on moving bodies, a principle that is directly applied in aircraft design and flight dynamics.", imageSrc: getImagePath(400, 250, 'NewtonLawsMotion') },
+                            { title: "Bartolomeu de Gusmão's Passarola Design", subtitle: "1709", text: "This early flying machine concept was one of the first to attempt a powered design, blending theoretical knowledge with practical experimentation. It represents an early effort to harness natural forces for controlled flight.", imageSrc: getImagePath(400, 250, 'Passarola') },
+                            { title: "Daniel Bernoulli's Hydrodynamica", subtitle: "1738", text: "Bernoulli’s work laid down the mathematical principles of fluid dynamics, which are critical to understanding lift and drag. These concepts are fundamental to the design and optimization of aircraft wings and airframes.", imageSrc: getImagePath(400, 250, 'BernoulliPrinciple') },
+                            { title: "Watt's steam engine work", subtitle: "1760s-1790s", text: "While primarily advancing industrial power, steam engine innovations influenced the development of mechanical propulsion. This laid the technological groundwork for later experiments in engine-powered flight.", imageSrc: getImagePath(400, 250, 'WattEngine') }
                         ],
                         [ // 1790s CE to 1910s CE
-                            { title: "Cayley's Glider Design and Fixed-Wing Concept", subtitle: "1799", text: "Regarded as a founding figure in aviation, Cayley’s systematic approach to glider design established many of the principles—such as lift, drag, and stability—that continue to inform modern aircraft design.", imageSrc: getPlaceholderUrl(400, 250, 'Cayley Glider Design') },
-                            { title: "Cayley's On Aerial Navigation", subtitle: "1809–1810", text: "Cayley's published a paper which appeared in Nicholson's Journal of Natural Philosophy, Chemistry and the Arts. In this paper, he laid out the basis for the study of aerodynamics. However, this work was not known and acknowledged for some years.", imageSrc: getPlaceholderUrl(400, 250, 'CayleyPaper') },
-                            { title: "Carnot's cycle", subtitle: "1824", text: "Carnot’s theoretical work on the efficiency of heat engines influenced later designs of propulsion systems. His ideas helped engineers understand how to convert energy more efficiently—an essential aspect of powered flight.", imageSrc: getPlaceholderUrl(400, 250, 'Carnot Cycle') },
-                            { title: "Wenham's Wind Tunnel", subtitle: "1871", text: "By creating a controlled environment to test aerodynamic shapes, these experiments validated theories of lift and drag. They were essential in moving from speculative designs to data-driven aircraft development.", imageSrc: getPlaceholderUrl(400, 250, 'Wenham Tunnel') },
-                            { title: "Otto's Thermodynamic principles", subtitle: "Engine Efficiency (1876)", text: "Otto’s innovations in internal combustion engines provided the means to create lightweight and efficient power sources, directly influencing the development of propulsion systems in early aircraft.", imageSrc: getPlaceholderUrl(400, 250, 'Otto Engine') },
-                            { title: "Chanute's improved components", subtitle: "Structural Improvements (1890s)", text: "Chanute’s refinements in glider design and airframe components bridged the gap between experimental aerodynamics and practical flight, informing many aspects of the first powered aircraft.", imageSrc: getPlaceholderUrl(400, 250, 'Chanute Glider') },
-                            { title: "Langley's Aerodrome models", subtitle: "1896", text: "Langley’s work with scaled-down powered models was one of the first systematic studies of engine-powered flight, helping to refine the design parameters for what would become modern aviation.", imageSrc: getPlaceholderUrl(400, 250, 'Langley Aerodrome') },
-                            { title: "Pilcher's Powered Aircraft Design", subtitle: "1899", text: "Pilcher’s innovative approach to constructing powered aircraft contributed valuable experimental data, illustrating both the promise and the challenges of moving from gliding to powered flight.", imageSrc: getPlaceholderUrl(400, 250, 'Pilcher Aircraft') }
+                            { title: "Cayley's Glider Design and Fixed-Wing Concept", subtitle: "1799", text: "Regarded as a founding figure in aviation, Cayley’s systematic approach to glider design established many of the principles—such as lift, drag, and stability—that continue to inform modern aircraft design.", imageSrc: getImagePath(400, 250, 'CayleyGliderDesign') },
+                            { title: "Cayley's On Aerial Navigation", subtitle: "1809–1810", text: "Cayley's published a paper which appeared in Nicholson's Journal of Natural Philosophy, Chemistry and the Arts. In this paper, he laid out the basis for the study of aerodynamics. However, this work was not known and acknowledged for some years.", imageSrc: getImagePath(400, 250, 'CayleyPaper') },
+                            { title: "Carnot's cycle", subtitle: "1824", text: "Carnot’s theoretical work on the efficiency of heat engines influenced later designs of propulsion systems. His ideas helped engineers understand how to convert energy more efficiently—an essential aspect of powered flight.", imageSrc: getImagePath(400, 250, 'CarnotCycle') },
+                            { title: "Wenham's Wind Tunnel", subtitle: "1871", text: "By creating a controlled environment to test aerodynamic shapes, these experiments validated theories of lift and drag. They were essential in moving from speculative designs to data-driven aircraft development.", imageSrc: getImagePath(400, 250, 'WenhamTunnel') },
+                            { title: "Otto's Thermodynamic principles", subtitle: "Engine Efficiency (1876)", text: "Otto’s innovations in internal combustion engines provided the means to create lightweight and efficient power sources, directly influencing the development of propulsion systems in early aircraft.", imageSrc: getImagePath(400, 250, 'OttoEngine') },
+                            { title: "Chanute's improved components", subtitle: "Structural Improvements (1890s)", text: "Chanute’s refinements in glider design and airframe components bridged the gap between experimental aerodynamics and practical flight, informing many aspects of the first powered aircraft.", imageSrc: getImagePath(400, 250, 'ChanuteGlider') },
+                            { title: "Langley's Aerodrome models", subtitle: "1896", text: "Langley’s work with scaled-down powered models was one of the first systematic studies of engine-powered flight, helping to refine the design parameters for what would become modern aviation.", imageSrc: getImagePath(400, 250, 'LangleyAerodrome') },
+                            { title: "Pilcher's Powered Aircraft Design", subtitle: "1899", text: "Pilcher’s innovative approach to constructing powered aircraft contributed valuable experimental data, illustrating both the promise and the challenges of moving from gliding to powered flight.", imageSrc: getImagePath(400, 250, 'PilcherAircraft') }
                         ],
                         [ // 1910s CE to 1945 CE
-                            { title: "Prandtl's Boundary-Layer Theory", subtitle: "1904", text: "This theory significantly improved the understanding of how air behaves close to a surface. Its application in wing design helped engineers create more efficient and stable aircraft.", imageSrc: getPlaceholderUrl(400, 250, 'Prandtl Boundary') },
-                            { title: "Kutta & Zhukovsky's Lift Theorem", subtitle: "1906", text: "Their mathematical formulation of lift generation became a cornerstone in aerodynamic theory, directly impacting the design and performance of aircraft wings.", imageSrc: getPlaceholderUrl(400, 250, 'Lift Theorem') },
-                            { title: "Dunne's tailless aircraft designs", subtitle: "Stability Concepts (1908)", text: "Dunne’s work on inherent stability and streamlined designs influenced modern approaches to aircraft safety and control, ensuring that future designs could combine efficiency with ease of handling.", imageSrc: getPlaceholderUrl(400, 250, 'Dunne Aircraft') },
-                            { title: "Coandă's theoretical work", subtitle: "Early Jet Propulsion Ideas (1910)", text: "Coandă’s experiments with jet propulsion and his studies of fluid flow contributed to early insights into engine design and the management of airflow—ideas that are fundamental to both propeller-driven and jet aircraft.", imageSrc: getPlaceholderUrl(400, 250, 'Coanda Effect') }
+                            { title: "Prandtl's Boundary-Layer Theory", subtitle: "1904", text: "This theory significantly improved the understanding of how air behaves close to a surface. Its application in wing design helped engineers create more efficient and stable aircraft.", imageSrc: getImagePath(400, 250, 'PrandtlBoundary') },
+                            { title: "Kutta & Zhukovsky's Lift Theorem", subtitle: "1906", text: "Their mathematical formulation of lift generation became a cornerstone in aerodynamic theory, directly impacting the design and performance of aircraft wings.", imageSrc: getImagePath(400, 250, 'LiftTheorem') },
+                            { title: "Dunne's tailless aircraft designs", subtitle: "Stability Concepts (1908)", text: "Dunne’s work on inherent stability and streamlined designs influenced modern approaches to aircraft safety and control, ensuring that future designs could combine efficiency with ease of handling.", imageSrc: getImagePath(400, 250, 'DunneAircraft') },
+                            { title: "Coandă's theoretical work", subtitle: "Early Jet Propulsion Ideas (1910)", text: "Coandă’s experiments with jet propulsion and his studies of fluid flow contributed to early insights into engine design and the management of airflow—ideas that are fundamental to both propeller-driven and jet aircraft.", imageSrc: getImagePath(400, 250, 'CoandaEffect') }
                         ]
                     ]
                 },
@@ -533,47 +534,47 @@
                         "Zeppelin & Modern"
                     ],
                     segmentOverviews: [
-                         { title: "Practical Implementations", subtitle: "Early Concepts & Lighter-than-Air (Overview)", text: "From unmanned kites and models to early human attempts and breakthrough balloon flight.", imageSrc: getPlaceholderUrl(400,250,'Early Lighter-than-Air Overview') },
-                         { title: "Practical Implementations", subtitle: "Heavier-than-Air Pioneers (Overview)", text: "Development of gliders and the experimental path to powered, controlled flights.", imageSrc: getPlaceholderUrl(400,250,'HTA Pioneers Overview') },
-                         { title: "Practical Implementations", subtitle: "Zeppelin & Modern (Overview)", text: "The rise and fall of rigid airships alongside rapid advances post-World Wars.", imageSrc: getPlaceholderUrl(400,250,'Alt Modern Overview') }
+                         { title: "Practical Implementations", subtitle: "Early Concepts & Lighter-than-Air (Overview)", text: "From unmanned kites and models to early human attempts and breakthrough balloon flight.", imageSrc: getImagePath(400,250,'EarlyLTAOverview') },
+                         { title: "Practical Implementations", subtitle: "Heavier-than-Air Pioneers (Overview)", text: "Development of gliders and the experimental path to powered, controlled flights.", imageSrc: getImagePath(400,250,'HTAPioneersOverview') },
+                         { title: "Practical Implementations", subtitle: "Zeppelin & Modern (Overview)", text: "The rise and fall of rigid airships alongside rapid advances post-World Wars.", imageSrc: getImagePath(400,250,'AltModernOverview') }
                     ],
                     segmentDetails: [
                         [ // Early Concepts & LTA
                             { title: "Non-Human Flight", subtitle: "Kites, Models, etc.", 
                              text: "As some of the earliest controlled aerial objects, kites demonstrated basic aerodynamic principles and control mechanisms. They served as both toys and practical tools, inspiring early experiments in harnessing the forces of the wind.", 
-                             imageSrc: getPlaceholderUrl(400, 250, 'Kites Models'),
+                             imageSrc: getImagePath(400, 250, 'Kites'),
                              subEvents: [
                                     {
                                         title: "Archytas' Flying Pigeon (400s BCE)",
                                         summary: "Attributed to the ancient Greek philosopher and engineer Archytas, this early mechanical flying model is an example of how simple propulsion mechanisms were used to mimic bird flight—laying conceptual foundations for later inventions.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'Pigeon')
+                                        imageSrc: getImagePath(80, 60, 'Pigeon')
                                     },
                                     {
                                         title: "Kongming's Sky Lantern (200s BCE)",
                                         summary: "Used historically for signaling and celebrations, sky lanterns illustrate early applications of buoyant flight. Their design and use reflect humanity’s longstanding interest in light, airborne craft.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'Kongming')
+                                        imageSrc: getImagePath(80, 60, 'Kongming')
                                     }
                                 ]
                                 // --- END: Sub-Events Data ---
                             },
                             { title: "Early Attempts at Human Flight", subtitle: "800s CE - 1599s CE", 
                              text: "Legends and documented attempts before successful ballooning, often involving tower jumping or ornithopter designs.", 
-                             imageSrc: getPlaceholderUrl(400, 250, 'Tower Jumpers'),
+                             imageSrc: getImagePath(400, 250, 'TowerJumpers'),
                              subEvents: [
                                     {
                                         title: "Abbas Ibn Firnas's Jump - 800s CE",
                                         summary: "An early documented effort to emulate bird flight through a controlled leap, Ibn Firnas’s attempt marks one of the first known efforts to achieve human flight, influencing later cultural and scientific narratives on the subject.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'AbbasJump')
+                                        imageSrc: getImagePath(80, 60, 'AbbasJump')
                                     },
                                     {
                                         title: "Eilmer of Malmesbury's Jump - 1000s CE",
                                         summary: "Eilmer’s gliding attempt, though only partially successful, represents the early human curiosity to understand and replicate the mechanics of bird flight, laying the groundwork for future aerodynamic experiments.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'EilmerJump')
+                                        imageSrc: getImagePath(80, 60, 'EilmerJump')
                                     },
                                     {
                                         title: "João Torto's Failed Flight Attempt - 1540s",
                                         summary: "Despite its failure, this early experiment in human flight contributed to an evolving body of trial and error, ultimately informing the iterative process that led to successful powered flight.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'TortoJump')
+                                        imageSrc: getImagePath(80, 60, 'TortoJump')
                                     }
                                 ]
                                 // --- END: Sub-Events Data ---
@@ -583,23 +584,23 @@
                             {
                                 title: "The Age of the Balloon", subtitle: "1783",
                                 text: "The late 18th century marked a pivotal moment with the successful demonstration of lighter-than-air flight, capturing public imagination and opening the skies.",
-                                imageSrc: getImagePath(400, 250, 'Montgolfier Flight'),
+                                imageSrc: getImagePath(400, 250, 'MontgolfierFlight'),
                                 // --- NEW: Sub-Events Data ---
                                 subEvents: [
                                     {
                                         title: "Montgolfier Brothers' Balloons - 1783",
                                         summary: "Joseph-Michel and Jacques-Étienne Montgolfier achieved the first public unmanned hot air balloon flight in Annonay, France (June 1783), followed by flights with animals. Their successful demonstration of hot air balloon flight proved that controlled, human-carrying flight was possible, dramatically expanding public and scientific interest in aerial travel.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'Montgolfier Demo')
+                                        imageSrc: getImagePath(80, 60, 'MontgolfierDemo')
                                     },
                                     {
                                         title: "First Human Passenger Flights - 1783",
                                         summary: "Pilâtre de Rozier and Marquis d'Arlandes made the first untethered human flight in a Montgolfier balloon over Paris (November 1783). Jacques Charles and Nicolas Robert achieved the first manned flight in a hydrogen balloon shortly after (December 1783).",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'First Human Flight')
+                                        imageSrc: getImagePath(80, 60, 'FirstHumanFlight')
                                     },
                                     {
                                         title: "Ballooning Era - 1780s - 1850s",
                                         summary: "These successes sparked widespread public excitement and further experimentation across Europe, leading to numerous ascents, cross-channel flights, and military applications. These early flights proved that human beings could travel safely through the air, paving the way for more ambitious and technologically complex forms of aviation.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'BalloonEra')
+                                        imageSrc: getImagePath(80, 60, 'BalloonEra')
                                     }
                                 ]
                                 // --- END: Sub-Events Data ---
@@ -611,17 +612,17 @@
                                     {
                                         title: "Cayley's Manned Glider Flight (1853)",
                                         summary: "George Cayley’s experiments with gliders are widely recognized as the first systematic study of fixed-wing flight. His work laid the essential aerodynamic principles that directly influenced later powered flight. In 1853, Cayley built a triplane glider (a glider with three horizontal wing structures) that carried his coachman 900 feet (275 meters) across Brompton Dale in the north of England before crashing. It was the first recorded flight by an adult in an aircraft.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'CayleyFlight')
+                                        imageSrc: getImagePath(80, 60, 'CayleyFlight')
                                     },
                                     {
                                         title: "Lilienthal's Glider Flights (1891)",
                                         summary: "By documenting repeated, controlled glider flights, Otto Lilienthal provided empirical data on wing design and stability. His contributions directly informed the methods and successes of later pioneers.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'OttoGlider')
+                                        imageSrc: getImagePath(80, 60, 'OttoGlider')
                                     },
                                     {
                                         title: "Chanute's Biplane Glider (1896)",
                                         summary: "Octave Chanute’s work in refining glider designs and testing various configurations created a critical bridge between the theoretical principles of aerodynamics and the practical requirements of powered flight.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'ChanuteGlider')
+                                        imageSrc: getImagePath(80, 60, 'ChanuteGlider')
                                     }
                                 ]
                                 // --- END: Sub-Events Data ---
@@ -633,52 +634,52 @@
                                     {
                                         title: "Clément Ader's Éole (1890)",
                                         summary: "Ader’s powered aircraft experiments, though not immediately successful, were instrumental in creating competitive momentum and stimulating further research into engine-powered flight.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'AderEole')
+                                        imageSrc: getImagePath(80, 60, 'AderEole')
                                     },
                                     {
                                         title: "Samuel Pierpont Langley's Aerodrome (1896)",
                                         summary: "Langley’s systematic approach to powered flight, through careful experimentation with scale models, established critical design benchmarks that influenced the engineering of future aircraft.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'LangleyAerodrome')
+                                        imageSrc: getImagePath(80, 60, 'LangleyAerodrome')
                                     },
                                     {
                                         title: "Gustave Whitehead's Reported Flight (1901)",
                                         summary: "Whitehead’s reported flight in 1901 has been a source of debate for years. The Wright Brothers' thunderous campaign against the recognition of Whitehead achievement highlights the global race to achieve powered flight and underscores a bleak picture of cutthroat competition. For example, the Wright brothers visited Whitehead’s Bridgeport shop in 1901 and 1902 and had discussions with him. Anton Pruckner, Whitehead’s young machinist and engine assistant, and Cecil Steeves, another of Whitehead’s young neighbor helpers, witnessed this. Asked in later years how he knew the two men were the Wright brothers, Pruckner replied, ‘They had to introduce themselves.’ He said the pair visited ‘more than one time.’ Steeves, in a recorded interview in 1937, said he remembered a visit by the Wrights. ‘They came from Ohio,’ he said, ‘and under the guise of offering to help finance Whitehead’s inventions, actually received inside information about his work…. After they had gone away, Mr. Whitehead turned to me and said, ‘Now that I have given them the secrets of my invention they will probably never do anything in the way of financing me'. Whitehead died in 1927 in poverty.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'WhiteheadFlight')
+                                        imageSrc: getImagePath(80, 60, 'WhiteheadFlight')
                                     },
                                  {
                                         title: "Richard Pearse's Monoplane (1902)",
                                         summary: "Pearse’s experimental designs with monoplane configurations contributed to the growing body of evidence that powered flight was achievable, influencing the iterative improvements of aircraft technology.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'PearseMonoplane')
+                                        imageSrc: getImagePath(80, 60, 'PearseMonoplane')
                                     },
                                     {
                                         title: "Karl Jatho's Powered Aircraft (1903)",
                                         summary: "Jatho’s work provided additional proof that engine-powered flight was within reach, reinforcing the experimental momentum that characterized the early years of aviation development.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'JathoAircraft')
+                                        imageSrc: getImagePath(80, 60, 'JathoAircraft')
                                     },
                                     {
                                         title: "Preston Watson's Alleged Flight (1903)",
                                         summary: "Watson’s reported flight in 1903 continues the broader narrative of experimental efforts that spurred rapid advancements and intense global competition in early aviation.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'WatsonFlight')
+                                        imageSrc: getImagePath(80, 60, 'WatsonFlight')
                                     },
                                     {
                                         title: "Alberto Santos-Dumont's 14-bis Flight (1906)",
                                         summary: "This well-documented flight in Europe provided evidence of controlled, powered flight, capturing the public imagination and earning a celebrated place in aviation history.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'DumontFlight')
+                                        imageSrc: getImagePath(80, 60, 'DumontFlight')
                                     },
                                     {
                                         title: "Traian Vuia's Monoplane (1907)",
                                         summary: "Vuia’s experiments with self-propelled monoplane designs pushed the boundaries of what was technically possible, adding important insights into engine integration and aircraft structure.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'VuiaMonoplane')
+                                        imageSrc: getImagePath(80, 60, 'VuiaMonoplane')
                                     },
                                     {
                                         title: "Wright Brothers' Flights (1902–1908)",
                                         summary: "In 1903, the Wright Brothers performed a sustained, controlled flight of a powered, heavier-than-air aircraft, lasting 12 seconds that was not documented or witnessed by major organizations or the general public.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'WrightFlight')
+                                        imageSrc: getImagePath(80, 60, 'WrightFlight')
                                     },
                                     {
                                         title: "Dimitri Sensaud de Lavaud's Flight in Latin America (1910)",
                                         summary: "This early flight outside the traditional centers of innovation underscored the global nature of the quest for powered flight and spurred further advancements in aviation across different regions.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'WrightFlight')
+                                        imageSrc: getImagePath(80, 60, 'WrightFlight')
                                     }
                                 ]
                                 // --- END: Sub-Events Data ---
@@ -692,37 +693,37 @@
                                     {
                                         title: "Henri Giffard's Dirigible (1852)",
                                         summary: "Giffard’s powered dirigible was one of the first successful attempts to control lighter-than-air craft, demonstrating that alternative approaches to flight could offer viable solutions for navigation and transport.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'GiffardDirigible')
+                                        imageSrc: getImagePath(80, 60, 'GiffardDirigible')
                                     },
                                     {
                                         title: "Charles Renard and Arthur Constantin's Le France (1884)",
                                         summary: "Le France achieved sustained and controlled flight as a dirigible, proving that airships could be used reliably for both military and civilian purposes, complementing developments in heavier-than-air flight.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'LeFrance')
+                                        imageSrc: getImagePath(80, 60, 'LeFrance')
                                     },
                                     {
                                         title: "Ferdinand von Zeppelin's Rigid Airships (1900)",
                                         summary: "Zeppelin’s innovations in rigid airship design opened a parallel chapter in aviation history. His work focused on large-scale, long-range travel and significantly influenced public and military perceptions of aerial transport.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'ZeppelinAirship')
+                                        imageSrc: getImagePath(80, 60, 'ZeppelinAirship')
                                     },
                                     {
                                         title: "LZ 3 and Military Adoption (1906)",
                                         summary: "The military’s adoption of the LZ 3 demonstrated the strategic value of dirigibles in reconnaissance and transport, highlighting how different technological approaches could address specific operational needs.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'LZ3')
+                                        imageSrc: getImagePath(80, 60, 'LZ3')
                                     },
                                     {
                                         title: "Zeppelin's First Commercial Service (1909)",
                                         summary: "The introduction of regular commercial airship services marked a major milestone in civilian aviation, showing that controlled, comfortable flight could become part of everyday transportation.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'LZ3')
+                                        imageSrc: getImagePath(80, 60, 'LZ3')
                                     },
                                     {
                                         title: "The Graf Zeppelin (1928)",
                                         summary: "As one of the largest and most advanced airships ever built, the Graf Zeppelin symbolized the peak of dirigible technology, combining luxury travel with state-of-the-art engineering and demonstrating the potential of large-scale aerial transport.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'Graf')
+                                        imageSrc: getImagePath(80, 60, 'Graf')
                                     },
                                     {
                                         title: "The Hindenburg Disaster (1937)",
                                         summary: "The tragic end of the Hindenburg underscored the risks inherent in early airship technology. This disaster shifted public confidence away from dirigibles, accelerating the focus on heavier-than-air aircraft as the future of flight.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'Hindenburg')
+                                        imageSrc: getImagePath(80, 60, 'Hindenburg')
                                     }
                             ]
                                                              // --- END: Sub-Events Data ---
@@ -734,17 +735,17 @@
                                     {
                                         title: "Breaking the Sound Barrier (1947)",
                                         summary: "This achievement marked the dawn of supersonic flight. The breakthrough not only redefined the limits of speed but also spurred significant advancements in aerodynamics, materials science, and propulsion systems that continue to influence modern aircraft design.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'SoundBarrier')
+                                        imageSrc: getImagePath(80, 60, 'SoundBarrier')
                                     },
                                  {
                                         title: "Satellite Launch (1957)",
                                         summary: "The launch of satellites signaled the extension of flight into outer space. This milestone expanded the domain of aeronautics into aerospace engineering and laid the technological and scientific groundwork for space exploration.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'Satellite')
+                                        imageSrc: getImagePath(80, 60, 'Satellite')
                                     },
                                    {
                                         title: "First Human Moon Landing (1969)",
                                         summary: "The Apollo 11 mission epitomized the culmination of decades of research and innovation in flight technology. Landing on the Moon not only achieved a long-held human dream but also demonstrated the potential for international cooperation and the vast possibilities of aerospace exploration.",
-                                        imageSrc: getPlaceholderUrl(80, 60, 'MoonLanding')
+                                        imageSrc: getImagePath(80, 60, 'MoonLanding')
                                     }
                             ]
                             }
@@ -1353,7 +1354,7 @@
 
         specificDetail.subEvents.forEach(subEvent => {
             // Use the updated placeholder size here
-            const imageSrc = subEvent.imageSrc || getPlaceholderUrl(300, 180, 'Sub-Event Img');
+            const imageSrc = subEvent.imageSrc || getImagePath(300, 180, 'Sub-Event Img');
             subEventListHTML += `
                 <li class="sub-event-item">
                     <img class="sub-event-image" src="${imageSrc}" alt="${subEvent.title || ''}" onerror="handleImageError(this)">
